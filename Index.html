@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>💜 EJC Santo Eugênio de Mazenod• Sistema Financeiro</title>
+  <title>💜 EJC Santo Eugênio • Sistema Financeiro</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -37,6 +37,17 @@
       transition:.2s;
     }
     .btn:hover{transform:translateY(-2px);}
+    .tabBtn{
+      padding:10px 14px;
+      border-radius:14px;
+      font-weight:700;
+      background:#f1f5f9;
+      white-space:nowrap;
+    }
+    .tabBtn.active{
+      background:#7c3aed;
+      color:white;
+    }
   </style>
 </head>
 
@@ -67,86 +78,39 @@
 </div>
 
 <!-- HEADER -->
-<header id="appHeader" class="hidden bg-white border-b px-6 py-4 flex justify-between items-center sticky top-0 shadow">
-  <h2 class="font-extrabold text-xl text-gray-800">📊 Painel Financeiro EJC</h2>
-  <button onclick="logout()" class="btn bg-gray-100 text-sm">
-    🚪 Sair
-  </button>
+<header id="appHeader" class="hidden bg-white border-b px-6 py-4 sticky top-0 shadow z-40">
+  <div class="flex justify-between items-center">
+    <h2 class="font-extrabold text-xl text-gray-800">📊 Painel Financeiro EJC</h2>
+    <button onclick="logout()" class="btn bg-gray-100 text-sm">
+      🚪 Sair
+    </button>
+  </div>
+
+  <!-- NAV TABS -->
+  <div id="tabsNav" class="hidden flex gap-2 mt-4 overflow-x-auto pb-2"></div>
 </header>
 
-<!-- ADMIN -->
-<main id="adminPanel" class="hidden p-6 space-y-6 max-w-6xl mx-auto">
+<!-- CONTEÚDO -->
+<main class="p-6 max-w-6xl mx-auto space-y-6">
 
-  <h1 class="text-2xl font-extrabold">👑 Pilotos Finanças — Dashboard Geral</h1>
+  <!-- ADMIN SECTIONS -->
+  <section id="tab-dashboard" class="tabSection hidden"></section>
+  <section id="tab-ejc" class="tabSection hidden"></section>
+  <section id="tab-feijoada" class="tabSection hidden"></section>
+  <section id="tab-mercadinho" class="tabSection hidden"></section>
+  <section id="tab-outros" class="tabSection hidden"></section>
+  <section id="tab-historico" class="tabSection hidden"></section>
+  <section id="tab-exportar" class="tabSection hidden"></section>
 
-  <!-- Cards -->
-  <div class="grid md:grid-cols-4 gap-4">
-    <div class="card border-l-4 border-green-500">
-      <p class="text-xs uppercase text-gray-500 font-bold">💚 Entradas</p>
-      <h2 id="admEntradas" class="text-2xl font-extrabold text-green-600">R$ 0</h2>
-    </div>
-    <div class="card border-l-4 border-red-500">
-      <p class="text-xs uppercase text-gray-500 font-bold">❤️ Saídas</p>
-      <h2 id="admSaidas" class="text-2xl font-extrabold text-red-500">R$ 0</h2>
-    </div>
-    <div class="card border-l-4 border-purple-600">
-      <p class="text-xs uppercase text-gray-500 font-bold">💜 Saldo Total</p>
-      <h2 id="admSaldo" class="text-2xl font-extrabold text-purple-700">R$ 0</h2>
-    </div>
-    <div class="card border-l-4 border-yellow-500">
-      <p class="text-xs uppercase text-gray-500 font-bold">⚠️ Pendências</p>
-      <h2 id="admPend" class="text-2xl font-extrabold text-yellow-600">R$ 0</h2>
-    </div>
-  </div>
-
-  <!-- Chart -->
-  <div class="card">
-    <h2 class="font-bold mb-3">🍀 Categorias Financeiras</h2>
-    <canvas id="chartCategorias"></canvas>
-  </div>
-
-  <!-- Fechamento EJC -->
-  <div class="card">
-    <h2 class="font-bold mb-3">⛪ Fechamento EJC (por dia)</h2>
-    <div id="fechamentoEJC"></div>
-  </div>
-
-  <!-- Fechamento Mercadinho -->
-  <div class="card">
-    <h2 class="font-bold mb-3">🛒 Fechamento Mercadinho</h2>
-    <div id="fechamentoMercadinho"></div>
-  </div>
-
-  <!-- Export -->
-  <div class="card">
-    <h2 class="font-bold mb-3">📤 Exportações Oficiais</h2>
-
-    <button onclick="exportarPDF()" class="btn w-full bg-purple-700 text-white mb-3">
-      📄 Exportar PDF
-    </button>
-
-    <button onclick="exportarExcel()" class="btn w-full bg-green-600 text-white">
-      📊 Exportar Excel Verdadeiro (.xlsx)
-    </button>
-  </div>
-
-</main>
-
-<!-- COMPRAS -->
-<main id="comprasPanel" class="hidden p-6 space-y-6 max-w-6xl mx-auto">
-
-  <h1 class="text-2xl font-extrabold">🛒 Equipe Compras — Pendências</h1>
-
-  <div class="card">
-    <h2 class="font-bold mb-3">⚠️ Devedores</h2>
-    <div id="comprasPendencias"></div>
-  </div>
+  <!-- COMPRAS SECTION -->
+  <section id="tab-compras" class="tabSection hidden"></section>
 
 </main>
 
 <script>
-/* CONFIG */
+/* ===================== CONFIG ===================== */
 const API_URL="https://script.google.com/macros/s/AKfycbzxKh6wEaKatDBMvZ45ac9tnC5FxBzyTrnq42-wH92QmWPqUK8c_qH4vEVLDrBGQyinkg/exec";
+
 const PASS_ADMIN="@admpilotosejc2026#";
 const PASS_COMPRAS="$compras2026";
 
@@ -155,7 +119,7 @@ let adminData=[];
 let comprasData=[];
 let chart=null;
 
-/* LOGIN */
+/* ===================== LOGIN ===================== */
 function loginAdmin(){
   if(passwordInput.value===PASS_ADMIN){role="admin";startApp();}
   else showError();
@@ -170,31 +134,96 @@ function showError(){
 }
 function logout(){location.reload();}
 
-/* START */
+/* ===================== START ===================== */
 async function startApp(){
   loginScreen.classList.add("hidden");
   appHeader.classList.remove("hidden");
+  tabsNav.classList.remove("hidden");
 
-  if(role==="admin") adminPanel.classList.remove("hidden");
-  if(role==="compras") comprasPanel.classList.remove("hidden");
-
+  montarTabs();
   await carregarTudo();
 }
 
-/* LOAD */
+/* ===================== TABS ===================== */
+function montarTabs(){
+  tabsNav.innerHTML="";
+
+  if(role==="admin"){
+    criarTab("Dashboard","dashboard");
+    criarTab("⛪ EJC","ejc");
+    criarTab("🍲 Feijoada","feijoada");
+    criarTab("🛒 Mercadinho","mercadinho");
+    criarTab("📁 Outros","outros");
+    criarTab("📑 Histórico","historico");
+    criarTab("📤 Exportar","exportar");
+  }
+
+  if(role==="compras"){
+    criarTab("🛒 Compras","compras");
+  }
+
+  abrirTab(role==="admin"?"dashboard":"compras");
+}
+
+function criarTab(nome,id){
+  const btn=document.createElement("button");
+  btn.innerText=nome;
+  btn.className="tabBtn";
+  btn.onclick=()=>abrirTab(id);
+  btn.id="btn-"+id;
+  tabsNav.appendChild(btn);
+}
+
+function abrirTab(id){
+  document.querySelectorAll(".tabSection").forEach(s=>s.classList.add("hidden"));
+  document.querySelectorAll(".tabBtn").forEach(b=>b.classList.remove("active"));
+
+  document.getElementById("tab-"+id).classList.remove("hidden");
+  document.getElementById("btn-"+id).classList.add("active");
+
+  renderTudo();
+}
+
+/* ===================== LOAD ===================== */
 async function carregarTudo(){
   adminData = await (await fetch(API_URL+"?action=listarAdmin")).json();
   comprasData = await (await fetch(API_URL+"?action=listarCompras")).json();
-
-  if(role==="admin") renderAdmin();
-  if(role==="compras") renderCompras();
+  renderTudo();
 }
 
-/* ADMIN */
-function renderAdmin(){
+/* ===================== POST ===================== */
+async function postar(action,payload){
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action,payload})
+  });
+  await carregarTudo();
+}
+
+/* ===================== RENDER MASTER ===================== */
+function renderTudo(){
+  if(role==="admin"){
+    renderDashboard();
+    renderEJC();
+    renderCategoria("Feijoada","tab-feijoada","🍲 Aba Feijoada Completa");
+    renderMercadinho();
+    renderCategoria("Outros","tab-outros","📁 Outros Movimentos");
+    renderHistorico();
+    renderExportar();
+  }
+
+  if(role==="compras"){
+    renderCompras();
+  }
+}
+
+/* ===================== DASHBOARD ===================== */
+function renderDashboard(){
   const tudo=[...adminData,...comprasData];
 
   let entradas=0,saidas=0,pend=0;
+
   tudo.forEach(t=>{
     const v=parseFloat(t.amount||0);
     if(t.type==="Entrada") entradas+=v;
@@ -202,92 +231,160 @@ function renderAdmin(){
     if(t.paid===false) pend+=v;
   });
 
-  admEntradas.innerText="R$ "+entradas.toFixed(2);
-  admSaidas.innerText="R$ "+saidas.toFixed(2);
-  admSaldo.innerText="R$ "+(entradas-saidas).toFixed(2);
-  admPend.innerText="R$ "+pend.toFixed(2);
+  document.getElementById("tab-dashboard").innerHTML=`
+    <h1 class="text-2xl font-extrabold mb-4">👑 Pilotos Finanças — Dashboard Geral</h1>
 
-  /* Fechamento EJC */
-  const dias=["Sexta","Sabado","Domingo"];
-  fechamentoEJC.innerHTML="";
-  dias.forEach(d=>{
-    let total=0;
-    comprasData.filter(x=>x.category==="EJC" && x.ejc_dia===d)
-      .forEach(v=> total+=parseFloat(v.amount||0));
-    fechamentoEJC.innerHTML+=`
-      <div class="border-b py-2">✨ ${d}: <b>R$ ${total.toFixed(2)}</b></div>`;
-  });
+    <div class="grid md:grid-cols-4 gap-4">
+      <div class="card border-l-4 border-green-500">
+        <p class="text-xs font-bold">💚 Entradas</p>
+        <h2 class="text-2xl font-extrabold text-green-600">R$ ${entradas.toFixed(2)}</h2>
+      </div>
+      <div class="card border-l-4 border-red-500">
+        <p class="text-xs font-bold">❤️ Saídas</p>
+        <h2 class="text-2xl font-extrabold text-red-500">R$ ${saidas.toFixed(2)}</h2>
+      </div>
+      <div class="card border-l-4 border-purple-600">
+        <p class="text-xs font-bold">💜 Saldo Total</p>
+        <h2 class="text-2xl font-extrabold text-purple-700">R$ ${(entradas-saidas).toFixed(2)}</h2>
+      </div>
+      <div class="card border-l-4 border-yellow-500">
+        <p class="text-xs font-bold">⚠️ Pendências</p>
+        <h2 class="text-2xl font-extrabold text-yellow-600">R$ ${pend.toFixed(2)}</h2>
+      </div>
+    </div>
 
-  /* Mercadinho */
-  fechamentoMercadinho.innerHTML="";
-  ["DiaDasMaes","DiaDosNamorados"].forEach(cat=>{
-    let total=0;
-    comprasData.filter(x=>x.category===cat)
-      .forEach(v=> total+=parseFloat(v.amount||0));
-    fechamentoMercadinho.innerHTML+=`
-      <div class="border-b py-2">
-        ${cat==="DiaDasMaes"?"🌸 Dia das Mães":"💘 Dia dos Namorados"}:
-        <b>R$ ${total.toFixed(2)}</b>
-      </div>`;
-  });
+    <div class="card mt-6">
+      <h2 class="font-bold mb-3">🍀 Distribuição por Categoria</h2>
+      <canvas id="chartCategorias"></canvas>
+    </div>
+  `;
 
-  /* Chart */
   const categorias={};
   tudo.forEach(t=>{
     categorias[t.category]=(categorias[t.category]||0)+parseFloat(t.amount||0);
   });
 
-  if(chart) chart.destroy();
-  chart=new Chart(chartCategorias,{
-    type:"pie",
-    data:{
-      labels:Object.keys(categorias),
-      datasets:[{data:Object.values(categorias)}]
-    }
-  });
+  setTimeout(()=>{
+    if(chart) chart.destroy();
+    chart=new Chart(chartCategorias,{
+      type:"pie",
+      data:{
+        labels:Object.keys(categorias),
+        datasets:[{data:Object.values(categorias)}]
+      }
+    });
+  },200);
 }
 
-/* COMPRAS */
-function renderCompras(){
-  comprasPendencias.innerHTML="";
-  const pend=comprasData.filter(x=>x.paid===false);
+/* ===================== EJC ===================== */
+function renderEJC(){
+  const dias=["Sexta","Sabado","Domingo"];
+  let html=`<h1 class="text-2xl font-extrabold mb-4">⛪ Aba EJC — Fechamento por Dia</h1>`;
 
-  if(pend.length===0){
-    comprasPendencias.innerHTML="🎉 Nenhuma pendência!";
-    return;
+  dias.forEach(d=>{
+    let total=0,pend=0;
+
+    comprasData.filter(x=>x.category==="EJC" && x.ejc_dia===d)
+      .forEach(v=>{
+        total+=parseFloat(v.amount||0);
+        if(v.paid===false) pend+=parseFloat(v.amount||0);
+      });
+
+    html+=`
+      <div class="card mb-3">
+        <h2 class="font-bold">✨ ${d}</h2>
+        <p>Total: <b>R$ ${total.toFixed(2)}</b></p>
+        <p>Pendências: <b class="text-red-600">R$ ${pend.toFixed(2)}</b></p>
+      </div>
+    `;
+  });
+
+  document.getElementById("tab-ejc").innerHTML=html;
+}
+
+/* ===================== MERCADINHO ===================== */
+function renderMercadinho(){
+  let html=`<h1 class="text-2xl font-extrabold mb-4">🛒 Mercadinho — Campanhas</h1>`;
+
+  [["DiaDasMaes","🌸 Dia das Mães"],["DiaDosNamorados","💘 Dia dos Namorados"]]
+    .forEach(([cat,nome])=>{
+      let total=0;
+      comprasData.filter(x=>x.category===cat)
+        .forEach(v=>total+=parseFloat(v.amount||0));
+
+      html+=`
+        <div class="card mb-3">
+          <h2 class="font-bold">${nome}</h2>
+          <p>Total vendido: <b class="text-green-700">R$ ${total.toFixed(2)}</b></p>
+        </div>
+      `;
+    });
+
+  document.getElementById("tab-mercadinho").innerHTML=html;
+}
+
+/* ===================== CATEGORIA GENÉRICA ===================== */
+function renderCategoria(cat,tabId,titulo){
+  let lista=[...adminData,...comprasData].filter(x=>x.category===cat);
+
+  let html=`<h1 class="text-2xl font-extrabold mb-4">${titulo}</h1>`;
+
+  if(lista.length===0){
+    html+=`<p class="text-gray-500">Nenhum registro ainda.</p>`;
+  } else {
+    lista.reverse().forEach(t=>{
+      html+=`
+        <div class="card mb-2 flex justify-between">
+          <div>
+            <b>${t.description}</b>
+            <p class="text-xs text-gray-500">${t.paid?"Pago":"Pendente"}</p>
+          </div>
+          <span class="font-bold">R$ ${parseFloat(t.amount||0).toFixed(2)}</span>
+        </div>
+      `;
+    });
   }
 
-  pend.forEach(d=>{
-    comprasPendencias.innerHTML+=`
-      <div class="p-3 bg-red-50 border rounded-xl mb-2 flex justify-between">
+  document.getElementById(tabId).innerHTML=html;
+}
+
+/* ===================== HISTÓRICO ===================== */
+function renderHistorico(){
+  const tudo=[...adminData,...comprasData];
+  let html=`<h1 class="text-2xl font-extrabold mb-4">📑 Histórico Completo</h1>`;
+
+  tudo.reverse().slice(0,100).forEach(t=>{
+    html+=`
+      <div class="card mb-2 flex justify-between">
         <div>
-          <b>${d.equipe_devedora}</b>
-          <p class="text-xs">${d.description}</p>
+          <b>${t.description}</b>
+          <p class="text-xs text-gray-500">${t.category}</p>
         </div>
-        <button onclick="darBaixa('${d.id||d.ID}')"
-          class="btn bg-red-600 text-white text-xs">
-          Receber
-        </button>
-      </div>`;
+        <span class="font-bold">R$ ${parseFloat(t.amount||0).toFixed(2)}</span>
+      </div>
+    `;
   });
+
+  document.getElementById("tab-historico").innerHTML=html;
 }
 
-/* DAR BAIXA */
-async function darBaixa(id){
-  const forma=prompt("Forma pagamento?");
-  const recebido=prompt("Quem recebeu?");
-  await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      action:"marcarPago",
-      payload:{id,forma_pagamento:forma,received_by:recebido}
-    })
-  });
-  await carregarTudo();
+/* ===================== EXPORTAR ===================== */
+function renderExportar(){
+  document.getElementById("tab-exportar").innerHTML=`
+    <h1 class="text-2xl font-extrabold mb-4">📤 Exportações Oficiais</h1>
+
+    <div class="card mb-3">
+      <button onclick="exportarPDF()" class="btn w-full bg-purple-700 text-white mb-3">
+        📄 Exportar PDF
+      </button>
+
+      <button onclick="exportarExcel()" class="btn w-full bg-green-600 text-white">
+        📊 Exportar Excel Verdadeiro (.xlsx)
+      </button>
+    </div>
+  `;
 }
 
-/* EXPORT PDF */
 function exportarPDF(){
   const { jsPDF }=window.jspdf;
   const doc=new jsPDF();
@@ -302,12 +399,44 @@ function exportarPDF(){
   doc.save("Prestacao_EJC2026.pdf");
 }
 
-/* EXPORT EXCEL REAL */
 function exportarExcel(){
   const ws=XLSX.utils.json_to_sheet(comprasData);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"Prestacao");
   XLSX.writeFile(wb,"Prestacao_EJC2026.xlsx");
+}
+
+/* ===================== COMPRAS ===================== */
+function renderCompras(){
+  let html=`<h1 class="text-2xl font-extrabold mb-4">🛒 Equipe Compras — Pendências</h1>`;
+
+  const pend=comprasData.filter(x=>x.paid===false);
+
+  if(pend.length===0){
+    html+=`<p class="text-green-600 font-bold">🎉 Nenhuma pendência!</p>`;
+  } else {
+    pend.forEach(d=>{
+      html+=`
+        <div class="card mb-2 flex justify-between">
+          <div>
+            <b>${d.equipe_devedora}</b>
+            <p class="text-xs">${d.description}</p>
+          </div>
+          <button onclick="darBaixa('${d.id}')" class="btn bg-red-600 text-white text-xs">
+            Receber
+          </button>
+        </div>
+      `;
+    });
+  }
+
+  document.getElementById("tab-compras").innerHTML=html;
+}
+
+async function darBaixa(id){
+  const forma=prompt("Forma pagamento?");
+  const recebido=prompt("Quem recebeu?");
+  await postar("marcarPago",{id,forma_pagamento:forma,received_by:recebido});
 }
 </script>
 
