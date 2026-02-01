@@ -1,29 +1,21 @@
+<!-- PARTE 1/3 — EJC 2026 SISTEMA FINANCEIRO OFICIAL -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>💜 EJC Santo Eugênio • Sistema Financeiro </title>
+  <title>💜 EJC Santo Eugênio • Sistema Financeiro Oficial</title>
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Charts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <!-- Excel Real -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
   <style>
     *{font-family:Poppins,sans-serif;}
     body{background:#f8fafc;}
-
     .card{
       background:white;
       border-radius:18px;
@@ -31,7 +23,6 @@
       padding:18px;
       box-shadow:0 8px 30px rgba(0,0,0,.05);
     }
-
     .btn{
       padding:12px 16px;
       border-radius:14px;
@@ -39,7 +30,6 @@
       transition:.2s;
     }
     .btn:hover{transform:translateY(-2px);}
-
     .tabBtn{
       padding:10px 14px;
       border-radius:12px;
@@ -99,9 +89,7 @@
   </button>
 </header>
 
-<!-- =========================
-      ADMIN PANEL
-========================= -->
+<!-- ========================= ADMIN PANEL ========================= -->
 <main id="adminPanel"
   class="hidden max-w-6xl mx-auto p-6 space-y-6">
 
@@ -116,11 +104,11 @@
     <button class="tabBtn" onclick="showAdminTab('feijoada',event)">🍲 Feijoada</button>
     <button class="tabBtn" onclick="showAdminTab('mercadinho',event)">🛒 Mercadinho</button>
     <button class="tabBtn" onclick="showAdminTab('outros',event)">📦 Outros</button>
+    <button class="tabBtn" onclick="showAdminTab('historico',event)">📜 Histórico</button>
   </div>
 
-  <!-- ========================= ABA GERAL ========================= -->
+  <!-- ABA GERAL -->
   <section id="tab-geral" class="tabSection">
-
     <div class="grid md:grid-cols-4 gap-4">
       <div class="card border-l-4 border-green-500">
         <p class="text-xs font-bold text-gray-500">💚 Entradas</p>
@@ -133,7 +121,7 @@
       </div>
 
       <div class="card border-l-4 border-purple-600">
-        <p class="text-xs font-bold text-gray-500">💜 Saldo Total</p>
+        <p class="text-xs font-bold text-gray-500">💜 Saldo</p>
         <h2 id="admSaldo" class="text-2xl font-extrabold text-purple-700">R$ 0</h2>
       </div>
 
@@ -144,109 +132,121 @@
     </div>
 
     <div class="card">
-      <h2 class="font-bold mb-3">📈 Distribuição Financeira</h2>
+      <h2 class="font-bold mb-3">📈 Categorias Financeiras</h2>
       <canvas id="chartCategorias"></canvas>
     </div>
-
-    <div class="card">
-      <h2 class="font-bold mb-3">📤 Exportações Oficiais</h2>
-
-      <button onclick="exportarPDF()"
-        class="btn w-full bg-purple-700 text-white mb-3">
-        📄 Exportar Prestação PDF
-      </button>
-
-      <button onclick="exportarExcel()"
-        class="btn w-full bg-green-600 text-white">
-        📊 Exportar Excel Verdadeiro (.xlsx)
-      </button>
-    </div>
-
   </section>
 
-  <!-- ========================= ABA EJC ========================= -->
-  <section id="tab-ejc" class="tabSection hidden">
-    <div class="card">
-      <h2 class="font-bold mb-3">⛪ Fechamento do EJC por Dia</h2>
-      <div id="ejcFechamento"></div>
+<!-- (continua na Parte 2/3) -->
+  <!-- =========================
+      ABA EJC (ADMIN)
+========================= -->
+<section id="tab-ejc" class="tabSection hidden">
+
+  <div class="card">
+    <h2 class="font-bold mb-3">⛪ Fechamento do EJC por Dia</h2>
+    <div id="ejcFechamento"></div>
+  </div>
+
+  <div class="card">
+    <h2 class="font-bold mb-3">⚠️ Pendências por Equipe</h2>
+    <div id="ejcPendencias"></div>
+  </div>
+
+  <div class="card">
+    <h2 class="font-bold mb-3">📜 Histórico Completo do EJC</h2>
+    <div id="ejcHistorico"></div>
+  </div>
+
+</section>
+
+<!-- =========================
+      ABA FEIJOADA (ADMIN)
+========================= -->
+<section id="tab-feijoada" class="tabSection hidden">
+
+  <div class="card">
+    <h2 class="font-bold mb-3">🍲 Controle Total da Feijoada</h2>
+
+    <div class="grid md:grid-cols-2 gap-3 mb-4">
+
+      <input id="fjProduto" placeholder="Produto / Item"
+        class="border rounded-xl px-4 py-3 w-full"/>
+
+      <input id="fjQtd" type="number" placeholder="Quantidade"
+        class="border rounded-xl px-4 py-3 w-full"/>
+
+      <input id="fjValor" type="number" step="0.01"
+        placeholder="Valor Total (R$)"
+        class="border rounded-xl px-4 py-3 w-full"/>
+
+      <select id="fjTipo"
+        class="border rounded-xl px-4 py-3 w-full">
+        <option value="Entrada">✅ Venda (Entrada)</option>
+        <option value="Saida">❌ Compra (Saída)</option>
+      </select>
+
+      <input id="fjComprador" placeholder="Quem comprou?"
+        class="border rounded-xl px-4 py-3 w-full"/>
+
+      <input id="fjVendedor" placeholder="Quem registrou?"
+        class="border rounded-xl px-4 py-3 w-full"/>
+
     </div>
 
-    <div class="card">
-      <h2 class="font-bold mb-3">⚠️ Pendências por Equipe</h2>
-      <div id="ejcPendencias"></div>
-    </div>
+    <button onclick="registrarFeijoada()"
+      class="btn w-full bg-purple-700 text-white">
+      💾 Registrar Feijoada
+    </button>
+  </div>
 
-    <div class="card">
-      <h2 class="font-bold mb-3">📜 Histórico Completo EJC</h2>
-      <div id="ejcHistorico"></div>
-    </div>
-  </section>
+  <div class="card">
+    <h2 class="font-bold mb-3">📜 Histórico da Feijoada</h2>
+    <div id="listaFeijoada"></div>
+  </div>
 
-  <!-- ========================= ABA FEIJOADA ========================= -->
-  <section id="tab-feijoada" class="tabSection hidden">
+</section>
 
-    <div class="card">
-      <h2 class="font-bold mb-3">🍲 Controle Completo da Feijoada</h2>
+<!-- =========================
+      ABA MERCADINHO (ADMIN)
+========================= -->
+<section id="tab-mercadinho" class="tabSection hidden">
 
-      <div class="grid md:grid-cols-2 gap-3 mb-4">
+  <div class="card">
+    <h2 class="font-bold mb-3">🛒 Totais do Mercadinho</h2>
+    <div id="mercadinhoResumo"></div>
+  </div>
 
-        <input id="fjProduto" placeholder="Produto / Item"
-          class="border rounded-xl px-4 py-3 w-full"/>
+  <div class="card">
+    <h2 class="font-bold mb-3">📜 Histórico Mercadinho</h2>
+    <div id="mercadinhoHistorico"></div>
+  </div>
 
-        <input id="fjQtd" type="number" placeholder="Quantidade"
-          class="border rounded-xl px-4 py-3 w-full"/>
+</section>
 
-        <input id="fjValor" type="number" step="0.01"
-          placeholder="Valor Total (R$)"
-          class="border rounded-xl px-4 py-3 w-full"/>
+<!-- =========================
+      ABA OUTROS (ADMIN)
+========================= -->
+<section id="tab-outros" class="tabSection hidden">
 
-        <select id="fjTipo"
-          class="border rounded-xl px-4 py-3 w-full">
-          <option value="Entrada">✅ Venda (Entrada)</option>
-          <option value="Saida">❌ Compra (Saída)</option>
-        </select>
+  <div class="card">
+    <h2 class="font-bold mb-3">📦 Outros Movimentos (Doações / Patrocínios)</h2>
+    <div id="outrosHistorico"></div>
+  </div>
 
-        <input id="fjComprador" placeholder="Quem comprou?"
-          class="border rounded-xl px-4 py-3 w-full"/>
+</section>
 
-        <input id="fjVendedor" placeholder="Quem registrou?"
-          class="border rounded-xl px-4 py-3 w-full"/>
+<!-- =========================
+      ABA HISTÓRICO GERAL
+========================= -->
+<section id="tab-historico" class="tabSection hidden">
 
-      </div>
+  <div class="card">
+    <h2 class="font-bold mb-3">📜 Histórico Geral Completo</h2>
+    <div id="historicoGeral"></div>
+  </div>
 
-      <button onclick="registrarFeijoada()"
-        class="btn w-full bg-purple-700 text-white">
-        💾 Registrar Feijoada
-      </button>
-    </div>
-
-    <div class="card">
-      <h2 class="font-bold mb-3">📜 Histórico Feijoada</h2>
-      <div id="listaFeijoada"></div>
-    </div>
-
-  </section>
-
-  <!-- ========================= ABA MERCADINHO ========================= -->
-  <section id="tab-mercadinho" class="tabSection hidden">
-    <div class="card">
-      <h2 class="font-bold mb-3">🛒 Fechamento Mercadinho</h2>
-      <div id="mercadinhoResumo"></div>
-    </div>
-
-    <div class="card">
-      <h2 class="font-bold mb-3">📜 Histórico Mercadinho</h2>
-      <div id="mercadinhoHistorico"></div>
-    </div>
-  </section>
-
-  <!-- ========================= ABA OUTROS ========================= -->
-  <section id="tab-outros" class="tabSection hidden">
-    <div class="card">
-      <h2 class="font-bold mb-3">📦 Outros Movimentos</h2>
-      <div id="outrosHistorico"></div>
-    </div>
-  </section>
+</section>
 
 </main>
 
@@ -254,70 +254,144 @@
       COMPRAS PANEL
 ========================= -->
 <main id="comprasPanel"
-  class="hidden max-w-5xl mx-auto p-6 space-y-6">
+  class="hidden max-w-6xl mx-auto p-6 space-y-6">
 
   <h1 class="text-2xl font-extrabold">
-    🛒 Equipe Compras — Registro de Vendas
+    🛒 Equipe Compras — Painel de Vendas
   </h1>
 
+  <!-- Abas Compras -->
+  <div class="flex gap-2 flex-wrap">
+    <button class="tabBtn active" onclick="showComprasTab('ejc',event)">⛪ EJC</button>
+    <button class="tabBtn" onclick="showComprasTab('mercadinho',event)">🛒 Mercadinho</button>
+    <button class="tabBtn" onclick="showComprasTab('outros',event)">📦 Outros</button>
+    <button class="tabBtn" onclick="showComprasTab('pendencias',event)">⚠️ Pendências</button>
+  </div>
+
+  <!-- ABA COMPRAS EJC -->
+  <section id="c-tab-ejc" class="cTabSection">
+
+    <div class="card">
+      <h2 class="font-bold mb-3">⛪ Vendas do EJC</h2>
+
+      <select id="filtroDiaEJC"
+        onchange="renderCompras()"
+        class="border rounded-xl px-3 py-2 mb-3 w-full">
+
+        <option value="todos">📌 Todos os dias</option>
+        <option value="Sexta">✨ Sexta</option>
+        <option value="Sabado">🔥 Sábado</option>
+        <option value="Domingo">🙏 Domingo</option>
+
+      </select>
+
+      <div id="comprasHistoricoEJC"></div>
+    </div>
+
+  </section>
+
+  <!-- ABA COMPRAS MERCADINHO -->
+  <section id="c-tab-mercadinho" class="cTabSection hidden">
+
+    <div class="card">
+      <h2 class="font-bold mb-3">🛒 Mercadinho</h2>
+      <div id="comprasHistoricoMercadinho"></div>
+    </div>
+
+  </section>
+
+  <!-- ABA COMPRAS OUTROS -->
+  <section id="c-tab-outros" class="cTabSection hidden">
+
+    <div class="card">
+      <h2 class="font-bold mb-3">📦 Outros (Doações / Extras)</h2>
+      <div id="comprasHistoricoOutros"></div>
+    </div>
+
+  </section>
+
+  <!-- ABA COMPRAS PENDÊNCIAS -->
+  <section id="c-tab-pendencias" class="cTabSection hidden">
+
+    <div class="card">
+      <h2 class="font-bold mb-3">⚠️ Pendências e Devedores</h2>
+      <div id="comprasPendencias"></div>
+    </div>
+
+  </section>
+
+  <!-- BOTÃO NOVA VENDA -->
   <button onclick="abrirModalVenda()"
     class="btn w-full bg-green-600 text-white">
-    ➕ Nova Venda
+    ➕ Registrar Nova Venda
   </button>
-
-  <div class="card">
-    <h2 class="font-bold mb-3">⚠️ Pendências / Devedores</h2>
-    <div id="comprasPendencias"></div>
-  </div>
-
-  <div class="card">
-    <h2 class="font-bold mb-3">📜 Histórico das Vendas</h2>
-    <div id="comprasHistorico"></div>
-  </div>
 
 </main>
 
 <!-- =========================
-      MODAL NOVA VENDA
+      MODAL NOVA VENDA (OBRIGATÓRIO)
 ========================= -->
 <div id="modalVenda"
   class="hidden fixed inset-0 bg-black/60 flex justify-center items-center z-50">
 
-  <div class="bg-white w-full max-w-md rounded-3xl p-6">
-    <h2 class="text-xl font-extrabold mb-4">🛒 Nova Venda / Registro</h2>
+  <div class="bg-white w-full max-w-lg rounded-3xl p-6">
 
-    <input id="vProduto" placeholder="Produto"
+    <h2 class="text-xl font-extrabold mb-4">
+      📝 Registro Oficial de Venda
+    </h2>
+
+    <!-- Produto -->
+    <input id="vProduto" placeholder="Produto / Descrição"
       class="w-full border rounded-xl px-4 py-3 mb-2"/>
 
+    <!-- Valor -->
     <input id="vValor" type="number" step="0.01"
       placeholder="Valor Total (R$)"
       class="w-full border rounded-xl px-4 py-3 mb-2"/>
 
+    <!-- Categoria -->
     <select id="vCategoria"
       class="w-full border rounded-xl px-4 py-3 mb-2">
       <option value="EJC">⛪ EJC</option>
-      <option value="DiaDasMaes">🌸 Mercadinho Dia das Mães</option>
-      <option value="DiaDosNamorados">💘 Mercadinho Namorados</option>
-      <option value="Outros">📦 Outros</option>
+      <option value="DiaDasMaes">🌸 Mercadinho — Dia das Mães</option>
+      <option value="DiaDosNamorados">💘 Mercadinho — Namorados</option>
+      <option value="Outros">📦 Outros (Doação / Patrocínio)</option>
     </select>
 
+    <!-- Dia do EJC -->
     <select id="vDia"
       class="w-full border rounded-xl px-4 py-3 mb-2">
-      <option value="">(Somente EJC)</option>
+      <option value="">(Somente para EJC)</option>
       <option value="Sexta">Sexta</option>
       <option value="Sabado">Sábado</option>
       <option value="Domingo">Domingo</option>
     </select>
 
+    <!-- Comprador -->
+    <input id="vNome" placeholder="Nome do Comprador"
+      class="w-full border rounded-xl px-4 py-3 mb-2"/>
+
+    <input id="vTelefone" placeholder="Telefone do Comprador"
+      class="w-full border rounded-xl px-4 py-3 mb-2"/>
+
+    <input id="vEquipe" placeholder="Equipe (se aplicável)"
+      class="w-full border rounded-xl px-4 py-3 mb-2"/>
+
+    <!-- Forma Pagamento -->
+    <select id="vPagamento"
+      class="w-full border rounded-xl px-4 py-3 mb-2">
+      <option value="PIX">💠 PIX</option>
+      <option value="Dinheiro">💵 Dinheiro</option>
+      <option value="Debito">💳 Débito</option>
+      <option value="Credito">🏦 Crédito</option>
+    </select>
+
+    <!-- Status -->
     <select id="vStatus"
       class="w-full border rounded-xl px-4 py-3 mb-2">
       <option value="Pago">✅ Pago</option>
       <option value="Devendo">⚠️ Devendo</option>
     </select>
-
-    <input id="vEquipe"
-      placeholder="Equipe Devedora (se devendo)"
-      class="w-full border rounded-xl px-4 py-3 mb-2"/>
 
     <button onclick="salvarVenda()"
       class="btn w-full bg-green-600 text-white">
@@ -328,9 +402,12 @@
       class="btn w-full bg-gray-200 mt-2">
       Cancelar
     </button>
+
   </div>
 </div>
-<script>
+
+<!-- (continua na Parte 3/3 com toda lógica + render + export + baixa) -->
+  <script>
 /* ======================================================
    CONFIG PRINCIPAL
 ====================================================== */
@@ -426,7 +503,24 @@ function showAdminTab(tab,event){
 }
 
 /* ======================================================
-   MODAL VENDA (COMPRAS + ADMIN)
+   SISTEMA DE ABAS COMPRAS
+====================================================== */
+function showComprasTab(tab,event){
+
+  document.querySelectorAll(".cTabSection")
+    .forEach(sec=>sec.classList.add("hidden"));
+
+  document.getElementById("c-tab-"+tab)
+    .classList.remove("hidden");
+
+  document.querySelectorAll(".tabBtn")
+    .forEach(btn=>btn.classList.remove("active"));
+
+  event.target.classList.add("active");
+}
+
+/* ======================================================
+   MODAL VENDA
 ====================================================== */
 function abrirModalVenda(){
   modalVenda.classList.remove("hidden");
@@ -436,12 +530,12 @@ function fecharModalVenda(){
 }
 
 /* ======================================================
-   SALVAR NOVA VENDA (COMPRAS OU ADMIN)
+   SALVAR VENDA (API REAL)
 ====================================================== */
 async function salvarVenda(){
 
-  if(!vProduto.value || !vValor.value){
-    alert("⚠️ Preencha Produto e Valor.");
+  if(!vProduto.value || !vValor.value || !vNome.value){
+    alert("⚠️ Preencha Produto, Valor e Nome.");
     return;
   }
 
@@ -450,22 +544,35 @@ async function salvarVenda(){
     type:"Entrada",
     category:vCategoria.value,
     description:vProduto.value,
+
     amount:vValor.value,
+
+    buyer_name:vNome.value,
+    buyer_phone:vTelefone.value,
+
     responsible: role==="admin" ? "Pilotos Finanças" : "Equipe Compras",
+
     paid: vStatus.value==="Pago",
-    equipe_devedora: vStatus.value==="Devendo" ? vEquipe.value : "-",
+
+    forma_pagamento:vPagamento.value,
+
+    received_by: role==="admin" ? "Pilotos" : "Compras",
+
+    equipe_devedora: vStatus.value==="Devendo" ? vEquipe.value : "",
+
     ejc_dia: vCategoria.value==="EJC" ? vDia.value : ""
   };
 
   await postar("criarVendaCompras",payload);
 
   fecharModalVenda();
+  alert("✅ Venda registrada com sucesso!");
 
   vProduto.value="";
   vValor.value="";
+  vNome.value="";
+  vTelefone.value="";
   vEquipe.value="";
-
-  alert("✅ Registro salvo com sucesso!");
 }
 
 /* ======================================================
@@ -473,7 +580,7 @@ async function salvarVenda(){
 ====================================================== */
 async function darBaixa(id){
 
-  const forma=prompt("Forma pagamento? PIX / Dinheiro / Cartão");
+  const forma=prompt("Forma pagamento? PIX / Dinheiro / Débito / Crédito");
   const recebido=prompt("Quem recebeu?");
 
   if(!forma || !recebido) return;
@@ -509,9 +616,8 @@ function renderAdmin(){
   admSaldo.innerText="R$ "+(entradas-saidas).toFixed(2);
   admPend.innerText="R$ "+pend.toFixed(2);
 
-  /* GRÁFICO CATEGORIAS */
+  /* Chart */
   const categorias={};
-
   tudo.forEach(t=>{
     categorias[t.category]=(categorias[t.category]||0)+parseFloat(t.amount||0);
   });
@@ -533,7 +639,7 @@ function renderAdmin(){
 }
 
 /* ======================================================
-   ABA EJC — FECHAMENTO + HISTÓRICO + DEVEDORES
+   ABA EJC
 ====================================================== */
 function renderEJC(){
 
@@ -555,12 +661,13 @@ function renderEJC(){
       </div>`;
   });
 
-  /* Pendências Equipe */
+  /* Pendências */
   const pend=comprasData.filter(x=>x.category==="EJC" && x.paid===false);
 
   if(pend.length===0){
     ejcPendencias.innerHTML="🎉 Nenhuma pendência!";
   } else {
+
     let mapa={};
 
     pend.forEach(p=>{
@@ -606,7 +713,7 @@ function renderMercadinho(){
 
     mercadinhoResumo.innerHTML+=`
       <div class="border-b py-2">
-        ${cat==="DiaDasMaes"?"🌸 Dia das Mães":"💘 Dia dos Namorados"}:
+        ${cat==="DiaDasMaes"?"🌸 Dia das Mães":"💘 Namorados"}:
         <b>R$ ${total.toFixed(2)}</b>
       </div>`;
   });
@@ -646,7 +753,7 @@ function renderOutros(){
 }
 
 /* ======================================================
-   ABA FEIJOADA — CONTROLE TOTAL
+   ABA FEIJOADA
 ====================================================== */
 function renderFeijoada(){
 
@@ -661,7 +768,6 @@ function renderFeijoada(){
   }
 
   lista.slice().reverse().forEach(t=>{
-
     listaFeijoada.innerHTML+=`
       <div class="border-b py-2 flex justify-between text-sm">
         <div>
@@ -674,8 +780,7 @@ function renderFeijoada(){
         <span class="font-extrabold">
           R$ ${parseFloat(t.amount||0).toFixed(2)}
         </span>
-      </div>
-    `;
+      </div>`;
   });
 }
 
@@ -703,29 +808,25 @@ async function registrarFeijoada(){
 
   await postar("criarAdmin",payload);
 
-  fjProduto.value="";
-  fjQtd.value="";
-  fjValor.value="";
-  fjComprador.value="";
-  fjVendedor.value="";
-
-  alert("🍲 Registro Feijoada salvo!");
+  alert("🍲 Registro salvo!");
 }
-  /* ======================================================
-   PAINEL COMPRAS — HISTÓRICO + PENDÊNCIAS
+
+/* ======================================================
+   COMPRAS RENDER
 ====================================================== */
 function renderCompras(){
 
   comprasPendencias.innerHTML="";
-  comprasHistorico.innerHTML="";
-
-  const pend=comprasData.filter(x=>x.paid===false);
+  comprasHistoricoEJC.innerHTML="";
+  comprasHistoricoMercadinho.innerHTML="";
+  comprasHistoricoOutros.innerHTML="";
 
   /* Pendências */
+  const pend=comprasData.filter(x=>x.paid===false);
+
   if(pend.length===0){
     comprasPendencias.innerHTML="🎉 Nenhuma pendência!";
   } else {
-
     pend.forEach(d=>{
       comprasPendencias.innerHTML+=`
         <div class="p-3 bg-red-50 border rounded-xl mb-2 flex justify-between">
@@ -736,7 +837,6 @@ function renderCompras(){
               R$ ${parseFloat(d.amount).toFixed(2)}
             </p>
           </div>
-
           <button onclick="darBaixa('${d.id}')"
             class="btn bg-red-600 text-white text-xs">
             Receber
@@ -745,99 +845,48 @@ function renderCompras(){
     });
   }
 
-  /* Histórico Completo */
+  /* Histórico por Categoria */
   comprasData.slice().reverse().forEach(v=>{
-    comprasHistorico.innerHTML+=`
+
+    let bloco=`
       <div class="border-b py-2 flex justify-between text-sm">
-        <div>
-          <b>${v.description}</b>
-          <div class="text-xs text-gray-500">
-            ${v.category} • ${v.ejc_dia||""}
-          </div>
-        </div>
-        <span class="font-extrabold text-green-700">
-          R$ ${parseFloat(v.amount).toFixed(2)}
-        </span>
+        <span>${v.description}</span>
+        <b>R$ ${parseFloat(v.amount).toFixed(2)}</b>
       </div>`;
+
+    if(v.category==="EJC") comprasHistoricoEJC.innerHTML+=bloco;
+    if(v.category==="DiaDasMaes" || v.category==="DiaDosNamorados")
+      comprasHistoricoMercadinho.innerHTML+=bloco;
+    if(v.category==="Outros") comprasHistoricoOutros.innerHTML+=bloco;
+
   });
 }
 
 /* ======================================================
-   EXPORTAÇÃO PDF OFICIAL (ADMIN)
+   EXPORT PDF + EXCEL
 ====================================================== */
 function exportarPDF(){
-
   const { jsPDF }=window.jspdf;
   const doc=new jsPDF();
 
-  doc.setFontSize(16);
-  doc.text("Prestação Oficial • EJC Santo Eugênio 2026",20,20);
+  doc.text("Prestação Oficial • EJC 2026",20,20);
 
-  doc.setFontSize(11);
-  doc.text("Resumo completo de vendas e pendências",20,30);
-
-  let y=45;
-
+  let y=40;
   comprasData.forEach(v=>{
-    doc.setFontSize(10);
-
-    doc.text(
-      `${v.description} | ${v.category} | R$ ${parseFloat(v.amount).toFixed(2)} | ${v.paid?"Pago":"Devendo"}`,
-      20,y
-    );
-
+    doc.text(`${v.description} | ${v.category} | R$ ${v.amount}`,20,y);
     y+=8;
-
-    if(y>270){
-      doc.addPage();
-      y=20;
-    }
+    if(y>270){doc.addPage();y=20;}
   });
 
   doc.save("Prestacao_EJC2026.pdf");
 }
 
-/* ======================================================
-   EXPORTAÇÃO EXCEL REAL (.xlsx)
-====================================================== */
 function exportarExcel(){
-
   const ws=XLSX.utils.json_to_sheet(comprasData);
   const wb=XLSX.utils.book_new();
-
-  XLSX.utils.book_append_sheet(wb,ws,"Prestacao_Compras");
-
+  XLSX.utils.book_append_sheet(wb,ws,"Prestacao");
   XLSX.writeFile(wb,"Prestacao_EJC2026.xlsx");
 }
-
-/* ======================================================
-   BOTÃO FLUTUANTE NOVA VENDA (ADMIN + COMPRAS)
-====================================================== */
-function criarBotaoFlutuante(){
-
-  const btn=document.createElement("button");
-
-  btn.innerHTML="➕ Nova Venda";
-  btn.className="btn bg-green-600 text-white fixed bottom-6 right-6 shadow-xl z-50";
-  btn.onclick=abrirModalVenda;
-
-  document.body.appendChild(btn);
-}
-
-/* ======================================================
-   AUTO INIT
-====================================================== */
-window.addEventListener("load",()=>{
-
-  if(role==="admin" || role==="compras"){
-    criarBotaoFlutuante();
-  }
-
-});
-
-/* ======================================================
-   FIM DO SISTEMA
-====================================================== */
 </script>
 
 </body>
