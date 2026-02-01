@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EJC 2026 • Sistema Financeiro</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{font-family:Poppins, sans-serif;}
+    body{background:#f8fafc;}
+    .btn{
+      padding:14px;
+      border-radius:14px;
+      font-weight:800;
+      transition:.2s;
+    }
+    .btn:hover{transform:translateY(-2px);}
+    .card{
+      background:white;
+      border-radius:18px;
+      border:1px solid #e5e7eb;
+      padding:18px;
+      box-shadow:0 8px 30px rgba(0,0,0,.05);
+    }
+    .loader {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #7e22ce;
+      border-radius: 50%;
+      width: 24px; height: 24px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg);} 100% {transform: rotate(360deg);} }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+<!-- LOGIN -->
+<div id="loginScreen" class="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-purple-700 to-indigo-900 z-50">
+  <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl mx-4">
+    <h1 class="text-3xl font-extrabold text-center mb-2 text-gray-800">EJC 2026</h1>
+    <p class="text-center text-gray-500 mb-6">Sistema Financeiro Oficial</p>
+
+    <input id="passwordInput"
+      type="password"
+      placeholder="Digite sua senha"
+      class="w-full border rounded-xl px-4 py-3 mb-4 outline-none focus:border-purple-500"/>
+
+    <button onclick="loginAdmin()" class="btn w-full bg-purple-700 hover:bg-purple-800 text-white mb-3 shadow-lg">
+      🔐 Entrar Pilotos (Admin)
+    </button>
+
+    <button onclick="loginCompras()" class="btn w-full bg-green-600 hover:bg-green-700 text-white shadow-lg">
+      🛒 Entrar Compras
+    </button>
+
+    <p id="loginError" class="hidden mt-4 text-center text-red-500 font-bold bg-red-50 p-2 rounded-lg border border-red-100">
+      ❌ Senha incorreta
+    </p>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="appHeader" class="hidden bg-white border-b px-6 py-4 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+  <h2 class="font-extrabold text-xl text-gray-800">📊 Painel Financeiro EJC</h2>
+  <button onclick="logout()" class="btn bg-gray-100 hover:bg-red-50 hover:text-red-600 text-sm py-2 px-4">
+    🚪 Sair
+  </button>
+</header>
+
+<!-- LOADING -->
+<div id="loadingOverlay" class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center">
+    <div class="loader mb-2"></div>
+    <p class="font-bold text-gray-600">Sincronizando...</p>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<main id="adminPanel" class="hidden p-6 space-y-6 max-w-6xl mx-auto">
+
+  <h1 class="text-2xl font-extrabold text-gray-800">👨‍✈️ Painel Pilotos (Admin)</h1>
+
+  <!-- RESUMO -->
+  <div class="grid md:grid-cols-4 gap-4">
+    <div class="card border-l-4 border-green-500">
+      <p class="text-gray-500 text-xs font-bold uppercase">Entradas</p>
+      <h2 id="totalEntradas" class="text-2xl font-extrabold text-green-600">R$ 0,00</h2>
+    </div>
+
+    <div class="card border-l-4 border-red-500">
+      <p class="text-gray-500 text-xs font-bold uppercase">Saídas</p>
+      <h2 id="totalSaidas" class="text-2xl font-extrabold text-red-500">R$ 0,00</h2>
+    </div>
+
+    <div class="card border-l-4 border-purple-600">
+      <p class="text-gray-500 text-xs font-bold uppercase">Saldo Atual</p>
+      <h2 id="saldoAtual" class="text-2xl font-extrabold text-purple-700">R$ 0,00</h2>
+    </div>
+
+    <div class="card border-l-4 border-yellow-500">
+      <p class="text-gray-500 text-xs font-bold uppercase">Pendências</p>
+      <h2 id="totalPendencias" class="text-2xl font-extrabold text-yellow-600">R$ 0,00</h2>
+    </div>
+  </div>
+
+  <!-- NOVA TRANSAÇÃO -->
+  <div class="card">
+    <h2 class="font-bold mb-4 text-lg">➕ Nova Transação</h2>
+    <div class="grid md:grid-cols-3 gap-3">
+      <input id="admDesc" placeholder="Descrição (Ex: Compra mercado)" class="w-full border rounded-xl px-4 py-3"/>
+      <input id="admValor" type="number" step="0.01" placeholder="Valor (R$)" class="w-full border rounded-xl px-4 py-3"/>
+      <select id="admTipo" class="w-full border rounded-xl px-4 py-3 bg-white">
+        <option value="Entrada">Entrada (+)</option>
+        <option value="Saida">Saída (-)</option>
+      </select>
+    </div>
+
+    <button onclick="criarAdmin()" class="btn w-full bg-purple-700 hover:bg-purple-800 text-white mt-4">
+      💾 Salvar Transação
+    </button>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div class="card">
+    <h2 class="font-bold mb-4 text-lg border-b pb-2">📌 Histórico Geral</h2>
+    <div id="adminLista" class="text-sm max-h-96 overflow-y-auto"></div>
+  </div>
+
+</main>
+
+<!-- COMPRAS PANEL -->
+<main id="comprasPanel" class="hidden p-6 space-y-6 max-w-6xl mx-auto">
+
+  <h1 class="text-2xl font-extrabold text-gray-800">🛒 Painel Compras</h1>
+
+  <!-- NOVA VENDA -->
+  <div class="card">
+    <h2 class="font-bold mb-4 text-lg">➕ Registrar Venda</h2>
+
+    <div class="grid grid-cols-2 gap-3">
+      <input id="prod" placeholder="Produto (Ex: Marmita)" class="w-full border rounded-xl px-4 py-3"/>
+      <input id="valorVenda" type="number" step="0.01" placeholder="Valor (R$)" class="w-full border rounded-xl px-4 py-3"/>
+    </div>
+
+    <input id="equipe" placeholder="Equipe (se devendo)" class="w-full border rounded-xl px-4 py-3 mt-3"/>
+
+    <select id="statusVenda" class="w-full border rounded-xl px-4 py-3 mt-3 bg-white">
+      <option value="Pago">✅ Pago na hora</option>
+      <option value="Pendente">⏳ Vai pagar depois</option>
+    </select>
+
+    <button onclick="criarVenda()" class="btn w-full bg-green-600 hover:bg-green-700 text-white mt-4">
+      💾 Salvar Venda
+    </button>
+  </div>
+
+  <!-- DEVEDORES -->
+  <div class="card border-red-100">
+    <h2 class="font-bold mb-4 text-lg text-red-600 border-b pb-2">⚠️ Pendências</h2>
+    <div id="pendenciasLista"></div>
+  </div>
+
+  <!-- VENDAS RECENTES -->
+  <div class="card">
+    <h2 class="font-bold mb-4 text-lg border-b pb-2">📌 Vendas Recentes</h2>
+    <div id="vendasRecentes"></div>
+  </div>
+
+</main>
+
+<script>
+/* ===============================
+   CONFIG
+================================*/
+const API_URL = "https://script.google.com/macros/s/AKfycbxp6sdKJQIfNBHZiqWfPxPmNnccQPldkWwjYeMKnLvD4IRN5gFG2PkI942VHo-pSRriNw/exec";
+
+const PASS_ADMIN = "@admpilotosejc2026#";
+const PASS_COMPRAS = "$compras2026";
+
+let role=null;
+let adminData=[];
+let comprasData=[];
+
+const $ = id => document.getElementById(id);
+
+/* ===============================
+   LOGIN
+================================*/
+function loginAdmin(){
+  if($("passwordInput").value===PASS_ADMIN){
+    role="admin"; startApp();
+  } else showError();
+}
+function loginCompras(){
+  if($("passwordInput").value===PASS_COMPRAS){
+    role="compras"; startApp();
+  } else showError();
+}
+function showError(){
+  $("loginError").classList.remove("hidden");
+  setTimeout(()=> $("loginError").classList.add("hidden"),2500);
+}
+function logout(){ location.reload(); }
+
+/* ===============================
+   APP START
+================================*/
+async function startApp(){
+  $("loginScreen").classList.add("hidden");
+  $("appHeader").classList.remove("hidden");
+
+  if(role==="admin") $("adminPanel").classList.remove("hidden");
+  if(role==="compras") $("comprasPanel").classList.remove("hidden");
+
+  await carregarTudo();
+}
+
+function toggleLoading(show){
+  show ? $("loadingOverlay").classList.remove("hidden")
+       : $("loadingOverlay").classList.add("hidden");
+}
+
+/* ===============================
+   LOAD DATA
+================================*/
+async function carregarTudo(){
+  toggleLoading(true);
+
+  adminData = await (await fetch(`${API_URL}?action=listarAdmin&t=${Date.now()}`)).json();
+  comprasData = await (await fetch(`${API_URL}?action=listarCompras&t=${Date.now()}`)).json();
+
+  if(role==="admin") renderAdmin();
+  if(role==="compras") renderCompras();
+
+  toggleLoading(false);
+}
+
+/* ===============================
+   POST API
+================================*/
+async function enviarDados(action,payload){
+  toggleLoading(true);
+
+  await fetch(API_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action,payload})
+  });
+
+  setTimeout(()=>carregarTudo(),1200);
+}
+
+/* ===============================
+   ADMIN ACTION
+================================*/
+function criarAdmin(){
+  const payload={
+    date:new Date().toISOString(),
+    type:$("admTipo").value,
+    description:$("admDesc").value,
+    amount:$("admValor").value,
+    paid:true
+  };
+  enviarDados("criarAdmin",payload);
+}
+
+/* ===============================
+   COMPRAS ACTION
+================================*/
+function criarVenda(){
+  const payload={
+    date:new Date().toISOString(),
+    produto:$("prod").value,
+    description:$("prod").value,
+    amount:$("valorVenda").value,
+    paid:$("statusVenda").value==="Pago",
+    equipe_devedora:$("equipe").value||"-"
+  };
+  enviarDados("criarVendaCompras",payload);
+}
+
+function marcarPago(id){
+  const forma=prompt("Forma de pagamento?");
+  const recebido=prompt("Quem recebeu?");
+  enviarDados("marcarPago",{id,forma_pagamento:forma,received_by:recebido});
+}
+
+/* ===============================
+   RENDER ADMIN
+================================*/
+function renderAdmin(){
+  let ent=0,sai=0,pend=0;
+  $("adminLista").innerHTML="";
+
+  adminData.reverse().forEach(t=>{
+    const v=parseFloat(t.amount||0);
+    if(t.type==="Entrada") ent+=v;
+    else sai+=v;
+
+    $("adminLista").innerHTML+=`
+      <div class="flex justify-between border-b py-2">
+        <span>${t.description}</span>
+        <b class="${t.type==="Entrada"?"text-green-600":"text-red-600"}">
+          ${t.type==="Entrada"?"+":"-"} R$ ${v.toFixed(2)}
+        </b>
+      </div>`;
+  });
+
+  comprasData.forEach(c=>{
+    if(c.paid===false) pend+=parseFloat(c.amount||0);
+  });
+
+  $("totalEntradas").innerText="R$ "+ent.toFixed(2);
+  $("totalSaidas").innerText="R$ "+sai.toFixed(2);
+  $("saldoAtual").innerText="R$ "+(ent-sai).toFixed(2);
+  $("totalPendencias").innerText="R$ "+pend.toFixed(2);
+}
+
+/* ===============================
+   RENDER COMPRAS
+================================*/
+function renderCompras(){
+  $("pendenciasLista").innerHTML="";
+  $("vendasRecentes").innerHTML="";
+
+  const pend=comprasData.filter(x=>x.paid===false);
+  const rec=comprasData.slice().reverse().slice(0,8);
+
+  if(pend.length===0){
+    $("pendenciasLista").innerHTML="<p class='text-gray-400'>Nenhuma pendência 🎉</p>";
+  } else {
+    pend.forEach(t=>{
+      $("pendenciasLista").innerHTML+=`
+        <div class="flex justify-between bg-red-50 p-3 rounded-xl mb-2">
+          <div>
+            <b>${t.description}</b>
+            <p class="text-xs text-red-600">R$ ${parseFloat(t.amount).toFixed(2)}</p>
+            <p class="text-[10px] uppercase">${t.equipe_devedora}</p>
+          </div>
+          <button onclick="marcarPago('${t.ID||t.id}')"
+            class="bg-white border px-3 rounded-lg text-xs font-bold text-red-600">
+            Receber
+          </button>
+        </div>`;
+    });
+  }
+
+  rec.forEach(t=>{
+    $("vendasRecentes").innerHTML+=`
+      <div class="flex justify-between border-b py-2">
+        <span>${t.description}</span>
+        <b>R$ ${parseFloat(t.amount).toFixed(2)}</b>
+      </div>`;
+  });
+}
+</script>
+
+</body>
+</html>
