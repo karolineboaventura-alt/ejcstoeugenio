@@ -3,267 +3,294 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
   <title>Sistema Financeiro • EJC 2026</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
     body{background:#f8fafc;font-family:sans-serif;}
     .card{background:#fff;padding:20px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,.08);}
-    .btn{padding:12px;border-radius:12px;font-weight:bold;}
+    .btn{padding:12px;border-radius:12px;font-weight:bold;transition:0.2s;}
+    .btn:active{transform:scale(0.98);}
+    .hidden{display:none;}
   </style>
 </head>
-
 <body>
 
-<!-- LOGIN -->
-<div id="loginScreen" class="fixed inset-0 flex items-center justify-center bg-purple-900">
-
-  <div class="card w-full max-w-sm">
-
-    <h1 class="text-2xl font-extrabold text-center mb-4">
-      💜 Sistema Financeiro EJC
-    </h1>
-
-    <input id="passwordInput" type="password"
-      placeholder="Senha"
-      class="w-full border p-3 rounded-xl mb-3"/>
-
-    <button onclick="loginAdmin()"
-      class="btn w-full bg-purple-700 text-white mb-2">
-      👑 Pilotos
-    </button>
-
-    <button onclick="loginCompras()"
-      class="btn w-full bg-green-600 text-white">
-      🛒 Compras
-    </button>
-
-    <p id="loginError" class="hidden text-red-600 font-bold text-center mt-3">
-      Senha errada
-    </p>
-
+<div id="loginScreen" class="fixed inset-0 flex items-center justify-center bg-purple-900 z-50">
+  <div class="card w-full max-w-sm mx-4">
+    <h1 class="text-2xl font-extrabold text-center mb-4 text-purple-900">💜 Financeiro EJC</h1>
+    <input id="passwordInput" type="password" placeholder="Senha" class="w-full border p-3 rounded-xl mb-3 outline-none focus:border-purple-500"/>
+    <button onclick="loginAdmin()" class="btn w-full bg-purple-700 text-white mb-2 shadow-lg">👑 Pilotos</button>
+    <button onclick="loginCompras()" class="btn w-full bg-green-600 text-white shadow-lg">🛒 Compras</button>
+    <p id="loginError" class="hidden text-red-600 font-bold text-center mt-3 bg-red-100 p-2 rounded">Senha incorreta</p>
   </div>
 </div>
 
-<!-- APP -->
-<div id="app" class="hidden p-6 space-y-6 max-w-xl mx-auto">
+<div id="loading" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center">
+    <div class="bg-white p-5 rounded-xl shadow-xl flex flex-col items-center">
+        <div class="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-2"></div>
+        <span class="font-bold text-gray-700">Salvando...</span>
+    </div>
+</div>
 
-  <h2 id="tituloPainel" class="text-xl font-extrabold"></h2>
+<div id="app" class="hidden p-4 space-y-6 max-w-xl mx-auto">
+  <header class="flex justify-between items-center mb-4">
+      <h2 id="tituloPainel" class="text-xl font-extrabold text-gray-800"></h2>
+      <button onclick="location.reload()" class="text-sm text-red-500 font-bold bg-white px-3 py-1 rounded shadow">Sair</button>
+  </header>
 
-  <!-- FORM -->
-  <div class="card space-y-3">
+  <div class="card space-y-3 border-l-4 border-green-500">
+    <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2">➕ Registrar Venda</h3>
 
-    <h3 class="font-bold">➕ Nova Venda</h3>
+    <div class="grid grid-cols-2 gap-2">
+        <input id="produto" placeholder="Produto (Ex: Marmita)" class="w-full border p-3 rounded-lg outline-none focus:border-green-500"/>
+        <input id="valor" type="number" step="0.01" placeholder="Valor (R$)" class="w-full border p-3 rounded-lg outline-none focus:border-green-500 font-bold"/>
+    </div>
 
-    <input id="produto" placeholder="Produto"
-      class="w-full border p-2 rounded"/>
-
-    <input id="valor" type="number" placeholder="Valor total"
-      class="w-full border p-2 rounded"/>
-
-    <select id="categoria" class="w-full border p-2 rounded">
+    <select id="categoria" class="w-full border p-3 rounded-lg bg-white" onchange="toggleCamposEJC()">
       <option value="EJC">⛪ EJC</option>
-      <option value="DiaDasMaes">🌸 Mercadinho Dia das Mães</option>
+      <option value="DiaDasMaes">🌸 Mercadinho Mães</option>
       <option value="DiaDosNamorados">💘 Mercadinho Namorados</option>
-      <option value="Outros">📦 Outros</option>
       <option value="Feijoada">🍲 Feijoada</option>
+      <option value="Outros">📦 Outros</option>
     </select>
 
-    <select id="ejcDia" class="w-full border p-2 rounded">
-      <option value="">Dia do EJC (se for EJC)</option>
-      <option value="Sexta">Sexta</option>
-      <option value="Sabado">Sábado</option>
-      <option value="Domingo">Domingo</option>
+    <div id="boxDiaEJC">
+        <select id="ejcDia" class="w-full border p-3 rounded-lg bg-white">
+          <option value="Sexta">Sexta</option>
+          <option value="Sabado">Sábado</option>
+          <option value="Domingo">Domingo</option>
+        </select>
+    </div>
+
+    <select id="statusPago" class="w-full border p-3 rounded-lg bg-white font-bold text-gray-700" onchange="toggleDevedor()">
+      <option value="true">✅ Pago na Hora</option>
+      <option value="false">⚠️ Devendo (Fiado)</option>
     </select>
 
-    <input id="buyerName" placeholder="Nome comprador"
-      class="w-full border p-2 rounded"/>
+    <div id="boxDevedor" class="hidden p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+        <label class="text-xs font-bold text-yellow-700 uppercase">Dados para Cobrança</label>
+        <input id="equipeDevedora" placeholder="Nome da Equipe / Pessoa" class="w-full border p-2 rounded mt-1"/>
+    </div>
 
-    <input id="buyerPhone" placeholder="Telefone comprador"
-      class="w-full border p-2 rounded"/>
+    <div id="boxPagamento" class="p-3 bg-green-50 rounded-lg border border-green-200">
+        <label class="text-xs font-bold text-green-700 uppercase">Recebimento</label>
+        <div class="flex gap-2 mt-1">
+            <select id="formaPagamento" class="w-1/2 border p-2 rounded">
+              <option value="PIX">PIX</option>
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="Cartao">Cartão</option>
+            </select>
+            <input id="responsible" placeholder="Quem recebeu?" class="w-1/2 border p-2 rounded"/>
+        </div>
+    </div>
 
-    <input id="responsible" placeholder="Quem vendeu"
-      class="w-full border p-2 rounded"/>
-
-    <select id="formaPagamento" class="w-full border p-2 rounded">
-      <option value="PIX">PIX</option>
-      <option value="Dinheiro">Dinheiro</option>
-      <option value="Debito">Débito</option>
-      <option value="Credito">Crédito</option>
-    </select>
-
-    <select id="statusPago" class="w-full border p-2 rounded">
-      <option value="true">✅ Pago</option>
-      <option value="false">⚠️ Devendo</option>
-    </select>
-
-    <input id="equipeDevedora" placeholder="Equipe (se devendo)"
-      class="w-full border p-2 rounded"/>
-
-    <button onclick="salvarVenda()"
-      class="btn w-full bg-green-600 text-white">
-      💾 Salvar Venda
+    <button onclick="salvarVenda()" class="btn w-full bg-green-600 hover:bg-green-700 text-white shadow-lg text-lg">
+      💾 Salvar
     </button>
-
   </div>
 
-  <!-- PENDÊNCIAS -->
-  <div class="card">
-    <h3 class="font-bold mb-2">⚠️ Pendências</h3>
-    <div id="pendencias"></div>
+  <div class="card border-l-4 border-yellow-500">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-gray-800">⚠️ Pendências / Devedores</h3>
+        <button onclick="carregarPendencias()" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200">🔄 Atualizar</button>
+    </div>
+    <div id="pendencias" class="space-y-3">
+        <p class="text-center text-gray-400 py-4">Carregando...</p>
+    </div>
   </div>
-
 </div>
 
 <script>
 /* ================= CONFIG ================= */
+// Link da sua API (SEU SCRIPT)
+const API_URL = "https://script.google.com/macros/s/AKfycbzxKh6wEaKatDBMvZ45ac9tnC5FxBzyTrnq42-wH92QmWPqUK8c_qH4vEVLDrBGQyinkg/exec";
 
-const API_URL="https://script.google.com/macros/s/AKfycbzxKh6wEaKatDBMvZ45ac9tnC5FxBzyTrnq42-wH92QmWPqUK8c_qH4vEVLDrBGQyinkg/exec";
+const PASS_ADMIN = "@admpilotosejc2026#";
+const PASS_COMPRAS = "$compras2026";
 
-const PASS_ADMIN="@admpilotosejc2026#";
-const PASS_COMPRAS="$compras2026";
-
-let role="";
-let comprasData=[];
+let role = "";
 
 /* ================= LOGIN ================= */
-
-function loginAdmin(){
-  if(passwordInput.value===PASS_ADMIN){
-    role="admin";
+function loginAdmin() {
+  if(document.getElementById('passwordInput').value === PASS_ADMIN) {
+    role = "admin";
     iniciar();
   } else erro();
 }
 
-function loginCompras(){
-  if(passwordInput.value===PASS_COMPRAS){
-    role="compras";
+function loginCompras() {
+  if(document.getElementById('passwordInput').value === PASS_COMPRAS) {
+    role = "compras";
     iniciar();
   } else erro();
 }
 
-function erro(){
-  loginError.classList.remove("hidden");
+function erro() {
+  const err = document.getElementById('loginError');
+  err.classList.remove("hidden");
+  setTimeout(() => err.classList.add("hidden"), 2000);
 }
 
-/* ================= START ================= */
+function iniciar() {
+  document.getElementById('loginScreen').classList.add("hidden");
+  document.getElementById('app').classList.remove("hidden");
+  document.getElementById('tituloPainel').innerText = role === "admin" ? "👑 Pilotos" : "🛒 Compras";
+  carregarPendencias();
+}
 
-async function iniciar(){
-  loginScreen.classList.add("hidden");
-  app.classList.remove("hidden");
+/* ================= UI UTILS ================= */
+function toggleCamposEJC() {
+    const isEJC = document.getElementById('categoria').value === 'EJC';
+    document.getElementById('boxDiaEJC').classList.toggle('hidden', !isEJC);
+}
 
-  tituloPainel.innerText =
-    role==="admin" ? "👑 Painel Pilotos (Total)" : "🛒 Painel Compras";
+function toggleDevedor() {
+    const isPago = document.getElementById('statusPago').value === "true";
+    document.getElementById('boxPagamento').classList.toggle('hidden', !isPago);
+    document.getElementById('boxDevedor').classList.toggle('hidden', isPago);
+}
 
-  await carregarPendencias();
+function toggleLoading(show) {
+    document.getElementById('loading').classList.toggle('hidden', !show);
 }
 
 /* ================= LOAD ================= */
+async function carregarPendencias() {
+  try {
+      const res = await fetch(API_URL + "?action=listarCompras&t=" + new Date().getTime());
+      const data = await res.json();
+      
+      // Filtrar apenas pendentes
+      const pend = data.filter(x => x.paid === false);
+      const div = document.getElementById('pendencias');
+      
+      div.innerHTML = "";
 
-async function carregarPendencias(){
-  comprasData = await (await fetch(API_URL+"?action=listarCompras")).json();
+      if(pend.length === 0) {
+        div.innerHTML = "<div class='text-center text-gray-400'>🎉 Nenhuma pendência!</div>";
+        return;
+      }
 
-  let pend = comprasData.filter(x=>x.paid===false);
+      pend.forEach(p => {
+        div.innerHTML += `
+          <div class="flex justify-between items-center bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+            <div>
+              <b class="text-gray-800">${p.equipe_devedora || 'Sem Nome'}</b>
+              <p class="text-xs text-gray-500">${p.description} • R$ ${parseFloat(p.amount).toFixed(2)}</p>
+            </div>
+            <button onclick="darBaixa('${p.id}')" class="bg-green-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow hover:bg-green-600">
+              Receber
+            </button>
+          </div>
+        `;
+      });
+  } catch (e) {
+      console.error(e);
+      document.getElementById('pendencias').innerHTML = "<p class='text-red-500 text-center'>Erro ao carregar.</p>";
+  }
+}
 
-  pendencias.innerHTML="";
-
-  if(pend.length===0){
-    pendencias.innerHTML="🎉 Nenhuma pendência!";
-    return;
+/* ================= SALVAR VENDA (POST) ================= */
+async function salvarVenda() {
+  const prod = document.getElementById('produto').value;
+  const val = document.getElementById('valor').value;
+  
+  if(!prod || !val) {
+      alert("Preencha Produto e Valor!");
+      return;
   }
 
-  pend.forEach(p=>{
-    pendencias.innerHTML+=`
-      <div class="border-b py-2 flex justify-between">
-        <div>
-          <b>${p.description}</b><br>
-          <span class="text-xs text-red-600">
-            ${p.equipe_devedora}
-          </span>
-        </div>
-        <button onclick="darBaixa('${p.id}')"
-          class="btn bg-red-600 text-white text-xs">
-          Receber
-        </button>
-      </div>
-    `;
-  });
-}
+  toggleLoading(true);
 
-/* ================= SALVAR VENDA ================= */
+  const isPago = document.getElementById('statusPago').value === "true";
 
-async function salvarVenda(){
-
-  let payload={
-
-    /* ORDEM EXATA DO SEU SHEET COMPRAS */
-
+  const payload = {
     date: new Date().toISOString(),
-    type:"Entrada",
-    category: categoria.value,
-    description: produto.value,
-
-    produto: produto.value,
+    type: "Entrada",
+    category: document.getElementById('categoria').value,
+    description: prod,
+    produto: prod,
     quantidade: 1,
-    valor_unitario: "",
-
-    amount: valor.value,
-
-    buyer_name: buyerName.value,
-    buyer_phone: buyerPhone.value,
-
-    responsible: responsible.value,
-
-    paid: statusPago.value==="true",
-
-    paid_date: "",
-    forma_pagamento: formaPagamento.value,
-    received_by: responsible.value,
-
-    equipe_devedora: equipeDevedora.value,
-    ejc_dia: ejcDia.value
+    valor_unitario: val, // Campo extra para segurança
+    amount: val,
+    buyer_name: isPago ? "-" : document.getElementById('equipeDevedora').value, // Nome de quem deve
+    buyer_phone: "",
+    responsible: role === 'admin' ? "Admin" : "Compras",
+    paid: isPago,
+    paid_date: isPago ? new Date().toISOString() : "",
+    forma_pagamento: isPago ? document.getElementById('formaPagamento').value : "",
+    received_by: isPago ? document.getElementById('responsible').value : "",
+    equipe_devedora: isPago ? "-" : document.getElementById('equipeDevedora').value,
+    ejc_dia: document.getElementById('categoria').value === 'EJC' ? document.getElementById('ejcDia').value : ""
   };
 
-  await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      action:"criarVendaCompras",
-      payload
-    })
-  });
+  try {
+      // Usamos no-cors para evitar erro de bloqueio do Google e assumimos sucesso
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          action: "criarVendaCompras",
+          payload: payload
+        })
+      });
 
-  alert("✅ Venda salva!");
+      // Limpar campos
+      document.getElementById('produto').value = "";
+      document.getElementById('valor').value = "";
+      document.getElementById('equipeDevedora').value = "";
+      
+      alert("✅ Venda Registrada com Sucesso!");
+      
+      // Esperar um pouco pro Google processar antes de recarregar
+      setTimeout(() => {
+          toggleLoading(false);
+          carregarPendencias();
+      }, 1500);
 
-  await carregarPendencias();
+  } catch (e) {
+      toggleLoading(false);
+      alert("Erro ao salvar: " + e);
+  }
 }
 
-/* ================= DAR BAIXA ================= */
+/* ================= DAR BAIXA (UPDATE) ================= */
+async function darBaixa(id) {
+  const forma = prompt("Forma de pagamento? (PIX / Dinheiro)");
+  if(!forma) return;
+  
+  const quem = prompt("Quem recebeu o valor?");
+  if(!quem) return;
 
-async function darBaixa(id){
+  toggleLoading(true);
 
-  let forma = prompt("Forma pagamento?");
-  let recebido = prompt("Quem recebeu?");
+  try {
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          action: "marcarPago",
+          payload: {
+            id: id,
+            forma_pagamento: forma,
+            received_by: quem
+          }
+        })
+      });
 
-  await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      action:"marcarPago",
-      payload:{
-        id,
-        forma_pagamento:forma,
-        received_by:recebido
-      }
-    })
-  });
+      alert("✅ Baixa realizada!");
+      setTimeout(() => {
+          toggleLoading(false);
+          carregarPendencias();
+      }, 1500);
 
-  alert("✅ Baixa registrada!");
-  await carregarPendencias();
+  } catch (e) {
+      toggleLoading(false);
+      alert("Erro na baixa.");
+  }
 }
-
 </script>
 
 </body>
