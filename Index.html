@@ -15,19 +15,25 @@
   <style>
     body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
     
-    .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
+    /* UI Components */
+    .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; transition: transform 0.2s; }
+    .card:hover { transform: translateY(-2px); }
     .btn { transition: all 0.2s ease-in-out; }
     .btn:active { transform: scale(0.95); }
     
+    /* Abas */
     .tab-btn { padding: 10px 16px; border-radius: 12px; font-weight: 600; color: #64748b; transition: all 0.3s; white-space: nowrap; }
-    .tab-btn:hover { background-color: #e2e8f0; }
+    .tab-btn:hover { background-color: #e2e8f0; color: #475569; }
     .tab-btn.active { background-color: #7e22ce; color: white; box-shadow: 0 4px 12px rgba(126, 34, 206, 0.3); }
 
+    /* Scrollbar invisível */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+    /* Loading Spinner */
     .loader { border: 3px solid #f3f3f3; border-top: 3px solid #7e22ce; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
     .hidden { display: none !important; }
   </style>
 </head>
@@ -35,48 +41,84 @@
 
   <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900 p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl relative text-center">
-      <div class="w-20 h-20 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-church"></i></div>
-      <h1 class="text-2xl font-bold mb-6">EJC 2026</h1>
-      <input id="passInput" type="password" placeholder="Senha" class="w-full border-2 border-slate-100 p-3 rounded-xl mb-4 text-center outline-none focus:border-purple-500 font-bold text-slate-700">
-      <button onclick="login('admin')" class="w-full bg-purple-700 text-white font-bold py-3 rounded-xl btn mb-2 shadow-lg">Pilotos (Admin)</button>
-      <button onclick="login('compras')" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl btn shadow-lg">Equipe Compras</button>
-      <p id="loginError" class="hidden text-red-500 text-xs font-bold mt-4 bg-red-50 p-2 rounded">Senha incorreta!</p>
+      <div class="w-20 h-20 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner"><i class="fas fa-church"></i></div>
+      <h1 class="text-2xl font-bold mb-1 text-slate-800">EJC 2026</h1>
+      <p class="text-xs text-slate-400 uppercase tracking-widest mb-6">Sistema Financeiro</p>
+      
+      <input id="passInput" type="password" placeholder="Digite a Senha" class="w-full border-2 border-slate-100 p-3 rounded-xl mb-4 text-center outline-none focus:border-purple-500 font-bold text-slate-700 transition focus:bg-purple-50">
+      
+      <button onclick="login('admin')" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 rounded-xl btn mb-3 shadow-lg shadow-purple-200">
+        👑 Pilotos (Admin)
+      </button>
+      <button onclick="login('compras')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl btn shadow-lg shadow-emerald-200">
+        🛒 Equipe Compras
+      </button>
+      
+      <p id="loginError" class="hidden text-red-500 text-xs font-bold mt-4 bg-red-50 p-2 rounded border border-red-100">🔒 Senha incorreta!</p>
     </div>
   </div>
 
   <div id="app" class="hidden flex-1 flex flex-col">
+    
     <header class="bg-white border-b sticky top-0 z-40 shadow-sm backdrop-blur-md bg-opacity-95">
       <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         <div class="flex items-center gap-3">
-          <div class="bg-purple-600 text-white w-9 h-9 rounded-lg flex items-center justify-center font-bold"><i class="fas fa-chart-line"></i></div>
-          <div><h2 class="font-bold text-sm">Painel EJC</h2><p id="roleLabel" class="text-[10px] font-bold text-purple-600 uppercase bg-purple-50 px-2 rounded w-fit">...</p></div>
+          <div class="bg-gradient-to-br from-purple-600 to-indigo-600 text-white w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-md"><i class="fas fa-chart-pie"></i></div>
+          <div>
+            <h2 class="font-bold text-slate-800 text-sm leading-tight">Painel EJC</h2>
+            <p id="roleLabel" class="text-[10px] font-bold text-purple-600 uppercase tracking-wider bg-purple-50 px-2 py-0.5 rounded-md w-fit">...</p>
+          </div>
         </div>
-        <button onclick="location.reload()" class="text-slate-400 hover:text-red-500 p-2"><i class="fas fa-power-off"></i></button>
+        <button onclick="location.reload()" class="bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 p-2.5 rounded-xl transition border border-slate-100"><i class="fas fa-power-off"></i></button>
       </div>
-      <div id="adminTabs" class="hidden max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto pb-2 mt-1">
-        <button onclick="showTab('geral')" id="btn-geral" class="tab-btn active">Geral</button>
-        <button onclick="showTab('ejc')" id="btn-ejc" class="tab-btn">EJC</button>
-        <button onclick="showTab('feijoada')" id="btn-feijoada" class="tab-btn">Feijoada</button>
-        <button onclick="showTab('mercadinho')" id="btn-mercadinho" class="tab-btn">Mercadinho</button>
-        <button onclick="showTab('outros')" id="btn-outros" class="tab-btn">Outros</button>
+      
+      <div id="adminTabs" class="hidden max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto pb-0 mt-2 border-t border-slate-50 pt-2 no-scrollbar">
+        <button onclick="showTab('geral')" id="btn-geral" class="tab-btn active"><i class="fas fa-home mr-1"></i> Geral</button>
+        <button onclick="showTab('ejc')" id="btn-ejc" class="tab-btn"><i class="fas fa-church mr-1"></i> EJC</button>
+        <button onclick="showTab('feijoada')" id="btn-feijoada" class="tab-btn"><i class="fas fa-utensils mr-1"></i> Feijoada</button>
+        <button onclick="showTab('mercadinho')" id="btn-mercadinho" class="tab-btn"><i class="fas fa-store mr-1"></i> Mercadinho</button>
+        <button onclick="showTab('outros')" id="btn-outros" class="tab-btn"><i class="fas fa-box-open mr-1"></i> Outros</button>
       </div>
     </header>
 
     <main class="flex-1 max-w-7xl mx-auto w-full p-4 space-y-6 pb-24">
-      
+
       <section id="tab-geral" class="tab-content hidden animate-fade-in">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div class="card border-l-4 border-green-500"><p class="text-[10px] font-bold text-slate-400 uppercase">ENTRADAS</p><h3 id="dashEntradas" class="text-xl font-bold text-green-600">R$ 0,00</h3></div>
-          <div class="card border-l-4 border-red-500"><p class="text-[10px] font-bold text-slate-400 uppercase">SAÍDAS</p><h3 id="dashSaidas" class="text-xl font-bold text-red-500">R$ 0,00</h3></div>
-          <div class="card border-l-4 border-purple-600"><p class="text-[10px] font-bold text-slate-400 uppercase">SALDO REAL</p><h3 id="dashSaldo" class="text-xl font-bold text-purple-700">R$ 0,00</h3></div>
-          <div class="card border-l-4 border-yellow-500"><p class="text-[10px] font-bold text-slate-400 uppercase">A RECEBER</p><h3 id="dashPend" class="text-xl font-bold text-yellow-600">R$ 0,00</h3></div>
+          <div class="card border-l-4 border-green-500 py-4">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Entradas</p>
+            <h3 id="dashEntradas" class="text-xl font-bold text-green-600 mt-1">R$ 0,00</h3>
+          </div>
+          <div class="card border-l-4 border-red-500 py-4">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Saídas</p>
+            <h3 id="dashSaidas" class="text-xl font-bold text-red-500 mt-1">R$ 0,00</h3>
+          </div>
+          <div class="card border-l-4 border-purple-600 py-4 bg-gradient-to-br from-white to-purple-50">
+            <p class="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Saldo Real</p>
+            <h3 id="dashSaldo" class="text-xl font-bold text-purple-700 mt-1">R$ 0,00</h3>
+          </div>
+          <div class="card border-l-4 border-yellow-500 py-4">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">A Receber</p>
+            <h3 id="dashPend" class="text-xl font-bold text-yellow-600 mt-1">R$ 0,00</h3>
+          </div>
         </div>
+
         <div class="grid md:grid-cols-2 gap-6">
-          <div class="card h-64"><canvas id="chartGeral"></canvas></div>
+          <div class="card">
+            <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-chart-pie text-purple-500"></i> Distribuição</h3>
+            <div class="h-64"><canvas id="chartGeral"></canvas></div>
+          </div>
           <div class="card bg-slate-800 text-white border-none">
-            <h3 class="font-bold mb-4 flex items-center gap-2"><i class="fas fa-file-export text-yellow-400"></i> Relatórios</h3>
-            <button onclick="exportarPDF()" class="w-full bg-white/10 hover:bg-white/20 p-3 rounded-xl font-bold mb-3 flex items-center justify-center gap-2 border border-white/10">📄 PDF Oficial</button>
-            <button onclick="exportarExcel()" class="w-full bg-green-600 hover:bg-green-500 p-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg">📊 Excel (.xlsx)</button>
+            <h3 class="font-bold mb-4 flex items-center gap-2 text-yellow-400"><i class="fas fa-file-export"></i> Relatórios Oficiais</h3>
+            <p class="text-sm text-slate-300 mb-6">Gere a prestação de contas completa do EJC para a paróquia.</p>
+            <div class="space-y-3">
+              <button onclick="exportarPDF()" class="w-full bg-white/10 hover:bg-white/20 p-3 rounded-xl font-bold flex items-center justify-center gap-2 border border-white/10 transition">
+                <i class="fas fa-file-pdf text-red-400"></i> Baixar PDF Oficial
+              </button>
+              <button onclick="exportarExcel()" class="w-full bg-emerald-600 hover:bg-emerald-500 p-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg transition">
+                <i class="fas fa-file-excel"></i> Baixar Excel (.xlsx)
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -84,38 +126,41 @@
       <section id="tab-ejc" class="tab-content hidden space-y-6">
         <div id="ejcFechamento" class="grid md:grid-cols-3 gap-4"></div>
         <div class="card border-red-100">
-          <div class="flex items-center gap-2 mb-4 text-red-700 border-b border-red-50 pb-2"><i class="fas fa-exclamation-circle"></i><h3 class="font-bold">Pendências por Equipe</h3></div>
+          <div class="flex items-center gap-2 mb-4 text-red-700 border-b border-red-50 pb-2"><i class="fas fa-exclamation-circle"></i> <h3 class="font-bold">Pendências (Admin)</h3></div>
           <div id="ejcPendencias" class="space-y-2 max-h-60 overflow-y-auto"></div>
         </div>
-        <div class="card"><h3 class="font-bold mb-4 text-slate-700">📜 Histórico EJC</h3><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-xs text-slate-500 uppercase"><tr><th class="p-3">Data</th><th>Item</th><th>Equipe</th><th class="text-right p-3">Valor</th></tr></thead><tbody id="tableEJC" class="divide-y divide-slate-100"></tbody></table></div></div>
+        <div class="card">
+          <h3 class="font-bold mb-4 text-slate-700">📜 Histórico EJC</h3>
+          <div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-xs text-slate-500 uppercase"><tr><th class="p-3">Data</th><th>Item</th><th>Equipe</th><th class="text-right p-3">Valor</th></tr></thead><tbody id="tableEJC" class="divide-y divide-slate-100"></tbody></table></div>
+        </div>
       </section>
 
       <section id="tab-feijoada" class="tab-content hidden space-y-6">
         <div class="card bg-orange-50 border-orange-200">
-          <h3 class="font-bold text-orange-800 mb-4"><i class="fas fa-utensils"></i> Controle Feijoada</h3>
+          <h3 class="font-bold text-orange-800 mb-4 flex items-center gap-2"><i class="fas fa-utensils"></i> Gestão Feijoada</h3>
           <div class="grid grid-cols-2 gap-3 mb-3">
-             <input id="fjProd" placeholder="Item (Ex: Marmita, Carne)" class="border p-3 rounded-xl w-full text-sm outline-none focus:border-orange-500">
+             <input id="fjProd" placeholder="Item (Ex: Carne, Marmita)" class="border p-3 rounded-xl w-full text-sm outline-none focus:border-orange-500">
              <input id="fjQtd" type="number" placeholder="Qtd" class="border p-3 rounded-xl w-full text-sm outline-none focus:border-orange-500">
              <input id="fjValor" type="number" step="0.01" placeholder="Valor Total (R$)" class="border p-3 rounded-xl w-full text-sm font-bold outline-none focus:border-orange-500">
-             <select id="fjTipo" class="border p-3 rounded-xl w-full text-sm bg-white outline-none focus:border-orange-500"><option value="Entrada">✅ Venda</option><option value="Saida">❌ Compra</option></select>
+             <select id="fjTipo" class="border p-3 rounded-xl w-full text-sm bg-white outline-none focus:border-orange-500"><option value="Entrada">✅ Venda (Entrada)</option><option value="Saida">❌ Compra (Saída)</option></select>
           </div>
           <input id="fjQuem" placeholder="Nome Comprador / Fornecedor" class="border p-3 rounded-xl w-full mb-3 text-sm focus:border-orange-500 outline-none">
-          <button onclick="salvarAdmin('Feijoada')" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl shadow-lg transition">💾 Registrar</button>
+          <button onclick="salvarAdmin('Feijoada')" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl shadow-lg transition">💾 Registrar Movimento</button>
         </div>
-        <div class="card"><div id="feijoadaHistorico" class="divide-y divide-slate-100 max-h-96 overflow-y-auto"></div></div>
+        <div class="card"><h3 class="font-bold mb-4 text-slate-600">📜 Extrato Completo</h3><div id="feijoadaHistorico" class="divide-y divide-slate-100 max-h-96 overflow-y-auto"></div></div>
       </section>
 
       <section id="tab-mercadinho" class="tab-content hidden space-y-6">
         <div id="mercadinhoResumo" class="grid md:grid-cols-2 gap-4"></div>
-        <div class="card"><div id="mercadinhoHistorico" class="divide-y divide-slate-100 max-h-96 overflow-y-auto"></div></div>
+        <div class="card"><h3 class="font-bold mb-4 text-slate-600">📜 Vendas Mercadinho</h3><div id="mercadinhoHistorico" class="divide-y divide-slate-100 max-h-96 overflow-y-auto"></div></div>
       </section>
 
       <section id="tab-outros" class="tab-content hidden space-y-6">
         <div class="card bg-blue-50 border-blue-200">
-          <h3 class="font-bold text-blue-800 mb-4">📦 Outros Movimentos</h3>
+          <h3 class="font-bold text-blue-800 mb-4">📦 Movimento Geral</h3>
           <div class="grid grid-cols-2 gap-3 mb-3">
-            <input id="outDesc" placeholder="Descrição" class="border p-3 rounded-xl w-full text-sm outline-none focus:border-blue-500">
-            <input id="outValor" type="number" step="0.01" placeholder="Valor" class="border p-3 rounded-xl w-full text-sm font-bold outline-none focus:border-blue-500">
+            <input id="outDesc" placeholder="Descrição (Ex: Doação, Cabo)" class="border p-3 rounded-xl w-full text-sm outline-none focus:border-blue-500">
+            <input id="outValor" type="number" step="0.01" placeholder="Valor (R$)" class="border p-3 rounded-xl w-full text-sm font-bold outline-none focus:border-blue-500">
             <select id="outTipo" class="border p-3 rounded-xl w-full text-sm bg-white outline-none focus:border-blue-500 col-span-2"><option value="Entrada">Entrada (+)</option><option value="Saida">Saída (-)</option></select>
           </div>
           <button onclick="salvarAdmin('Outros')" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-lg transition">Salvar Registro</button>
@@ -124,16 +169,19 @@
       </section>
 
       <section id="painel-compras" class="hidden space-y-6">
-        <button onclick="openModalVenda()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-green-200 text-xl flex items-center justify-center gap-3 transition transform hover:scale-[1.01] active:scale-[0.99]">
+        
+        <button onclick="openModalVenda()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-green-200/50 text-xl flex items-center justify-center gap-3 transition transform hover:scale-[1.01] active:scale-[0.99]">
           <div class="bg-white/20 p-2 rounded-full"><i class="fas fa-plus"></i></div> NOVA VENDA
         </button>
 
         <div class="card border-l-4 border-yellow-500">
           <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
-            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-exclamation-triangle text-yellow-500"></i> Pendências</h3>
-            <button onclick="loadData()" class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg font-bold text-slate-600"><i class="fas fa-sync-alt mr-1"></i> Atualizar</button>
+            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-exclamation-triangle text-yellow-500"></i> Pendências / Devedores</h3>
+            <button onclick="loadData()" class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg font-bold text-slate-600 flex items-center gap-1"><i class="fas fa-sync-alt"></i> Atualizar</button>
           </div>
-          <div id="listaPendencias" class="space-y-3"><p class="text-center text-slate-400 py-4 text-sm">Carregando...</p></div>
+          <div id="listaPendencias" class="space-y-3">
+            <p class="text-center text-slate-400 py-4 text-sm animate-pulse">Carregando...</p>
+          </div>
         </div>
 
         <div class="card">
@@ -141,20 +189,23 @@
           <div id="listaMinhasVendas" class="divide-y divide-slate-100 text-sm"></div>
         </div>
       </section>
+
     </main>
   </div>
 
-  <div id="modalVenda" class="hidden fixed inset-0 bg-black/60 z-[70] flex items-center justify-center p-4">
+  <div id="modalVenda" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative animate-fade-in">
       <div class="flex justify-between items-center mb-6">
         <h3 class="font-bold text-xl text-slate-800">Registrar Venda</h3>
-        <button onclick="closeModalVenda()" class="text-slate-400 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
+        <button onclick="closeModalVenda()" class="text-slate-400 hover:text-red-500 text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition"><i class="fas fa-times"></i></button>
       </div>
-      <form onsubmit="salvarVenda(event)" class="space-y-4">
+
+      <form id="formVenda" onsubmit="salvarVenda(event)" class="space-y-4">
+        
         <div class="grid grid-cols-3 gap-3">
           <div class="col-span-2">
             <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Produto</label>
-            <input id="vProd" placeholder="Ex: Marmita" class="w-full border-2 border-slate-100 p-3 rounded-xl outline-none focus:border-purple-500 font-medium" required>
+            <input id="vProd" placeholder="Ex: Marmita" class="w-full border-2 border-slate-100 p-3 rounded-xl outline-none focus:border-purple-500 font-medium text-slate-700" required>
           </div>
           <div>
             <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Valor</label>
@@ -166,124 +217,329 @@
           <div>
             <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Categoria</label>
             <select id="vCat" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white text-sm outline-none focus:border-purple-500" onchange="toggleDia()">
-              <option value="EJC">EJC</option><option value="Mercadinho">Mercadinho</option><option value="Feijoada">Feijoada</option><option value="Outros">Outros</option>
+              <option value="EJC">⛪ EJC</option>
+              <option value="Mercadinho">🛒 Mercadinho</option>
+              <option value="Feijoada">🍲 Feijoada</option>
+              <option value="Outros">📦 Outros</option>
             </select>
           </div>
           <div>
             <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Dia</label>
-            <select id="vDia" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white text-sm outline-none focus:border-purple-500"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select>
+            <select id="vDia" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white text-sm outline-none focus:border-purple-500">
+              <option value="Sexta">Sexta</option>
+              <option value="Sabado">Sábado</option>
+              <option value="Domingo">Domingo</option>
+            </select>
           </div>
         </div>
+
         <div>
-          <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Status</label>
-          <select id="vStatus" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white font-bold text-slate-700 outline-none focus:border-purple-500" onchange="togglePagto()"><option value="Pago">✅ Pago na hora</option><option value="Pendente">⚠️ Devendo (Fiado)</option></select>
+          <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Status Pagamento</label>
+          <select id="vStatus" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white font-bold text-slate-700 outline-none focus:border-purple-500" onchange="togglePagto()">
+            <option value="Pago">✅ Pago na hora</option>
+            <option value="Pendente">⚠️ Devendo (Fiado)</option>
+          </select>
         </div>
+
         <div id="boxDevedor" class="hidden p-3 bg-yellow-50 rounded-xl border border-yellow-200">
-          <label class="text-[10px] font-bold text-yellow-700 uppercase ml-1">Quem está devendo?</label>
-          <input id="vEquipe" placeholder="Nome da Equipe / Pessoa" class="w-full border border-yellow-200 p-2 rounded-lg mt-1 bg-white outline-none">
+          <label class="text-[10px] font-bold text-yellow-700 uppercase ml-1">Nome da Equipe / Devedor</label>
+          <input id="vEquipe" placeholder="Quem está devendo?" class="w-full border border-yellow-200 p-2 rounded-lg mt-1 bg-white outline-none focus:ring-2 focus:ring-yellow-400">
         </div>
+
         <div id="boxPagto" class="grid grid-cols-2 gap-3 p-3 bg-green-50 rounded-xl border border-green-200">
-          <div><label class="text-[10px] font-bold text-green-700 uppercase">Forma</label><select id="vForma" class="w-full border border-green-200 p-2 rounded-lg bg-white text-sm mt-1 outline-none"><option value="Dinheiro">Dinheiro</option><option value="PIX">PIX</option><option value="Cartao">Cartão</option></select></div>
-          <div><label class="text-[10px] font-bold text-green-700 uppercase">Recebedor</label><input id="vQuem" placeholder="Seu nome" class="w-full border border-green-200 p-2 rounded-lg bg-white text-sm mt-1 outline-none"></div>
+          <div>
+            <label class="text-[10px] font-bold text-green-700 uppercase">Forma</label>
+            <select id="vForma" class="w-full border border-green-200 p-2 rounded-lg bg-white text-sm mt-1 outline-none">
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="PIX">PIX</option>
+              <option value="Cartao">Cartão</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-green-700 uppercase">Recebedor</label>
+            <input id="vQuem" placeholder="Seu nome" class="w-full border border-green-200 p-2 rounded-lg bg-white text-sm mt-1 outline-none">
+          </div>
         </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg mt-4 active:scale-95 transition">CONFIRMAR</button>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg mt-4 active:scale-95 transition hover:shadow-xl">CONFIRMAR REGISTRO</button>
       </form>
     </div>
   </div>
 
-  <div id="loading" class="hidden fixed inset-0 bg-white/90 z-[80] flex flex-col items-center justify-center"><div class="loader mb-4"></div><p class="font-bold text-slate-500">Salvando...</p></div>
+  <div id="loading" class="hidden fixed inset-0 bg-white/90 backdrop-blur-sm z-[80] flex flex-col items-center justify-center">
+    <div class="loader mb-4"></div>
+    <p class="font-bold text-slate-500 animate-pulse">Processando...</p>
+  </div>
 
 <script>
-// ================= CONFIG =================
-// ⚠️ COLE SEU LINK NOVO AQUI ⚠️
+// ================= CONFIGURAÇÃO =================
+// ⚠️ SEU LINK ATUALIZADO AQUI
 const API_URL = "https://script.google.com/macros/s/AKfycbwjHf6tTfJRPxb0h9HBVTFfA2q68w3CekPpuEKP5x9K1hNpHTmRq93A-PnIrdCb6ICwJg/exec";
 
 const PASS_ADMIN = "@admpilotosejc2026#";
 const PASS_COMPRAS = "$compras2026";
-let role="", db=[];
 
-// ================= CORE =================
-function login(t){const p=document.getElementById('passInput').value; if((t==='admin'&&p===PASS_ADMIN)||(t==='compras'&&p===PASS_COMPRAS)){role=t;init();}else{document.getElementById('loginError').classList.remove('hidden');}}
-async function init(){document.getElementById('loginScreen').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('roleLabel').innerText=role==='admin'?"Pilotos":"Compras"; if(role==='admin'){document.getElementById('adminTabs').classList.remove('hidden');showTab('geral');}else{document.getElementById('painel-compras').classList.remove('hidden');}await loadData();}
-function toggleLoader(s){document.getElementById('loading').classList.toggle('hidden',!s);}
+let role = "";
+let db = []; // Banco de dados local
 
-async function loadData(){
+// ================= LOGIN & INIT =================
+function login(tipo) {
+  const p = document.getElementById('passInput').value;
+  if(tipo==='admin' && p===PASS_ADMIN) { role='admin'; init(); }
+  else if(tipo==='compras' && p===PASS_COMPRAS) { role='compras'; init(); }
+  else document.getElementById('loginError').classList.remove('hidden');
+}
+
+async function init() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('roleLabel').innerText = role === 'admin' ? "👑 Pilotos" : "🛒 Compras";
+  
+  if(role === 'admin') { 
+    document.getElementById('adminTabs').classList.remove('hidden'); 
+    showTab('geral'); 
+  } else { 
+    document.getElementById('painel-compras').classList.remove('hidden'); 
+  }
+  
+  await loadData();
+}
+
+// ================= DADOS =================
+function toggleLoader(show) { document.getElementById('loading').classList.toggle('hidden', !show); }
+
+async function loadData() {
   toggleLoader(true);
-  try{ const res=await fetch(`${API_URL}?t=${Date.now()}`); db=await res.json(); renderAll(); }
-  catch(e){console.error(e);alert("Erro ao carregar dados.");} finally{toggleLoader(false);}
+  try {
+    const res = await fetch(`${API_URL}?t=${Date.now()}`);
+    db = await res.json();
+    renderAll();
+  } catch(e) {
+    console.error(e);
+    alert("Erro ao conectar com a planilha. Verifique sua internet.");
+  } finally {
+    toggleLoader(false);
+  }
 }
 
-async function postData(act, pay){
+async function postData(action, payload) {
   toggleLoader(true);
-  try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:act,payload:pay})}); setTimeout(async()=>{await loadData();alert("✅ Sucesso!");closeModalVenda();document.querySelectorAll('input').forEach(i=>i.value='');},2000); }
-  catch(e){alert("Erro ao salvar.");toggleLoader(false);}
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ action, payload })
+    });
+    
+    // Espera 2s para garantir que o Google salvou
+    setTimeout(async () => {
+      await loadData();
+      alert("✅ Salvo com sucesso!");
+      closeModalVenda();
+      document.querySelectorAll('input').forEach(i => i.value = ''); // Limpa formulários
+    }, 2000);
+    
+  } catch(e) {
+    alert("Erro ao salvar.");
+    toggleLoader(false);
+  }
 }
 
-// ================= RENDER =================
-function renderAll(){ role==='admin'?renderAdmin():renderCompras(); }
+// ================= RENDERIZAÇÃO =================
+function renderAll() {
+  if(role === 'admin') { 
+    renderDashboard(); 
+    renderEJC(); 
+    renderFeijoada(); 
+    renderMercadinho(); 
+    renderOutros(); 
+  } else { 
+    renderCompras(); 
+  }
+}
 
-function renderAdmin(){
-  let ent=0,sai=0,pend=0,cats={};
-  db.forEach(i=>{ const v=parseFloat(i.amount||0); if(i.paid){if(i.type==='Entrada'){ent+=v;cats[i.category]=(cats[i.category]||0)+v;}else{sai+=v;}}else{pend+=v;} });
+// --- ADMIN ---
+function renderDashboard() {
+  let ent=0, sai=0, pend=0;
+  const cats={};
   
-  document.getElementById('dashEntradas').innerText=`R$ ${ent.toFixed(2)}`;
-  document.getElementById('dashSaidas').innerText=`R$ ${sai.toFixed(2)}`;
-  document.getElementById('dashSaldo').innerText=`R$ ${(ent-sai).toFixed(2)}`;
-  document.getElementById('dashPend').innerText=`R$ ${pend.toFixed(2)}`;
+  db.forEach(i => {
+    const val = parseFloat(i.amount||0);
+    if(i.paid) {
+      if(i.type === 'Entrada') { 
+        ent += val; 
+        cats[i.category] = (cats[i.category] || 0) + val;
+      } else { 
+        sai += val; 
+      }
+    } else {
+      pend += val;
+    }
+  });
 
-  // EJC
-  const dias=['Sexta','Sabado','Domingo']; let html='';
-  dias.forEach(d=>{ const t=db.filter(i=>i.category==='EJC'&&i.ejc_dia===d&&i.paid).reduce((a,b)=>a+parseFloat(b.amount),0); html+=`<div class="card bg-purple-50 text-center py-3"><p class="text-xs font-bold text-purple-400 uppercase">${d}</p><h3 class="text-xl font-bold text-purple-800">R$ ${t.toFixed(2)}</h3></div>`; });
-  document.getElementById('ejcFechamento').innerHTML=html;
+  document.getElementById('dashEntradas').innerText = `R$ ${ent.toFixed(2)}`;
+  document.getElementById('dashSaidas').innerText = `R$ ${sai.toFixed(2)}`;
+  document.getElementById('dashSaldo').innerText = `R$ ${(ent-sai).toFixed(2)}`;
+  document.getElementById('dashPend').innerText = `R$ ${pend.toFixed(2)}`;
   
-  const pends=db.filter(i=>i.category==='EJC'&&!i.paid);
-  document.getElementById('ejcPendencias').innerHTML=pends.map(p=>`<div class="flex justify-between items-center border-b border-slate-50 py-2 text-sm"><div><span class="font-bold text-slate-700">${p.equipe_devedora}</span> <span class="text-xs text-slate-400">(${p.description})</span></div><span class="text-red-500 font-bold">R$ ${parseFloat(p.amount).toFixed(2)}</span></div>`).join('')||'<p class="text-center text-gray-400 text-xs py-2">Sem pendências.</p>';
+  const ctx = document.getElementById('chartGeral');
+  if(window.myChart) window.myChart.destroy();
+  window.myChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: { 
+      labels: Object.keys(cats), 
+      datasets: [{ data: Object.values(cats), backgroundColor: ['#a855f7','#22c55e','#f97316','#3b82f6'], borderWidth:0 }] 
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+function renderEJC() {
+  const dias = ['Sexta','Sabado','Domingo'];
+  let html = '';
+  dias.forEach(d => {
+    const tot = db.filter(i => i.category==='EJC' && i.ejc_dia===d && i.paid).reduce((a,b)=>a+parseFloat(b.amount),0);
+    html += `<div class="card bg-purple-50 border border-purple-100 text-center py-3"><p class="text-xs font-bold text-purple-400 uppercase">${d}</p><h3 class="text-xl font-bold text-purple-800">R$ ${tot.toFixed(2)}</h3></div>`;
+  });
+  document.getElementById('ejcFechamento').innerHTML = html;
+
+  const pends = db.filter(i => i.category==='EJC' && !i.paid);
+  document.getElementById('ejcPendencias').innerHTML = pends.map(p => 
+    `<div class="flex justify-between items-center border-b border-slate-50 py-2 text-sm"><div><span class="font-bold text-slate-700">${p.equipe_devedora || p.buyer_name}</span> <span class="text-xs text-slate-400">(${p.description})</span></div><span class="text-red-500 font-bold">R$ ${parseFloat(p.amount).toFixed(2)}</span></div>`
+  ).join('') || '<p class="text-center text-gray-400 text-xs py-2">Sem pendências.</p>';
+
+  document.getElementById('tableEJC').innerHTML = db.filter(i => i.category==='EJC').reverse().slice(0,50).map(t => 
+    `<tr class="border-b border-slate-50 hover:bg-slate-50"><td class="py-3 px-2 text-xs text-slate-500">${new Date(t.date).toLocaleDateString()}</td><td class="font-medium text-slate-700">${t.description}</td><td class="text-xs text-slate-500">${t.paid ? t.buyer_name : t.equipe_devedora}</td><td class="text-right px-2 font-bold ${t.paid?'text-green-600':'text-yellow-600'}">R$ ${parseFloat(t.amount).toFixed(2)}</td></tr>`
+  ).join('');
+}
+
+function renderFeijoada() { renderList('Feijoada', 'feijoadaHistorico'); }
+function renderMercadinho() { 
+  const maes = db.filter(i => i.category==='Mercadinho' && i.description.toLowerCase().includes('maes') && i.paid).reduce((a,b)=>a+parseFloat(b.amount),0);
+  const nam = db.filter(i => i.category==='Mercadinho' && i.description.toLowerCase().includes('namorados') && i.paid).reduce((a,b)=>a+parseFloat(b.amount),0);
+  document.getElementById('mercadinhoResumo').innerHTML = `<div class="card bg-pink-50 border-pink-100 p-4"><p class="text-xs font-bold text-pink-400">Dia das Mães</p><h3 class="text-xl font-bold text-pink-700">R$ ${maes.toFixed(2)}</h3></div><div class="card bg-rose-50 border-rose-100 p-4"><p class="text-xs font-bold text-rose-400">Namorados</p><h3 class="text-xl font-bold text-rose-700">R$ ${nam.toFixed(2)}</h3></div>`;
+  renderList('Mercadinho', 'mercadinhoHistorico'); 
+}
+function renderOutros() { renderList('Outros', 'outrosHistorico'); }
+
+function renderList(cat, elId) {
+  document.getElementById(elId).innerHTML = db.filter(i => i.category===cat).reverse().map(t => 
+    `<div class="flex justify-between py-3 border-b border-slate-50 text-sm hover:bg-slate-50 px-2 rounded transition"><div><b class="text-slate-700">${t.description}</b><p class="text-[10px] text-slate-400 uppercase">${t.type} • ${t.responsible}</p></div><span class="${t.type==='Entrada'?'text-green-600':'text-red-500'} font-bold">R$ ${parseFloat(t.amount).toFixed(2)}</span></div>`
+  ).join('') || '<p class="text-center text-slate-400 py-4 text-xs">Vazio.</p>';
+}
+
+// --- COMPRAS ---
+function renderCompras() {
+  const pend = db.filter(i => !i.paid);
+  const divP = document.getElementById('listaPendencias');
   
-  document.getElementById('tableEJC').innerHTML=db.filter(i=>i.category==='EJC').reverse().slice(0,50).map(t=>`<tr class="border-b border-slate-50 hover:bg-slate-50"><td class="py-3 px-2 text-xs text-slate-500">${new Date(t.date).toLocaleDateString()}</td><td class="font-medium text-slate-700">${t.description}</td><td class="text-xs text-slate-500">${t.paid?t.buyer_name:t.equipe_devedora}</td><td class="text-right px-2 font-bold ${t.paid?'text-green-600':'text-yellow-600'}">R$ ${parseFloat(t.amount).toFixed(2)}</td></tr>`).join('');
+  if(pend.length === 0) {
+    divP.innerHTML = '<div class="text-center py-6"><i class="fas fa-check-circle text-4xl text-green-200"></i><p class="text-slate-400 mt-2 text-sm">Tudo pago!</p></div>';
+  } else {
+    divP.innerHTML = pend.map(p => `
+      <div class="bg-white p-4 rounded-xl flex justify-between items-center border border-red-50 shadow-sm hover:shadow-md transition">
+        <div>
+          <p class="font-bold text-slate-800 text-sm">${p.equipe_devedora || p.buyer_name || 'Sem Nome'}</p>
+          <p class="text-xs text-slate-500">${p.description} • R$ ${parseFloat(p.amount).toFixed(2)}</p>
+        </div>
+        <button onclick="receber('${p.id}')" class="bg-white border border-green-200 text-green-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-600 hover:text-white transition">RECEBER</button>
+      </div>`).join('');
+  }
 
-  // Listas
-  renderList('Feijoada','feijoadaHistorico'); renderList('Mercadinho','mercadinhoHistorico'); renderList('Outros','outrosHistorico');
+  document.getElementById('listaMinhasVendas').innerHTML = db.slice().reverse().slice(0,10).map(t => 
+    `<div class="flex justify-between py-3 border-b border-slate-50 text-sm"><span>${t.description} <span class="text-xs text-slate-400">(${t.category})</span></span><span class="font-bold text-green-600">R$ ${parseFloat(t.amount).toFixed(2)}</span></div>`
+  ).join('');
+}
+
+// ================= MODAL & LÓGICA =================
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.remove('hidden');
+  document.getElementById('btn-'+id).classList.add('active');
+}
+function openModalVenda() { document.getElementById('modalVenda').classList.remove('hidden'); }
+function closeModalVenda() { document.getElementById('modalVenda').classList.add('hidden'); }
+
+function toggleDia() { document.getElementById('vDia').parentElement.style.display = document.getElementById('vCat').value==='EJC' ? 'block' : 'none'; }
+function togglePagto() {
+  const isP = document.getElementById('vStatus').value==='Pago';
+  document.getElementById('boxPagto').classList.toggle('hidden', !isP);
+  document.getElementById('boxDevedor').classList.toggle('hidden', isP);
+  document.getElementById('vEquipe').required = !isP;
+}
+
+// ================= AÇÕES (POST) =================
+async function salvarVenda(e) {
+  e.preventDefault();
+  const isP = document.getElementById('vStatus').value==='Pago';
+  const devedorNome = isP ? "-" : document.getElementById('vEquipe').value;
+
+  const payload = {
+    date: new Date().toISOString(), 
+    type: "Entrada", 
+    category: document.getElementById('vCat').value,
+    description: document.getElementById('vProd').value, 
+    produto: document.getElementById('vProd').value,
+    amount: document.getElementById('vValor').value, 
+    quantity: 1, 
+    paid: isP,
+    equipe_devedora: devedorNome, // Importante para aparecer na lista
+    buyer_name: devedorNome,      // Fallback
+    ejc_dia: document.getElementById('vCat').value==='EJC' ? document.getElementById('vDia').value : "",
+    forma_pagamento: isP ? document.getElementById('vForma').value : "",
+    responsible: "Equipe Compras", 
+    valor_unitario: "", 
+    buyer_phone: ""
+  };
+  await postData('criarVendaCompras', payload);
+}
+
+async function salvarAdmin(cat) {
+  let p = {};
+  if(cat==='Feijoada') p = { description: document.getElementById('fjProd').value, amount: document.getElementById('fjValor').value, type: document.getElementById('fjTipo').value, quantity: document.getElementById('fjQtd').value, buyer_name: document.getElementById('fjQuem').value };
+  else p = { description: document.getElementById('outDesc').value, amount: document.getElementById('outValor').value, type: document.getElementById('outTipo').value };
   
-  const ctx=document.getElementById('chartGeral'); if(window.myChart)window.myChart.destroy();
-  window.myChart=new Chart(ctx,{type:'doughnut',data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:['#a855f7','#22c55e','#f97316','#3b82f6'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false}});
+  if(!p.description || !p.amount) return alert("Preencha os campos!");
+  
+  const payload = { 
+    ...p, 
+    date: new Date().toISOString(), 
+    category: cat, 
+    paid: true, 
+    responsible: "Admin", 
+    buyer_phone: "", 
+    equipe_devedora: "-", 
+    forma_pagamento: "Admin" 
+  };
+  await postData('criarTransacaoAdmin', payload);
 }
 
-function renderList(cat,id){ document.getElementById(id).innerHTML=db.filter(i=>i.category===cat).reverse().map(t=>`<div class="flex justify-between py-3 border-b border-slate-50 text-sm hover:bg-slate-50 px-2 rounded transition"><div><b class="text-slate-700">${t.description}</b><p class="text-[10px] text-slate-400 uppercase">${t.type} • ${t.responsible}</p></div><span class="${t.type==='Entrada'?'text-green-600':'text-red-500'} font-bold">R$ ${parseFloat(t.amount).toFixed(2)}</span></div>`).join('')||'<p class="text-center text-slate-400 py-4 text-xs">Nenhum registro.</p>'; }
-
-function renderCompras(){
-  const pend=db.filter(i=>!i.paid);
-  document.getElementById('listaPendencias').innerHTML=pend.length===0?'<div class="text-center py-6"><i class="fas fa-check-circle text-4xl text-green-200"></i><p class="text-slate-400 mt-2 text-sm">Tudo pago!</p></div>':pend.map(p=>`<div class="bg-white p-4 rounded-xl flex justify-between items-center border border-red-50 shadow-sm hover:shadow-md transition"><div><p class="font-bold text-slate-800 text-sm">${p.equipe_devedora}</p><p class="text-xs text-slate-500">${p.description} • R$ ${parseFloat(p.amount).toFixed(2)}</p></div><button onclick="receber('${p.id}')" class="bg-white border border-green-200 text-green-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-600 hover:text-white transition">RECEBER</button></div>`).join('');
-  document.getElementById('listaMinhasVendas').innerHTML=db.slice().reverse().slice(0,10).map(t=>`<div class="flex justify-between py-3 border-b border-slate-50 text-sm"><span>${t.description} <span class="text-xs text-slate-400">(${t.category})</span></span><span class="font-bold text-green-600">R$ ${parseFloat(t.amount).toFixed(2)}</span></div>`).join('');
+async function receber(id) {
+  const forma = prompt("Forma de Pagamento? (PIX/Dinheiro)");
+  if(!forma) return;
+  const quem = prompt("Quem recebeu?");
+  await postData('marcarPago', { id, forma_pagamento: forma, received_by: quem });
 }
 
-// ================= LOGIC =================
-function showTab(id){document.querySelectorAll('.tab-content').forEach(e=>e.classList.add('hidden'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.remove('hidden');document.getElementById('btn-'+id).classList.add('active');}
-function openModalVenda(){document.getElementById('modalVenda').classList.remove('hidden');}
-function closeModalVenda(){document.getElementById('modalVenda').classList.add('hidden');}
-function toggleDia(){document.getElementById('vDia').parentElement.style.display=document.getElementById('vCat').value==='EJC'?'block':'none';}
-function togglePagto(){const p=document.getElementById('vStatus').value==='Pago';document.getElementById('boxPagto').classList.toggle('hidden',!p);document.getElementById('boxDevedor').classList.toggle('hidden',p);document.getElementById('vEquipe').required=!p;}
-
-// ================= ACTIONS =================
-async function salvarVenda(e){
-  e.preventDefault(); const p=document.getElementById('vStatus').value==='Pago';
-  const pay={date:new Date().toISOString(),category:document.getElementById('vCat').value,produto:document.getElementById('vProd').value,quantidade:1,valor_unitario:"",amount:document.getElementById('vValor').value,buyer_name:p?"-":document.getElementById('vEquipe').value,buyer_phone:"",responsible:"Compras",paid:p,paid_date:p?new Date():"",forma_pagamento:p?document.getElementById('vForma').value:"",received_by:p?document.getElementById('vQuem').value:"",ejc_dia:document.getElementById('vCat').value==='EJC'?document.getElementById('vDia').value:"",equipe_devedora:p?"-":document.getElementById('vEquipe').value};
-  await postData('criarVendaCompras',pay);
+// ================= EXPORTAR =================
+function exportarPDF() {
+  const { jsPDF } = window.jspdf; const doc = new jsPDF();
+  doc.text("Prestação EJC 2026", 10, 10);
+  let y=20;
+  db.forEach(i => {
+    doc.text(`${i.description} | R$ ${i.amount} | ${i.type}`, 10, y); 
+    y+=10; if(y>280){ doc.addPage(); y=20; }
+  });
+  doc.save("EJC_Oficial.pdf");
 }
-async function salvarAdmin(cat){
-  let pay={};
-  if(cat==='Feijoada'){ pay={description:document.getElementById('fjProd').value,amount:document.getElementById('fjValor').value,type:document.getElementById('fjTipo').value,buyer_name:document.getElementById('fjQuem').value,responsible:"Admin",category:cat,paid:true,date:new Date().toISOString(),equipe_devedora:"-"}; }
-  else{ pay={description:document.getElementById('outDesc').value,amount:document.getElementById('outValor').value,type:document.getElementById('outTipo').value,category:cat,paid:true,responsible:"Admin",date:new Date().toISOString(),equipe_devedora:"-"}; }
-  if(!pay.description||!pay.amount) return alert("Preencha tudo");
-  await postData('criarTransacaoAdmin',pay);
+function exportarExcel() {
+  const ws = XLSX.utils.json_to_sheet(db);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Dados");
+  XLSX.writeFile(wb, "EJC_Oficial.xlsx");
 }
-async function receber(id){
-  const f=prompt("Forma (PIX/Dinheiro)?"); if(!f)return; const q=prompt("Quem recebeu?");
-  await postData('marcarPago',{id:id,forma_pagamento:f,received_by:q});
-}
-
-// ================= EXPORT =================
-function exportarPDF(){const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.text("Prestação EJC 2026",10,10);let y=20;db.forEach(i=>{doc.text(`${i.description} R$${i.amount}`,10,y);y+=10;});doc.save("EJC.pdf");}
-function exportarExcel(){const ws=XLSX.utils.json_to_sheet(db);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Dados");XLSX.writeFile(wb,"EJC.xlsx");}
 </script>
 </body>
 </html>
