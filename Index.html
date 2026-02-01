@@ -3,374 +3,639 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>21º EJC • Painel Financeiro</title>
+  <title>21º EJC • Sistema Financeiro</title>
 
+  <!-- Libs -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <!-- Icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-    
-    /* Design System Fofo */
-    .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 8px 25px rgba(126, 34, 206, 0.05); border: 1px solid #f3e8ff; transition: transform 0.2s; }
-    .card:hover { transform: translateY(-3px); }
-    
-    .btn { transition: all 0.2s; border-radius: 14px; } 
-    .btn:active { transform: scale(0.96); }
-    
-    .tab-btn { padding: 10px 18px; border-radius: 12px; font-weight: 600; color: #94a3b8; transition: all 0.3s; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
-    .tab-btn:hover { background-color: #f3e8ff; color: #7e22ce; }
-    .tab-btn.active { background-color: #7e22ce; color: white; box-shadow: 0 4px 12px rgba(126, 34, 206, 0.3); }
+    body { font-family: 'Poppins', sans-serif; background:#f8fafc; }
+    .card {
+      background:white; border-radius:20px;
+      padding:20px;
+      box-shadow:0 8px 25px rgba(126,34,206,0.08);
+      border:1px solid #f3e8ff;
+    }
+    .btn { font-weight:800; border-radius:16px; transition:.2s; }
+    .btn:active { transform:scale(.96); }
+    .tab-btn {
+      padding:10px 18px; border-radius:14px;
+      font-weight:700; color:#94a3b8;
+      display:flex; gap:6px; align-items:center;
+    }
+    .tab-btn.active {
+      background:#7e22ce; color:white;
+      box-shadow:0 4px 12px rgba(126,34,206,.35);
+    }
+    .hidden { display:none !important; }
 
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .loader { border: 3px solid #f3f3f3; border-top: 3px solid #7e22ce; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .hidden { display: none !important; }
-    
-    /* Toast Notificação */
-    #toast { visibility: hidden; min-width: 280px; background-color: #2e1065; color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 10px 25px rgba(126, 34, 206, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
-    #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    #toast {
+      visibility:hidden;
+      min-width:260px;
+      background:#2e1065;
+      color:white;
+      text-align:center;
+      border-radius:50px;
+      padding:14px;
+      position:fixed;
+      z-index:999;
+      left:50%;
+      bottom:25px;
+      transform:translateX(-50%);
+      font-size:14px;
+      box-shadow:0 10px 25px rgba(126,34,206,.3);
+    }
+    #toast.show { visibility:visible; }
+
+    .loader {
+      border:4px solid #eee;
+      border-top:4px solid #7e22ce;
+      border-radius:50%;
+      width:45px; height:45px;
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform:rotate(0deg); }
+      100% { transform:rotate(360deg); }
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col text-slate-800">
 
-  <div id="toast"><i class="fas fa-heart text-pink-400"></i> <span id="toastMsg">Salvo com carinho!</span></div>
+<body class="min-h-screen flex flex-col">
 
-  <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl text-center relative overflow-hidden border-4 border-purple-50">
-      <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 to-pink-500"></div>
-      
-      <div class="w-20 h-20 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-purple-100"><i class="fas fa-church"></i></div>
-      
-      <p class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-2">💜 Sistema Financeiro</p>
-      
-      <h1 class="text-xl font-extrabold mb-3 text-purple-900 leading-tight">
-        21º EJC<br>Santo Eugênio de Mazenod
-      </h1>
-      
-      <div class="bg-purple-50 p-3 rounded-xl mb-6 border border-purple-100">
-        <p class="text-sm text-slate-600 italic font-medium">“A morte não venceu. O Teu amor me salvou!”</p>
-        <p class="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-wide">João 11, 25–26</p>
-      </div>
-      
-      <div class="relative mb-4">
-        <i class="fas fa-lock absolute left-4 top-4 text-pink-300 text-xs"></i>
-        <input id="passInput" type="password" placeholder="Senha Secreta" class="w-full pl-10 pr-4 py-3 border-2 border-purple-100 rounded-xl outline-none focus:border-purple-500 font-bold text-center text-purple-800 transition focus:bg-purple-50">
-      </div>
-      
-      <button onclick="login('admin')" class="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white font-bold py-3.5 rounded-xl btn mb-3 shadow-lg shadow-purple-200 flex items-center justify-center gap-2">
-        👑 Pilotos (Admin)
+<!-- Toast -->
+<div id="toast">💜 Salvo com sucesso!</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="fixed inset-0 bg-slate-900/90 flex items-center justify-center z-50">
+  <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center shadow-2xl">
+    <h1 class="text-xl font-extrabold text-purple-800">
+      💜 Sistema Financeiro<br>21º EJC Santo Eugênio
+    </h1>
+    <p class="italic text-slate-500 text-sm mt-2">
+      “A morte não venceu. O Teu amor me salvou!”
+    </p>
+    <p class="text-xs text-slate-400 mb-6">João 11, 25–26</p>
+
+    <input id="passInput"
+      type="password"
+      placeholder="Digite a senha"
+      class="w-full border-2 border-purple-100 p-3 rounded-xl text-center font-bold">
+
+    <button onclick="login('admin')"
+      class="w-full mt-4 bg-purple-700 text-white py-3 btn">
+      👑 Entrar como Admin
+    </button>
+
+    <button onclick="login('compras')"
+      class="w-full mt-3 bg-emerald-600 text-white py-3 btn">
+      🛒 Entrar como Compras
+    </button>
+
+    <p id="loginError" class="hidden text-red-600 font-bold mt-4">
+      🚫 Senha incorreta
+    </p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden flex-1">
+
+<header class="bg-white border-b sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
+    <h2 class="font-extrabold text-purple-800">
+      📊 Painel Financeiro — 21º EJC
+    </h2>
+    <span id="roleLabel" class="text-xs font-bold text-purple-600"></span>
+  </div>
+
+  <!-- Abas ADMIN -->
+  <div id="adminTabs" class="hidden max-w-6xl mx-auto flex gap-2 px-4 pb-3 overflow-x-auto">
+    <button id="btn-geral" class="tab-btn active" onclick="showTab('geral')">🏠 Geral</button>
+    <button id="btn-ejc" class="tab-btn" onclick="showTab('ejc')">⛪ EJC</button>
+    <button id="btn-feijoada" class="tab-btn" onclick="showTab('feijoada')">🍲 Feijoada</button>
+    <button id="btn-mercadinho" class="tab-btn" onclick="showTab('mercadinho')">🛒 Mercadinho</button>
+    <button id="btn-outros" class="tab-btn" onclick="showTab('outros')">📦 Outros</button>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto p-4 space-y-6 pb-28">
+
+<!-- GERAL -->
+<section id="tab-geral" class="tab-content">
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="card text-center">
+      <p class="text-xs text-slate-400 font-bold">💚 Entradas</p>
+      <h2 id="dashEntradas" class="text-xl font-extrabold text-green-600">R$ 0</h2>
+    </div>
+
+    <div class="card text-center">
+      <p class="text-xs text-slate-400 font-bold">❤️ Saídas</p>
+      <h2 id="dashSaidas" class="text-xl font-extrabold text-red-500">R$ 0</h2>
+    </div>
+
+    <div class="card text-center">
+      <p class="text-xs text-slate-400 font-bold">💜 Saldo</p>
+      <h2 id="dashSaldo" class="text-xl font-extrabold text-purple-700">R$ 0</h2>
+    </div>
+
+    <div class="card text-center">
+      <p class="text-xs text-slate-400 font-bold">⚠️ Pendências</p>
+      <h2 id="dashPend" class="text-xl font-extrabold text-yellow-600">R$ 0</h2>
+    </div>
+  </div>
+
+  <div class="card mt-6">
+    <h3 class="font-bold mb-3">📊 Distribuição Financeira</h3>
+    <div class="h-64">
+      <canvas id="chartGeral"></canvas>
+    </div>
+  </div>
+
+  <div class="card mt-6">
+    <h3 class="font-bold mb-3">🏆 Top Devedores</h3>
+    <div id="rankingDevedores"></div>
+  </div>
+
+  <div class="card mt-6 flex gap-3">
+    <button onclick="exportarExcel()"
+      class="w-full bg-emerald-600 text-white py-4 btn">
+      📊 Exportar Excel
+    </button>
+
+    <button onclick="exportarPDF()"
+      class="w-full bg-slate-800 text-white py-4 btn">
+      📄 Exportar PDF
+    </button>
+  </div>
+
+  <button onclick="openModalVenda()"
+    class="w-full mt-6 bg-purple-100 text-purple-800 py-4 btn">
+    ✨ ADMIN: Registrar Venda Manual
+  </button>
+
+</section>
+<!-- EJC -->
+<section id="tab-ejc" class="tab-content hidden space-y-6">
+  <div class="card">
+    <h3 class="font-bold text-purple-700 mb-3">⛪ Fechamento por Dia</h3>
+    <div id="ejcResumoDias" class="grid grid-cols-3 gap-3"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="font-bold text-red-600 mb-3">⚠️ Pendências Totais</h3>
+    <div id="adminPendenciasList"></div>
+  </div>
+</section>
+
+<!-- FEIJOADA -->
+<section id="tab-feijoada" class="tab-content hidden space-y-6">
+  <div class="card">
+    <h3 class="font-bold text-orange-700 mb-3">🍲 Controle Feijoada</h3>
+
+    <input id="fjDesc" placeholder="Descrição"
+      class="w-full border p-3 rounded-xl mb-2">
+
+    <input id="fjValor" type="number" step="0.01"
+      placeholder="Valor R$"
+      class="w-full border p-3 rounded-xl mb-2">
+
+    <select id="fjTipo"
+      class="w-full border p-3 rounded-xl mb-2">
+      <option value="Entrada">✅ Venda</option>
+      <option value="Saida">❌ Compra</option>
+    </select>
+
+    <button onclick="salvarFeijoada()"
+      class="w-full bg-orange-600 text-white py-4 btn">
+      💾 Registrar
+    </button>
+  </div>
+
+  <div class="card">
+    <h3 class="font-bold mb-2">📜 Histórico</h3>
+    <div id="histFeijoada"></div>
+  </div>
+</section>
+
+<!-- MERCADINHO -->
+<section id="tab-mercadinho" class="tab-content hidden space-y-6">
+  <div class="card">
+    <h3 class="font-bold text-pink-700 mb-3">🛒 Mercadinho</h3>
+    <div id="mercResumo"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="font-bold mb-2">📜 Histórico</h3>
+    <div id="histMercadinho"></div>
+  </div>
+</section>
+
+<!-- OUTROS -->
+<section id="tab-outros" class="tab-content hidden space-y-6">
+  <div class="card">
+    <h3 class="font-bold text-blue-700 mb-3">📦 Outros Movimentos</h3>
+
+    <input id="outDesc" placeholder="Descrição"
+      class="w-full border p-3 rounded-xl mb-2">
+
+    <input id="outValor" type="number" step="0.01"
+      placeholder="Valor R$"
+      class="w-full border p-3 rounded-xl mb-2">
+
+    <select id="outTipo"
+      class="w-full border p-3 rounded-xl mb-2">
+      <option value="Entrada">Entrada (+)</option>
+      <option value="Saida">Saída (-)</option>
+    </select>
+
+    <button onclick="salvarOutros()"
+      class="w-full bg-blue-700 text-white py-4 btn">
+      💾 Salvar
+    </button>
+  </div>
+
+  <div class="card">
+    <h3 class="font-bold mb-2">📜 Histórico</h3>
+    <div id="histOutros"></div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<!-- MODAL VENDA -->
+<div id="modalVenda"
+  class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+
+  <div class="bg-white w-full max-w-md rounded-3xl p-6">
+    <h3 class="font-extrabold text-purple-700 mb-4">
+      ✨ Registrar Venda
+    </h3>
+
+    <form onsubmit="salvarVenda(event)" class="space-y-3">
+
+      <input id="vProd" required
+        placeholder="Produto"
+        class="w-full border p-3 rounded-xl">
+
+      <input id="vValor" required type="number" step="0.01"
+        placeholder="Valor R$"
+        class="w-full border p-3 rounded-xl">
+
+      <select id="vCat"
+        class="w-full border p-3 rounded-xl">
+        <option value="EJC">⛪ EJC</option>
+        <option value="Mercadinho">🛒 Mercadinho</option>
+        <option value="Feijoada">🍲 Feijoada</option>
+        <option value="Outros">📦 Outros</option>
+      </select>
+
+      <select id="vDia"
+        class="w-full border p-3 rounded-xl">
+        <option value="Sexta">Sexta</option>
+        <option value="Sabado">Sábado</option>
+        <option value="Domingo">Domingo</option>
+      </select>
+
+      <select id="vStatus"
+        class="w-full border p-3 rounded-xl"
+        onchange="toggleFiado()">
+        <option value="Pago">✅ Pago</option>
+        <option value="Pendente">⚠️ Fiado</option>
+      </select>
+
+      <input id="vEquipe"
+        class="hidden w-full border p-3 rounded-xl"
+        placeholder="Quem está devendo?">
+
+      <select id="vForma"
+        class="w-full border p-3 rounded-xl">
+        <option value="Dinheiro">Dinheiro</option>
+        <option value="PIX">PIX</option>
+        <option value="Cartao Credito">Cartão Crédito</option>
+        <option value="Cartao Debito">Cartão Débito</option>
+      </select>
+
+      <input id="vQuem"
+        placeholder="Quem recebeu?"
+        class="w-full border p-3 rounded-xl">
+
+      <button
+        class="w-full bg-purple-700 text-white py-4 btn">
+        💾 Confirmar
       </button>
-      <button onclick="login('compras')" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-3.5 rounded-xl btn shadow-lg shadow-teal-200 flex items-center justify-center gap-2">
-        🛒 Equipe Compras
+
+      <button type="button"
+        onclick="closeModalVenda()"
+        class="w-full bg-slate-100 py-3 rounded-xl font-bold">
+        Cancelar
       </button>
-      
-      <p id="loginError" class="hidden text-red-500 text-xs font-bold mt-4 bg-red-50 p-2 rounded border border-red-100 animate-pulse">🚫 Senha incorreta!</p>
-    </div>
+
+    </form>
   </div>
+</div>
 
-  <div id="app" class="hidden flex-1 flex flex-col">
-    <header class="bg-white border-b sticky top-0 z-40 shadow-sm backdrop-blur-md bg-opacity-95">
-      <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-          <div class="bg-gradient-to-br from-purple-600 to-pink-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-md"><i class="fas fa-chart-line"></i></div>
-          <div>
-            <h2 class="font-bold text-slate-800 text-sm leading-tight">📊 Painel Financeiro — EJC 2026</h2>
-            <p id="roleLabel" class="text-[10px] font-bold text-purple-600 uppercase tracking-wider bg-purple-50 px-2 py-0.5 rounded-md w-fit">...</p>
-          </div>
-        </div>
-        <button onclick="location.reload()" class="bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 p-2.5 rounded-xl transition border border-slate-100"><i class="fas fa-power-off"></i></button>
-      </div>
-      
-      <div id="adminTabs" class="hidden max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto pb-0 mt-2 border-t border-slate-50 pt-2 no-scrollbar">
-        <button onclick="showTab('geral')" id="btn-geral" class="tab-btn active"><i class="fas fa-home"></i> Geral</button>
-        <button onclick="showTab('ejc')" id="btn-ejc" class="tab-btn"><i class="fas fa-church"></i> EJC</button>
-        <button onclick="showTab('feijoada')" id="btn-feijoada" class="tab-btn"><i class="fas fa-utensils"></i> Feijoada</button>
-        <button onclick="showTab('mercadinho')" id="btn-mercadinho" class="tab-btn"><i class="fas fa-store"></i> Mercadinho</button>
-        <button onclick="showTab('outros')" id="btn-outros" class="tab-btn"><i class="fas fa-box-open"></i> Outros</button>
-      </div>
-    </header>
-
-    <main class="flex-1 max-w-7xl mx-auto w-full p-4 space-y-6 pb-24">
-
-      <section id="tab-geral" class="tab-content hidden animate-fade-in">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div class="card border-l-4 border-green-500 py-5"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">💚 Entradas</p><h3 id="dashEntradas" class="text-xl font-bold text-green-600 mt-1">R$ 0,00</h3></div>
-          <div class="card border-l-4 border-red-500 py-5"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">❤️ Saídas</p><h3 id="dashSaidas" class="text-xl font-bold text-red-500 mt-1">R$ 0,00</h3></div>
-          <div class="card border-l-4 border-purple-600 py-5 bg-gradient-to-br from-white to-purple-50"><p class="text-[10px] font-bold text-purple-400 uppercase tracking-wider">💜 Saldo Real</p><h3 id="dashSaldo" class="text-xl font-bold text-purple-700 mt-1">R$ 0,00</h3></div>
-          <div class="card border-l-4 border-yellow-500 py-5"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">⚠️ A Receber</p><h3 id="dashPend" class="text-xl font-bold text-yellow-600 mt-1">R$ 0,00</h3></div>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="card border-l-4 border-orange-400">
-            <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-trophy text-orange-400"></i> Top Devedores</h3>
-            <div id="rankingDevedores" class="space-y-3">
-              <p class="text-sm text-slate-400">Calculando...</p>
-            </div>
-          </div>
-
-          <div class="card bg-slate-800 text-white border-none">
-            <h3 class="font-bold mb-4 flex items-center gap-2 text-yellow-400"><i class="fas fa-file-contract"></i> Prestação de Contas</h3>
-            <p class="text-xs text-slate-300 mb-6">Documentos oficiais para a coordenação.</p>
-            <div class="space-y-3">
-              <button onclick="exportarPDF()" class="w-full bg-white/10 hover:bg-white/20 p-3 rounded-xl font-bold flex items-center justify-center gap-2 border border-white/10 transition"><i class="fas fa-file-pdf text-red-400"></i> Relatório PDF</button>
-              <button onclick="exportarExcel()" class="w-full bg-emerald-600 hover:bg-emerald-500 p-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg transition"><i class="fas fa-file-excel"></i> Planilha Excel (.xlsx)</button>
-            </div>
-          </div>
-        </div>
-        
-        <button onclick="openModalVenda()" class="w-full mt-6 bg-slate-200 text-slate-600 font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-300 transition">✨ ADMIN: LANÇAR VENDA MANUAL</button>
-      </section>
-
-      <section id="tab-ejc" class="tab-content hidden space-y-6">
-        <h3 class="font-bold text-purple-700 text-lg flex items-center gap-2"><i class="fas fa-calendar-alt"></i> Resumo por Dia</h3>
-        <div id="ejcFechamento" class="grid md:grid-cols-3 gap-4"></div>
-        <div class="card border-red-100 mt-4"><div class="flex justify-between items-center mb-4 border-b border-red-50 pb-2"><h3 class="font-bold text-red-700 flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> Pendências Totais</h3></div><div id="adminPendenciasList" class="space-y-2 max-h-80 overflow-y-auto"></div></div>
-        <div class="card"><h3 class="font-bold mb-4 text-slate-600">📜 Histórico EJC</h3><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-xs text-slate-500 uppercase"><tr><th class="p-3">Data</th><th>Desc</th><th>Quem</th><th class="text-right p-3">$$</th></tr></thead><tbody id="tableEJC" class="divide-y divide-slate-100"></tbody></table></div></div>
-      </section>
-
-      <section id="tab-feijoada" class="tab-content hidden space-y-6">
-        <div class="card bg-orange-50 border-orange-200"><h3 class="font-bold text-orange-800 mb-4 flex items-center gap-2"><i class="fas fa-utensils"></i> Gestão Feijoada</h3><div class="grid grid-cols-2 gap-3 mb-3"><input id="fjProd" placeholder="Item" class="border p-3 rounded-xl w-full text-sm outline-none"><input id="fjQtd" type="number" placeholder="Qtd" class="border p-3 rounded-xl w-full text-sm outline-none"><input id="fjValor" type="number" step="0.01" placeholder="R$" class="border p-3 rounded-xl w-full text-sm font-bold outline-none"><select id="fjTipo" class="border p-3 rounded-xl w-full text-sm bg-white outline-none"><option value="Entrada">✅ Venda</option><option value="Saida">❌ Compra</option></select></div><input id="fjQuem" placeholder="Nome" class="border p-3 rounded-xl w-full mb-3 text-sm outline-none"><button onclick="salvarAdmin('Feijoada')" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl shadow-lg transition btn">💾 Registrar Movimento</button></div>
-        <div class="card"><div id="feijoadaHistorico" class="divide-y divide-slate-100 max-h-96 overflow-y-auto"></div></div>
-      </section>
-
-      <section id="tab-mercadinho" class="tab-content hidden space-y-6">
-        <div id="mercadinhoResumo" class="grid md:grid-cols-2 gap-4"></div>
-        <div class="card"><h3 class="font-bold mb-4 text-slate-600">📜 Todas as Vendas</h3><div id="mercadinhoHistorico" class="divide-y divide-slate-100 max-h-96 overflow-y-auto"></div></div>
-      </section>
-
-      <section id="tab-outros" class="tab-content hidden space-y-6">
-        <div class="card bg-blue-50 border-blue-200"><h3 class="font-bold text-blue-800 mb-4 flex items-center gap-2"><i class="fas fa-box-open"></i> Movimento Geral</h3><div class="grid grid-cols-2 gap-3 mb-3"><input id="outDesc" placeholder="Descrição" class="border p-3 rounded-xl w-full text-sm outline-none"><input id="outValor" type="number" step="0.01" placeholder="R$" class="border p-3 rounded-xl w-full text-sm font-bold outline-none"><select id="outTipo" class="border p-3 rounded-xl w-full text-sm bg-white outline-none col-span-2"><option value="Entrada">Entrada (+)</option><option value="Saida">Saída (-)</option></select></div><button onclick="salvarAdmin('Outros')" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl shadow-lg transition btn">Salvar</button></div>
-        <div class="card"><div id="outrosHistorico" class="divide-y divide-slate-100"></div></div>
-      </section>
-
-      <section id="painel-compras" class="hidden space-y-6">
-        <button onclick="openModalVenda()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-green-200/50 text-xl flex items-center justify-center gap-3 transition transform hover:scale-[1.01] btn">
-          <div class="bg-white/20 p-2 rounded-full"><i class="fas fa-plus"></i></div> NOVA VENDA
-        </button>
-        <div class="card border-l-4 border-yellow-500"><div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3"><h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-exclamation-triangle text-yellow-500"></i> Pendências</h3><button onclick="loadData()" class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg font-bold text-slate-600 flex items-center gap-1 btn"><i class="fas fa-sync-alt"></i> Atualizar</button></div><div id="listaPendencias" class="space-y-3"><p class="text-center text-slate-400 py-4 text-sm animate-pulse">Carregando...</p></div></div>
-        <div class="card"><h3 class="font-bold mb-4 text-slate-500 text-xs uppercase tracking-wider">📜 Minhas Vendas Recentes</h3><div id="listaMinhasVendas" class="divide-y divide-slate-100 text-sm"></div></div>
-      </section>
-    </main>
-  </div>
-
-  <div id="modalVenda" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative animate-fade-in border-4 border-purple-50">
-      <div class="flex justify-between items-center mb-6"><h3 class="font-bold text-xl text-slate-800 flex items-center gap-2"><i class="fas fa-shopping-cart text-purple-600"></i> Registrar Venda</h3><button onclick="closeModalVenda()" class="text-slate-400 hover:text-red-500 text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition"><i class="fas fa-times"></i></button></div>
-      <form id="formVenda" onsubmit="salvarVenda(event)" class="space-y-4">
-        <div class="grid grid-cols-3 gap-3"><div class="col-span-2"><label class="text-[10px] font-bold text-slate-400 uppercase">Produto</label><input id="vProd" placeholder="Ex: Marmita" class="w-full border-2 border-slate-100 p-3 rounded-xl outline-none focus:border-purple-500 font-medium text-slate-700" required></div><div><label class="text-[10px] font-bold text-slate-400 uppercase">Valor</label><input id="vValor" type="number" step="0.01" placeholder="R$" class="w-full border-2 border-slate-100 p-3 rounded-xl font-bold outline-none focus:border-purple-500 text-center" required></div></div>
-        <div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] font-bold text-slate-400 uppercase">Categoria</label><select id="vCat" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white text-sm outline-none focus:border-purple-500" onchange="toggleDia()"><option value="EJC">⛪ EJC</option><option value="Mercadinho">🛒 Mercadinho</option><option value="Feijoada">🍲 Feijoada</option><option value="Outros">📦 Outros</option></select></div><div><label class="text-[10px] font-bold text-slate-400 uppercase">Dia</label><select id="vDia" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white text-sm outline-none focus:border-purple-500"><option value="Sexta">Sexta</option><option value="Sabado">Sabado</option><option value="Domingo">Domingo</option></select></div></div>
-        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Status</label><select id="vStatus" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white font-bold text-slate-700 outline-none focus:border-purple-500" onchange="togglePagto()"><option value="Pago">✅ Pago na hora</option><option value="Pendente">⚠️ Devendo (Fiado)</option></select></div>
-        <div id="boxDevedor" class="hidden p-3 bg-yellow-50 rounded-xl border border-yellow-200"><label class="text-[10px] font-bold text-yellow-700 uppercase">Nome da Equipe / Devedor</label><input id="vEquipe" placeholder="Quem está devendo?" class="w-full border border-yellow-200 p-2 rounded-lg mt-1 bg-white outline-none focus:ring-2 focus:ring-yellow-400"></div>
-        <div id="boxPagto" class="grid grid-cols-2 gap-3 p-3 bg-green-50 rounded-xl border border-green-200"><div><label class="text-[10px] font-bold text-green-700 uppercase">Forma</label><select id="vForma" class="w-full border border-green-200 p-2 rounded-lg bg-white text-sm mt-1 outline-none"><option value="Dinheiro">Dinheiro</option><option value="PIX">PIX</option><option value="Cartao Credito">Cartão Crédito</option><option value="Cartao Debito">Cartão Débito</option></select></div><div><label class="text-[10px] font-bold text-green-700 uppercase">Recebedor</label><input id="vQuem" placeholder="Seu nome" class="w-full border border-green-200 p-2 rounded-lg bg-white text-sm mt-1 outline-none"></div></div>
-        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg mt-4 active:scale-95 transition hover:shadow-xl btn">✨ CONFIRMAR REGISTRO</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="modalReceber" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative animate-fade-in border-4 border-green-50">
-      <h3 class="font-bold text-xl text-green-700 mb-1 flex items-center gap-2"><i class="fas fa-hand-holding-usd"></i> Receber Pagamento</h3>
-      <p class="text-xs text-slate-400 mb-4">Confirme os dados do recebimento</p>
-      <div class="space-y-4">
-        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Forma de Pagamento</label><select id="recForma" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white text-sm outline-none focus:border-green-500 font-medium"><option value="Dinheiro">Dinheiro</option><option value="PIX">PIX</option><option value="Cartao Credito">Cartão Crédito</option><option value="Cartao Debito">Cartão Débito</option></select></div>
-        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Quem Recebeu?</label><input id="recQuem" placeholder="Seu nome" class="w-full border-2 border-slate-100 p-3 rounded-xl outline-none focus:border-green-500 text-sm"></div>
-        <div class="grid grid-cols-2 gap-2 mt-4"><button onclick="fecharModalReceber()" class="bg-slate-100 text-slate-500 font-bold py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button><button onclick="confirmarRecebimento()" class="bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 shadow-lg transition btn">✅ CONFIRMAR</button></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="loading" class="hidden fixed inset-0 bg-white/90 z-[90] flex flex-col items-center justify-center"><div class="loader mb-4"></div><p class="font-bold text-slate-500 animate-pulse">Sincronizando com o Google...</p></div>
+<!-- LOADING -->
+<div id="loading"
+  class="hidden fixed inset-0 bg-white/90 flex flex-col items-center justify-center z-50">
+  <div class="loader mb-4"></div>
+  <p class="font-bold text-slate-500">Sincronizando...</p>
+</div>
 
 <script>
-// LINK DO SEU SCRIPT (Já Atualizado)
-const API_URL = "https://script.google.com/macros/s/AKfycbynjMjJ7-un_ZOToVcl7qNGQ-ryKfKbNaApujQ7bSbMeorl4pphfohCGXVMQQYN4t0CaA/exec";
+/* ======================================================
+   CONFIG
+====================================================== */
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwIuoOl8rE4JA8MTxBwB7qji54gewjucx52XpE6-4vpcZy2A-nSi08S9GyQgElNVd-tdw/exec";
 
-const PASS_ADMIN = "@admpilotosejc2026#";
+const PASS_ADMIN   = "@admpilotosejc2026#";
 const PASS_COMPRAS = "$compras2026";
-let role = "", db = [], currentIdReceber = null;
 
-function login(t){const p=document.getElementById('passInput').value; if((t==='admin'&&p===PASS_ADMIN)||(t==='compras'&&p===PASS_COMPRAS)){role=t;init();}else{document.getElementById('loginError').classList.remove('hidden');}}
-async function init(){document.getElementById('loginScreen').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('roleLabel').innerText=role==='admin'?"👑 Pilotos":"🛒 Compras"; if(role==='admin'){document.getElementById('adminTabs').classList.remove('hidden');showTab('geral');}else{document.getElementById('painel-compras').classList.remove('hidden');}await loadData();}
-function toggleLoader(s){document.getElementById('loading').classList.toggle('hidden',!s);}
-function showToast(msg){const t=document.getElementById("toast");document.getElementById("toastMsg").innerText=msg;t.className="show";setTimeout(()=>{t.className=t.className.replace("show","");},3000);}
+let role="", db=[], currentId=null;
 
+/* ======================================================
+   HELPERS
+====================================================== */
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.innerText=msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2500);
+}
+function loader(x){
+  document.getElementById("loading").classList.toggle("hidden",!x);
+}
+function isPago(x){ return x===true || x==="TRUE"; }
+function isPend(x){ return !isPago(x); }
+
+/* ======================================================
+   LOGIN
+====================================================== */
+function login(tipo){
+  const p=document.getElementById("passInput").value;
+
+  if(tipo==="admin" && p===PASS_ADMIN){
+    role="admin";
+  }
+  else if(tipo==="compras" && p===PASS_COMPRAS){
+    role="compras";
+  }
+  else{
+    document.getElementById("loginError").classList.remove("hidden");
+    return;
+  }
+
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  document.getElementById("roleLabel").innerText =
+    role==="admin" ? "👑 ADMIN" : "🛒 COMPRAS";
+
+  if(role==="admin"){
+    document.getElementById("adminTabs").classList.remove("hidden");
+  }
+
+  loadData();
+}
+
+/* ======================================================
+   LOAD DATA
+====================================================== */
 async function loadData(){
-  toggleLoader(true);
-  try{ const res=await fetch(`${API_URL}?t=${Date.now()}`); db=await res.json(); renderAll(); }
-  catch(e){console.error(e);} finally{toggleLoader(false);}
+  loader(true);
+
+  const a = await fetch(API_URL+"?action=listarAdmin");
+  const c = await fetch(API_URL+"?action=listarCompras");
+
+  const admin = await a.json();
+  const compras = await c.json();
+
+  db=[...admin,...compras];
+
+  renderAll();
+  loader(false);
 }
 
-async function postData(act, pay){
-  toggleLoader(true);
-  try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:act,payload:pay})}); 
-       setTimeout(async()=>{await loadData();showToast("✅ Salvo com sucesso!");closeModalVenda();fecharModalReceber();document.querySelectorAll('input').forEach(i=>i.value='');},2000); }
-  catch(e){alert("Erro ao salvar.");toggleLoader(false);}
+/* ======================================================
+   MODAL
+====================================================== */
+function openModalVenda(){
+  document.getElementById("modalVenda").classList.remove("hidden");
+}
+function closeModalVenda(){
+  document.getElementById("modalVenda").classList.add("hidden");
+}
+function toggleFiado(){
+  const st=document.getElementById("vStatus").value;
+  document.getElementById("vEquipe")
+    .classList.toggle("hidden", st==="Pago");
 }
 
-function renderAll(){ role==='admin'?renderAdmin():renderCompras(); }
-
-function renderAdmin(){
-  let ent=0,sai=0,pend=0,cats={};
-  db.forEach(i=>{ const v=parseFloat(i.amount||0); if(i.paid){if(i.type==='Entrada'){ent+=v;cats[i.category]=(cats[i.category]||0)+v;}else{sai+=v;}}else{pend+=v;} });
-  document.getElementById('dashEntradas').innerText=`R$ ${ent.toFixed(2)}`;
-  document.getElementById('dashSaidas').innerText=`R$ ${sai.toFixed(2)}`;
-  document.getElementById('dashSaldo').innerText=`R$ ${(ent-sai).toFixed(2)}`;
-  document.getElementById('dashPend').innerText=`R$ ${pend.toFixed(2)}`;
-  
-  // RANKING INTELIGENTE
-  const ranking = {};
-  db.filter(i => !i.paid).forEach(i => { const nome = i.equipe_devedora || i.buyer_name || "Desconhecido"; ranking[nome] = (ranking[nome] || 0) + parseFloat(i.amount); });
-  const sortedRanking = Object.entries(ranking).sort((a,b) => b[1] - a[1]).slice(0,5);
-  document.getElementById('rankingDevedores').innerHTML = sortedRanking.length ? sortedRanking.map((r, idx) => `
-    <div class="flex justify-between items-center text-sm border-b border-orange-100 py-1">
-      <span class="font-bold text-slate-700">${idx+1}. ${r[0]}</span>
-      <span class="font-bold text-red-500">R$ ${r[1].toFixed(2)}</span>
-    </div>
-  `).join('') : '<p class="text-sm text-slate-400">Ninguém deve nada! 🎉</p>';
-
-  // EJC POR DIA
-  const dias=['Sexta','Sabado','Domingo']; let html='';
-  dias.forEach(d=>{ const t=db.filter(i=>i.category==='EJC'&&i.ejc_dia===d&&i.paid).reduce((a,b)=>a+parseFloat(b.amount),0); html+=`<div class="card bg-purple-50 border border-purple-100 text-center py-3"><p class="text-xs font-bold text-purple-400 uppercase">${d}</p><h3 class="text-xl font-bold text-purple-800">R$ ${t.toFixed(2)}</h3></div>`; });
-  document.getElementById('ejcFechamento').innerHTML=html;
-  
-  // MERCADINHO INTELIGENTE
-  const maes = db.filter(i=>i.category==='Mercadinho' && i.paid && (i.description.toLowerCase().includes('mae')||i.description.toLowerCase().includes('mãe'))).reduce((a,b)=>a+parseFloat(b.amount),0);
-  const nam = db.filter(i=>i.category==='Mercadinho' && i.paid && i.description.toLowerCase().includes('namorad')).reduce((a,b)=>a+parseFloat(b.amount),0);
-  const geral = db.filter(i=>i.category==='Mercadinho' && i.paid).reduce((a,b)=>a+parseFloat(b.amount),0);
-  document.getElementById('mercadinhoResumo').innerHTML = `
-    <div class="card bg-pink-50 border-pink-100 p-4"><p class="text-xs font-bold text-pink-400 uppercase">🌸 Dia das Mães</p><h3 class="text-xl font-bold text-pink-700">R$ ${maes.toFixed(2)}</h3></div>
-    <div class="card bg-rose-50 border-rose-100 p-4"><p class="text-xs font-bold text-rose-400 uppercase">💘 Namorados</p><h3 class="text-xl font-bold text-rose-700">R$ ${nam.toFixed(2)}</h3></div>
-    <div class="card border p-4 col-span-2 text-center"><p class="text-xs font-bold text-slate-400 uppercase">Total Geral Mercadinho</p><h3 class="text-xl font-bold text-slate-700">R$ ${geral.toFixed(2)}</h3></div>
-  `;
-
-  // PENDÊNCIAS COM BOTÃO RECEBER (ADMIN)
-  const pends=db.filter(i=>!i.paid);
-  document.getElementById('adminPendenciasList').innerHTML=pends.map(p=>`
-    <div id="card-adm-${p.id}" class="flex justify-between items-center border-b border-slate-50 py-3 text-sm hover:bg-slate-50 px-2">
-      <div><span class="font-bold text-slate-700">${p.equipe_devedora||p.buyer_name}</span> <small class="text-slate-400">(${p.description}) • ${p.category}</small></div>
-      <div class="flex gap-2 items-center"><span class="text-red-500 font-bold">R$ ${parseFloat(p.amount).toFixed(2)}</span><button onclick="abrirModalReceber('${p.id}')" class="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-bold hover:bg-green-200">RECEBER</button></div>
-    </div>`).join('')||'<p class="text-center text-gray-400 text-xs py-2">Sem pendências.</p>';
-
-  document.getElementById('tableEJC').innerHTML=db.filter(i=>i.category==='EJC').reverse().slice(0,30).map(t=>`<div class="flex justify-between py-2 border-b"><span>${t.description}</span><span class="${t.paid?'text-green-600':'text-yellow-600'} font-bold">R$ ${parseFloat(t.amount).toFixed(2)}</span></div>`).join('');
-  renderList('Feijoada','feijoadaHistorico'); renderList('Mercadinho','mercadinhoHistorico'); renderList('Outros','outrosHistorico');
-}
-
-function renderList(cat,id){ document.getElementById(id).innerHTML=db.filter(i=>i.category===cat).reverse().map(t=>`<div class="flex justify-between py-2 border-b text-sm"><span>${t.description}</span><span class="${t.paid?'text-green-600':'text-red-500'} font-bold">R$ ${parseFloat(t.amount).toFixed(2)}</span></div>`).join(''); }
-
-function renderCompras(){
-  const pend=db.filter(i=>!i.paid);
-  const div=document.getElementById('listaPendencias');
-  if(pend.length===0) div.innerHTML='<div class="text-center py-6 bg-green-50 rounded-xl"><p class="text-green-600 font-bold">Tudo pago! 🎉</p></div>';
-  else div.innerHTML=pend.map(p=>`
-    <div id="card-${p.id}" class="bg-white p-4 rounded-xl flex justify-between items-center border border-red-50 shadow-sm hover:shadow-md transition card-pendencia">
-      <div><p class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fas fa-user-tag text-slate-400 text-xs"></i> ${p.equipe_devedora || p.buyer_name || 'Sem Nome'}</p><p class="text-xs text-slate-500 ml-5">${p.description} • R$ ${parseFloat(p.amount).toFixed(2)}</p></div>
-      <button onclick="abrirModalReceber('${p.id}')" class="bg-green-50 text-green-700 border border-green-200 px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-600 hover:text-white transition shadow-sm">RECEBER</button>
-    </div>`).join('');
-  document.getElementById('listaMinhasVendas').innerHTML=db.slice().reverse().slice(0,15).map(t=>`
-    <div class="flex justify-between items-center py-3 border-b border-slate-50 text-sm">
-      <div class="flex items-center gap-2">${t.paid ? '<i class="fas fa-check-circle text-green-500"></i>' : '<i class="fas fa-clock text-yellow-500"></i>'}<span>${t.description} <span class="text-xs text-slate-400">(${t.category})</span></span></div>
-      <span class="font-bold ${t.paid?'text-green-600':'text-yellow-600'}">R$ ${parseFloat(t.amount).toFixed(2)}</span>
-    </div>`).join('');
-}
-
-function showTab(id){document.querySelectorAll('.tab-content').forEach(e=>e.classList.add('hidden'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.remove('hidden');document.getElementById('btn-'+id).classList.add('active');}
-function openModalVenda(){document.getElementById('modalVenda').classList.remove('hidden');}
-function closeModalVenda(){document.getElementById('modalVenda').classList.add('hidden');}
-function toggleDia(){document.getElementById('vDia').parentElement.style.display=document.getElementById('vCat').value==='EJC'?'block':'none';}
-function togglePagto(){const p=document.getElementById('vStatus').value==='Pago';document.getElementById('boxPagto').classList.toggle('hidden',!p);document.getElementById('boxDevedor').classList.toggle('hidden',p);document.getElementById('vEquipe').required=!p;}
-
+/* ======================================================
+   SALVAR VENDA (100% CORRIGIDO)
+====================================================== */
 async function salvarVenda(e){
-  e.preventDefault(); const p=document.getElementById('vStatus').value==='Pago';
-  const devedor = p ? "-" : document.getElementById('vEquipe').value;
-  const pay={date:new Date().toISOString(),category:document.getElementById('vCat').value,produto:document.getElementById('vProd').value,amount:document.getElementById('vValor').value,quantity:1,paid:p,equipe_devedora:devedor,buyer_name:devedor,ejc_dia:document.getElementById('vCat').value==='EJC'?document.getElementById('vDia').value:"",forma_pagamento:p?document.getElementById('vForma').value:"",received_by:p?document.getElementById('vQuem').value:"",responsible:role==='admin'?"Admin":"Compras",valor_unitario:"",buyer_phone:""};
-  await postData('criarVendaCompras',pay);
-}
-async function salvarAdmin(cat){
-  let p={}; if(cat==='Feijoada') p={description:document.getElementById('fjProd').value,amount:document.getElementById('fjValor').value,type:document.getElementById('fjTipo').value,quantity:document.getElementById('fjQtd').value,buyer_name:document.getElementById('fjQuem').value,responsible:"Admin",category:cat,paid:true,date:new Date().toISOString(),equipe_devedora:"-"}; else p={description:document.getElementById('outDesc').value,amount:document.getElementById('outValor').value,type:document.getElementById('outTipo').value,category:cat,paid:true,responsible:"Admin",date:new Date().toISOString(),equipe_devedora:"-"};
-  if(!p.description||!p.amount) return alert("Preencha tudo");
-  await postData('criarTransacaoAdmin',p);
-}
+  e.preventDefault();
 
-// === NOVO MODAL RECEBER ===
-function abrirModalReceber(id) { currentIdReceber = id; document.getElementById('recQuem').value=""; document.getElementById('modalReceber').classList.remove('hidden'); }
-function fecharModalReceber() { document.getElementById('modalReceber').classList.add('hidden'); currentIdReceber = null; }
+  const pago = document.getElementById("vStatus").value==="Pago";
 
-async function confirmarRecebimento() {
-  // ===== 0. Validação =====
-  const f = document.getElementById("recForma").value;
-  const q = document.getElementById("recQuem").value.trim();
+  const payload={
+    date:new Date().toISOString(),
+    category:document.getElementById("vCat").value,
+    produto:document.getElementById("vProd").value,
+    amount:document.getElementById("vValor").value,
+    paid:pago,
 
-  if (!q) { alert("⚠️ Preencha quem recebeu o pagamento."); return; }
-  if (!currentIdReceber) { alert("Erro: Nenhuma pendência selecionada."); return; }
+    ejc_dia:
+      document.getElementById("vCat").value==="EJC"
+      ? document.getElementById("vDia").value
+      : "",
 
-  toggleLoader(true);
+    equipe_devedora:
+      pago ? "" : document.getElementById("vEquipe").value,
 
-  try {
-    // ===== 1. Atualiza corretamente no array local =====
-    const itemIndex = db.findIndex(i => String(i.id) === String(currentIdReceber));
-    if (itemIndex === -1) { alert("Erro: Pendência não encontrada."); toggleLoader(false); return; }
+    forma_pagamento:
+      pago ? document.getElementById("vForma").value : "",
 
-    db[itemIndex].paid = true;
-    db[itemIndex].forma_pagamento = f;
-    db[itemIndex].received_by = q;
+    received_by:
+      pago ? document.getElementById("vQuem").value : ""
+  };
 
-    // ===== 2. Remove instantâneo da tela =====
-    const card = document.getElementById("card-" + currentIdReceber);
-    const cardAdm = document.getElementById("card-adm-" + currentIdReceber);
-    if (card) card.remove();
-    if (cardAdm) cardAdm.remove();
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      action:"criarVendaCompras",
+      payload
+    })
+  });
 
-    // ===== 3. Atualiza painel completo =====
-    renderAll();
-
-    // ===== 4. Fecha modal =====
-    fecharModalReceber();
-
-    // ===== 5. Salva no Google Sheets =====
-    await fetch(API_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "marcarPago", payload: { id: currentIdReceber, forma_pagamento: f, received_by: q } })
-    });
-
-    // ===== 6. Confirmação =====
-    showToast("💰 Pagamento recebido com sucesso!");
-
-    // ===== 7. Reload real (garantia total) =====
-    setTimeout(() => { loadData(); }, 1200);
-
-  } catch (err) { console.error(err); alert("❌ Erro ao registrar pagamento."); }
-  toggleLoader(false);
+  toast("✅ Venda salva!");
+  closeModalVenda();
+  loadData();
 }
 
-// EXPORTAÇÃO "REAL" E FORMATADA
+/* ======================================================
+   RECEBER PAGAMENTO (SOME NA HORA)
+====================================================== */
+async function receber(id){
+  const forma=prompt("Forma de pagamento?");
+  const quem=prompt("Quem recebeu?");
+
+  if(!forma || !quem) return;
+
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      action:"marcarPago",
+      payload:{id, forma_pagamento:forma, received_by:quem}
+    })
+  });
+
+  toast("💰 Pagamento confirmado!");
+  loadData();
+}
+
+/* ======================================================
+   SALVAR FEIJOADA / OUTROS
+====================================================== */
+async function salvarFeijoada(){
+  await salvarAdmin("Feijoada",
+    document.getElementById("fjDesc").value,
+    document.getElementById("fjValor").value,
+    document.getElementById("fjTipo").value
+  );
+}
+async function salvarOutros(){
+  await salvarAdmin("Outros",
+    document.getElementById("outDesc").value,
+    document.getElementById("outValor").value,
+    document.getElementById("outTipo").value
+  );
+}
+
+async function salvarAdmin(cat, desc, valor, tipo){
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      action:"criarAdmin",
+      payload:{
+        date:new Date().toISOString(),
+        category:cat,
+        description:desc,
+        amount:valor,
+        type:tipo,
+        paid:true
+      }
+    })
+  });
+
+  toast("✅ Salvo!");
+  loadData();
+}
+
+/* ======================================================
+   RENDER
+====================================================== */
+function renderAll(){
+  let ent=0,sai=0,pend=0;
+  let cats={};
+
+  db.forEach(i=>{
+    const v=parseFloat(i.amount||0);
+
+    if(isPago(i.paid)){
+      if(i.type==="Saida"){ sai+=v; }
+      else{ ent+=v; cats[i.category]=(cats[i.category]||0)+v; }
+    }
+    else pend+=v;
+  });
+
+  document.getElementById("dashEntradas").innerText="R$ "+ent.toFixed(2);
+  document.getElementById("dashSaidas").innerText="R$ "+sai.toFixed(2);
+  document.getElementById("dashSaldo").innerText="R$ "+(ent-sai).toFixed(2);
+  document.getElementById("dashPend").innerText="R$ "+pend.toFixed(2);
+
+  // Pendências Admin
+  document.getElementById("adminPendenciasList").innerHTML =
+    db.filter(x=>isPend(x.paid)).map(p=>`
+      <div class="flex justify-between border-b py-2">
+        <span>${p.equipe_devedora||p.description}</span>
+        <button onclick="receber('${p.id}')"
+          class="bg-green-200 px-3 rounded-lg font-bold">
+          RECEBER
+        </button>
+      </div>
+    `).join("");
+
+  // Fechamento dias EJC
+  const dias=["Sexta","Sabado","Domingo"];
+  document.getElementById("ejcResumoDias").innerHTML =
+    dias.map(d=>{
+      const total=db.filter(x=>x.category==="EJC" && x.ejc_dia===d && isPago(x.paid))
+        .reduce((s,a)=>s+parseFloat(a.amount),0);
+      return `<div class="card text-center">
+        <p class="text-xs font-bold">${d}</p>
+        <h2 class="font-extrabold text-purple-700">R$ ${total.toFixed(2)}</h2>
+      </div>`;
+    }).join("");
+
+  // Mercadinho resumo
+  const maes=db.filter(x=>x.category==="Mercadinho" && x.description?.toLowerCase().includes("mãe"))
+    .reduce((s,a)=>s+parseFloat(a.amount),0);
+
+  const nam=db.filter(x=>x.category==="Mercadinho" && x.description?.toLowerCase().includes("namor"))
+    .reduce((s,a)=>s+parseFloat(a.amount),0);
+
+  document.getElementById("mercResumo").innerHTML=
+    `<p>🌸 Dia das Mães: <b>R$ ${maes.toFixed(2)}</b></p>
+     <p>💘 Namorados: <b>R$ ${nam.toFixed(2)}</b></p>`;
+
+  // Histórico
+  document.getElementById("histFeijoada").innerHTML =
+    db.filter(x=>x.category==="Feijoada").map(x=>`<p>${x.description} - R$ ${x.amount}</p>`).join("");
+
+  document.getElementById("histMercadinho").innerHTML =
+    db.filter(x=>x.category==="Mercadinho").map(x=>`<p>${x.description} - R$ ${x.amount}</p>`).join("");
+
+  document.getElementById("histOutros").innerHTML =
+    db.filter(x=>x.category==="Outros").map(x=>`<p>${x.description} - R$ ${x.amount}</p>`).join("");
+}
+
+/* ======================================================
+   EXPORT
+====================================================== */
 function exportarExcel(){
-  const dadosFormatados = db.map(i => ({
-    "Data": new Date(i.date).toLocaleDateString(),
-    "Tipo": i.type,
-    "Categoria": i.category,
-    "Descrição": i.description,
-    "Valor (R$)": parseFloat(i.amount),
-    "Status": i.paid ? "PAGO" : "PENDENTE",
-    "Quem Pagou/Deve": i.paid ? i.buyer_name : i.equipe_devedora,
-    "Forma Pagto": i.paid ? "Realizado" : "-",
-    "Dia EJC": i.ejc_dia || "-"
-  }));
-  const ws = XLSX.utils.json_to_sheet(dadosFormatados);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Prestacao_Contas");
-  XLSX.writeFile(wb, "EJC_Prestacao_Contas.xlsx");
+  const ws=XLSX.utils.json_to_sheet(db);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"EJC");
+  XLSX.writeFile(wb,"EJC_FINANCEIRO.xlsx");
 }
 
-function exportarPDF(){const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.text("Prestação EJC 2026",10,10);let y=20;db.forEach(i=>{doc.text(`${i.description} | R$${i.amount} | ${i.paid?'OK':'DEVENDO'}`,10,y);y+=10;if(y>280){doc.addPage();y=20;}});doc.save("EJC.pdf");}
+function exportarPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  doc.text("Prestação de Contas — 21º EJC",10,10);
+  let y=20;
+  db.forEach(i=>{
+    doc.text(`${i.category} | ${i.description} | R$ ${i.amount}`,10,y);
+    y+=7;
+  });
+  doc.save("EJC_RELATORIO.pdf");
+}
 </script>
+
 </body>
 </html>
