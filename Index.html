@@ -1,439 +1,245 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EJC BANK 21º • V12.5 FINAL</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&family=Montserrat:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
-    
-    <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #f3f4f6; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .tab-active { border-bottom: 4px solid #10b981; color: #10b981; font-weight: 800; background-color: #ecfdf5; }
-        .day-active { background-color: #10b981; color: white; border-color: #10b981; }
-        .hidden { display: none !important; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
-        input, select { font-size: 16px !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>EJC BANK 21º • V14.3 FINAL</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    body { font-family: 'Montserrat', sans-serif; background-color: #f3f4f6; }
+    .tab-active { border-bottom: 4px solid #10b981; color: #10b981; font-weight: 800; background-color: #f0fdf4; }
+    .hidden { display: none !important; }
+    .card-stat { transition: transform 0.2s; border-bottom: 4px solid rgba(0,0,0,0.1); }
+    .card-stat:hover { transform: scale(1.02); }
+  </style>
 </head>
+
 <body class="text-slate-800 min-h-screen flex flex-col">
 
-    <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-slate-900">
-        <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-purple-900/30 blur-[100px]"></div>
-            <div class="absolute top-[40%] -right-[10%] w-[60%] h-[60%] rounded-full bg-emerald-900/20 blur-[100px]"></div>
-        </div>
-        <div class="relative w-full max-w-sm bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20 ring-1 ring-black/5 animate-fade-in-up">
-            <div class="bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 p-6 text-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                <div class="relative z-10">
-                    <div class="w-16 h-16 mx-auto bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20 mb-3 shadow-lg">
-                        <i class="fas fa-landmark text-3xl text-emerald-400"></i>
-                    </div>
-                    <h1 class="text-2xl font-black text-white uppercase font-mono tracking-tighter">EJC <span class="text-emerald-400">BANK</span></h1>
-                    <p class="text-[10px] text-purple-200 uppercase tracking-[0.3em] font-bold mt-1">21º Encontro</p>
-                </div>
-            </div>
-            <div class="p-8">
-                <div class="text-center mb-8">
-                    <p class="text-sm font-black text-slate-700 italic leading-snug">“A morte não venceu.<br>O teu amor me salvou!”</p>
-                    <p class="text-[9px] text-slate-400 font-bold mt-3">Jo 11,25–26 • Paróquia Santo Eugênio de Mazenod</p>
-                    <p class="text-[9px] text-slate-300 font-bold mt-1 uppercase tracking-wide">Diocese de Campo Limpo • São Paulo</p>
-                </div>
-                <div class="mb-6 group">
-                    <div class="flex items-center border-2 border-slate-200 rounded-xl px-4 py-3 focus-within:border-purple-600 focus-within:ring-4 focus-within:ring-purple-500/10 transition-all bg-slate-50 focus-within:bg-white">
-                        <i class="fas fa-lock text-slate-400 group-focus-within:text-purple-600 transition-colors"></i>
-                        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full bg-transparent outline-none ml-3 font-bold text-slate-700" autocomplete="off">
-                    </div>
-                </div>
-                <div class="space-y-3">
-                    <button onclick="tentarLogin('admin')" class="w-full py-3.5 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-purple-700 to-indigo-700 shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"><span>ACESSAR COMO PILOTOS</span></button>
-                    <button onclick="tentarLogin('compras')" class="w-full py-3.5 rounded-xl font-bold text-sm text-emerald-900 bg-gradient-to-r from-emerald-300 to-emerald-400 shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"><span>ACESSAR COMPRAS</span></button>
-                </div>
-                <p id="msgErroLogin" class="hidden mt-4 text-xs font-bold text-center text-red-500 bg-red-50 py-2 rounded-lg border border-red-100 animate-pulse">⛔ Senha incorreta!</p>
-                <p class="mt-8 text-center text-[9px] text-slate-300 uppercase font-bold tracking-widest">V12.5 • Official Release</p>
-            </div>
-        </div>
+<div id="loginScreen" class="fixed inset-0 flex items-center justify-center bg-slate-900 z-[999]">
+  <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm text-center border-b-8 border-purple-800">
+    <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="fas fa-landmark text-3xl text-purple-700"></i>
     </div>
-
-    <header class="bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 text-white p-4 sticky top-0 z-50 shadow-xl border-b-4 border-emerald-500 hidden" id="appHeader">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm border border-white/20"><i class="fas fa-landmark text-2xl text-emerald-400"></i></div>
-                    <div><h1 class="text-xl font-black tracking-tighter uppercase font-mono leading-none">EJC <span class="text-emerald-400">BANK</span></h1><span id="userBadge" class="text-[9px] font-bold bg-white/10 px-2 py-0.5 rounded text-purple-200 uppercase tracking-widest inline-block"></span></div>
-                </div>
-                <button onclick="sair()" class="md:hidden bg-red-500/20 text-red-300 p-2 rounded-lg"><i class="fas fa-power-off"></i></button>
-            </div>
-            <div class="flex gap-2 w-full md:w-auto justify-end">
-                <button onclick="exportarExcel()" class="bg-slate-700 text-white p-2 px-3 rounded-lg text-xs font-bold transition admin-only"><i class="fas fa-file-excel mr-1"></i>Excel</button>
-                <button onclick="exportarPDF()" class="bg-slate-700 text-white p-2 px-3 rounded-lg text-xs font-bold transition admin-only"><i class="fas fa-file-pdf mr-1"></i>PDF</button>
-                <button onclick="mudarAba('arquivo')" id="tab-arquivo" class="bg-slate-800 text-slate-400 px-4 py-2 rounded-lg font-bold text-xs admin-only border border-slate-600">Arquivo</button>
-                <button onclick="abrirModal()" class="bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2 transition active:scale-95"><i class="fas fa-plus-circle"></i><span>NOVO</span></button>
-                <button onclick="sair()" class="hidden md:block bg-red-600 text-white px-3 py-2 rounded-lg font-bold text-xs transition"><i class="fas fa-sign-out-alt"></i></button>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto p-3 md:p-6 hidden w-full fade-in pb-20" id="appMain">
-        <div id="painelMetricas" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 admin-only">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-emerald-500"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Recebido</p><h2 id="totEntradas" class="text-2xl font-black text-slate-800 mt-1 font-mono">R$ 0,00</h2></div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-rose-500"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Saídas / Pendente</p><h2 id="totSaidas" class="text-2xl font-black text-rose-600 mt-1 font-mono">R$ 0,00</h2></div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-indigo-600"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Saldo Líquido</p><h2 id="totSaldo" class="text-2xl font-black text-indigo-800 mt-1 font-mono">R$ 0,00</h2></div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm p-1.5 mb-4 flex gap-2 overflow-x-auto border border-slate-200 sticky top-20 z-40" id="barraAbas">
-            <button id="tab-admin" onclick="mudarAba('admin')" class="flex-1 py-3 px-4 rounded-lg font-bold text-xs md:text-sm text-slate-500 hover:bg-slate-50 transition tab-active admin-only-tab">ADMIN & CAIXA</button>
-            <button id="tab-compras" onclick="mudarAba('compras')" class="flex-1 py-3 px-4 rounded-lg font-bold text-xs md:text-sm text-slate-500 hover:bg-slate-50 transition">MERCADINHO & COMPRAS</button>
-        </div>
-
-        <div class="flex flex-col md:flex-row justify-between items-center gap-3 mb-6 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <div id="painelDias" class="hidden flex bg-white p-1 rounded-lg shadow-sm border border-slate-200 w-full md:w-auto">
-                <button onclick="filtrarDia('Todos')" id="day-Todos" class="flex-1 px-4 py-2 rounded-md text-xs font-bold day-active">Todos</button>
-                <button onclick="filtrarDia('Sexta')" id="day-Sexta" class="flex-1 px-4 py-2 rounded-md text-xs font-bold text-slate-500">Sexta</button>
-                <button onclick="filtrarDia('Sabado')" id="day-Sabado" class="flex-1 px-4 py-2 rounded-md text-xs font-bold text-slate-500">Sábado</button>
-                <button onclick="filtrarDia('Domingo')" id="day-Domingo" class="flex-1 px-4 py-2 rounded-md text-xs font-bold text-rose-500 border border-transparent">Dom</button>
-            </div>
-            <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-                <select id="filtroCampanha" onchange="renderizarTabela()" class="w-full md:w-40 px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white">
-                    <option value="">Todas</option>
-                    <option value="EJC">EJC (Encontro)</option>
-                    <option value="Feijoada">🍛 Feijoada</option>
-                    <option value="DiaDasMaes">🌸 Dia das Mães</option>
-                    <option value="DiaDosNamorados">❤️ Namorados</option>
-                </select>
-                <select id="filtroEquipe" onchange="renderizarTabela()" class="w-full md:w-48 px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white"><option value="">Equipes</option><option>Animação</option><option>Café</option><option>Cozinha</option><option>Piloto</option><option>Sala</option><option>Secretaria</option></select>
-                <input type="text" id="campoBusca" onkeyup="renderizarTabela()" placeholder="Buscar..." class="w-full md:w-56 px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold outline-none focus:border-purple-500">
-            </div>
-        </div>
-
-        <div id="areaCobranca" class="hidden mb-8 space-y-4 animate-fade-in-up">
-            <div class="bg-rose-100 border-l-4 border-rose-500 p-4 rounded-r-xl"><h3 class="font-black text-rose-800 uppercase text-sm">MODO COBRANÇA ATIVO</h3></div>
-            <div id="top5Resumo" class="bg-white border border-rose-100 p-4 rounded-xl shadow-sm hidden"></div>
-            <div id="listaDevedores" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200 relative">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left"><thead class="bg-slate-50 border-b border-slate-200 text-[10px] font-black uppercase text-slate-500"><tr><th class="p-4">Data</th><th class="p-4">Descrição</th><th class="p-4 text-right">Valor</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Ações</th></tr></thead><tbody id="corpoTabela" class="divide-y divide-slate-100 text-xs text-slate-700"></tbody></table>
-            </div>
-            <div id="loading" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-10 hidden backdrop-blur-sm"><div class="animate-spin rounded-full h-10 w-10 border-b-4 border-emerald-500 mb-3"></div><p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Sincronizando...</p></div>
-            <div id="emptyState" class="hidden absolute inset-0 flex flex-col items-center justify-center text-slate-300 py-10"><i class="fas fa-folder-open text-4xl mb-2"></i><p class="font-bold text-xs uppercase">Nenhum registro encontrado</p></div>
-        </div>
-    </main>
-
-    <div id="modal" class="fixed inset-0 bg-slate-900/90 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-fade-in-up">
-            <div class="bg-gradient-to-r from-purple-900 to-indigo-900 p-5 text-white flex justify-between items-center"><h2 class="font-black uppercase text-sm">Novo Lançamento</h2><button onclick="fecharModal()" class="text-white hover:text-white text-2xl transition">&times;</button></div>
-            <form id="formFin" class="p-6 space-y-4 max-h-[85vh] overflow-y-auto">
-                
-                <div id="seletorTipoAdmin" class="hidden mb-4 p-3 bg-indigo-50 rounded-xl">
-                    <label class="text-[10px] font-bold text-indigo-500 uppercase block mb-2">Categoria Admin</label>
-                    <div class="flex gap-2">
-                        <label class="flex-1 cursor-pointer"><input type="radio" name="catAdmin" value="GERAL" checked onchange="toggleFormAdmin()" class="hidden peer"><div class="text-center py-2 rounded-lg border font-bold text-xs peer-checked:bg-indigo-600 peer-checked:text-white transition">GERAL</div></label>
-                        <label class="flex-1 cursor-pointer"><input type="radio" name="catAdmin" value="Feijoada" onchange="toggleFormAdmin()" class="hidden peer"><div class="text-center py-2 rounded-lg border font-bold text-xs peer-checked:bg-orange-500 peer-checked:text-white transition">FEIJOADA</div></label>
-                    </div>
-                </div>
-                
-                <input id="f_desc" required placeholder="Descrição / Produto" class="w-full border-2 border-slate-200 p-3 rounded-xl font-bold text-slate-700 outline-none focus:border-purple-500 transition">
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <input id="f_val" type="number" step="0.01" required placeholder="Valor (R$)" class="w-full border-2 border-slate-200 p-3 rounded-xl font-black text-slate-800 focus:border-purple-500 outline-none">
-                    <select id="f_type" class="w-full border-2 border-slate-200 p-3 rounded-xl bg-white font-bold text-slate-600 focus:border-purple-500 outline-none"><option value="ENTRADA">🟢 Entrada</option><option value="PENDENTE">🟠 Pendente</option><option value="SAIDA">🔴 Saída</option></select>
-                </div>
-
-                <div id="camposMercado" class="hidden bg-purple-50 p-4 rounded-xl space-y-3">
-                    <p class="text-[10px] font-black text-purple-400 uppercase tracking-widest">Detalhes da Venda</p>
-                    <select id="f_cat" disabled class="w-full border border-purple-200 p-2 rounded-lg bg-gray-100 text-xs font-bold text-gray-500">
-                        <option value="EJC">EJC (Encontro)</option>
-                        <option value="DiaDasMaes">Dia das Mães</option>
-                        <option value="DiaDosNamorados">Namorados</option>
-                    </select>
-                    <div id="divParoquia" class="hidden mt-2 bg-white p-2 rounded border border-purple-200 space-y-2">
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="f_paroquia" class="w-5 h-5 text-purple-600 rounded"><span class="text-xs font-bold text-purple-700 uppercase">⛪ É da Paróquia?</span></label>
-                        <div id="divComunidadeInput" class="hidden"><input id="f_comunidade_input" placeholder="Qual Comunidade?" class="w-full border p-2 rounded-lg text-xs font-bold uppercase text-purple-800"></div>
-                    </div>
-                    <div id="divDiaEJC"><select id="f_dia" onchange="validarFiadoDomingo()" class="w-full border p-2 rounded-lg text-xs font-bold bg-white text-purple-800"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo (Sem fiado)</option></select></div>
-                    <select id="f_equipe_lista" class="w-full border p-2 rounded-lg text-xs font-bold bg-white text-purple-800"><option value="">Equipe da Pessoa...</option><option>Animação</option><option>Café</option><option>Cozinha</option><option>Secretaria</option><option>Sala</option></select>
-                </div>
-
-                <div id="camposFeijoada" class="hidden bg-orange-50 p-4 rounded-xl border border-orange-100 space-y-3">
-                    <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest">Detalhes Feijoada</p>
-                    <div class="grid grid-cols-2 gap-3">
-                        <input id="f_qtd" type="number" value="1" placeholder="Qtd" class="w-full border p-2 rounded-lg font-bold text-orange-800 outline-none">
-                        <input id="f_comun" placeholder="Comunidade" class="w-full border p-2 rounded-lg font-bold text-orange-800 outline-none uppercase">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <input id="f_nome" placeholder="Nome" class="w-full border-2 border-slate-200 p-3 rounded-xl font-bold text-sm outline-none focus:border-purple-500">
-                    <input id="f_tel" placeholder="Telefone" class="w-full border-2 border-slate-200 p-3 rounded-xl font-bold text-sm outline-none focus:border-purple-500">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <select id="f_forma" class="w-full border-2 border-slate-200 p-3 rounded-xl font-bold bg-white outline-none focus:border-purple-500"><option value="PIX">⚡ Pix</option><option value="DINHEIRO">💵 Dinheiro</option><option value="CARTAO">💳 Cartão</option></select>
-                    <input id="f_recebido" placeholder="Recebido por" class="w-full border-2 border-slate-200 p-3 rounded-xl font-bold outline-none focus:border-purple-500 transition">
-                </div>
-
-                <div id="divEquipe"><input id="f_equipe" placeholder="Equipe (Admin)" class="w-full border-2 border-slate-200 p-3 rounded-xl outline-none focus:border-purple-500 text-sm font-bold"></div>
-
-                <button type="submit" class="w-full bg-emerald-500 text-white font-black p-4 rounded-xl hover:bg-emerald-600 shadow-lg transition active:scale-95">💾 SALVAR REGISTRO</button>
-            </form>
-        </div>
+    <h1 class="text-2xl font-black uppercase mb-1">EJC <span class="text-emerald-500">BANK</span></h1>
+    <p class="text-[10px] text-slate-400 font-bold mb-6 uppercase tracking-widest text-center">Sistema Financeiro • 21º EJC</p>
+    <input id="inputSenha" type="password" placeholder="Senha de Acesso" class="w-full border-2 p-3 rounded-xl font-bold text-center outline-none focus:border-purple-500">
+    <div class="mt-6 space-y-3">
+      <button onclick="tentarLogin('admin')" class="w-full bg-purple-700 text-white py-3 rounded-xl font-black shadow-lg">👑 PILOTOS</button>
+      <button onclick="tentarLogin('compras')" class="w-full bg-emerald-500 text-white py-3 rounded-xl font-black shadow-lg">🛒 COMPRAS</button>
     </div>
+    <p id="msgErroLogin" class="hidden mt-4 text-red-500 font-bold text-xs">⛔ Senha incorreta!</p>
+  </div>
+</div>
 
-    <script>
-        const API = "https://script.google.com/macros/s/AKfycbziecBve__1I_ccKJ2RjkZST0LXyQv0QqA5Jc8KOLoPe20Cbz2tEE0j0-2g0ewmZ4Avmg/exec"; 
-        const SENHA_ADMIN = "@admpilotos2026#"; const SENHA_COMPRAS = "$compras2026";
-        let ROLE='', TOKEN='', abaAtiva='admin', dadosCache=[], filtroDiaAtual='Todos', modoCompras = 'EJC', subMercadinho = 'DiaDasMaes';
+<header id="appHeader" class="hidden bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 text-white p-4 sticky top-0 z-50 shadow-xl border-b-2 border-emerald-500">
+  <div class="flex justify-between items-center max-w-6xl mx-auto">
+    <h1 class="font-black uppercase text-lg italic tracking-tighter">EJC <span class="text-emerald-400">BANK</span></h1>
+    <div class="flex gap-2">
+      <button onclick="exportarExcel()" class="bg-slate-700 hover:bg-slate-600 px-3 py-2 rounded-lg text-xs admin-only" title="Exportar Excel"><i class="fas fa-file-excel text-green-400"></i></button>
+      <button onclick="abrirModal()" class="bg-emerald-500 hover:bg-emerald-400 px-4 py-2 rounded-lg font-black text-xs transition active:scale-95">➕ NOVO</button>
+      <button onclick="sair()" class="bg-red-600/20 text-red-400 border border-red-400/30 px-3 py-2 rounded-lg font-black"><i class="fas fa-power-off"></i></button>
+    </div>
+  </div>
+</header>
 
-        function tentarLogin(role) {
-            const input = document.getElementById("inputSenha");
-            if((role==='admin' && input.value===SENHA_ADMIN) || (role==='compras' && input.value===SENHA_COMPRAS)) {
-                ROLE = role; TOKEN = role==='admin' ? "TOKEN_PILOTOS_2026" : "TOKEN_COMPRAS_2026";
-                entrar();
-            } else { document.getElementById("msgErroLogin").classList.remove("hidden"); input.value=""; input.focus(); }
-        }
+<main id="appMain" class="hidden max-w-6xl mx-auto p-4 w-full">
+  <div id="dashAdmin" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 admin-only">
+    <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-emerald-500 card-stat">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Recebido</p>
+      <h2 id="totalRecebido" class="text-2xl font-black text-slate-700">R$ 0,00</h2>
+    </div>
+    <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-orange-500 card-stat">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pendente (Fiado)</p>
+      <h2 id="totalPendente" class="text-2xl font-black text-orange-600">R$ 0,00</h2>
+    </div>
+    <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-purple-600 card-stat">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Saldo Líquido</p>
+      <h2 id="totalLiquido" class="text-2xl font-black text-purple-800">R$ 0,00</h2>
+    </div>
+  </div>
 
-        function entrar() {
-            document.getElementById("loginScreen").classList.add("hidden"); document.getElementById("appHeader").classList.remove("hidden");
-            document.getElementById("appMain").classList.remove("hidden"); document.getElementById("userBadge").innerText = ROLE==='admin' ? "👑 PILOTOS" : "🛒 COMPRAS";
-            aplicarPermissoes(); carregar();
-        }
+  <div class="flex bg-white p-1 rounded-2xl shadow-md mb-6 overflow-hidden border border-slate-200">
+    <button id="tab-admin" onclick="mudarAba('admin')" class="flex-1 py-3 text-xs font-black tab-active admin-only uppercase">Caixa</button>
+    <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="flex-1 py-3 text-xs font-black admin-only uppercase tracking-tighter">🍛 Feijoada</button>
+    <button id="tab-compras" onclick="mudarAba('compras')" class="flex-1 py-3 text-xs font-black uppercase">🛒 Compras</button>
+    <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="flex-1 py-3 text-xs font-black admin-only uppercase tracking-tighter">📦 Arquivo</button>
+  </div>
 
-        function aplicarPermissoes() {
-            if(ROLE==='compras') {
-                document.querySelectorAll('.admin-only, .admin-only-card, .admin-only-tab').forEach(el => el.classList.add('hidden'));
-                document.querySelectorAll('.btn-export').forEach(b => b.classList.add('hidden'));
-                document.getElementById('painelMetricas').classList.add('hidden'); mudarAba('compras');
-            } else { mudarAba('admin'); }
-        }
+  <div id="painelFiltros" class="flex flex-col md:flex-row gap-3 mb-6 bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
+    <select id="filtroDia" onchange="renderizarTabela()" class="p-2 rounded-lg text-xs font-bold border bg-slate-50 outline-none">
+      <option value="Todos">Todos os Dias</option>
+      <option value="Sexta">Sexta</option>
+      <option value="Sabado">Sábado</option>
+      <option value="Domingo">Domingo</option>
+    </select>
+    <input type="text" id="campoBusca" onkeyup="renderizarTabela()" placeholder="🔍 Buscar nome ou descrição..." class="flex-1 p-2 rounded-lg text-xs font-bold border bg-slate-50 outline-none">
+  </div>
 
-        function sair() { location.reload(); }
+  <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+    <table class="w-full text-left">
+      <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-black border-b">
+        <tr><th class="p-4">Info</th><th class="p-4">Descrição</th><th class="p-4 text-right">Valor</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Ação</th></tr>
+      </thead>
+      <tbody id="corpoTabela" class="divide-y divide-slate-100 text-xs font-medium text-slate-700"></tbody>
+    </table>
+  </div>
+  <div id="loading" class="hidden py-10 flex flex-col items-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mb-2"></div><span class="text-slate-400 font-bold uppercase text-[10px]">Sincronizando...</span></div>
+</main>
 
-        async function apiPost(a, p) {
-            document.getElementById("loading").classList.remove("hidden");
-            try { 
-                const res = await fetch(API, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action:a, token:TOKEN, payload:p }) });
-                const json = await res.json();
-                if(!json.success) alert("Erro: " + (json.error || "Desconhecido"));
-                await carregar(); 
-            } catch(e) { alert("Erro ao salvar."); }
-            finally { document.getElementById("loading").classList.add("hidden"); }
-        }
+<div id="modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
+  <div class="bg-white p-6 rounded-3xl w-full max-w-lg shadow-2xl">
+    <h2 id="modalTitle" class="font-black mb-4 uppercase text-purple-700">Novo Lançamento</h2>
+    <form id="formFin" class="space-y-3">
+      <input id="f_desc" placeholder="Descrição" class="w-full border p-3 rounded-xl font-bold focus:border-purple-500 outline-none" required>
+      <input id="f_val" type="number" step="0.01" placeholder="Valor R$" class="w-full border p-3 rounded-xl font-bold" required>
+      <select id="f_type" class="w-full border p-3 rounded-xl font-bold bg-white outline-none">
+        <option value="ENTRADA">🟢 Entrada</option><option value="PENDENTE">🟠 Pendente</option><option value="SAIDA">🔴 Saída</option>
+      </select>
+      <div id="camposMercado" class="hidden bg-purple-50 p-3 rounded-xl space-y-2 border border-purple-100">
+        <select id="f_dia" class="w-full border p-2 rounded-lg font-bold"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select>
+        <select id="f_equipe" class="w-full border p-2 rounded-lg font-bold">
+            <option value="">Equipe da Pessoa...</option>
+            <option>Animação</option><option>Apoio ao Patrimônio</option><option>Café</option><option>Casal Coordenador Geral</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som e Iluminação</option><option>Trânsito</option><option>Visitação</option>
+        </select>
+      </div>
+      <div id="camposFeijoada" class="hidden bg-orange-50 p-3 rounded-xl space-y-2 border border-orange-100">
+        <input id="f_qtd" type="number" value="1" class="w-full border p-2 rounded-lg font-bold">
+        <input id="f_comun" placeholder="Comunidade" class="w-full border p-2 rounded-lg font-bold uppercase">
+      </div>
+      <input id="f_nome" placeholder="Nome da Pessoa" class="w-full border p-3 rounded-xl font-bold">
+      <input id="f_recebido" placeholder="Recebido por (Seu Nome)" class="w-full border p-3 rounded-xl font-bold">
+      <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-2xl font-black shadow-lg transition active:scale-95">💾 SALVAR REGISTRO</button>
+      <button type="button" onclick="fecharModal()" class="w-full py-2 text-slate-400 font-bold">Cancelar</button>
+    </form>
+  </div>
+</div>
 
-        async function carregar() {
-            document.getElementById("loading").classList.remove("hidden");
-            let rota = abaAtiva==='compras' ? "listarCompras" : (abaAtiva==='arquivo' ? "listarArquivo" : "listarAdminFull");
-            try {
-                const res = await fetch(`${API}?action=${rota}&token=${TOKEN}`);
-                dadosCache = await res.json(); renderizarTabela(); calcularStatsPorDia(dadosCache);
-            } catch(e) { console.error("Erro Conexão."); } finally { document.getElementById("loading").classList.add("hidden"); }
-        }
+<script>
+const API = "https://script.google.com/macros/s/AKfycbziecBve__1I_ccKJ2RjkZST0LXyQv0QqA5Jc8KOLoPe20Cbz2tEE0j0-2g0ewmZ4Avmg/exec";
+const SENHA_ADMIN = "@admpilotos2026#"; const SENHA_COMPRAS = "$compras2026";
+let ROLE="", TOKEN="", abaAtiva="admin", dadosCache=[];
 
-        function calcularStatsPorDia(dados) {
-            if(abaAtiva!=='compras') { document.getElementById("painelStats").classList.add("hidden"); return; }
-            document.getElementById("painelStats").classList.remove("hidden");
-            let sex=0, sab=0, dom=0, pend=0;
-            const dadosEJC = dados.filter(i => i.category === 'EJC');
-            dadosEJC.forEach(i=>{
-                const v=parseFloat(i.amount||0);
-                if(i.ejc_dia==="Sexta" && i.paid) sex+=v; else if(i.ejc_dia==="Sabado" && i.paid) sab+=v; else if(i.ejc_dia==="Domingo" && i.paid) dom+=v;
-                if(!i.paid) pend+=v;
-            });
-            document.getElementById("statSexta").innerText=`R$ ${sex.toFixed(2)}`; document.getElementById("statSabado").innerText=`R$ ${sab.toFixed(2)}`;
-            document.getElementById("statDomingo").innerText=`R$ ${dom.toFixed(2)}`; document.getElementById("statPendente").innerText=`R$ ${pend.toFixed(2)}`;
-        }
+function tentarLogin(role){
+  const senha=document.getElementById("inputSenha").value;
+  if(role==="admin" && senha===SENHA_ADMIN){ ROLE="admin"; TOKEN="TOKEN_PILOTOS_2026"; }
+  else if(role==="compras" && senha===SENHA_COMPRAS){ ROLE="compras"; TOKEN="TOKEN_COMPRAS_2026"; }
+  else { document.getElementById("msgErroLogin").classList.remove("hidden"); return; }
+  document.getElementById("loginScreen").classList.add("hidden"); document.getElementById("appHeader").classList.remove("hidden");
+  document.getElementById("appMain").classList.remove("hidden"); carregar();
+}
 
-        function setModoCompras(modo) {
-            modoCompras = modo;
-            if (modo === "EJC") {
-                document.getElementById("btnModoEJC").className = "flex-1 py-3 rounded-xl font-black text-xs bg-blue-600 text-white shadow";
-                document.getElementById("btnModoMerc").className = "flex-1 py-3 rounded-xl font-black text-xs bg-slate-200 text-slate-600 shadow";
-                document.getElementById("selectSubMercadinho").classList.add("hidden"); document.getElementById("painelDias").classList.remove("hidden"); 
-            } else {
-                document.getElementById("btnModoMerc").className = "flex-1 py-3 rounded-xl font-black text-xs bg-emerald-600 text-white shadow";
-                document.getElementById("btnModoEJC").className = "flex-1 py-3 rounded-xl font-black text-xs bg-slate-200 text-slate-600 shadow";
-                document.getElementById("selectSubMercadinho").classList.remove("hidden"); subMercadinho = document.getElementById("selectSubMercadinho").value;
-            }
-            carregar();
-        }
+function sair(){ location.reload(); }
 
-        function renderizarTabela() {
-            const corpo=document.getElementById("corpoTabela"); const areaCobranca=document.getElementById("areaCobranca"); corpo.innerHTML=""; 
-            let dados=dadosCache;
-            
-            if (abaAtiva === "compras") {
-                if (modoCompras === "EJC") {
-                    dados = dados.filter(i => i.category === "EJC");
-                    if (filtroDiaAtual !== 'Todos') dados = dados.filter(i => i.ejc_dia === filtroDiaAtual);
-                } else { dados = dados.filter(i => i.category === subMercadinho); }
-            }
+async function carregar(){
+  document.getElementById("loading").classList.remove("hidden");
+  let rota = abaAtiva==="compras"?"listarCompras":abaAtiva==="feijoada"?"listarFeijoada":abaAtiva==="arquivo"?"listarArquivo":"listarAdminFull";
+  const res = await fetch(`${API}?action=${rota}&token=${TOKEN}`);
+  dadosCache = await res.json(); renderizarTabela(); if(ROLE==="admin") atualizarStats();
+  document.getElementById("loading").classList.add("hidden");
+}
 
-            const eq=document.getElementById("filtroEquipe").value; if(eq && eq!=="") dados=dados.filter(i=>i.equipe===eq);
-            
-            // ✅ FIX 2: Check seguro filtroCampanha
-            if(abaAtiva!=='compras') {
-                const campEl=document.getElementById("filtroCampanha"); 
-                if(campEl && campEl.value!=="") {
-                    // ✅ FIX 1: CASE INSENSITIVE CHECK
-                    dados = dados.filter(i => String(i.category).toLowerCase() === campEl.value.toLowerCase());
-                }
-            }
+function renderizarTabela(){
+  const corpo=document.getElementById("corpoTabela"); const busca=document.getElementById("campoBusca").value.toLowerCase();
+  const filtroDia=document.getElementById("filtroDia").value; corpo.innerHTML="";
 
-            const busca=document.getElementById("campoBusca").value.toLowerCase();
-            if(busca) dados=dados.filter(i=>(i.buyer_name && i.buyer_name.toLowerCase().includes(busca)) || (i.description && i.description.toLowerCase().includes(busca)));
+  // ✅ FIX: Evita mutação do array original usando [...spread]
+  [...dadosCache].reverse().forEach(i=>{
+    const pago = i.paid===true || i.paid==="TRUE";
+    const desc = i.description || i.product || "Registro";
+    if(busca && !desc.toLowerCase().includes(busca) && !(i.buyer_name||"").toLowerCase().includes(busca)) return;
+    if(filtroDia!=="Todos" && i.ejc_dia && i.ejc_dia !== filtroDia) return;
 
-            dados.length===0 ? document.getElementById("emptyState").classList.remove("hidden") : document.getElementById("emptyState").classList.add("hidden");
+    corpo.innerHTML+=`
+      <tr class="border-b hover:bg-slate-50 transition">
+        <td class="p-4 text-slate-400 font-bold whitespace-nowrap">${new Date(i.date).toLocaleDateString()}<br><span class="text-[9px] uppercase opacity-60">${i.ejc_dia||''}</span></td>
+        <td class="p-4"><div class="font-bold text-slate-700">${desc}</div><div class="text-[10px] text-slate-400">${i.buyer_name||i.name||''} ${i.comunidade?' • ⛪ '+i.comunidade:''} ${i.equipe?' • '+i.equipe:''}</div></td>
+        <td class="p-4 text-right font-black ${i.type==="SAIDA"?'text-red-500':'text-slate-600'}">R$ ${parseFloat(i.amount||0).toFixed(2)}</td>
+        <td class="p-4 text-center font-bold text-[9px]">${abaAtiva==="arquivo"?"📦 ARQUIVO":pago?"✅ PAGO":"🟠 PENDENTE"}</td>
+        <td class="p-4 text-center">${!pago && abaAtiva!=="feijoada" && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="bg-emerald-500 text-white w-8 h-8 rounded-full shadow transition transform active:scale-90 flex items-center justify-center mx-auto">✔</button>` : "-"}</td>
+      </tr>`;
+  });
+}
 
-            if(abaAtiva==='compras' && filtroDiaAtual==='Domingo' && modoCompras==='EJC') { 
-                const pendentes = dadosCache.filter(i => i.category === "EJC" && !i.paid);
-                if (pendentes.length > 0) { areaCobranca.classList.remove("hidden"); renderizarCobranca(pendentes); }
-                else areaCobranca.classList.add("hidden");
-            } else { areaCobranca.classList.add("hidden"); }
+function atualizarStats(){
+  let rec=0, pend=0, sai=0;
+  dadosCache.forEach(i=>{
+    const v = parseFloat(i.amount||0);
+    const pago = i.paid===true || i.paid==="TRUE";
+    if(i.type==="SAIDA") sai += v;
+    else if(pago) rec += v;
+    else pend += v;
+  });
+  document.getElementById("totalRecebido").innerText = `R$ ${rec.toFixed(2)}`;
+  document.getElementById("totalPendente").innerText = `R$ ${pend.toFixed(2)}`;
+  document.getElementById("totalLiquido").innerText = `R$ ${(rec - sai).toFixed(2)}`;
+}
 
-            dados.reverse().forEach(i=>{
-                const v=parseFloat(i.amount||0); const isPago=i.paid===true; const isSaida = (i.type && i.type === "SAIDA");
-                
-                // ✅ FIX 1: CASE INSENSITIVE BADGE
-                let catLower = String(i.category).toLowerCase();
-                let badge = (catLower==="diadasmaes") ? "MÃES" : (catLower==="diadosnamorados" ? "NAMORADOS" : (catLower==="feijoada" ? "FEIJOADA" : "EJC"));
-                let colorBadge = (catLower==="feijoada") ? "bg-orange-100 text-orange-600" : "bg-blue-100 text-blue-600";
+async function apiPost(action,payload){
+  document.getElementById("loading").classList.remove("hidden");
+  await fetch(API,{ method:"POST", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body:JSON.stringify({ action, token:TOKEN, payload }) });
+  setTimeout(carregar, 800);
+}
 
-                corpo.innerHTML+=`<tr class="hover:bg-slate-50 border-b border-slate-50 transition">
-                    <td class="p-4 text-[10px] font-bold text-slate-400">${new Date(i.date).toLocaleDateString()}</td>
-                    <td class="p-4"><div class="font-bold">${i.product||i.description}</div><div class="text-[9px] uppercase"><span class="${colorBadge} px-1 rounded">${badge}</span> ${i.equipe||''} • ${i.buyer_name||i.name||'Servo'}</div></td>
-                    <td class="p-4 text-right font-mono font-bold ${isSaida?'text-red-500':'text-emerald-600'}">R$ ${v.toFixed(2)}</td>
-                    <td class="p-4 text-center"><span class="px-2 py-1 rounded text-[9px] font-black ${isPago?'bg-emerald-100 text-emerald-700':'bg-orange-100 text-orange-700'}">${isPago?'PAGO':'PENDENTE'}</span></td>
-                    <td class="p-4 flex justify-center gap-2">${!isPago ? `<button onclick="baixar('${i.id}')" class="bg-emerald-500 text-white w-7 h-7 rounded-full">✔</button>`:''}</td></tr>`;
-            });
-        }
+async function baixar(id){
+  if(!confirm("Confirmar recebimento?")) return;
+  dadosCache = dadosCache.map(i => i.id === id ? { ...i, paid: true } : i);
+  renderizarTabela(); await apiPost("marcarPago",{id});
+}
 
-        function renderizarCobranca(dados) {
-            const lista=document.getElementById("listaDevedores"); const dev={};
-            dados.forEach(i=>{
-                let n = (i.buyer_name || i.name || "Identificar").toUpperCase();
-                if (!dev[n]) dev[n] = { tot: 0, its: [], ids: [], eq: i.equipe || "-" };
-                dev[n].tot += parseFloat(i.amount); dev[n].its.push(i.product || i.description); dev[n].ids.push(i.id);
-            });
-            lista.innerHTML = "";
-            Object.entries(dev).forEach(([n, d]) => {
-                const ids = JSON.stringify(d.ids).replace(/"/g, '&quot;');
-                lista.innerHTML += `<div class="bg-white p-4 rounded-xl shadow-sm border border-rose-100"><h4 class="font-black text-xs uppercase">${n}</h4><p class="text-[10px] text-slate-500">${d.its.join(", ")}</p><div class="flex justify-between items-center mt-3"><span class="font-black text-rose-600">R$ ${d.tot.toFixed(2)}</span><button onclick="pagarLote(${ids})" class="bg-emerald-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold">PAGAR</button></div></div>`;
-            });
-        }
+function mudarAba(a){
+  abaAtiva=a; document.querySelectorAll("button[id^='tab-']").forEach(b=>b.classList.remove("tab-active"));
+  document.getElementById("tab-"+a).classList.add("tab-active"); carregar();
+}
 
-        async function pagarLote(ids) { if(!confirm(`Confirmar pagamento?`)) return; dadosCache = dadosCache.map(i => ids.includes(i.id) ? { ...i, paid: true } : i); renderizarTabela(); await apiPost("pagarLote", {ids}); }
-        async function baixar(id) { if(!confirm("Confirmar recebimento?")) return; dadosCache = dadosCache.map(i => i.id === id ? { ...i, paid: true } : i); renderizarTabela(); await apiPost("marcarPago", {id}); }
+function abrirModal(){
+  document.getElementById("modal").classList.remove("hidden");
+  document.getElementById("camposMercado").classList.toggle("hidden",abaAtiva!=="compras");
+  document.getElementById("camposFeijoada").classList.toggle("hidden",abaAtiva!=="feijoada");
+}
+function fecharModal(){ document.getElementById("modal").classList.add("hidden"); }
 
-        function exportarExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dadosCache), "Relatorio"); XLSX.writeFile(wb, `EJC_BANK_${abaAtiva}.xlsx`); }
-        function exportarPDF() { const doc = new jspdf.jsPDF(); doc.text(`Relatório ${abaAtiva}`, 10, 10); doc.autoTable({ head:[['Data','Desc','Valor']], body:dadosCache.map(i=>[new Date(i.date).toLocaleDateString(), i.description||i.product, i.amount]) }); doc.save("EJC.pdf"); }
+document.getElementById("formFin").addEventListener("submit",async function(e){
+  e.preventDefault();
+  const desc=document.getElementById("f_desc").value; const val=parseFloat(document.getElementById("f_val").value);
+  const tipo=document.getElementById("f_type").value; const nome=document.getElementById("f_nome").value;
+  const recebido=document.getElementById("f_recebido").value;
 
-        function filtrarDia(d) { filtroDiaAtual=d; document.querySelectorAll('#painelDias button').forEach(b=>b.classList.remove('day-active')); document.getElementById('day-'+d).classList.add('day-active'); renderizarTabela(); }
-        
-        function mudarAba(a) { 
-            abaAtiva=a; document.querySelectorAll('button[id^="tab-"]').forEach(b=>b.classList.remove('tab-active')); document.getElementById('tab-'+a).classList.add('tab-active');
-            document.getElementById("painelDias").classList.toggle("hidden", a!=='compras'); 
-            // ✅ FIX: FILTRO CAMPANHA VISIVEL NO ADMIN
-            document.getElementById("filtroCampanha").classList.toggle("hidden", a==='compras'); 
-            document.getElementById("painelModoCompras").classList.toggle("hidden", a!=='compras');
-            if(a==='compras') setModoCompras(modoCompras); else carregar(); 
-        }
+  if(abaAtiva==="compras"){
+    if(!document.getElementById("f_equipe").value) return alert("⛔ Selecione a equipe!");
+    if(tipo==="SAIDA") return alert("⛔ Compras não lança saída.");
+    if(document.getElementById("f_dia").value==="Domingo" && tipo!=="ENTRADA") return alert("⛔ Domingo não permite pendências!");
+  }
+  if(abaAtiva==="feijoada" && !recebido) return alert("⛔ Feijoada exige: Recebido por");
 
-        function abrirModal() { 
-            document.getElementById("modal").classList.remove("hidden"); 
-            document.getElementById("camposMercado").classList.toggle("hidden",abaAtiva!=='compras'); 
-            if(abaAtiva === "compras") {
-                const cat = document.getElementById("f_cat"); const divPar = document.getElementById('divParoquia');
-                const divDia = document.getElementById('divDiaEJC');
-                if (modoCompras === "EJC") { cat.value = "EJC"; divPar.classList.add('hidden'); divDia.classList.remove('hidden'); } 
-                else { cat.value = subMercadinho; divPar.classList.remove('hidden'); divDia.classList.add('hidden'); }
-            }
-            if(abaAtiva === 'admin') { document.getElementById("seletorTipoAdmin").classList.remove("hidden"); toggleFormAdmin(); } 
-            else { document.getElementById("seletorTipoAdmin").classList.add("hidden"); }
-        }
+  if(abaAtiva==="admin") await apiPost("criarAdmin",{ date:new Date(), type:tipo, description:desc, amount:val, name:nome, paid:tipo==="ENTRADA", recebidoPor:recebido });
+  if(abaAtiva==="compras") await apiPost("criarVendaCompras",{ date:new Date(), category:"EJC", product:desc, amount:val, name:nome, paid:tipo==="ENTRADA", recebidoPor:recebido, day:document.getElementById("f_dia").value, equipe:document.getElementById("f_equipe").value });
+  if(abaAtiva==="feijoada") await apiPost("criarFeijoada",{ date:new Date(), product:desc, qtd:parseInt(document.getElementById("f_qtd").value||1), amount:val, name:nome, comunidade:document.getElementById("f_comun").value, paid:true, recebidoPor:recebido });
+  fecharModal(); this.reset();
+});
 
-        function validarFiadoDomingo() {
-            if(ROLE !== "compras") return;
-            const dia = document.getElementById("f_dia").value;
-            if(dia === "Domingo") document.getElementById("f_type").value = "ENTRADA";
-        }
+function exportarExcel() {
+  const dadosLimpos = dadosCache.map(i => ({
+    Data: new Date(i.date).toLocaleDateString(),
+    Descrição: i.description || i.product,
+    Valor: i.amount,
+    Status: (i.paid || i.paid==="TRUE") ? "Pago" : "Pendente",
+    Equipe: i.equipe || "",
+    Dia: i.ejc_dia || "",
+    RecebidoPor: i.recebidoPor || i.recebido_por || ""
+  }));
+  const wb = XLSX.utils.book_new(); const ws = XLSX.utils.json_to_sheet(dadosLimpos);
+  XLSX.utils.book_append_sheet(wb, ws, abaAtiva.toUpperCase());
+  XLSX.writeFile(wb, `EJC_BANK_${abaAtiva.toUpperCase()}_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
 
-        document.getElementById('f_paroquia').addEventListener('change', function() {
-            document.getElementById('divComunidadeInput').classList.toggle('hidden', !this.checked);
-        });
-
-        // ✅ SUBMIT ATUALIZADO V12.5 (PAYLOAD LIMPO + UNIFICADO)
-        document.getElementById("formFin").addEventListener("submit", async function(e) {
-            e.preventDefault();
-            const desc = document.getElementById("f_desc").value.trim();
-            const val = parseFloat(document.getElementById("f_val").value || 0);
-            const tipo = document.getElementById("f_type").value;
-            const nome = document.getElementById("f_nome").value.trim();
-            const tel = document.getElementById("f_tel").value.trim();
-            const forma = document.getElementById("f_forma").value;
-            const recebidoPor = document.getElementById("f_recebido").value.trim();
-
-            if (abaAtiva === "admin") {
-                const catAdmin = document.querySelector('input[name="catAdmin"]:checked')?.value;
-                
-                // ✅ FIX 3: PAYLOAD LIMPO (SÓ ENVIA QTD SE FOR FEIJOADA)
-                let payload = {
-                    date: new Date(),
-                    type: tipo,
-                    description: desc,
-                    amount: val,
-                    category: catAdmin, // "Feijoada" ou "GERAL"
-                    name: nome,
-                    phone: tel,
-                    paid: tipo === "ENTRADA",
-                    forma: forma,
-                    recebidoPor: recebidoPor,
-                    equipe: document.getElementById("f_equipe").value.trim()
-                };
-
-                if(catAdmin === "Feijoada") {
-                    payload.qtd = parseInt(document.getElementById("f_qtd").value || 1);
-                    payload.comunidade = document.getElementById("f_comun").value.trim();
-                }
-
-                await apiPost("criarAdmin", payload);
-            }
-
-            if (abaAtiva === "compras") {
-                let eqFinal = document.getElementById("f_equipe_lista").value;
-                if (modoCompras === "MERCADINHO" && document.getElementById('f_paroquia').checked) {
-                    const comu = document.getElementById('f_comunidade_input').value.trim();
-                    if(!comu) { alert("Digite o nome da Comunidade!"); return; }
-                    eqFinal = `${eqFinal} - ${comu} (⛪)`;
-                }
-                await apiPost("criarVendaCompras", {
-                    date: new Date(), category: (modoCompras === "EJC" ? "EJC" : subMercadinho),
-                    product: desc, amount: val, name: nome, phone: tel,
-                    paid: tipo === "ENTRADA", forma, recebidoPor,
-                    day: (modoCompras === "EJC" ? document.getElementById("f_dia").value : ""),
-                    equipe: eqFinal
-                });
-            }
-            fecharModal(); this.reset();
-            document.getElementById('divParoquia').classList.add('hidden'); document.getElementById('divComunidadeInput').classList.add('hidden');
-        });
-
-        function toggleFormAdmin() { 
-            const val = document.querySelector('input[name="catAdmin"]:checked').value; 
-            // ✅ FIX 1: CASE INSENSITIVE TOGGLE
-            document.getElementById("camposFeijoada").classList.toggle("hidden", String(val).toLowerCase() !== "feijoada"); 
-        }
-        function fecharModal() { document.getElementById("modal").classList.add("hidden"); }
-    </script>
+document.getElementById("modal").addEventListener("click", function(e){ if(e.target === this) fecharModal(); });
+</script>
 </body>
 </html>
