@@ -1,397 +1,237 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sistema Financeiro EJC</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-
-  <style>
-    body { font-family: 'Poppins', sans-serif; background:#f8fafc; }
-    .card { background:white; border-radius:20px; padding:20px; box-shadow:0 8px 25px rgba(126,34,206,0.08); border:1px solid #f3e8ff; transition: transform 0.2s; }
-    .card:hover { transform: translateY(-2px); }
-    .btn { font-weight:800; border-radius:16px; transition:.2s; }
-    .btn:active { transform:scale(.96); }
-    .tab-btn { padding:10px 18px; border-radius:14px; font-weight:700; color:#94a3b8; display:flex; gap:6px; align-items:center; transition: all 0.3s; white-space: nowrap; cursor: pointer; }
-    .tab-btn:hover { background-color: #f3e8ff; color: #7e22ce; }
-    .tab-btn.active { background:#7e22ce; color:white; box-shadow:0 4px 12px rgba(126,34,206,.35); }
-    .hidden { display:none !important; }
-    
-    .badge { padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-    .badge-pago { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-    .badge-pendente { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-
-    #toast { visibility:hidden; min-width:260px; background:#2e1065; color:white; text-align:center; border-radius:50px; padding:14px; position:fixed; z-index:999; left:50%; bottom:25px; transform:translateX(-50%); font-size:14px; box-shadow:0 10px 25px rgba(126,34,206,.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
-    #toast.show { visibility:visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-    .loader { border:4px solid #eee; border-top:4px solid #7e22ce; border-radius:50%; width:45px; height:45px; animation:spin 1s linear infinite; }
-    @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
-    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EJC BANK 6.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&family=Montserrat:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #f0f2f5; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .tab-active { border-bottom: 4px solid #10b981; color: #10b981; font-weight: 800; }
+        .day-active { background-color: #10b981; color: white; border-color: #10b981; }
+        .hidden { display: none; }
+    </style>
 </head>
+<body class="text-slate-800">
 
-<body class="min-h-screen flex flex-col text-slate-800">
-
-  <div id="toast"><i class="fas fa-check-circle text-green-400"></i> <span id="toastMsg">Salvo com sucesso!</span></div>
-
-  <div id="loginScreen" class="fixed inset-0 bg-slate-900/95 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center shadow-2xl border-4 border-purple-50">
-      <div class="w-20 h-20 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-church"></i></div>
-      
-      <h1 id="tituloLogin" class="text-xl font-extrabold text-purple-800"></h1>
-      <p id="temaLogin" class="italic text-slate-500 text-sm mt-2"></p>
-      <p id="versiculoLogin" class="text-xs text-slate-400 mb-6 font-bold uppercase"></p>
-
-      <input id="passInput" type="password" placeholder="Senha Secreta" class="w-full border-2 border-purple-100 p-3 rounded-xl text-center font-bold outline-none focus:border-purple-500 transition">
-      <button onclick="login('admin')" class="w-full mt-4 bg-purple-700 text-white py-3 btn shadow-lg hover:bg-purple-800">👑 Entrar como Admin</button>
-      <button onclick="login('compras')" class="w-full mt-3 bg-emerald-600 text-white py-3 btn shadow-lg hover:bg-emerald-700">🛒 Entrar como Compras</button>
-      <p id="loginError" class="hidden text-red-500 font-bold mt-4 bg-red-50 p-2 rounded animate-pulse">🚫 Senha incorreta</p>
-    </div>
-  </div>
-
-  <div id="app" class="hidden flex-1">
-    <header class="bg-white border-b sticky top-0 z-40 shadow-sm">
-      <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-          <div class="bg-gradient-to-br from-purple-600 to-pink-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-md"><i class="fas fa-chart-line"></i></div>
-          <div>
-            <h2 id="tituloPainel" class="font-extrabold text-slate-800 text-sm"></h2>
-            <span id="roleLabel" class="text-[10px] font-bold text-purple-600 uppercase tracking-wider bg-purple-50 px-2 py-0.5 rounded-md"></span>
-          </div>
+    <div id="loginScreen" class="fixed inset-0 bg-slate-900 z-[200] flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-2xl text-center">
+            <div class="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"><i class="fas fa-landmark text-4xl text-purple-700"></i></div>
+            <h1 class="text-3xl font-black text-slate-800 mb-2 uppercase font-mono">EJC BANK</h1>
+            <p class="text-slate-500 mb-8 text-sm">Sistema Seguro • 21º EJC</p>
+            <div class="space-y-4">
+                <button onclick="iniciarLogin('admin')" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-black py-4 rounded-xl shadow-lg flex items-center justify-center gap-3"><i class="fas fa-crown"></i> PILOTOS FINANÇAS</button>
+                <button onclick="iniciarLogin('compras')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl shadow-lg flex items-center justify-center gap-3"><i class="fas fa-shopping-cart"></i> EQUIPE DE COMPRAS</button>
+            </div>
         </div>
-        <button onclick="location.reload()" class="bg-slate-50 text-slate-400 hover:text-red-500 p-2.5 rounded-xl transition"><i class="fas fa-power-off"></i></button>
-      </div>
+    </div>
 
-      <div id="adminTabs" class="hidden max-w-6xl mx-auto flex gap-2 px-4 pb-3 overflow-x-auto no-scrollbar">
-        <button id="btn-geral" class="tab-btn active" onclick="showTab('geral')"><i class="fas fa-home"></i> Geral</button>
-        <button id="btn-auditoria" class="tab-btn" onclick="showTab('auditoria')"><i class="fas fa-check-double"></i> Recebidos</button>
-        <button id="btn-ejc" class="tab-btn" onclick="showTab('ejc')"><i class="fas fa-church"></i> EJC</button>
-        <button id="btn-feijoada" class="tab-btn" onclick="showTab('feijoada')"><i class="fas fa-utensils"></i> Feijoada</button>
-        <button id="btn-mercadinho" class="tab-btn" onclick="showTab('mercadinho')"><i class="fas fa-store"></i> Mercadinho</button>
-        <button id="btn-doacoes" class="tab-btn" onclick="showTab('doacoes')"><i class="fas fa-hand-holding-heart"></i> Doações</button>
-        <button id="btn-outros" class="tab-btn" onclick="showTab('outros')"><i class="fas fa-box-open"></i> Outros</button>
-      </div>
+    <header class="bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 text-white p-4 md:p-6 shadow-2xl sticky top-0 z-50 border-b-4 border-emerald-500 hidden" id="appHeader">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-white/5 p-3 rounded-2xl backdrop-blur-sm border border-white/10"><i class="fas fa-landmark text-3xl text-emerald-400"></i></div>
+                <div><h1 class="text-2xl md:text-3xl font-black tracking-tighter uppercase font-mono leading-none">EJC <span class="text-emerald-400">BANK</span></h1><span id="userBadge" class="text-[10px] font-bold bg-white/10 px-2 py-1 rounded text-purple-200 uppercase tracking-widest mt-1 inline-block"></span></div>
+            </div>
+            <div class="flex flex-wrap gap-2 justify-end">
+                <button onclick="exportarExcel()" class="bg-slate-700 hover:bg-green-700 text-white p-2 rounded-lg text-xs font-bold btn-export"><i class="fas fa-file-excel"></i></button>
+                <button onclick="exportarPDF()" class="bg-slate-700 hover:bg-red-700 text-white p-2 rounded-lg text-xs font-bold btn-export"><i class="fas fa-file-pdf"></i></button>
+                <button onclick="mudarAba('arquivo')" id="tab-arquivo" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl font-bold text-xs border border-slate-600 btn-arquivo"><i class="fas fa-box-archive"></i> Arquivo</button>
+                <button onclick="abrirModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-xl font-bold shadow-lg flex items-center gap-2 border border-emerald-400"><i class="fas fa-plus-circle text-lg"></i> <span>NOVO</span></button>
+                <button onclick="sair()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl font-bold text-xs"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
     </header>
 
-    <main class="max-w-6xl mx-auto p-4 space-y-6 pb-28">
-      
-      <section id="tab-geral" class="tab-content animate-fade-in">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="card text-center border-l-4 border-green-500"><p class="text-[10px] text-slate-400 font-bold uppercase">💚 Entradas</p><h2 id="dashEntradas" class="text-xl font-extrabold text-green-600">R$ 0</h2></div>
-          <div class="card text-center border-l-4 border-red-500"><p class="text-[10px] text-slate-400 font-bold uppercase">❤️ Saídas</p><h2 id="dashSaidas" class="text-xl font-extrabold text-red-500">R$ 0</h2></div>
-          <div class="card text-center border-l-4 border-purple-600"><p class="text-[10px] text-slate-400 font-bold uppercase">💜 Saldo</p><h2 id="dashSaldo" class="text-xl font-extrabold text-purple-700">R$ 0</h2></div>
-          <div class="card text-center border-l-4 border-yellow-500"><p class="text-[10px] text-slate-400 font-bold uppercase">⚠️ Pendências</p><h2 id="dashPend" class="text-xl font-extrabold text-yellow-600">R$ 0</h2></div>
+    <main class="max-w-7xl mx-auto p-4 md:p-8 hidden" id="appMain">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-emerald-500"><p class="text-xs font-bold text-slate-400 uppercase">Recebido</p><h2 id="totEntradas" class="text-3xl font-black text-slate-800 mt-2 font-mono">R$ 0,00</h2></div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-rose-500"><p class="text-xs font-bold text-slate-400 uppercase">Saídas/Pend.</p><h2 id="totSaidas" class="text-3xl font-black text-rose-600 mt-2 font-mono">R$ 0,00</h2></div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-indigo-600"><p class="text-xs font-bold text-slate-400 uppercase">Saldo</p><h2 id="totSaldo" class="text-3xl font-black text-indigo-800 mt-2 font-mono">R$ 0,00</h2></div>
         </div>
-        <div class="card mt-6"><h3 class="font-bold mb-3 flex items-center gap-2"><i class="fas fa-chart-pie text-purple-500"></i> Distribuição</h3><div class="h-64"><canvas id="chartGeral"></canvas></div></div>
-        <div class="grid md:grid-cols-2 gap-6 mt-6">
-          <div class="card border-l-4 border-orange-400"><h3 class="font-bold mb-3 flex items-center gap-2"><i class="fas fa-trophy text-orange-400"></i> Top Devedores</h3><div id="rankingDevedores" class="space-y-2"></div></div>
-          <div class="card bg-slate-800 text-white border-none"><h3 class="font-bold mb-4 text-yellow-400"><i class="fas fa-file-contract"></i> Fechamento & Relatórios</h3><div class="flex flex-col gap-3"><button onclick="fecharCaixa()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-extrabold py-3 btn flex items-center justify-center gap-2 shadow-lg shadow-yellow-500/20"><i class="fas fa-lock"></i> FECHAR CAIXA DO DIA (PDF)</button><button onclick="exportarExcel()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 btn flex items-center justify-center gap-2"><i class="fas fa-file-excel"></i> Baixar Excel Master</button></div></div>
+        <div class="bg-white rounded-xl shadow-sm p-2 mb-4 flex gap-2 overflow-x-auto border border-slate-200" id="barraAbas">
+            <button id="tab-admin" onclick="mudarAba('admin')" class="flex-1 py-3 px-4 rounded-lg font-bold text-sm text-slate-500 hover:bg-slate-50"><i class="fas fa-briefcase"></i> ADMIN</button>
+            <button id="tab-compras" onclick="mudarAba('compras')" class="flex-1 py-3 px-4 rounded-lg font-bold text-sm text-slate-500 hover:bg-slate-50"><i class="fas fa-shopping-cart"></i> MERCADINHO</button>
+            <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="flex-1 py-3 px-4 rounded-lg font-bold text-sm text-slate-500 hover:bg-slate-50"><i class="fas fa-utensils"></i> FEIJOADA</button>
         </div>
-        <button onclick="openModalVenda()" class="w-full mt-6 bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition">✨ ADMIN: Registrar Venda Manual</button>
-      </section>
-
-      <section id="tab-auditoria" class="tab-content hidden space-y-6">
-        <div class="card bg-emerald-50 border-emerald-100 text-center">
-          <p class="text-xs font-bold text-emerald-600 uppercase">💰 Total Já Recebido</p>
-          <h2 id="totalRecebidosAuditoria" class="text-3xl font-extrabold text-emerald-800 mt-1">R$ 0,00</h2>
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+            <div id="painelDias" class="hidden flex bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                <button onclick="filtrarDia('Todos')" id="day-Todos" class="px-4 py-2 rounded-lg text-xs font-bold day-active">Todos</button>
+                <button onclick="filtrarDia('Sexta')" id="day-Sexta" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-500">Sexta</button>
+                <button onclick="filtrarDia('Sabado')" id="day-Sabado" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-500">Sábado</button>
+                <button onclick="filtrarDia('Domingo')" id="day-Domingo" class="px-4 py-2 rounded-lg text-xs font-bold text-rose-500 border border-transparent hover:border-rose-200 flex items-center gap-1"><i class="fas fa-exclamation-circle"></i> Domingo</button>
+            </div>
+            <select id="filtroEquipe" onchange="renderizarTabela()" class="w-full md:w-48 px-3 py-2 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 outline-none focus:border-purple-500"><option value="">Todas as Equipes</option><option>Animação</option><option>Apoio ao Patrimônio</option><option>Café</option><option>Casal Coordenador Geral</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som e Iluminação</option><option>Trânsito</option><option>Visitação</option></select>
+            <div class="relative w-full md:w-64"><i class="fas fa-search absolute left-3 top-3 text-slate-400"></i><input type="text" id="campoBusca" onkeyup="filtrarBusca()" placeholder="Buscar..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500 text-sm"></div>
         </div>
-        <div class="card">
-          <h3 class="font-bold mb-3 text-emerald-700 flex items-center gap-2"><i class="fas fa-check-double"></i> Histórico de Recebimentos</h3>
-          <div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-emerald-50 text-xs text-emerald-700 uppercase"><tr><th class="p-3">Data</th><th>Descrição</th><th>Cliente</th><th>Rec. Por</th><th class="text-right p-3">Valor</th><th class="text-center">Ação</th></tr></thead><tbody id="tableAuditoria" class="divide-y divide-emerald-50"></tbody></table></div>
-        </div>
-      </section>
-
-      <section id="tab-ejc" class="tab-content hidden space-y-6">
-        <div class="card"><h3 class="font-bold text-purple-700 mb-3">⛪ Fechamento por Dia</h3><div id="ejcResumoDias" class="grid grid-cols-3 gap-3"></div></div>
-        <div class="card border-red-100"><h3 class="font-bold text-red-700 mb-3 flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> Pendências Totais</h3><div id="adminPendenciasList" class="space-y-2 max-h-80 overflow-y-auto"></div></div>
-        <div class="card"><h3 class="font-bold mb-3 text-slate-600">📜 Histórico EJC Completo</h3><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-xs text-slate-500 uppercase"><tr><th class="p-3">Data</th><th>Detalhes</th><th>Cliente</th><th>Pagto</th><th class="text-right p-3">Valor</th><th class="text-center">Editar</th></tr></thead><tbody id="tableEJC" class="divide-y divide-slate-100"></tbody></table></div></div>
-      </section>
-
-      <section id="tab-feijoada" class="tab-content hidden space-y-6"><div class="card bg-orange-50 border-orange-100"><h3 class="font-bold text-orange-700 mb-3">🍲 Controle Feijoada</h3><div class="grid grid-cols-2 gap-2 mb-2"><input id="fjDesc" placeholder="Item" class="w-full border p-3 rounded-xl outline-none text-sm"><input id="fjQtd" type="number" placeholder="Qtd" class="w-full border p-3 rounded-xl outline-none text-sm"></div><div class="grid grid-cols-2 gap-2 mb-2"><input id="fjValor" type="number" step="0.01" placeholder="R$" class="w-full border p-3 rounded-xl font-bold outline-none text-sm"><select id="fjTipo" class="w-full border p-3 rounded-xl bg-white outline-none text-sm"><option value="Entrada">✅ Venda</option><option value="Saida">❌ Compra</option></select></div><button onclick="salvarFeijoada()" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 btn shadow-lg">💾 Registrar</button></div><div class="card"><h3 class="font-bold mb-2">📜 Histórico Feijoada</h3><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-xs text-slate-500 uppercase"><tr><th class="p-3">Data</th><th>Detalhes</th><th>Cliente</th><th>Pagto</th><th class="text-right p-3">Valor</th><th class="text-center">Editar</th></tr></thead><tbody id="tableFeijoada" class="divide-y divide-slate-100"></tbody></table></div></div></section>
-
-      <section id="tab-mercadinho" class="tab-content hidden space-y-6"><div class="card"><h3 class="font-bold text-pink-700 mb-3">🛒 Resumo Mercadinho</h3><div id="mercResumo"></div></div><div class="card"><h3 class="font-bold mb-2">📜 Histórico Mercadinho</h3><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-xs text-slate-500 uppercase"><tr><th class="p-3">Data</th><th>Detalhes</th><th>Cliente</th><th>Pagto</th><th class="text-right p-3">Valor</th><th class="text-center">Editar</th></tr></thead><tbody id="tableMercadinho" class="divide-y divide-slate-100"></tbody></table></div></div></section>
-
-      <section id="tab-doacoes" class="tab-content hidden space-y-6"><div class="card bg-teal-50 border-teal-100"><h3 class="font-bold text-teal-700 mb-3">🎁 Registrar Doação</h3><div class="grid grid-cols-2 gap-2 mb-2"><input id="doaDesc" placeholder="Descrição (Ex: Oferta)" class="w-full border p-3 rounded-xl outline-none text-sm"><input id="doaValor" type="number" step="0.01" placeholder="R$" class="w-full border p-3 rounded-xl font-bold outline-none text-sm"></div><button onclick="salvarDoacao()" class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 btn shadow-lg">💾 Salvar Doação</button></div><div class="card"><h3 class="font-bold mb-2">📜 Histórico Doações</h3><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-xs text-slate-500 uppercase"><tr><th class="p-3">Data</th><th>Detalhes</th><th>Cliente</th><th>Pagto</th><th class="text-right p-3">Valor</th><th class="text-center">Editar</th></tr></thead><tbody id="tableDoacoes" class="divide-y divide-slate-100"></tbody></table></div></div></section>
-
-      <section id="tab-outros" class="tab-content hidden space-y-6"><div class="card bg-blue-50 border-blue-100"><h3 class="font-bold text-blue-700 mb-3">📦 Outros Movimentos</h3><div class="grid grid-cols-2 gap-2 mb-2"><input id="outDesc" placeholder="Descrição" class="w-full border p-3 rounded-xl outline-none text-sm"><input id="outValor" type="number" step="0.01" placeholder="R$" class="w-full border p-3 rounded-xl font-bold outline-none text-sm"></div><select id="outTipo" class="w-full border p-3 rounded-xl mb-2 bg-white outline-none text-sm"><option value="Entrada">Entrada (+)</option><option value="Saida">Saída (-)</option></select><button onclick="salvarOutros()" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 btn shadow-lg">💾 Salvar</button></div><div class="card"><h3 class="font-bold mb-2">📜 Histórico Geral</h3><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-xs text-slate-500 uppercase"><tr><th class="p-3">Data</th><th>Detalhes</th><th>Cliente</th><th>Pagto</th><th class="text-right p-3">Valor</th><th class="text-center">Editar</th></tr></thead><tbody id="tableOutros" class="divide-y divide-slate-100"></tbody></table></div></div></section>
-      
-      <section id="painel-compras" class="hidden space-y-6"><button onclick="openModalVenda()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-5 rounded-2xl shadow-xl text-xl flex items-center justify-center gap-3 transition transform hover:scale-[1.01] btn"><div class="bg-white/20 p-2 rounded-full"><i class="fas fa-plus"></i></div> NOVA VENDA</button><div class="card border-l-4 border-yellow-500"><div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3"><h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-exclamation-triangle text-yellow-500"></i> Pendências</h3><button onclick="loadData()" class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg font-bold text-slate-600 flex items-center gap-1 btn"><i class="fas fa-sync-alt"></i> Atualizar</button></div><div id="listaPendencias" class="space-y-3"><p class="text-center text-slate-400 py-4 text-sm animate-pulse">Carregando...</p></div></div><div class="card"><h3 class="font-bold mb-4 text-slate-500 text-xs uppercase tracking-wider">📜 Minhas Vendas Recentes</h3><div id="listaMinhasVendas" class="divide-y divide-slate-100 text-sm"></div></div></section>
+        <div id="areaCobranca" class="hidden mb-8 space-y-4"><div class="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-xl flex justify-between items-center"><div><h3 class="font-black text-rose-700 uppercase"><i class="fas fa-bullhorn"></i> Modo Cobrança</h3><p class="text-xs text-rose-600">Domingo Turbo Ativo</p></div></div><div id="top5Resumo" class="bg-white border border-rose-100 p-4 rounded-xl shadow-sm hidden"></div><div id="listaDevedores" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200 min-h-[400px] relative"><div class="overflow-x-auto"><table class="w-full text-left border-collapse"><thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase text-slate-500"><tr><th class="p-4">Data</th><th class="p-4">Descrição</th><th class="p-4 text-right">Valor</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Ações</th></tr></thead><tbody id="corpoTabela" class="divide-y divide-slate-100 text-sm font-medium text-slate-700"></tbody></table></div><div id="loading" class="absolute inset-0 bg-white/80 flex flex-col items-center justify-center z-10 hidden backdrop-blur-sm"><div class="animate-spin rounded-full h-12 w-12 border-b-4 border-emerald-500 mb-4"></div><p class="font-bold text-slate-500">Processando...</p></div></div>
     </main>
-  </div>
 
-  <div id="modalVenda" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-sm flex items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative animate-fade-in border-4 border-purple-50"><div class="flex justify-between items-center mb-6"><h3 class="font-bold text-xl text-slate-800 flex items-center gap-2"><i class="fas fa-shopping-cart text-purple-600"></i> Registrar Venda</h3><button onclick="closeModalVenda()" class="text-slate-400 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button></div><form onsubmit="salvarVenda(event)" class="space-y-3"><div class="grid grid-cols-3 gap-3"><div class="col-span-2"><label class="text-[10px] font-bold text-slate-400 uppercase">Produto *</label><input id="vProd" required placeholder="Ex: Marmita" class="w-full border-2 border-slate-100 p-3 rounded-xl outline-none focus:border-purple-500 font-medium text-slate-700"></div><div><label class="text-[10px] font-bold text-slate-400 uppercase">Valor *</label><input id="vValor" required type="number" step="0.01" placeholder="R$" class="w-full border-2 border-slate-100 p-3 rounded-xl font-bold outline-none focus:border-purple-500 text-center"></div></div><div><label class="text-[10px] font-bold text-slate-400 uppercase">Nome do Cliente *</label><input id="vNome" required placeholder="Quem está comprando?" class="w-full border-2 border-slate-100 p-3 rounded-xl outline-none focus:border-purple-500 text-sm"></div><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] font-bold text-slate-400 uppercase">Categoria</label><select id="vCat" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white text-sm outline-none focus:border-purple-500" onchange="toggleCat()"><option value="EJC">⛪ EJC</option><option value="Mercadinho">🛒 Mercadinho</option><option value="Feijoada">🍲 Feijoada</option><option value="Outros">📦 Outros</option></select></div><div id="boxCampanha" class="hidden"><label class="text-[10px] font-bold text-pink-500 uppercase">Campanha</label><select id="vCampanha" class="w-full border-2 border-pink-100 p-3 rounded-xl bg-pink-50 text-sm outline-none text-pink-700 font-bold"><option value="">Geral</option><option value="[MÃES] ">Dia das Mães</option><option value="[NAMORADOS] ">Namorados</option></select></div><div id="boxDia"><label class="text-[10px] font-bold text-slate-400 uppercase">Dia</label><select id="vDia" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white text-sm outline-none focus:border-purple-500"><option value="Sexta">Sexta</option><option value="Sabado">Sabado</option><option value="Domingo">Domingo</option></select></div></div><div><label class="text-[10px] font-bold text-slate-400 uppercase">Status</label><select id="vStatus" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white font-bold text-slate-700 outline-none focus:border-purple-500" onchange="toggleFiado()"><option value="Pago">✅ Pago na hora</option><option value="Pendente">⚠️ Fiado / Pendente</option></select></div><div id="vEquipeContainer" class="hidden p-3 bg-yellow-50 rounded-xl border border-yellow-200"><label class="text-[10px] font-bold text-yellow-700 uppercase">Dados para Cobrança *</label><input id="vEquipe" class="w-full border border-yellow-200 p-2 rounded-lg mt-1 bg-white outline-none focus:ring-2 focus:ring-yellow-400 mb-2" placeholder="Nome da Equipe (Ex: Liturgia)"><input id="vTel" class="w-full border border-yellow-200 p-2 rounded-lg bg-white outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Telefone (Opcional)"></div><div id="boxPagto" class="grid grid-cols-2 gap-3 p-3 bg-green-50 rounded-xl border border-green-200"><div><label class="text-[10px] font-bold text-green-700 uppercase">Forma</label><select id="vForma" class="w-full border border-green-200 p-2 rounded-lg bg-white text-sm mt-1 outline-none"><option value="Dinheiro">Dinheiro</option><option value="PIX">PIX</option><option value="Cartao Credito">Cartão Crédito</option><option value="Cartao Debito">Cartão Débito</option></select></div><div><label class="text-[10px] font-bold text-green-700 uppercase">Recebedor</label><input id="vQuem" placeholder="Seu nome" class="w-full border border-green-200 p-2 rounded-lg bg-white text-sm mt-1 outline-none"></div></div><button class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg mt-4 active:scale-95 transition hover:shadow-xl btn">✨ CONFIRMAR REGISTRO</button></form></div></div>
-  <div id="modalReceber" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4"><div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative animate-fade-in border-4 border-green-50"><h3 class="font-bold text-xl text-green-700 mb-1 flex items-center gap-2"><i class="fas fa-hand-holding-usd"></i> Receber Pagamento</h3><p class="text-xs text-slate-400 mb-4">Confirme os dados do recebimento</p><div class="space-y-4"><div><label class="text-[10px] font-bold text-slate-400 uppercase">Forma de Pagamento</label><select id="recForma" class="w-full border-2 border-slate-100 p-3 rounded-xl bg-white text-sm outline-none focus:border-green-500 font-medium"><option value="Dinheiro">Dinheiro</option><option value="PIX">PIX</option><option value="Cartao Credito">Cartão Crédito</option><option value="Cartao Debito">Cartão Débito</option></select></div><div><label class="text-[10px] font-bold text-slate-400 uppercase">Quem Recebeu?</label><input id="recQuem" placeholder="Seu nome" class="w-full border-2 border-slate-100 p-3 rounded-xl outline-none focus:border-green-500 text-sm"></div><div class="grid grid-cols-2 gap-2 mt-4"><button onclick="fecharModalReceber()" class="bg-slate-100 text-slate-500 font-bold py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button><button onclick="confirmarRecebimento()" class="bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 shadow-lg transition btn">✅ CONFIRMAR</button></div></div></div></div>
-  <div id="modalEditar" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"><div class="bg-white p-6 rounded-2xl w-full max-w-sm shadow-2xl"><h2 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-edit text-purple-600"></i> Editar Venda</h2><label class="text-xs font-bold text-slate-400">Descrição</label><input id="editDesc" class="w-full border-2 border-purple-100 p-3 rounded-xl mb-3 outline-none focus:border-purple-500"><label class="text-xs font-bold text-slate-400">Valor</label><input id="editValor" type="number" step="0.01" class="w-full border-2 border-purple-100 p-3 rounded-xl mb-4 outline-none focus:border-purple-500 font-bold text-purple-700"><div class="grid grid-cols-2 gap-2"><button onclick="fecharEditar()" class="bg-slate-100 text-slate-500 py-3 rounded-xl font-bold">Cancelar</button><button onclick="salvarEdicao()" class="bg-purple-700 text-white py-3 rounded-xl font-bold hover:bg-purple-800">Salvar</button></div></div></div>
-  <div id="loading" class="hidden fixed inset-0 bg-white/90 flex flex-col items-center justify-center z-[99]"><div class="loader mb-4"></div><p class="font-bold text-slate-500 animate-pulse">Sincronizando...</p></div>
+    <div id="modal" class="fixed inset-0 bg-slate-900/80 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-0 shadow-2xl relative overflow-hidden">
+            <div class="bg-gradient-to-r from-purple-900 to-indigo-900 p-4 text-white flex justify-between items-center"><h2 class="font-black uppercase flex items-center gap-2"><i class="fas fa-pen-to-square"></i> Novo</h2><button onclick="fecharModal()" class="text-white text-2xl">&times;</button></div>
+            <form id="formFin" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">Descrição</label><input id="f_desc" required class="w-full border-2 border-slate-200 p-3 rounded-xl font-semibold"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">Valor</label><input id="f_val" type="number" step="0.01" required class="w-full border-2 border-slate-200 p-3 rounded-xl font-black"></div>
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">Tipo</label><select id="f_type" class="w-full border-2 border-slate-200 p-3 rounded-xl bg-white font-semibold"><option value="ENTRADA">🟢 Entrada</option><option value="PENDENTE">🟠 Pendente</option><option value="SAIDA">🔴 Saída</option></select></div>
+                </div>
+                <div id="camposMercado" class="hidden bg-purple-50 p-3 rounded-xl border border-purple-100 space-y-3">
+                    <label class="text-xs font-bold text-purple-600 uppercase">Campanha</label><select id="f_cat" class="w-full border p-2 rounded-lg"><option value="Mercadinho">Geral</option><option value="DiaDasMaes">Dia das Mães</option></select>
+                    <select id="f_dia" class="w-full border p-2 rounded-lg font-bold"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select>
+                </div>
+                <div id="camposFeijoada" class="hidden bg-orange-50 p-3 rounded-xl border border-orange-100 grid grid-cols-2 gap-3">
+                    <div><label class="text-xs font-bold text-orange-600 uppercase">Qtd</label><input id="f_qtd" type="number" value="1" class="w-full border p-2 rounded-lg"></div>
+                    <div><label class="text-xs font-bold text-orange-600 uppercase">Comunidade</label><input id="f_comun" class="w-full border p-2 rounded-lg"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">Nome</label><input id="f_nome" class="w-full border-2 border-slate-200 p-3 rounded-xl"></div>
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">Telefone</label><input id="f_tel" class="w-full border-2 border-slate-200 p-3 rounded-xl"></div>
+                </div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">Equipe</label><input id="f_equipe" class="w-full border-2 border-slate-200 p-3 rounded-xl"></div>
+                <button type="submit" class="w-full bg-emerald-600 text-white font-black p-4 rounded-xl hover:bg-emerald-700 shadow-lg mt-2">SALVAR</button>
+            </form>
+        </div>
+    </div>
 
-<script>
-// CONFIGURAÇÃO
-const SISTEMA_TITULO = "Sistema Financeiro — 21º EJC Santo Eugênio";
-const SISTEMA_TEMA = "A morte não venceu. O Teu amor me salvou!";
-const SISTEMA_VERSICULO = "João 11, 25–26";
-const PASS_ADMIN = "@admpilotosejc2026#";
-const PASS_COMPRAS = "$compras2026";
-const API_URL = "https://script.google.com/macros/s/AKfycbwfoSETYSSw-aDyykBluO6k_3J9tHdBTyv9noDsa_qRjfSVVjG5iHAcP92NVNzkEC9RQg/exec";
+    <script>
+        // ✅ URL FINAL (COLOQUE AQUI APÓS DEPLOY)
+        const API = "URL_DO_DEPLOY_AQUI"; 
 
-let role="", db=[], currentIdReceber=null, editId=null;
+        const SENHA_ADMIN = "@admpilotos2026#";
+        const SENHA_COMPRAS = "$compras2026";
+        let ROLE = '', TOKEN = '';
+        let abaAtiva = 'admin', dadosCache = [], filtroDiaAtual = 'Todos';
 
-window.onload = function() {
-  document.getElementById("tituloLogin").innerHTML = "💜 " + SISTEMA_TITULO.split('—')[1];
-  document.getElementById("temaLogin").innerText = "“" + SISTEMA_TEMA + "”";
-  document.getElementById("versiculoLogin").innerText = SISTEMA_VERSICULO;
-  document.getElementById("tituloPainel").innerText = SISTEMA_TITULO;
-  toggleCat(); toggleFiado(); 
-};
+        function iniciarLogin(role) {
+            const senha = prompt("🔒 Senha de Acesso:");
+            if(role==='admin' && senha===SENHA_ADMIN) { ROLE='admin'; TOKEN="TOKEN_PILOTOS_2026"; }
+            else if(role==='compras' && senha===SENHA_COMPRAS) { ROLE='compras'; TOKEN="TOKEN_COMPRAS_2026"; }
+            else { return alert("⛔ Senha Incorreta!"); }
+            
+            document.getElementById("loginScreen").classList.add("hidden");
+            document.getElementById("appHeader").classList.remove("hidden");
+            document.getElementById("appMain").classList.remove("hidden");
+            document.getElementById("userBadge").innerText = ROLE==='admin' ? "👑 PILOTOS" : "🛒 COMPRAS";
+            aplicarPermissoes();
+            carregar();
+        }
 
-function toast(msg){ const t=document.getElementById("toast"); document.getElementById("toastMsg").innerText=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
-function loader(x){ document.getElementById("loading").classList.toggle("hidden",!x); }
-function isPago(x){ return x === true || String(x).trim().toUpperCase() === "TRUE"; } 
-function isPend(x){ return !isPago(x); }
-const colors = ['#a855f7','#22c55e','#f97316','#3b82f6','#ec4899', '#eab308', '#ef4444', '#14b8a6', '#6366f1'];
+        function aplicarPermissoes() {
+            if(ROLE==='compras') {
+                document.getElementById("tab-admin").style.display="none";
+                document.getElementById("tab-feijoada").style.display="none";
+                document.getElementById("tab-arquivo").style.display="none";
+                document.querySelectorAll(".btn-export, .btn-arquivo").forEach(b=>b.style.display="none");
+                mudarAba('compras');
+            } else { mudarAba('admin'); }
+        }
 
-function login(tipo){
-  const p=document.getElementById("passInput").value;
-  if(tipo==="admin" && p===PASS_ADMIN) role="admin";
-  else if(tipo==="compras" && p===PASS_COMPRAS) role="compras";
-  else { document.getElementById("loginError").classList.remove("hidden"); return; }
-  document.getElementById("loginScreen").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-  document.getElementById("roleLabel").innerText = role==="admin" ? "👑 ADMIN" : "🛒 COMPRAS";
-  role==="admin" ? document.getElementById("adminTabs").classList.remove("hidden") : document.getElementById("painel-compras").classList.remove("hidden");
-  if(role==="admin") showTab("geral");
-  loadData();
-}
+        function sair() { location.reload(); }
 
-async function loadData(){
-  loader(true);
-  try {
-    const a = await fetch(API_URL+"?action=listarAdmin");
-    const c = await fetch(API_URL+"?action=listarCompras");
-    const admin = await a.json();
-    const compras = await c.json();
-    db=[...admin,...compras];
-    renderAll();
-  } catch(e){ console.error(e); }
-  loader(false);
-}
+        // --- CORE COM TOKEN ---
+        async function carregar() {
+            document.getElementById("loading").classList.remove("hidden");
+            let rota = "listarAdmin";
+            if(abaAtiva==='compras') rota="listarCompras";
+            if(abaAtiva==='feijoada') rota="listarFeijoada";
+            if(abaAtiva==='arquivo') rota="listarArquivo";
 
-async function sendRequest(action, payload){
-  loader(true);
-  try {
-    await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, payload }) });
-    toast("✅ Sucesso!"); setTimeout(loadData, 1000); 
-  } catch(e) { alert("Erro ao salvar."); } finally { loader(false); }
-}
+            try {
+                // ✅ GET AGORA ENVIA TOKEN
+                const res = await fetch(`${API}?action=${rota}&token=${TOKEN}`);
+                const json = await res.json();
+                if(json.error) { alert(json.error); return; }
+                dadosCache = json;
+                document.getElementById("loading").classList.add("hidden");
+                renderizarTabela();
+            } catch(e) { console.error(e); }
+        }
 
-function openModalVenda(){ document.getElementById("modalVenda").classList.remove("hidden"); toggleFiado(); }
-function closeModalVenda(){ document.getElementById("modalVenda").classList.add("hidden"); }
-function showTab(tab){ 
-  document.querySelectorAll(".tab-content").forEach(s=>s.classList.add("hidden")); 
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active")); 
-  document.getElementById("tab-"+tab).classList.remove("hidden"); 
-  document.getElementById("btn-"+tab).classList.add("active");
-  if(tab === "auditoria") { renderAll(); }
-}
-function toggleFiado(){ const st=document.getElementById("vStatus").value; document.getElementById("vEquipeContainer").classList.toggle("hidden", st==="Pago"); document.getElementById("boxPagto").classList.toggle("hidden", st!=="Pago"); }
-function toggleCat(){ const cat = document.getElementById('vCat').value; document.getElementById('boxDia').style.display = cat==='EJC' ? 'block' : 'none'; document.getElementById('boxCampanha').style.display = cat==='Mercadinho' ? 'block' : 'none'; }
-function abrirModalReceber(id) { currentIdReceber = id; document.getElementById('recQuem').value = ""; document.getElementById('modalReceber').classList.remove('hidden'); }
-function fecharModalReceber() { document.getElementById('modalReceber').classList.add('hidden'); currentIdReceber = null; }
+        // --- RENDERIZAÇÃO (IGUAL V5.5) ---
+        function renderizarTabela() {
+            const corpo=document.getElementById("corpoTabela");
+            const areaCobranca=document.getElementById("areaCobranca");
+            const listaDev=document.getElementById("listaDevedores");
+            const top5Box=document.getElementById("top5Resumo");
+            corpo.innerHTML=""; listaDev.innerHTML=""; top5Box.classList.add("hidden");
 
-function abrirEditar(id){ editId = id; const item = db.find(x => x.id === id); if(item){ document.getElementById("editDesc").value = item.description; document.getElementById("editValor").value = item.amount; document.getElementById("modalEditar").classList.remove("hidden"); } }
-function fecharEditar(){ document.getElementById("modalEditar").classList.add("hidden"); editId = null; }
-async function salvarEdicao(){ 
-  const desc = document.getElementById("editDesc").value; 
-  const valor = document.getElementById("editValor").value; 
-  await sendRequest("editarVenda", { id: editId, description: desc, amount: valor }); 
-  fecharEditar(); 
-}
+            let dados=dadosCache;
+            if(abaAtiva==='compras' && filtroDiaAtual!=='Todos') dados=dados.filter(i=>i.ejc_dia===filtroDiaAtual);
+            const eq=document.getElementById("filtroEquipe").value; if(eq) dados=dados.filter(i=>i.equipe===eq);
+            const busca=document.getElementById("campoBusca").value.toLowerCase(); if(busca) dados=dados.filter(i=>(i.buyer_name && i.buyer_name.toLowerCase().includes(busca)));
 
-async function salvarVenda(e){
-  e.preventDefault();
-  const pago = document.getElementById("vStatus").value==="Pago";
-  const cat  = document.getElementById("vCat").value;
-  const prod = document.getElementById("vProd").value;
-  const nome = document.getElementById("vNome").value;
-  
-  if(!pago && !document.getElementById("vEquipe").value){ alert("⚠️ Para vender FIADO, preencha a Equipe ou Nome de quem deve."); return; }
+            if(abaAtiva==='compras' && filtroDiaAtual==='Domingo') { areaCobranca.classList.remove("hidden"); renderizarCobranca(dados); } 
+            else { areaCobranca.classList.add("hidden"); }
 
-  let descricaoFinal = prod;
-  if(cat === "Mercadinho"){ const campanha = document.getElementById("vCampanha").value; descricaoFinal = campanha + prod; }
+            let ent=0, sai=0;
+            dados.reverse().forEach(i=>{
+                const v=parseFloat(i.amount||0); const isPago=i.paid===true; const isSaida=i.type==="SAIDA";
+                if(abaAtiva!=='arquivo' && isPago) { if(isSaida) sai+=v; else ent+=v; }
+                let acoes = abaAtiva==='arquivo' ? '<span class="italic text-gray-400">Arquivado</span>' : 
+                    `<div class="flex justify-center gap-2">
+                        ${!isPago ? `<button onclick="baixar('${i.id}')" class="bg-emerald-100 text-emerald-600 w-8 h-8 rounded-full hover:bg-emerald-500 hover:text-white"><i class="fas fa-check"></i></button>`:''}
+                        <button onclick="arquivar('${i.id}')" class="bg-gray-100 text-gray-400 w-8 h-8 rounded-full hover:bg-gray-500 hover:text-white"><i class="fas fa-box-archive"></i></button>
+                    </div>`;
+                corpo.innerHTML+=`<tr class="hover:bg-slate-50 border-b border-slate-50 ${isSaida?'bg-red-50/30':''}"><td class="p-4"><div class="text-xs font-bold text-slate-400">${new Date(i.date).toLocaleDateString()}</div>${i.ejc_dia?`<span class="bg-purple-100 text-purple-700 text-[10px] px-1 rounded">${i.ejc_dia}</span>`:''}</td><td class="p-4"><div class="font-bold text-slate-700">${i.description||i.product}</div><div class="text-[10px] uppercase font-bold text-purple-400">${i.category||'Geral'} • ${i.buyer_name||'-'} • ${i.equipe||'-'}</div></td><td class="p-4 text-right font-mono font-bold ${isSaida?'text-red-500':'text-emerald-600'}">${isSaida?'-':'+'} R$ ${v.toFixed(2)}</td><td class="p-4 text-center"><span class="px-2 py-1 rounded text-[10px] font-black uppercase ${isPago?'bg-emerald-100 text-emerald-700':'bg-orange-100 text-orange-700'}">${isPago?'Pago':'Pendente'}</span></td><td class="p-4 text-center">${acoes}</td></tr>`;
+            });
+            if(abaAtiva!=='arquivo') { document.getElementById("totEntradas").innerText=`R$ ${ent.toFixed(2)}`; document.getElementById("totSaidas").innerText=`R$ ${sai.toFixed(2)}`; document.getElementById("totSaldo").innerText=`R$ ${(ent-sai).toFixed(2)}`; }
+        }
 
-  const payload={
-    date: new Date().toISOString(), category: cat, produto: descricaoFinal, description: descricaoFinal,
-    amount: document.getElementById("vValor").value, valor_unitario: document.getElementById("vValor").value,
-    paid: pago, quantidade: 1, ejc_dia: cat==="EJC" ? document.getElementById("vDia").value : "",
-    equipe_devedora: pago ? "" : document.getElementById("vEquipe").value,
-    buyer_name: nome, buyer_phone: document.getElementById("vTel").value,
-    forma_pagamento: pago ? document.getElementById("vForma").value : "",
-    received_by: pago ? document.getElementById("vQuem").value : "",
-    responsible: role === "admin" ? "Pilotos" : "Compras"
-  };
-  const action = role==="admin" ? "criarAdmin" : "criarVendaCompras";
-  if(role==="admin") payload.type = "Entrada";
-  await sendRequest(action, payload);
-  closeModalVenda(); document.querySelectorAll('#modalVenda input').forEach(i=>i.value='');
-}
+        function renderizarCobranca(dados) {
+            const lista=document.getElementById("listaDevedores"); const devedores={};
+            dados.forEach(i=>{
+                if(!i.paid && i.buyer_name) {
+                    const nome=i.buyer_name.toUpperCase();
+                    if(!devedores[nome]) devedores[nome]={total:0,itens:[],ids:[],equipe:i.equipe||"-",tel:i.phone||""};
+                    devedores[nome].total+=parseFloat(i.amount); devedores[nome].itens.push(i.product||i.description); devedores[nome].ids.push(i.id);
+                }
+            });
+            if(Object.keys(devedores).length===0) { lista.innerHTML=`<div class="col-span-3 text-center text-slate-400 py-6">🎉 Zero Pendências!</div>`; return; }
+            const ranking=Object.entries(devedores).sort((a,b)=>b[1].total-a[1].total);
+            const box=document.getElementById("top5Resumo"); box.classList.remove("hidden");
+            box.innerHTML=`<h3 class="font-black text-rose-700 uppercase mb-2">🔥 Top 5 Devedores</h3><ul class="text-xs text-slate-700 space-y-1">${ranking.slice(0,5).map(([n,d])=>`<li><b>${n}</b> — R$ ${d.total.toFixed(2)}</li>`).join("")}</ul>`;
+            ranking.forEach(([nome,d])=>{
+                const idsStr=JSON.stringify(d.ids).replace(/"/g,'&quot;');
+                lista.innerHTML+=`<div class="bg-white border border-rose-200 p-4 rounded-xl shadow hover:shadow-lg transition"><h4 class="font-black text-slate-800">${nome}</h4><p class="text-xs text-slate-500 mb-2">Equipe: <b>${d.equipe}</b></p><div class="text-xs bg-slate-50 p-2 rounded mb-3 max-h-16 overflow-y-auto">${d.itens.join(", ")}</div><div class="flex justify-between items-center border-t pt-2"><span class="font-black text-rose-600 text-lg">R$ ${d.total.toFixed(2)}</span><button onclick="pagarLote(${idsStr})" class="bg-emerald-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-emerald-700"><i class="fas fa-check-double"></i> PAGAR TUDO</button></div>${d.tel?`<a target="_blank" href="https://wa.me/55${d.tel.replace(/\D/g,'')}" class="block mt-3 text-xs text-emerald-600 font-bold hover:underline">📲 Cobrar no WhatsApp</a>`:""}</div>`;
+            });
+        }
 
-async function confirmarRecebimento() {
-  const f = document.getElementById("recForma").value;
-  const q = document.getElementById("recQuem").value.trim();
-  if (!q) { alert("⚠️ Preencha quem recebeu o pagamento."); return; }
-  if (!currentIdReceber) return;
-  loader(true);
-  const itemIndex = db.findIndex(i => String(i.id) === String(currentIdReceber));
-  if (itemIndex > -1) { db[itemIndex].paid = true; db[itemIndex].forma_pagamento = f; db[itemIndex].received_by = q; }
-  renderAll(); fecharModalReceber();
-  await fetch(API_URL,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"marcarPago", payload:{ id:currentIdReceber, forma_pagamento:f, received_by:q } }) });
-  toast("💰 Pagamento recebido!"); loader(false); setTimeout(loadData, 1000); 
-}
+        // --- ACTIONS COM TOKEN ---
+        async function apiPost(action, payload) {
+            document.getElementById("loading").classList.remove("hidden");
+            // ✅ POST AGORA ENVIA TOKEN
+            await fetch(API, { method:'POST', mode:'no-cors', body:JSON.stringify({ action, token:TOKEN, payload }) });
+            setTimeout(carregar, 2000);
+        }
 
-async function salvarFeijoada(){ await salvarAdmin("Feijoada", document.getElementById("fjDesc").value, document.getElementById("fjValor").value, document.getElementById("fjTipo").value, document.getElementById("fjQtd").value); }
-async function salvarOutros(){ await salvarAdmin("Outros", document.getElementById("outDesc").value, document.getElementById("outValor").value, document.getElementById("outTipo").value, 1); }
-async function salvarDoacao(){ await salvarAdmin("Doacoes", document.getElementById("doaDesc").value, document.getElementById("doaValor").value, "Entrada", 1); }
-async function salvarAdmin(cat, desc, valor, tipo, qtd){
-  if(!desc || !valor) return alert("Preencha tudo");
-  const payload = { date:new Date().toISOString(), category:cat, description:desc, amount:valor, type:tipo, paid:true, quantidade: qtd, responsible:"Admin" };
-  await sendRequest("criarAdmin", payload);
-}
+        async function pagarLote(ids) { if(!confirm(`Pagar todos (${ids.length}) itens?`)) return; await apiPost("pagarLote", {ids}); }
+        async function baixar(id) { if(confirm("Confirmar recebimento?")) await apiPost("marcarPago", {id}); }
+        async function arquivar(id) { if(confirm("Mover para Arquivo?")) await apiPost("arquivar", {id}); }
 
-function renderTable(lista, elementId) {
-  const tableBody = document.getElementById(elementId);
-  if(!tableBody) return;
-  tableBody.innerHTML = lista.map(t => {
-    const statusBadge = isPago(t.paid) ? '<span class="badge badge-pago">PAGO</span>' : '<span class="badge badge-pendente">PENDENTE</span>';
-    const nomeCliente = t.buyer_name || t.equipe_devedora || t.description || "-";
-    const telefone = t.buyer_phone ? `<br><span class="text-xs text-blue-500">📞 ${t.buyer_phone}</span>` : "";
-    return `
-    <tr class="border-b hover:bg-slate-50 transition">
-      <td class="p-3 text-slate-500 text-xs">${new Date(t.date).toLocaleDateString()}<br><span class="text-[9px] text-slate-300">ID: ${String(t.id).substring(0,6)}</span></td>
-      <td class="font-bold text-slate-700 text-sm">${t.description}<div class="text-[10px] text-slate-400 font-normal">${t.category}</div></td>
-      <td class="text-xs text-slate-600"><div class="font-bold">${nomeCliente}</div>${telefone}</td>
-      <td class="text-xs text-slate-600"><div>${t.forma_pagamento || "-"}</div><div class="text-[10px] text-slate-400">Rec: ${t.received_by || "-"}</div></td>
-      <td class="text-right p-3"><div class="font-bold text-sm ${t.type === 'Saida' ? 'text-red-500' : 'text-slate-800'}">${t.type === 'Saida' ? '-' : ''} R$ ${parseFloat(t.amount).toFixed(2)}</div><div class="mt-1">${statusBadge}</div></td>
-      <td class="text-center"><button onclick="abrirEditar('${t.id}')" class="text-purple-600 hover:text-purple-900 font-bold px-2">✏️</button></td>
-    </tr>`}).join('');
-}
+        // --- SUBMIT ---
+        document.getElementById("formFin").onsubmit = async (e) => {
+            e.preventDefault(); const btn=e.target.querySelector('button[type="submit"]'); btn.innerHTML="SALVANDO..."; btn.disabled=true;
+            const p={date:new Date().toISOString(), amount:parseFloat(document.getElementById("f_val").value), type:document.getElementById("f_type").value, category:document.getElementById("f_cat").value||"Geral", day:document.getElementById("f_dia").value, description:document.getElementById("f_desc").value, product:document.getElementById("f_desc").value, name:document.getElementById("f_nome").value, phone:document.getElementById("f_tel").value, equipe:document.getElementById("f_equipe").value, comunidade:document.getElementById("f_comun").value, qtd:document.getElementById("f_qtd").value, paid:document.getElementById("f_type").value==="ENTRADA"};
+            let a="criarAdmin"; if(abaAtiva==='compras') a="criarVendaCompras"; if(abaAtiva==='feijoada') a="criarFeijoada";
+            await apiPost(a, p);
+            fecharModal(); e.target.reset(); btn.innerHTML="SALVAR"; btn.disabled=false;
+        };
 
-function renderAll(){
-  let ent=0,sai=0,pend=0,cats={};
-  db.forEach(i=>{
-    const v=parseFloat(i.amount||0);
-    if(isPago(i.paid)){
-      if(i.type==="Saida") sai+=v;
-      else {
-        ent+=v;
-        cats[i.category]=(cats[i.category]||0)+v;
-      }
-    } else {
-      pend+=v;
-    }
-  });
-
-  document.getElementById("dashEntradas").innerText="R$ "+ent.toFixed(2);
-  document.getElementById("dashSaidas").innerText="R$ "+sai.toFixed(2);
-  document.getElementById("dashSaldo").innerText="R$ "+(ent-sai).toFixed(2);
-  document.getElementById("dashPend").innerText="R$ "+pend.toFixed(2);
-
-  const recebidos = db.filter(x => isPago(x.paid)); 
-  const totalRecebidos = recebidos.reduce((s,a)=>s+parseFloat(a.amount||0), 0); 
-  document.getElementById("totalRecebidosAuditoria").innerText = "R$ " + totalRecebidos.toFixed(2); 
-  renderTable(recebidos.reverse(), "tableAuditoria");
-
-  const ctx = document.getElementById('chartGeral');
-  if(ctx && window.myChart) window.myChart.destroy();
-  if(ctx) window.myChart = new Chart(ctx, { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: Object.keys(cats).map((_, i) => colors[i % colors.length]), borderWidth:0 }] }, options: { responsive: true, maintainAspectRatio: false } });
-
-  const listaPendencias = role === "admin" ? db.filter(x => isPend(x.paid)) : db.filter(x => isPend(x.paid) && (x.responsible === "Compras" || x.origem === "compras"));
-  const adminBox = document.getElementById("adminPendenciasList");
-  if(adminBox) adminBox.innerHTML = listaPendencias.map(p=>`<div class="flex justify-between border-b py-2 items-center"><div><span class="font-bold text-slate-700">${p.equipe_devedora||p.buyer_name||p.description}</span><br><small class="text-slate-400">${p.category}</small></div><div class="flex items-center gap-2"><span class="font-bold text-red-500">R$ ${parseFloat(p.amount).toFixed(2)}</span><button onclick="abrirModalReceber('${p.id}')" class="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-bold hover:bg-green-200">RECEBER</button></div></div>`).join("");
-  const comprasBox = document.getElementById("listaPendencias");
-  if(comprasBox) comprasBox.innerHTML = listaPendencias.map(p=>`<div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center shadow-sm"><div><p class="font-bold text-sm text-slate-700">${p.equipe_devedora||p.description}</p><p class="text-xs text-slate-500">R$ ${parseFloat(p.amount).toFixed(2)}</p></div><button onclick="abrirModalReceber('${p.id}')" class="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-bold">RECEBER</button></div>`).join("");
-  
-  const dias=["Sexta","Sabado","Domingo"];
-  document.getElementById("ejcResumoDias").innerHTML = dias.map(d=>{ const total=db.filter(x=>x.category==="EJC" && x.ejc_dia===d && isPago(x.paid)).reduce((s,a)=>s+parseFloat(a.amount),0); return `<div class="card text-center py-3 bg-purple-50 border-purple-100"><p class="text-xs font-bold text-purple-400">${d}</p><h2 class="font-extrabold text-purple-800 text-lg">R$ ${total.toFixed(2)}</h2></div>`; }).join("");
-  const maes=db.filter(x=>x.category==="Mercadinho" && isPago(x.paid) && String(x.description).includes("MÃES")).reduce((s,a)=>s+parseFloat(a.amount),0);
-  const nam=db.filter(x=>x.category==="Mercadinho" && isPago(x.paid) && String(x.description).includes("NAMORADOS")).reduce((s,a)=>s+parseFloat(a.amount),0);
-  const geral=db.filter(x=>x.category==="Mercadinho" && isPago(x.paid)).reduce((s,a)=>s+parseFloat(a.amount),0);
-  document.getElementById("mercResumo").innerHTML=`<div class="card bg-pink-50 p-4 mb-2"><p class="text-xs font-bold text-pink-400 uppercase">🌸 Dia das Mães</p><h3 class="text-xl font-bold text-pink-700">R$ ${maes.toFixed(2)}</h3></div><div class="card bg-rose-50 p-4 mb-2"><p class="text-xs font-bold text-rose-400 uppercase">💘 Namorados</p><h3 class="text-xl font-bold text-rose-700">R$ ${nam.toFixed(2)}</h3></div><div class="card border p-4 col-span-2 text-center"><p class="text-xs font-bold text-slate-400 uppercase">Total Geral Mercadinho</p><h3 class="text-xl font-bold text-slate-700">R$ ${geral.toFixed(2)}</h3></div>`;
-
-  renderTable(db.filter(i => i.category === 'EJC').reverse().slice(0, 50), "tableEJC");
-  renderTable(db.filter(x => x.category === "Feijoada").reverse(), "tableFeijoada");
-  renderTable(db.filter(x => x.category === "Mercadinho").reverse(), "tableMercadinho");
-  renderTable(db.filter(x => x.category === "Doacoes").reverse(), "tableDoacoes");
-  renderTable(db.filter(x => x.category === "Outros").reverse(), "tableOutros");
-
-  const minhasVendas = role === "admin" ? db.filter(x => x.responsible === "Pilotos" || x.responsible === "Admin") : db.filter(x => x.responsible === "Compras");
-  const listaMinhas = document.getElementById('listaMinhasVendas');
-  if(listaMinhas) listaMinhas.innerHTML = minhasVendas.reverse().slice(0,15).map(t=>`<div class="flex justify-between items-center py-3 border-b border-slate-50 text-sm"><div class="flex items-center gap-2">${isPago(t.paid) ? '<i class="fas fa-check-circle text-green-500"></i>' : '<i class="fas fa-clock text-yellow-500"></i>'}<span>${t.description} <span class="text-xs text-slate-400">(${t.category})</span></span></div><span class="font-bold ${isPago(t.paid)?'text-green-600':'text-yellow-600'}">R$ ${parseFloat(t.amount).toFixed(2)}</span></div>`).join('');
-  const ranking = {}; listaPendencias.forEach(i => { const n = i.equipe_devedora || i.buyer_name || "Desconhecido"; ranking[n] = (ranking[n] || 0) + parseFloat(i.amount); });
-  const sortedRanking = Object.entries(ranking).sort((a,b) => b[1] - a[1]).slice(0,5);
-  document.getElementById('rankingDevedores').innerHTML = sortedRanking.length ? sortedRanking.map((r, i) => `<div class="flex justify-between items-center text-sm border-b border-orange-100 py-1"><span class="font-bold text-slate-700">${i+1}. ${r[0]}</span><span class="font-bold text-red-500">R$ ${r[1].toFixed(2)}</span></div>`).join('') : '<p class="text-sm text-slate-400">Ninguém deve nada! 🎉</p>';
-}
-
-function fecharCaixa() {
-  if(role !== "admin") { alert("🚫 Acesso Negado: Somente Pilotos podem fechar o caixa."); return; }
-  const hoje = new Date().toLocaleDateString();
-  const vendasHoje = db.filter(i => new Date(i.date).toLocaleDateString() === hoje && isPago(i.paid));
-  if (vendasHoje.length === 0) { alert("Sem movimento hoje para fechar."); return; }
-  const totalEntrada = vendasHoje.filter(i => i.type !== 'Saida').reduce((a,b) => a + parseFloat(b.amount), 0);
-  const totalSaida = vendasHoje.filter(i => i.type === 'Saida').reduce((a,b) => a + parseFloat(b.amount), 0);
-  const saldo = totalEntrada - totalSaida;
-  const pix = vendasHoje.filter(i => i.forma_pagamento === 'PIX').reduce((a,b) => a + parseFloat(b.amount), 0);
-  const dinheiro = vendasHoje.filter(i => i.forma_pagamento === 'Dinheiro').reduce((a,b) => a + parseFloat(b.amount), 0);
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(20); doc.setTextColor(100, 30, 150); doc.text("Fechamento de Caixa — EJC", 10, 20);
-  doc.setFontSize(12); doc.setTextColor(0, 0, 0); doc.text("Data: " + hoje, 10, 30); doc.line(10, 35, 200, 35);
-  doc.text(`Entradas Totais:`, 10, 50); doc.setTextColor(0, 150, 0); doc.text(`R$ ${totalEntrada.toFixed(2)}`, 150, 50);
-  doc.setTextColor(0,0,0); doc.text(`Saídas (Compras):`, 10, 60); doc.setTextColor(200, 0, 0); doc.text(`R$ ${totalSaida.toFixed(2)}`, 150, 60);
-  doc.setTextColor(0,0,0); doc.line(10, 65, 200, 65);
-  doc.setFontSize(16); doc.text(`SALDO FINAL:`, 10, 80); doc.text(`R$ ${saldo.toFixed(2)}`, 150, 80);
-  doc.setFontSize(12); doc.text("Conferência Física:", 10, 100); doc.text(`Pix: R$ ${pix.toFixed(2)}`, 10, 110); doc.text(`Dinheiro: R$ ${dinheiro.toFixed(2)}`, 10, 120);
-  doc.save(`Fechamento_${hoje.replace(/\//g, '-')}.pdf`);
-  toast("🔒 Caixa Fechado e PDF Gerado!");
-}
-
-function exportarExcel(){
-  const wb = XLSX.utils.book_new();
-  const createSheet = (name, filterFn) => {
-    const data = db.filter(filterFn).map(i => ({ "Data": new Date(i.date).toLocaleDateString(), "Categoria": i.category, "Tipo": i.type || "Entrada", "Produto/Desc": i.description, "Valor": parseFloat(i.amount), "Cliente": i.buyer_name || "", "Devedor": i.equipe_devedora || "", "Status": isPago(i.paid) ? "PAGO" : "PENDENTE", "Forma": i.forma_pagamento || "", "Recebido Por": i.received_by || "", "Responsável": i.responsible || "" }));
-    const ws = XLSX.utils.json_to_sheet(data);
-    XLSX.utils.book_append_sheet(wb, ws, name);
-  };
-  createSheet("GERAL", x => true);
-  createSheet("PENDÊNCIAS", x => !isPago(x.paid));
-  createSheet("PAGOS", x => isPago(x.paid));
-  createSheet("EJC", x => x.category==="EJC");
-  createSheet("Mercadinho", x => x.category==="Mercadinho");
-  createSheet("Feijoada", x => x.category==="Feijoada");
-  createSheet("Doacoes", x => x.category==="Doacoes");
-  createSheet("Outros", x => x.category==="Outros");
-  XLSX.writeFile(wb, "EJC_FINANCEIRO_MASTER.xlsx");
-  toast("📊 Excel completo gerado!");
-}
-function exportarPDF(){
-  const {jsPDF}=window.jspdf;
-  const doc=new jsPDF();
-  doc.text("Prestação EJC 2026",10,10);
-  let y=20;
-  db.forEach(i=>{
-    doc.text(`${i.category} | ${i.description} | R$ ${i.amount}`,10,y);
-    y+=7;
-    if(y>280){doc.addPage(); y=20;}
-  });
-  doc.save("EJC_RELATORIO.pdf");
-}
-</script>
+        // --- UI HELPERS ---
+        function filtrarDia(d) { filtroDiaAtual=d; document.querySelectorAll('#painelDias button').forEach(b=>b.classList.remove('day-active','bg-emerald-500','text-white','bg-rose-500')); const btn=document.getElementById('day-'+d); if(d==='Domingo') btn.classList.add('bg-rose-500','text-white'); else btn.classList.add('day-active'); renderizarTabela(); }
+        function filtrarBusca() { renderizarTabela(); }
+        function mudarAba(a) { abaAtiva=a; document.querySelectorAll('button[id^="tab-"]').forEach(b=>{b.classList.remove('tab-active','text-emerald-600'); if(b.id==='tab-arquivo') b.classList.replace('bg-purple-600','bg-slate-800')}); if(a==='arquivo'){document.getElementById('tab-arquivo').classList.replace('bg-slate-800','bg-purple-600')}else{document.getElementById('tab-'+a).classList.add('tab-active','text-emerald-600')} document.getElementById("painelDias").classList.toggle("hidden", a!=='compras'); carregar(); }
+        function abrirModal() { document.getElementById("modal").classList.remove("hidden"); document.getElementById("camposMercado").classList.toggle("hidden",abaAtiva!=='compras'); document.getElementById("camposFeijoada").classList.toggle("hidden",abaAtiva!=='feijoada'); }
+        function fecharModal() { document.getElementById("modal").classList.add("hidden"); }
+        function exportarExcel() { const ws=XLSX.utils.json_to_sheet(dadosCache); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Relatorio"); XLSX.writeFile(wb,`EJC_${abaAtiva}.xlsx`); }
+        function exportarPDF() { const {jsPDF}=window.jspdf; const doc=new jsPDF(); doc.text(`Relatorio ${abaAtiva}`,14,15); doc.autoTable({startY:20, head:[['Data','Desc','Quem','Valor']], body:dadosCache.map(i=>[new Date(i.date).toLocaleDateString(),i.description||i.product,i.buyer_name,i.amount])}); doc.save(`Relatorio_${abaAtiva}.pdf`); }
+    </script>
 </body>
 </html>
