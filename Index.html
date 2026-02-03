@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EJC BANK</title>
+    <title>EJC BANK 21º • FINAL V11.4</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,32 +11,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&family=Montserrat:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
     <style>
         body { font-family: 'Montserrat', sans-serif; background-color: #f3f4f6; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         .tab-active { border-bottom: 4px solid #10b981; color: #10b981; font-weight: 800; background-color: #ecfdf5; }
         .day-active { background-color: #10b981; color: white; border-color: #10b981; }
+        .hidden { display: none !important; }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .hidden { display: none !important; }
         input, select { font-size: 16px !important; }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col">
 
     <div id="loginScreen" class="fixed inset-0 bg-slate-900 z-[999] flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center fade-in">
-            <div class="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"><i class="fas fa-landmark text-4xl text-purple-700"></i></div>
-            <h1 class="text-2xl font-black text-slate-800 mb-1 uppercase font-mono tracking-tighter">EJC BANK</h1>
-            <p class="text-slate-500 mb-8 text-xs font-bold uppercase tracking-widest">Sistema Financeiro 21º EJC</p>
+        <div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center fade-in border-b-8 border-purple-800">
+            <div class="bg-purple-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
+                <i class="fas fa-landmark text-3xl text-purple-700"></i>
+            </div>
+            <h1 class="text-3xl font-black text-slate-800 mb-2 uppercase font-mono tracking-tighter">
+                EJC <span class="text-emerald-600">BANK</span>
+            </h1>
+            <div class="h-[1px] w-24 bg-slate-200 mx-auto mb-4"></div>
+            <p class="text-[10px] text-slate-400 uppercase tracking-[0.25em] font-bold mb-3">Sistema Financeiro • 21º EJC</p>
+            <p class="text-emerald-700 text-sm font-black italic px-2 leading-tight mb-1">“A morte não venceu.<br>O teu amor me salvou!”</p>
+            <p class="text-[9px] text-slate-400 font-bold mb-8">Jo 11,25–26 • Paróquia Santo Eugênio de Mazenod</p>
+
             <div class="mb-6 relative">
-                <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full border-2 border-slate-200 p-4 pl-12 rounded-xl outline-none focus:border-purple-500 text-lg font-bold transition text-center" autocomplete="off">
+                <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full border-2 border-slate-200 p-4 pl-12 rounded-xl outline-none focus:border-purple-500 text-lg font-bold transition text-center shadow-sm text-slate-700" autocomplete="off">
+                <i class="fas fa-lock absolute left-4 top-5 text-slate-300"></i>
             </div>
+
             <div class="space-y-3">
-                <button onclick="tentarLogin('admin')" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2"><i class="fas fa-crown"></i> <span>PILOTOS</span></button>
-                <button onclick="tentarLogin('compras')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2"><i class="fas fa-shopping-cart"></i> <span>COMPRAS</span></button>
+                <button onclick="tentarLogin('admin')" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fas fa-crown"></i> <span>PILOTOS</span>
+                </button>
+                <button onclick="tentarLogin('compras')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fas fa-shopping-cart"></i> <span>COMPRAS</span>
+                </button>
             </div>
-            <p id="msgErroLogin" class="text-red-500 text-xs font-bold mt-4 hidden animate-pulse"></p>
+            <p id="msgErroLogin" class="text-red-500 text-xs font-bold mt-4 hidden animate-pulse bg-red-50 p-2 rounded-lg border border-red-100">⛔ Senha Incorreta!</p>
+            <p class="text-[9px] text-slate-300 uppercase font-bold tracking-widest mt-8 border-t border-slate-100 pt-4">Piloto Finanças • 21º Encontro de Jovens com Cristo</p>
         </div>
     </div>
 
@@ -136,6 +152,12 @@
                         <option value="EJC">EJC (Encontro)</option>
                     </select>
                     <select id="f_dia" onchange="validarFiadoDomingo()" class="w-full border border-purple-200 p-2 rounded-lg bg-white text-xs font-bold text-purple-800"><option value="Sexta">Sexta-feira</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo (Sem fiado)</option></select>
+                    
+                    <label class="text-[10px] font-bold text-purple-500 uppercase block mt-2 mb-1">Equipe da Pessoa</label>
+                    <select id="f_equipe_lista" class="w-full border border-purple-200 p-2 rounded-lg bg-white text-xs font-bold text-purple-800">
+                        <option value="">Selecione...</option>
+                        <option>Animação</option><option>Apoio ao Patrimônio</option><option>Café</option><option>Casal Coordenador Geral</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som e Iluminação</option><option>Trânsito</option><option>Visitação</option>
+                    </select>
                 </div>
 
                 <div id="camposFeijoada" class="hidden bg-orange-50 p-4 rounded-xl border border-orange-100">
@@ -179,6 +201,7 @@
     </div>
 
     <script>
+        // ✅ URL DA API V10.5
         const API = "https://script.google.com/macros/s/AKfycbziecBve__1I_ccKJ2RjkZST0LXyQv0QqA5Jc8KOLoPe20Cbz2tEE0j0-2g0ewmZ4Avmg/exec"; 
         
         const SENHA_ADMIN = "@admpilotos2026#";
@@ -281,7 +304,7 @@
             dados.length===0 ? empty.classList.remove("hidden") : empty.classList.add("hidden");
 
             if(abaAtiva==='compras' && filtroDiaAtual==='Domingo') { 
-                areaCobranca.classList.remove("hidden"); renderizarCobranca(dadosCache); 
+                areaCobranca.classList.remove("hidden"); renderizarCobranca(dadosCache);
             } else { areaCobranca.classList.add("hidden"); }
 
             let ent=0, sai=0;
@@ -300,13 +323,18 @@
                 if(i.category==="DiaDosNamorados") badge = `<span class="bg-red-100 text-red-600 px-1 rounded ml-1">NAMORADOS</span>`;
                 if(i.category==="Feijoada") badge = `<span class="bg-orange-100 text-orange-600 px-1 rounded ml-1">FEIJOADA</span>`;
                 if(i.category==="EJC") badge = `<span class="bg-blue-100 text-blue-600 px-1 rounded ml-1">EJC</span>`;
-                if(i.category==="ComprasEJC") badge = `<span class="bg-blue-100 text-blue-600 px-1 rounded ml-1">COMPRAS</span>`;
-
+                
                 let descHTML = `<div class="font-bold text-slate-700">${i.description||i.product}</div>`;
                 if(i.category==="Feijoada" || i.qtd) {
-                    descHTML += `<div class="text-[10px] text-slate-500 mt-1"><i class="fas fa-user mr-1"></i><b>${i.buyer_name||'Servo?'}</b> • <i class="fas fa-church mr-1"></i><b>${i.comunidade||'-'}</b> • Qtd: <b>${i.qtd||1}</b></div>`;
+                    const quem = i.name || i.buyer_name || 'Servo?';
+                    descHTML += `<div class="text-[10px] text-slate-500 mt-1"><i class="fas fa-user mr-1"></i><b>${quem}</b> • <i class="fas fa-church mr-1"></i><b>${i.comunidade||'-'}</b> • Qtd: <b>${i.qtd||1}</b></div>`;
                 } else {
-                    descHTML += `<div class="text-[9px] uppercase font-bold mt-1 text-slate-400">${badge} ${i.equipe ? `<span class="text-indigo-400 ml-1">• ${i.equipe}</span>` : ''} ${i.buyer_name ? `<span class="text-slate-500 ml-1">• ${i.buyer_name||i.name||''}</span>`:''}</div>`;
+                    const quem = i.buyer_name || i.name || 'Servo?';
+                    descHTML += `<div class="text-[9px] uppercase font-bold mt-1 text-slate-400">${badge} ${i.equipe ? `<span class="text-indigo-400 ml-1">• ${i.equipe}</span>` : ''} <span class="text-slate-500 ml-1">• ${quem}</span></div>`;
+                }
+                
+                if(i.recebidoPor || i.forma) {
+                    descHTML += `<div class="text-[9px] text-gray-400 mt-0.5">${i.recebidoPor ? `Rec: ${i.recebidoPor}` : ''} ${i.forma ? `• ${i.forma}` : ''}</div>`;
                 }
 
                 corpo.innerHTML+=`<tr class="hover:bg-slate-50 border-b border-slate-50 transition ${isSaida?'bg-red-50/40':''}">
@@ -324,11 +352,14 @@
             }
         }
 
+        // ✅ FIX: Cobrança Híbrida (Name || BuyerName)
         function renderizarCobranca(dados) {
             const lista=document.getElementById("listaDevedores"); const dev={};
             dados.forEach(i=>{
-                if(!i.paid && i.buyer_name && i.type !== "SAIDA") {
-                    const n=i.buyer_name.toUpperCase(); if(!dev[n]) dev[n]={tot:0,its:[],ids:[],eq:i.equipe||"-",tel:i.phone||""};
+                const nome = i.buyer_name || i.name;
+                if(!i.paid && nome && i.type !== "SAIDA") {
+                    const n = nome.toUpperCase(); 
+                    if(!dev[n]) dev[n]={tot:0,its:[],ids:[],eq:i.equipe||"-",tel:i.phone||""};
                     dev[n].tot+=parseFloat(i.amount); dev[n].its.push(i.product||i.description); dev[n].ids.push(i.id);
                 }
             });
@@ -346,7 +377,7 @@
         async function baixar(id) { if(confirm("Confirmar recebimento?")) await apiPost("marcarPago", {id}); }
         async function arquivar(id) { if(confirm("Mover para Arquivo Morto?")) await apiPost("arquivar", {id}); }
 
-        // ✅ SALVAR V10.3 (FIX FINAL: PAID & CAMPOS NOVOS)
+        // ✅ SUBMIT FINAL (COM LIMPEZA DE PAYLOAD)
         document.getElementById("formFin").addEventListener("submit", async function(e) {
             e.preventDefault(); const btn=this.querySelector('button[type="submit"]'); 
             btn.innerHTML=`<i class="fas fa-spinner fa-spin"></i> SALVANDO...`; btn.disabled=true;
@@ -357,16 +388,20 @@
             const nome = document.getElementById("f_nome").value;
             const tel = document.getElementById("f_tel").value;
             
-            // Lógica de Equipe vs Recebido
-            // Se for compras, manda 'recebido' no campo equipe. Se for admin, manda 'equipe'.
-            const equipeVal = ROLE === 'compras' ? document.getElementById("f_recebido").value : document.getElementById("f_equipe").value;
+            const equipeVal = ROLE === 'compras' ? document.getElementById("f_equipe_lista").value : document.getElementById("f_equipe").value;
+            
+            // ✅ Fix: Validação de Equipe
+            if(ROLE === 'compras' && !equipeVal) {
+                alert("⛔ Selecione a equipe da pessoa.");
+                btn.innerHTML = `<i class="fas fa-save"></i> SALVAR REGISTRO`; btn.disabled = false;
+                return;
+            }
             
             let action = "criarAdmin";
             const catAdmin = document.querySelector('input[name="catAdmin"]:checked');
             if(abaAtiva === 'admin' && catAdmin && catAdmin.value === 'FEIJOADA') action = "criarFeijoada";
-            if(abaAtiva === 'compras') action = "criarVendaCompras";
+            if(abaAtiva === 'compras') action = "criarVendaCompras"; 
 
-            // Validar Domingo
             const diaEl = document.getElementById("f_dia");
             const dia = diaEl ? diaEl.value : "";
             const isDomingo = (abaAtiva === 'compras' && dia === "Domingo");
@@ -376,7 +411,6 @@
                 btn.innerHTML = `<i class="fas fa-save"></i> SALVAR REGISTRO`; btn.disabled = false;
                 return;
             }
-            
             if(ROLE === "compras" && type === "SAIDA") {
                 alert("⛔ Compras não lança saída!");
                 btn.innerHTML = `<i class="fas fa-save"></i> SALVAR REGISTRO`; btn.disabled = false;
@@ -389,14 +423,20 @@
             const p = {
                 date: new Date().toISOString(),
                 amount: val, type: type, description: desc, product: desc,
-                name: nome, phone: tel, equipe: equipeVal,
+                name: nome, phone: tel, 
+                equipe: equipeVal,
                 category: document.getElementById("f_cat")?.value || "Geral",
                 day: dia, paid: paid, 
                 qtd: document.getElementById("f_qtd")?.value || 1,
                 comunidade: document.getElementById("f_comun")?.value,
-                // Extra payload (se backend suportar no futuro)
-                forma: document.getElementById("f_forma").value
+                forma: document.getElementById("f_forma").value,
+                recebidoPor: document.getElementById("f_recebido").value
             };
+
+            // ✅ Fix: Limpeza de Payload Feijoada
+            if(action === "criarFeijoada") {
+                delete p.description;
+            }
 
             await apiPost(action, p);
             fecharModal(); this.reset();
@@ -440,7 +480,6 @@
             carregar(); 
         }
         
-        // ✅ DOM SEGURO
         function abrirModal() { 
             document.getElementById("modal").classList.remove("hidden"); 
             document.getElementById("camposMercado").classList.toggle("hidden",abaAtiva!=='compras'); 
