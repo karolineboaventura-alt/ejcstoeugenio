@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EJC BANK</title>
+  <title>EJC BANK • 21º EJC</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -105,10 +105,10 @@
     <h2 class="text-center font-black text-purple-700 uppercase mb-4">Novo Lançamento</h2>
     <form id="formFin" class="space-y-3 text-center">
         
-        <input id="f_desc" placeholder="Produto (ex: Coxinha)" class="w-full border p-3 rounded-xl font-bold text-center outline-none focus:border-purple-500" required>
+        <input id="f_desc" placeholder="Produto (ex: Coxinha)" class="w-full border p-3 rounded-xl font-bold text-center outline-none focus:border-purple-500">
         
         <div class="flex gap-2">
-            <input id="f_val" type="number" step="0.01" placeholder="R$ Unitário" class="w-full border p-3 rounded-xl font-bold text-center" required>
+            <input id="f_val" type="number" step="0.01" placeholder="R$ Unitário" class="w-full border p-3 rounded-xl font-bold text-center">
             <button type="button" onclick="somarItem()" class="bg-purple-100 text-purple-600 px-4 rounded-xl font-black text-xl hover:bg-purple-200" title="Adicionar à Cesta">+</button>
         </div>
         
@@ -145,7 +145,7 @@
 </div>
 
 <script>
-// ✅ LINK DA API REAL
+// ✅ LINK DA API MANTIDO
 const API = "https://script.google.com/macros/s/AKfycbw4ZkR-3m6e6wt4MD0cr3M672_QBmcVDVltXf6kMw7q_ElLOtGZvK_bONRLlJSyc5lYFA/exec";
 
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
@@ -163,7 +163,7 @@ function tentarLogin(r){
     else return document.getElementById("msgErroLogin").classList.remove("hidden");
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("appMain").classList.remove("hidden");
-    // ⚠️ REMOVIDA LINHA QUE CAUSAVA ERRO NO LOGIN
+    // Header removido daqui pois não tem ID
     
     if(ROLE==="compras") { 
         abaAtiva="ejc"; 
@@ -201,7 +201,7 @@ async function carregar(){
         const r = await fetch(`${API}?action=${act}`); 
         dadosCache = await r.json(); 
         renderizar(); 
-        if(ROLE==="admin") atualizarStats(); // ✅ FUNÇÃO EXISTE AGORA
+        if(ROLE==="admin") atualizarStats();
     } catch(e){ 
         alert("Erro conexão: " + e.message); 
     }
@@ -221,7 +221,7 @@ function atualizarStats(){
     document.getElementById("totalLiquido").innerText = "R$ " + (rec - pen).toFixed(2);
 }
 
-// Renderização da Tabela
+// ✅ CORREÇÃO 1: RENDERIZAÇÃO COM FILTRO CORRETO PARA ADMIN E COMPRAS
 function renderizar(){
     const tb=document.getElementById("corpoTabela"); tb.innerHTML="";
     const busca = document.getElementById("campoBusca").value.toLowerCase();
@@ -229,16 +229,27 @@ function renderizar(){
     const ehDomingo = new Date().getDay()===0;
 
     const lista = dadosCache.slice().reverse().filter(i=>{
+        // Filtro EJC (Funciona para Todos)
         if(abaAtiva==="ejc") {
             if(i.category!=="EJC") return false;
-            if(filtroAtivo && filtroAtivo!=="Todos" && i.ejc_dia!==filtroAtivo) return false;
+            // Se tiver filtro ativo (Sexta, Sabado...), aplica. Se não, mostra tudo.
+            if(filtroAtivo && i.ejc_dia !== filtroAtivo) return false;
         }
+        
+        // Filtro Mercadinho (Funciona para Todos)
         if(abaAtiva==="mercadinho") {
             if(i.category!=="Mercadinho") return false; 
             const p=(i.product||"").toUpperCase();
-            if(filtroAtivo==="Geral" && (p.includes("MÃES") || p.includes("NAMORADOS"))) return false;
-            if(filtroAtivo && filtroAtivo!=="Geral" && !p.includes(filtroAtivo.replace(/[\[\]]/g,""))) return false;
+            
+            if(filtroAtivo==="Geral") {
+                // Geral não pode mostrar Mães nem Namorados
+                if(p.includes("MÃES") || p.includes("NAMORADOS")) return false;
+            } else if (filtroAtivo) {
+                // Se for filtro específico, tem que conter a tag (ex: [MÃES])
+                if(!p.includes(filtroAtivo.replace(/[\[\]]/g,""))) return false;
+            }
         }
+        
         const txt = (i.description||i.product||"").toLowerCase() + (i.buyer_name||"").toLowerCase();
         if(busca && !txt.includes(busca)) return false;
         
