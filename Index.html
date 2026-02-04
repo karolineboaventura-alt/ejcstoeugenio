@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EJC BANK 💰</title>
+  <title>EJC BANK</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -160,7 +160,7 @@
 </div>
 
 <script>
-// ✅ URL ATUALIZADA (NOVA API V15)
+// ✅ URL API V15 FINAL
 const API = "https://script.google.com/macros/s/AKfycbxpdUDknyp92-QwDwqOz_fxtPoso62D2zZLJksI0astU1RJG8WTVrPjKNLlGq6UNTRu/exec";
 
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
@@ -180,6 +180,7 @@ function tentarLogin(r){
     if(ROLE==="compras") { 
         abaAtiva="ejc"; 
         document.getElementById("tab-admin").classList.add("hidden");
+        // ✅ COMPRAS NÃO VÊ FEIJOADA, CONFIRMADO!
         document.getElementById("tab-feijoada").classList.add("hidden");
         document.getElementById("tab-arquivo").classList.add("hidden");
     }
@@ -376,12 +377,16 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
         await apiPost("criarVendaCompras", pl);
     }
     
-    // ✅ UPGRADE: ENVIO COMPLETO DA FEIJOADA
+    // ✅ UPGRADE FINO: AJUSTE DE LÓGICA DA FEIJOADA
     if(abaAtiva==="feijoada") {
+        // Remove 'day' para garantir que não conflite com EJC
+        delete pl.day; 
+        
         pl.qtd = document.getElementById("f_qtd").value;
         pl.comunidade = document.getElementById("f_comun").value;
-        pl.obs = document.getElementById("f_obs").value; // ✅ NOVA OBS
-        pl.equipe = document.getElementById("f_equipe_feijoada").value; // ✅ NOVA EQUIPE
+        pl.obs = document.getElementById("f_obs").value; 
+        pl.equipe = document.getElementById("f_equipe_feijoada").value;
+        
         await apiPost("criarFeijoada", pl);
     }
     
