@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EJC BANK • 21º EJC</title>
+  <title>EJC BANK 💰</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -131,8 +131,23 @@
         <select id="f_type" class="w-full border p-3 rounded-xl font-bold text-center bg-white"><option value="ENTRADA">🟢 Entrada (Pago)</option><option value="PENDENTE">🟠 Pendente (Fiado)</option><option value="SAIDA">🔴 Saída (Custo)</option></select>
         
         <div id="camposEJC" class="hidden bg-blue-50 p-3 rounded-xl space-y-2"><p class="text-[10px] font-black text-blue-400 uppercase">EJC</p><select id="f_dia" class="w-full border p-2 rounded-lg font-bold text-center"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select><select id="f_equipe" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
+        
         <div id="camposMercado" class="hidden bg-pink-50 p-3 rounded-xl space-y-2"><p class="text-[10px] font-black text-pink-400 uppercase">Mercadinho</p><select id="f_campanha" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Geral</option><option value="[MÃES]">Mães</option><option value="[NAMORADOS]">Namorados</option></select><select id="f_equipe_merc" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
-        <div id="camposFeijoada" class="hidden bg-orange-50 p-3 rounded-xl space-y-2"><input id="f_qtd" type="number" value="1" class="w-full border p-2 rounded-lg font-bold text-center" placeholder="Qtd"><input id="f_comun" placeholder="Comunidade" class="w-full border p-2 rounded-lg font-bold text-center uppercase"></div>
+        
+        <div id="camposFeijoada" class="hidden bg-orange-50 p-3 rounded-xl space-y-2">
+            <p class="text-[10px] font-black text-orange-400 uppercase">Detalhes Feijoada</p>
+            <input id="f_qtd" type="number" value="1" class="w-full border p-2 rounded-lg font-bold text-center" placeholder="Qtd">
+            <select id="f_equipe_feijoada" class="w-full border p-2 rounded-lg font-bold text-center">
+                <option value="">Sem Equipe (Avulso)</option>
+                <option>Animação</option><option>Patrimônio</option><option>Café</option>
+                <option>Círculo</option><option>Compras</option><option>Cozinha</option>
+                <option>Intercessão</option><option>Liturgia</option><option>Ordem</option>
+                <option>Piloto</option><option>Sala</option><option>Secretaria</option>
+                <option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
+            </select>
+            <input id="f_comun" placeholder="Comunidade" class="w-full border p-2 rounded-lg font-bold text-center uppercase">
+            <input id="f_obs" placeholder="Observação (ex: s/ cebola)" class="w-full border p-2 rounded-lg font-bold text-center text-xs">
+        </div>
 
         <input id="f_nome" placeholder="Nome da Pessoa" class="w-full border p-3 rounded-xl font-bold text-center">
         <input id="f_tel" placeholder="WhatsApp (DDD+Num)" class="w-full border p-3 rounded-xl font-bold text-center">
@@ -145,17 +160,15 @@
 </div>
 
 <script>
-// ✅ LINK DA API MANTIDO
-const API = "https://script.google.com/macros/s/AKfycbw4ZkR-3m6e6wt4MD0cr3M672_QBmcVDVltXf6kMw7q_ElLOtGZvK_bONRLlJSyc5lYFA/exec";
+// ✅ URL ATUALIZADA (NOVA API V15)
+const API = "https://script.google.com/macros/s/AKfycbxpdUDknyp92-QwDwqOz_fxtPoso62D2zZLJksI0astU1RJG8WTVrPjKNLlGq6UNTRu/exec";
 
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
 let ROLE="", abaAtiva="admin", filtroAtivo="", dadosCache=[];
-let itensCesta = []; // V15: Array da Cesta
+let itensCesta = []; 
 
-// Função para ver senha
 function toggleSenha(){ const i=document.getElementById("inputSenha"); const ic=document.getElementById("lockIcon"); i.type=i.type==="password"?"text":"password"; ic.className=i.type==="password"?"fas fa-eye":"fas fa-eye-slash"; }
 
-// Sistema de Login
 function tentarLogin(r){
     const s=document.getElementById("inputSenha").value;
     if(r==="admin" && s===PASS_ADMIN) ROLE="admin";
@@ -163,7 +176,6 @@ function tentarLogin(r){
     else return document.getElementById("msgErroLogin").classList.remove("hidden");
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("appMain").classList.remove("hidden");
-    // Header removido daqui pois não tem ID
     
     if(ROLE==="compras") { 
         abaAtiva="ejc"; 
@@ -174,7 +186,6 @@ function tentarLogin(r){
     mudarAba(abaAtiva);
 }
 
-// Navegação de Abas
 function mudarAba(a){
     abaAtiva=a; filtroAtivo="";
     document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("tab-active"));
@@ -186,11 +197,9 @@ function mudarAba(a){
     carregar();
 }
 
-// Filtros
 function filtrarDia(d){ filtroAtivo=d; renderizar(); }
 function filtrarCampanha(c){ filtroAtivo=c; renderizar(); }
 
-// ✅ CARREGAR DADOS
 async function carregar(){
     document.getElementById("loading").classList.remove("hidden");
     let act = "listarAdminFull";
@@ -202,13 +211,10 @@ async function carregar(){
         dadosCache = await r.json(); 
         renderizar(); 
         if(ROLE==="admin") atualizarStats();
-    } catch(e){ 
-        alert("Erro conexão: " + e.message); 
-    }
+    } catch(e){ alert("Erro conexão: " + e.message); }
     document.getElementById("loading").classList.add("hidden");
 }
 
-// ✅ FUNÇÃO RESTAURADA
 function atualizarStats(){
     let rec = 0, pen = 0;
     dadosCache.forEach(i => {
@@ -221,7 +227,6 @@ function atualizarStats(){
     document.getElementById("totalLiquido").innerText = "R$ " + (rec - pen).toFixed(2);
 }
 
-// ✅ CORREÇÃO 1: RENDERIZAÇÃO COM FILTRO CORRETO PARA ADMIN E COMPRAS
 function renderizar(){
     const tb=document.getElementById("corpoTabela"); tb.innerHTML="";
     const busca = document.getElementById("campoBusca").value.toLowerCase();
@@ -229,27 +234,16 @@ function renderizar(){
     const ehDomingo = new Date().getDay()===0;
 
     const lista = dadosCache.slice().reverse().filter(i=>{
-        // Filtro EJC (Funciona para Todos)
         if(abaAtiva==="ejc") {
             if(i.category!=="EJC") return false;
-            // Se tiver filtro ativo (Sexta, Sabado...), aplica. Se não, mostra tudo.
             if(filtroAtivo && i.ejc_dia !== filtroAtivo) return false;
         }
-        
-        // Filtro Mercadinho (Funciona para Todos)
         if(abaAtiva==="mercadinho") {
             if(i.category!=="Mercadinho") return false; 
             const p=(i.product||"").toUpperCase();
-            
-            if(filtroAtivo==="Geral") {
-                // Geral não pode mostrar Mães nem Namorados
-                if(p.includes("MÃES") || p.includes("NAMORADOS")) return false;
-            } else if (filtroAtivo) {
-                // Se for filtro específico, tem que conter a tag (ex: [MÃES])
-                if(!p.includes(filtroAtivo.replace(/[\[\]]/g,""))) return false;
-            }
+            if(filtroAtivo==="Geral" && (p.includes("MÃES") || p.includes("NAMORADOS"))) return false;
+            else if(filtroAtivo && !p.includes(filtroAtivo.replace(/[\[\]]/g,""))) return false;
         }
-        
         const txt = (i.description||i.product||"").toLowerCase() + (i.buyer_name||"").toLowerCase();
         if(busca && !txt.includes(busca)) return false;
         
@@ -284,17 +278,14 @@ function renderizar(){
     }
 }
 
-// 🛒 SOMA RÁPIDA (TURBO)
 function somarItem(){
     const descInput = document.getElementById("f_desc").value.trim();
     const desc = descInput || "Item Diverso";
     const val = parseFloat(document.getElementById("f_val").value);
-    
     if(!val || val <= 0) return alert("⛔ Digite um valor válido!");
     
     const itemExistente = itensCesta.find(i => i.desc.toLowerCase() === desc.toLowerCase() && i.val === val);
-    if (itemExistente) { itemExistente.qtd += 1; } 
-    else { itensCesta.push({ desc: desc, val: val, qtd: 1 }); }
+    if (itemExistente) { itemExistente.qtd += 1; } else { itensCesta.push({ desc: desc, val: val, qtd: 1 }); }
     
     renderCesta();
     document.getElementById("f_desc").value = ""; 
@@ -306,34 +297,18 @@ function renderCesta(){
     const lista = document.getElementById("listaItens");
     lista.innerHTML = "";
     let total = 0;
-    
-    if(itensCesta.length === 0){
-        document.getElementById("areaCesta").classList.add("hidden");
-        document.getElementById("txtSoma").innerText = "Total: R$ 0.00";
-        return;
-    }
-
+    if(itensCesta.length === 0){ document.getElementById("areaCesta").classList.add("hidden"); document.getElementById("txtSoma").innerText = "Total: R$ 0.00"; return; }
     itensCesta.forEach((item) => {
         const subtotal = item.val * item.qtd;
         total += subtotal;
-        lista.innerHTML += `
-            <div class="flex justify-between border-b border-slate-100 pb-1 text-xs">
-                <span><b class="text-purple-600">${item.qtd}x</b> ${item.desc}</span>
-                <span class="font-bold text-slate-700">R$ ${subtotal.toFixed(2)}</span>
-            </div>`;
+        lista.innerHTML += `<div class="flex justify-between border-b border-slate-100 pb-1 text-xs"><span><b class="text-purple-600">${item.qtd}x</b> ${item.desc}</span><span class="font-bold text-slate-700">R$ ${subtotal.toFixed(2)}</span></div>`;
     });
-    
     document.getElementById("txtSoma").innerText = `Total: R$ ${total.toFixed(2)}`;
     document.getElementById("areaCesta").classList.remove("hidden");
 }
 
-function limparCesta(){
-    itensCesta = [];
-    renderCesta();
-    calcularTroco();
-}
+function limparCesta(){ itensCesta = []; renderCesta(); calcularTroco(); }
 
-// 💰 TROCO
 document.getElementById("f_forma").addEventListener("change", () => {
     const forma = document.getElementById("f_forma").value;
     document.getElementById("blocoTroco").classList.toggle("hidden", forma !== "DINHEIRO");
@@ -345,7 +320,6 @@ function calcularTroco(){
     const totalCestaVal = itensCesta.reduce((acc, i) => acc + (i.val * i.qtd), 0);
     const valCampo = parseFloat(document.getElementById("f_val").value || 0);
     const totalFinal = totalCestaVal > 0 ? totalCestaVal : valCampo;
-    
     const pago = parseFloat(document.getElementById("f_pago").value || 0);
     let troco = pago - totalFinal;
     if(troco < 0) troco = 0;
@@ -382,15 +356,16 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     if(abaAtiva==="admin") await apiPost("criarAdmin", {...pl, type: document.getElementById("f_type").value});
     
     if(abaAtiva==="ejc" || abaAtiva==="mercadinho") {
-        if(abaAtiva==="mercadinho" && pl.paid === false) return alert("⛔ Mercadinho não permite fiado. Somente pagamento imediato!");
+        if(abaAtiva==="mercadinho" && pl.paid === false) return alert("⛔ Mercadinho não permite fiado.");
         if(abaAtiva==="ejc") {
             const dia = document.getElementById("f_dia").value;
-            if(dia === "Domingo" && pl.paid === false) return alert("⛔ Domingo é dia de cobrança! Não é permitido lançar fiado.");
+            if(dia === "Domingo" && pl.paid === false) return alert("⛔ Domingo é dia de cobrança!");
         }
-
         if(!pl.recebidoPor) return alert("⛔ Quem recebeu o dinheiro?");
-        if(!document.getElementById("f_equipe").value && !document.getElementById("f_equipe_merc").value) return alert("⛔ Equipe?");
-        pl.equipe = abaAtiva==="ejc" ? document.getElementById("f_equipe").value : document.getElementById("f_equipe_merc").value;
+        
+        if(abaAtiva==="ejc") pl.equipe = document.getElementById("f_equipe").value;
+        if(abaAtiva==="mercadinho") pl.equipe = document.getElementById("f_equipe_merc").value;
+        if(!pl.equipe) return alert("⛔ Equipe?");
         
         if(abaAtiva==="ejc") { pl.category="EJC"; pl.day=document.getElementById("f_dia").value; }
         if(abaAtiva==="mercadinho") { 
@@ -401,9 +376,12 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
         await apiPost("criarVendaCompras", pl);
     }
     
+    // ✅ UPGRADE: ENVIO COMPLETO DA FEIJOADA
     if(abaAtiva==="feijoada") {
         pl.qtd = document.getElementById("f_qtd").value;
         pl.comunidade = document.getElementById("f_comun").value;
+        pl.obs = document.getElementById("f_obs").value; // ✅ NOVA OBS
+        pl.equipe = document.getElementById("f_equipe_feijoada").value; // ✅ NOVA EQUIPE
         await apiPost("criarFeijoada", pl);
     }
     
