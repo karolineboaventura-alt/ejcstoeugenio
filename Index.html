@@ -145,7 +145,8 @@
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyktUziIbA0b4DL5Lhnf7DfGWB5-kXElVjjwvKL4BkX5gOvx_uofFwPnU-JoXCIcbUoXQ/exec"; 
+// ✅ LINK DA API REAL CONFIGURADO
+const API = "https://script.google.com/macros/s/AKfycbyU-w5SZVWWdV19ED7jPzImvOMzYx2TEJbCmsS5_k34HAUvDqIPH8b7AIMp4847SF3aQg/exec";
 
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
 let ROLE="", abaAtiva="admin", filtroAtivo="", dadosCache=[];
@@ -249,23 +250,19 @@ function renderizar(){
 
 // 🛒 SOMA RÁPIDA (TURBO)
 function somarItem(){
-    const desc = document.getElementById("f_desc").value || "Item";
+    const descInput = document.getElementById("f_desc").value.trim();
+    const desc = descInput || "Item Diverso";
     const val = parseFloat(document.getElementById("f_val").value);
     
-    if(!val) return alert("Digite o valor!");
+    if(!val || val <= 0) return alert("⛔ Digite um valor válido!");
     
-    // Adiciona na cesta
-    itensCesta.push({ desc: desc, val: val });
+    const itemExistente = itensCesta.find(i => i.desc.toLowerCase() === desc.toLowerCase() && i.val === val);
+    if (itemExistente) { itemExistente.qtd += 1; } 
+    else { itensCesta.push({ desc: desc, val: val, qtd: 1 }); }
     
-    // Atualiza Visual
     renderCesta();
-    
-    // Reseta campos para próximo item
-    document.getElementById("f_desc").value = "";
-    document.getElementById("f_desc").focus();
-    document.getElementById("f_val").value = "";
-    
-    // Atualiza Troco (se houver pagamento digitado)
+    document.getElementById("f_desc").value = ""; 
+    document.getElementById("f_desc").focus(); 
     calcularTroco();
 }
 
@@ -274,9 +271,20 @@ function renderCesta(){
     lista.innerHTML = "";
     let total = 0;
     
-    itensCesta.forEach((item, index) => {
-        total += item.val;
-        lista.innerHTML += `<div class="flex justify-between border-b border-slate-100 pb-1"><span>${item.desc}</span><span class="font-bold">R$ ${item.val.toFixed(2)}</span></div>`;
+    if(itensCesta.length === 0){
+        document.getElementById("areaCesta").classList.add("hidden");
+        document.getElementById("txtSoma").innerText = "Total: R$ 0.00";
+        return;
+    }
+
+    itensCesta.forEach((item) => {
+        const subtotal = item.val * item.qtd;
+        total += subtotal;
+        lista.innerHTML += `
+            <div class="flex justify-between border-b border-slate-100 pb-1 text-xs">
+                <span><b class="text-purple-600">${item.qtd}x</b> ${item.desc}</span>
+                <span class="font-bold text-slate-700">R$ ${subtotal.toFixed(2)}</span>
+            </div>`;
     });
     
     document.getElementById("txtSoma").innerText = `Total: R$ ${total.toFixed(2)}`;
@@ -285,8 +293,7 @@ function renderCesta(){
 
 function limparCesta(){
     itensCesta = [];
-    document.getElementById("areaCesta").classList.add("hidden");
-    document.getElementById("txtSoma").innerText = "Total: R$ 0.00";
+    renderCesta();
     calcularTroco();
 }
 
@@ -296,10 +303,10 @@ document.getElementById("f_forma").addEventListener("change", () => {
     document.getElementById("blocoTroco").classList.toggle("hidden", forma !== "DINHEIRO");
 });
 document.getElementById("f_pago").addEventListener("input", calcularTroco);
-document.getElementById("f_val").addEventListener("input", calcularTroco); // Fallback caso não use cesta
+document.getElementById("f_val").addEventListener("input", calcularTroco);
 
 function calcularTroco(){
-    const totalCestaVal = itensCesta.reduce((acc, i) => acc + i.val, 0);
+    const totalCestaVal = itensCesta.reduce((acc, i) => acc + (i.val * i.qtd), 0);
     const valCampo = parseFloat(document.getElementById("f_val").value || 0);
     const totalFinal = totalCestaVal > 0 ? totalCestaVal : valCampo;
     
@@ -314,19 +321,21 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     
     let finalDesc = document.getElementById("f_desc").value;
     let finalVal = parseFloat(document.getElementById("f_val").value);
+    let finalQtd = 1;
     
-    // Se tiver cesta, usa ela
     if(itensCesta.length > 0) {
-        finalDesc = itensCesta.map(i => i.desc).join(", ");
-        finalVal = itensCesta.reduce((acc, i) => acc + i.val, 0);
+        finalDesc = itensCesta.map(i => `${i.qtd}x ${i.desc}`).join(", ");
+        finalVal = itensCesta.reduce((acc, i) => acc + (i.val * i.qtd), 0);
+        finalQtd = itensCesta.reduce((acc, i) => acc + i.qtd, 0);
     }
     
-    if(!finalVal) return alert("⛔ Valor total zerado!");
+    if(!finalVal || finalVal <= 0) return alert("⛔ Valor total zerado!");
 
     const pl = {
         name: document.getElementById("f_nome").value,
         phone: document.getElementById("f_tel").value.replace(/\D/g,""),
         amount: finalVal,
+        qtd: finalQtd,
         recebidoPor: document.getElementById("f_recebido").value,
         description: finalDesc,
         product: finalDesc,
@@ -364,7 +373,7 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     
     fecharModal(); 
     this.reset();
-    limparCesta(); // ✅ Reset V15
+    limparCesta();
 });
 
 async function apiPost(act, pl){
@@ -373,7 +382,6 @@ async function apiPost(act, pl){
     carregar();
 }
 
-// ✅ RESET TOTAL AO ABRIR MODAL
 function abrirModal(){ 
     document.getElementById("modal").classList.remove("hidden"); 
     limparCesta();
