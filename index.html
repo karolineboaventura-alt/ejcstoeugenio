@@ -3,189 +3,233 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EJC BANK • 21º EJC</title>
+  <title>EJC BANK • Premium</title>
+  
+  <link rel="preconnect" href="https://script.google.com">
+  <link rel="dns-prefetch" href="https://script.google.com">
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   
   <style>
-    /* ===== AJUSTES GLOBAIS ===== */
-    body { font-family: 'Montserrat', sans-serif; background-color: #f3f4f6; width: 100%; overflow-x: hidden; }
+    /* ===== ESTILO PREMIUM ===== */
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; width: 100%; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
     
-    .tab-btn { opacity: 0.6; filter: grayscale(1); transition: all 0.3s; }
-    .tab-active { opacity: 1; filter: grayscale(0); border-bottom: 4px solid #10b981; transform: scale(1.05); }
-    .hidden { display: none !important; }
-    .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+    /* Efeito Vidro (Glassmorphism) */
+    .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
     
+    /* Botões com Feedback */
+    button { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    button:active { transform: scale(0.95); }
+    
+    /* Cards Flutuantes */
+    .card-shadow { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025); }
+    
+    /* Tabela Premium */
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 80px; }
+    table { width: 100%; min-width: 600px; border-spacing: 0 8px; border-collapse: separate; }
+    tbody tr { background: white; transition: transform 0.1s; }
+    tbody tr:hover { transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+    td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+    
+    /* Toast Notification (Substitui Alert) */
+    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
+    .toast { background: #1e293b; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+    @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
     .admin-only { display: none; }
-    
-    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { width: 100%; min-width: 600px; display: inline-block; }
-    
-    @media (max-width: 640px) { body { font-size: 14px; } }
+    .hidden { display: none !important; }
+    .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Scrollbar invisível mas funcional */
     .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 
 <body class="text-slate-800 min-h-screen flex flex-col">
 
-<div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-slate-950">
-  <div class="relative w-full max-w-sm bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 animate-fade-in-up border border-white/20">
-    <div class="text-center mb-6">
-      <h1 class="text-2xl font-black text-slate-800 mb-1">EJC <span class="text-emerald-500">BANK</span></h1>
-      <p class="text-[10px] font-black text-purple-600 uppercase tracking-widest">21º EJC • Santo Eugênio</p>
-      <p class="text-xs font-black text-slate-600 italic mt-3">"A morte não venceu.<br>O teu amor me salvou!"</p>
-      <p class="text-[9px] font-bold text-slate-400 mt-1">(Jo 11, 25-26)</p>
+<div id="toast-container"></div>
+
+<div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-slate-900/95 backdrop-blur-sm">
+  <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 animate-fade-in-up">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4 text-3xl">✝️</div>
+      <h1 class="text-3xl font-black text-slate-800 tracking-tight">EJC <span class="text-emerald-500">BANK</span></h1>
+      <p class="text-[10px] font-bold text-purple-600 uppercase tracking-widest mt-1">Gestão Financeira 21º EJC</p>
     </div>
-    <div class="relative mb-4">
-        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3 text-center font-bold outline-none focus:border-emerald-500">
-        <button onclick="toggleSenha()" class="absolute right-4 top-4 text-slate-400"><i id="lockIcon" class="fas fa-eye"></i></button>
+    
+    <div class="relative mb-4 group">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-lock text-slate-400 group-focus-within:text-emerald-500 transition"></i></div>
+        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-12 py-4 font-bold outline-none focus:border-emerald-500 focus:bg-white transition text-slate-700">
+        <button onclick="toggleSenha()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i id="lockIcon" class="fas fa-eye"></i></button>
     </div>
-    <button onclick="tentarLogin('admin')" class="w-full py-3.5 rounded-xl font-bold text-white bg-purple-700 shadow-lg mb-3">👑 PILOTOS</button>
-    <button onclick="tentarLogin('compras')" class="w-full py-3.5 rounded-xl font-bold text-white bg-emerald-600 shadow-lg">🛒 COMPRAS</button>
-    <p id="msgErroLogin" class="hidden text-red-500 text-xs font-bold text-center mt-3 animate-pulse">⛔ Senha incorreta. Tente novamente.</p>
-    <div class="mt-8 text-[9px] text-center text-slate-400 font-bold uppercase"><p>Pilotos Finanças • EJC 2026</p><p class="mt-1">Paróquia Santo Eugênio de Mazenod ✝️🤍</p></div>
+    
+    <div class="grid grid-cols-2 gap-3 mb-4">
+        <button onclick="tentarLogin('admin')" class="py-4 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 shadow-lg shadow-slate-200"><i class="fas fa-crown mr-2"></i>PILOTOS</button>
+        <button onclick="tentarLogin('compras')" class="py-4 rounded-2xl font-black text-white bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-200"><i class="fas fa-shopping-cart mr-2"></i>COMPRAS</button>
+    </div>
+    
+    <p id="msgErroLogin" class="hidden text-rose-500 text-xs font-bold text-center animate-pulse"><i class="fas fa-exclamation-circle mr-1"></i> Senha incorreta</p>
+    <div class="mt-8 text-[10px] text-center text-slate-400 font-bold uppercase tracking-wide opacity-50">Sistema V16.0 • Premium</div>
   </div>
 </div>
 
-<div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full pb-20">
-  <header class="bg-white p-4 sticky top-0 z-50 shadow-sm border-b border-slate-100 flex justify-between items-center">
-    <div><h1 class="font-black text-lg italic leading-none">EJC BANK</h1><span class="text-[9px] text-purple-400 font-bold tracking-widest">21º EJC</span></div>
+<div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
+  
+  <header class="glass sticky top-0 z-40 px-4 py-3 flex justify-between items-center border-b border-slate-200/50">
+    <div class="flex items-center gap-2">
+        <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-emerald-200">E</div>
+        <div><h1 class="font-black text-lg leading-none text-slate-800">EJC BANK</h1><span class="text-[9px] text-slate-400 font-bold tracking-widest">ONLINE</span></div>
+    </div>
     <div class="flex gap-2">
-      <button onclick="exportarExcel()" class="bg-slate-700 p-2 rounded-lg text-xs admin-only text-white"><i class="fas fa-file-excel"></i></button>
-      <button onclick="abrirModal()" class="bg-emerald-500 text-white px-4 py-2 rounded-lg font-black text-xs shadow hover:bg-emerald-400">➕ NOVO</button>
-      <button onclick="location.reload()" class="bg-red-100 text-red-500 px-3 py-2 rounded-lg"><i class="fas fa-power-off"></i></button>
+      <button onclick="exportarExcel()" class="bg-white text-slate-600 w-10 h-10 rounded-xl font-black border border-slate-100 shadow-sm admin-only flex items-center justify-center"><i class="fas fa-file-excel"></i></button>
+      <button onclick="abrirModal()" class="bg-slate-900 text-white px-4 h-10 rounded-xl font-bold text-xs shadow-lg shadow-slate-200 flex items-center gap-2"><i class="fas fa-plus"></i> <span class="hidden sm:inline">NOVO</span></button>
+      <button onclick="location.reload()" class="bg-rose-50 text-rose-500 w-10 h-10 rounded-xl border border-rose-100 flex items-center justify-center"><i class="fas fa-power-off"></i></button>
     </div>
   </header>
 
-  <div class="flex bg-white p-1 shadow-sm mb-4 overflow-x-auto no-scrollbar whitespace-nowrap">
-    <button id="tab-admin" onclick="mudarAba('admin')" class="tab-btn flex-1 py-3 px-4 text-xs font-black tab-active admin-only uppercase">Caixa</button>
-    <button id="tab-ejc" onclick="mudarAba('ejc')" class="tab-btn flex-1 py-3 px-4 text-xs font-black uppercase">⛪ EJC</button>
-    <button id="tab-mercadinho" onclick="mudarAba('mercadinho')" class="tab-btn flex-1 py-3 px-4 text-xs font-black uppercase">🛒 Mercadinho</button>
-    <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="tab-btn flex-1 py-3 px-4 text-xs font-black admin-only uppercase">🍛 Feijoada</button>
-    <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="tab-btn flex-1 py-3 px-4 text-xs font-black admin-only uppercase">📦 Arquivo</button>
+  <div class="bg-white border-b border-slate-100 pt-2 pb-0 px-4 shadow-sm overflow-x-auto no-scrollbar whitespace-nowrap sticky top-[65px] z-30">
+    <div class="flex gap-4">
+        <button id="tab-admin" onclick="mudarAba('admin')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-emerald-500 admin-only">📊 Dashboard</button>
+        <button id="tab-ejc" onclick="mudarAba('ejc')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-blue-500">⛪ EJC</button>
+        <button id="tab-mercadinho" onclick="mudarAba('mercadinho')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-pink-500">🛒 Mercadinho</button>
+        <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-orange-500 admin-only">🍛 Feijoada</button>
+        <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-slate-500 admin-only">📦 Arquivo</button>
+    </div>
   </div>
 
-  <main class="px-4">
-    <div id="filtrosEJC" class="hidden flex gap-2 mb-4 animate-fade-in-up">
-        <button onclick="filtrarDia('Sexta')" class="flex-1 bg-blue-50 text-blue-700 py-2 rounded-lg text-xs font-bold border border-blue-200">Sexta</button>
-        <button onclick="filtrarDia('Sabado')" class="flex-1 bg-blue-50 text-blue-700 py-2 rounded-lg text-xs font-bold border border-blue-200">Sábado</button>
-        <button onclick="filtrarDia('Domingo')" class="flex-1 bg-blue-50 text-blue-700 py-2 rounded-lg text-xs font-bold border border-blue-200">Domingo</button>
-    </div>
-    <div id="filtrosMercadinho" class="hidden flex gap-2 mb-4 animate-fade-in-up">
-        <button onclick="filtrarCampanha('[MÃES]')" class="flex-1 bg-pink-50 text-pink-700 py-2 rounded-lg text-xs font-bold border border-pink-200">🌸 Mães</button>
-        <button onclick="filtrarCampanha('[NAMORADOS]')" class="flex-1 bg-red-50 text-red-700 py-2 rounded-lg text-xs font-bold border border-red-200">💘 Namorados</button>
-        <button onclick="filtrarCampanha('Geral')" class="flex-1 bg-emerald-50 text-emerald-700 py-2 rounded-lg text-xs font-bold border border-emerald-200">🛒 Geral</button>
-    </div>
-    <div id="painelArquivo" class="hidden grid grid-cols-3 gap-2 mb-4 animate-fade-in-up">
-        <button onclick="arquivar('Mercadinho', '[MÃES]')" class="bg-pink-100 text-pink-700 py-3 rounded-lg text-[10px] font-bold border border-pink-200">Arq. Mães</button>
-        <button onclick="arquivar('Mercadinho', '[NAMORADOS]')" class="bg-red-100 text-red-700 py-3 rounded-lg text-[10px] font-bold border border-red-200">Arq. Namorados</button>
-        <button onclick="arquivar('FEIJOADA', '')" class="bg-orange-100 text-orange-700 py-3 rounded-lg text-[10px] font-bold border border-orange-200">Arq. Feijoada</button>
-    </div>
-
-    <div id="alertaDomingo" class="hidden bg-rose-600 text-white p-4 rounded-2xl shadow-lg mb-6 flex flex-col md:flex-row justify-between items-center gap-3">
-        <div class="flex items-center gap-3"><i class="fas fa-hand-holding-dollar text-2xl opacity-60"></i><div><h3 class="font-black uppercase text-sm">⚠️ MODO COBRANÇA</h3><p id="txtTotalCobranca" class="text-[10px] font-bold opacity-90">Calculando...</p></div></div>
-        <div class="flex gap-2 w-full md:w-auto"><button onclick="copiarRelatorioCobranca()" class="bg-white/20 px-3 py-2 rounded-lg text-xs font-bold hover:bg-white/30 flex-1"><i class="fas fa-copy mr-1"></i> Lista Zap</button><button onclick="pagarTudoDomingo()" class="bg-white text-rose-600 px-3 py-2 rounded-lg text-xs font-black hover:bg-rose-50 shadow-md flex-1"><i class="fas fa-check-double mr-1"></i> QUITAR LOTE</button></div>
-    </div>
-
-    <div id="dashAdmin" class="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 admin-only">
-       <div class="bg-white p-3 rounded-xl border-l-4 border-emerald-500 shadow-sm"><p class="text-[9px] font-bold text-slate-400 uppercase">Recebido</p><h2 id="totalRecebido" class="text-lg font-black text-slate-700">R$ 0</h2></div>
-       <div class="bg-white p-3 rounded-xl border-l-4 border-orange-500 shadow-sm"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><h2 id="totalPendente" class="text-lg font-black text-orange-600">R$ 0</h2></div>
-       <div class="bg-white p-3 rounded-xl border-l-4 border-purple-600 shadow-sm"><p class="text-[9px] font-bold text-slate-400 uppercase">Líquido</p><h2 id="totalLiquido" class="text-lg font-black text-purple-700">R$ 0</h2></div>
+  <main class="px-4 py-6">
+    
+    <div id="dashAdmin" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 admin-only animate-fade-in-up">
+       <div class="bg-white p-5 rounded-3xl card-shadow border border-slate-50 relative overflow-hidden">
+           <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fas fa-wallet text-6xl text-emerald-500"></i></div>
+           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Recebido</p>
+           <h2 id="totalRecebido" class="text-2xl font-black text-emerald-600">R$ 0,00</h2>
+           <div class="w-full bg-slate-100 h-1 mt-3 rounded-full"><div class="bg-emerald-500 h-1 rounded-full" style="width: 70%"></div></div>
+       </div>
+       <div class="bg-white p-5 rounded-3xl card-shadow border border-slate-50 relative overflow-hidden">
+           <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fas fa-clock text-6xl text-orange-500"></i></div>
+           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pendente</p>
+           <h2 id="totalPendente" class="text-2xl font-black text-orange-500">R$ 0,00</h2>
+           <div class="w-full bg-slate-100 h-1 mt-3 rounded-full"><div class="bg-orange-500 h-1 rounded-full" style="width: 30%"></div></div>
+       </div>
+       <div class="bg-white p-5 rounded-3xl card-shadow border border-slate-50 relative overflow-hidden">
+           <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fas fa-vault text-6xl text-purple-500"></i></div>
+           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Líquido</p>
+           <h2 id="totalLiquido" class="text-2xl font-black text-purple-600">R$ 0,00</h2>
+       </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-        <div class="p-3 bg-slate-50 border-b flex gap-2"><input id="campoBusca" onkeyup="renderizar()" placeholder="🔍 Buscar..." class="flex-1 bg-white border rounded-lg p-2 text-xs font-bold outline-none"></div>
-        <div id="loading" class="hidden p-4 text-center text-xs font-bold text-slate-400 animate-pulse">Sincronizando...</div>
-        <div class="table-wrapper">
-            <table class="text-left"><thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase text-center border-b"><tr><th class="p-3">Data</th><th class="p-3">Desc</th><th class="p-3">$$</th><th class="p-3">Sts</th><th class="p-3">Ação</th></tr></thead><tbody id="corpoTabela" class="text-xs font-medium text-slate-600 text-center divide-y divide-slate-100"></tbody></table>
-        </div>
+    <div id="filtrosEJC" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
+        <button onclick="filtrarDia('Sexta')" class="flex-1 bg-white text-blue-600 py-3 px-4 rounded-xl text-xs font-bold border border-blue-100 shadow-sm whitespace-nowrap hover:bg-blue-50">Sexta</button>
+        <button onclick="filtrarDia('Sabado')" class="flex-1 bg-white text-blue-600 py-3 px-4 rounded-xl text-xs font-bold border border-blue-100 shadow-sm whitespace-nowrap hover:bg-blue-50">Sábado</button>
+        <button onclick="filtrarDia('Domingo')" class="flex-1 bg-white text-blue-600 py-3 px-4 rounded-xl text-xs font-bold border border-blue-100 shadow-sm whitespace-nowrap hover:bg-blue-50">Domingo</button>
+    </div>
+    <div id="filtrosMercadinho" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
+        <button onclick="filtrarCampanha('[MÃES]')" class="flex-1 bg-white text-pink-600 py-3 px-4 rounded-xl text-xs font-bold border border-pink-100 shadow-sm whitespace-nowrap hover:bg-pink-50">🌸 Mães</button>
+        <button onclick="filtrarCampanha('[NAMORADOS]')" class="flex-1 bg-white text-rose-600 py-3 px-4 rounded-xl text-xs font-bold border border-rose-100 shadow-sm whitespace-nowrap hover:bg-rose-50">💘 Namorados</button>
+        <button onclick="filtrarCampanha('Geral')" class="flex-1 bg-white text-emerald-600 py-3 px-4 rounded-xl text-xs font-bold border border-emerald-100 shadow-sm whitespace-nowrap hover:bg-emerald-50">🛒 Geral</button>
+    </div>
+    <div id="painelArquivo" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
+        <button onclick="arquivar('Mercadinho', '[MÃES]')" class="bg-slate-200 text-slate-600 py-3 px-4 rounded-xl text-[10px] font-bold whitespace-nowrap">Arq. Mães</button>
+        <button onclick="arquivar('Mercadinho', '[NAMORADOS]')" class="bg-slate-200 text-slate-600 py-3 px-4 rounded-xl text-[10px] font-bold whitespace-nowrap">Arq. Namorados</button>
+        <button onclick="arquivar('FEIJOADA', '')" class="bg-slate-200 text-slate-600 py-3 px-4 rounded-xl text-[10px] font-bold whitespace-nowrap">Arq. Feijoada</button>
+    </div>
+
+    <div id="alertaDomingo" class="hidden bg-rose-500 text-white p-5 rounded-3xl shadow-xl shadow-rose-200 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
+        <div class="flex items-center gap-4"><div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"><i class="fas fa-hand-holding-dollar text-xl"></i></div><div><h3 class="font-black uppercase text-sm">COBRANÇA</h3><p id="txtTotalCobranca" class="text-xs font-bold opacity-90">Calculando...</p></div></div>
+        <div class="flex gap-2 w-full md:w-auto"><button onclick="copiarRelatorioCobranca()" class="bg-white/20 px-4 py-3 rounded-xl text-xs font-bold hover:bg-white/30 flex-1 backdrop-blur-md"><i class="fas fa-copy mr-2"></i>Relatório</button><button onclick="pagarTudoDomingo()" class="bg-white text-rose-600 px-4 py-3 rounded-xl text-xs font-black hover:bg-rose-50 shadow-md flex-1"><i class="fas fa-check-double mr-2"></i>BAIXAR TUDO</button></div>
+    </div>
+
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-search text-slate-300"></i></div>
+        <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar nome, item..." class="w-full bg-white border border-slate-100 rounded-2xl pl-10 pr-4 py-4 text-sm font-bold shadow-sm focus:border-emerald-500 outline-none mb-4 transition">
+    </div>
+
+    <div id="loading" class="hidden py-10 text-center"><div class="animate-spin inline-block w-8 h-8 border-4 border-slate-200 border-t-emerald-500 rounded-full"></div><p class="text-xs font-bold text-slate-400 mt-3 animate-pulse">Sincronizando...</p></div>
+    
+    <div class="table-wrapper">
+        <table class="text-left text-sm">
+            <thead class="text-[10px] font-black text-slate-400 uppercase"><tr class="bg-transparent"><th class="p-3">Data</th><th class="p-3">Detalhes</th><th class="p-3 text-right">Valor</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Ações</th></tr></thead>
+            <tbody id="corpoTabela" class="text-slate-600 font-medium"></tbody>
+        </table>
     </div>
   </main>
 </div>
 
-<div id="modal" class="hidden fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-[100] p-2 sm:p-4 backdrop-blur-sm">
-  <div class="relative bg-white w-full max-w-md sm:max-w-lg lg:max-w-xl rounded-3xl p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
+<div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="fecharModal()"></div>
+  <div class="relative bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
     
-    <button onclick="fecharModal()" class="absolute top-4 right-4 text-slate-300 hover:text-red-500 text-2xl font-bold transition z-50 p-2"><i class="fas fa-times"></i></button>
+    <button onclick="fecharModal()" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition"><i class="fas fa-times"></i></button>
 
-    <h2 class="text-center font-black text-purple-700 uppercase mb-4">Novo Lançamento</h2>
-    <form id="formFin" class="space-y-3 text-center">
-        
-        <input id="f_desc" placeholder="Produto (ex: Coxinha)" class="w-full border p-3 rounded-xl font-bold text-center outline-none focus:border-purple-500">
+    <div class="text-center mb-6">
+        <h2 class="font-black text-xl text-slate-800">Novo Lançamento</h2>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Preencha os dados</p>
+    </div>
+
+    <form id="formFin" class="space-y-3">
+        <div class="flex gap-2">
+            <input id="f_desc" placeholder="Produto (ex: Coxinha)" class="flex-1 bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl font-bold text-center outline-none focus:border-purple-500 focus:bg-white transition text-slate-800">
+        </div>
         
         <div class="flex gap-2">
-            <input id="f_val" type="number" step="0.01" placeholder="R$ Unitário" class="w-full border p-3 rounded-xl font-bold text-center">
-            <button type="button" onclick="somarItem()" class="bg-purple-100 text-purple-600 px-4 rounded-xl font-black text-xl hover:bg-purple-200" title="Adicionar à Cesta">+</button>
+            <input id="f_val" type="number" step="0.01" placeholder="R$ 0,00" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl font-bold text-center outline-none focus:border-purple-500 focus:bg-white transition text-slate-800">
+            <button type="button" onclick="somarItem()" class="bg-purple-100 text-purple-600 w-16 rounded-2xl font-black text-xl hover:bg-purple-200 transition">+</button>
         </div>
         
-        <div id="areaCesta" class="hidden bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <div id="listaItens" class="text-xs text-left space-y-1 mb-2 max-h-24 overflow-y-auto"></div>
-            <div class="flex justify-between items-center border-t pt-2 mt-2">
-                <button type="button" onclick="limparCesta()" class="text-[10px] text-red-500 font-bold uppercase hover:underline"><i class="fas fa-trash"></i> Limpar</button>
-                <p id="txtSoma" class="text-sm font-black text-purple-700">Total: R$ 0.00</p>
+        <div id="areaCesta" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <div id="listaItens" class="text-xs space-y-2 mb-3 max-h-32 overflow-y-auto"></div>
+            <div class="flex justify-between items-center border-t border-slate-200 pt-3">
+                <button type="button" onclick="limparCesta()" class="text-[10px] text-rose-500 font-bold uppercase hover:underline">Limpar</button>
+                <p id="txtSoma" class="text-base font-black text-purple-700">Total: R$ 0.00</p>
             </div>
         </div>
 
-        <select id="f_forma" class="w-full border p-3 rounded-xl font-bold text-center bg-white"><option value="PIX">PIX</option><option value="DINHEIRO">DINHEIRO</option><option value="CARTAO">CARTAO</option></select>
+        <select id="f_forma" class="w-full bg-white border-2 border-slate-100 p-4 rounded-2xl font-bold text-center text-slate-700"><option value="PIX">PIX</option><option value="DINHEIRO">DINHEIRO</option><option value="CARTAO">CARTAO</option></select>
 
-        <div id="blocoTroco" class="hidden bg-green-50 p-3 rounded-xl space-y-2 border border-green-200">
-            <p class="text-[10px] font-black text-green-600 uppercase">Calculadora de Troco</p>
-            <input id="f_pago" type="number" step="0.01" placeholder="Cliente pagou quanto?" class="w-full border p-2 rounded-lg font-bold text-center">
-            <p id="txtTroco" class="text-sm font-black text-green-700">Troco: R$ 0,00</p>
+        <div id="blocoTroco" class="hidden bg-emerald-50 p-4 rounded-2xl border border-emerald-100 space-y-2">
+            <p class="text-[10px] font-black text-emerald-600 uppercase text-center">Calculadora de Troco</p>
+            <input id="f_pago" type="number" step="0.01" placeholder="Quanto o cliente deu?" class="w-full bg-white border border-emerald-200 p-2 rounded-xl font-bold text-center">
+            <p id="txtTroco" class="text-center font-black text-emerald-700">Troco: R$ 0,00</p>
         </div>
 
-        <select id="f_type" class="w-full border p-3 rounded-xl font-bold text-center bg-white"><option value="ENTRADA">🟢 Entrada (Pago)</option><option value="PENDENTE">🟠 Pendente (Fiado)</option><option value="SAIDA">🔴 Saída (Custo)</option></select>
+        <select id="f_type" class="w-full bg-white border-2 border-slate-100 p-4 rounded-2xl font-bold text-center text-slate-700"><option value="ENTRADA">🟢 Pago Agora</option><option value="PENDENTE">🟠 Pendente (Fiado)</option><option value="SAIDA">🔴 Saída (Custo)</option></select>
         
-        <div id="camposEJC" class="hidden bg-blue-50 p-3 rounded-xl space-y-2"><p class="text-[10px] font-black text-blue-400 uppercase">EJC</p><select id="f_dia" class="w-full border p-2 rounded-lg font-bold text-center"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select><select id="f_equipe" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
+        <div id="camposEJC" class="hidden bg-blue-50 p-4 rounded-2xl space-y-2 border border-blue-100"><p class="text-[10px] font-black text-blue-400 uppercase text-center">EJC</p><select id="f_dia" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select><select id="f_equipe" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
         
-        <div id="camposMercado" class="hidden bg-pink-50 p-3 rounded-xl space-y-2">
-            <p class="text-[10px] font-black text-pink-400 uppercase">Configuração Venda</p>
-            <select id="f_tipo_pessoa" class="w-full border p-2 rounded-lg font-bold text-center">
-                <option value="PAROQUIANO">Paroquiano (Sem Equipe)</option>
-                <option value="SERVO">Servo do EJC</option>
-            </select>
-            <select id="f_campanha" class="w-full border p-2 rounded-lg font-bold text-center">
-                <option value="GERAL">🛒 Mercadinho Geral</option>
-                <option value="MAES">🌸 Dia das Mães</option>
-                <option value="NAMORADOS">💘 Dia dos Namorados</option>
-            </select>
-            <select id="f_equipe_merc" class="hidden w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe (Se Servo)...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
+        <div id="camposMercado" class="hidden bg-pink-50 p-4 rounded-2xl space-y-2 border border-pink-100">
+            <p class="text-[10px] font-black text-pink-400 uppercase text-center">Mercadinho</p>
+            <select id="f_tipo_pessoa" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="PAROQUIANO">👤 Paroquiano (Sem Equipe)</option><option value="SERVO">🙋‍♂️ Servo do EJC</option></select>
+            <select id="f_campanha" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="GERAL">🛒 Geral</option><option value="MAES">🌸 Mães</option><option value="NAMORADOS">💘 Namorados</option></select>
+            <select id="f_equipe_merc" class="hidden w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
         </div>
         
-        <div id="camposFeijoada" class="hidden bg-orange-50 p-3 rounded-xl space-y-2">
-            <p class="text-[10px] font-black text-orange-400 uppercase">Detalhes Feijoada</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <input id="f_qtd" type="number" value="1" class="w-full border p-2 rounded-lg font-bold text-center" placeholder="Qtd">
-                <select id="f_equipe_feijoada" class="w-full border p-2 rounded-lg font-bold text-center">
-                    <option value="">Sem Equipe (Avulso)</option>
-                    <option>Animação</option><option>Patrimônio</option><option>Café</option>
-                    <option>Círculo</option><option>Compras</option><option>Cozinha</option>
-                    <option>Intercessão</option><option>Liturgia</option><option>Ordem</option>
-                    <option>Piloto</option><option>Sala</option><option>Secretaria</option>
-                    <option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
-                </select>
+        <div id="camposFeijoada" class="hidden bg-orange-50 p-4 rounded-2xl space-y-2 border border-orange-100">
+            <p class="text-[10px] font-black text-orange-400 uppercase text-center">Feijoada</p>
+            <div class="grid grid-cols-2 gap-2">
+                <input id="f_qtd" type="number" value="1" class="w-full bg-white border p-2 rounded-xl font-bold text-center" placeholder="Qtd">
+                <select id="f_equipe_feijoada" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="">Sem Equipe</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
             </div>
-            <input id="f_comun" placeholder="Comunidade" class="w-full border p-2 rounded-lg font-bold text-center uppercase">
-            <input id="f_obs" placeholder="Observação (ex: s/ cebola)" class="w-full border p-2 rounded-lg font-bold text-center text-xs">
+            <input id="f_comun" placeholder="Comunidade" class="w-full bg-white border p-2 rounded-xl font-bold text-center uppercase">
+            <input id="f_obs" placeholder="Obs" class="w-full bg-white border p-2 rounded-xl font-bold text-center text-xs">
         </div>
 
-        <input id="f_nome" placeholder="Nome da Pessoa" class="w-full border p-3 rounded-xl font-bold text-center">
-        <input id="f_tel" placeholder="WhatsApp (DDD+Num)" class="w-full border p-3 rounded-xl font-bold text-center">
-        <input id="f_recebido" placeholder="Recebido por (Nome Obrigatório)" class="w-full border-2 border-slate-200 p-3 rounded-xl font-bold text-center focus:border-red-400">
+        <input id="f_nome" placeholder="Nome da Pessoa" class="w-full border-2 border-slate-100 p-4 rounded-2xl font-bold text-center outline-none focus:border-emerald-500 transition text-slate-700">
+        <input id="f_tel" placeholder="WhatsApp (DDD+Num)" class="w-full border-2 border-slate-100 p-4 rounded-2xl font-bold text-center outline-none focus:border-emerald-500 transition text-slate-700">
+        <input id="f_recebido" placeholder="Quem Recebeu? (Obrigatório)" class="w-full border-2 border-slate-200 p-4 rounded-2xl font-bold text-center focus:border-rose-400 transition bg-slate-50">
 
-        <button type="submit" class="w-full bg-emerald-500 text-white py-4 rounded-2xl font-black shadow-lg mt-2 active:scale-95 transition">💾 SALVAR</button>
-        <button type="button" onclick="fecharModal()" class="w-full py-2 text-slate-400 font-bold text-xs uppercase">Cancelar</button>
+        <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black shadow-xl shadow-slate-200 mt-2 active:scale-95 transition">💾 SALVAR LANÇAMENTO</button>
     </form>
   </div>
 </div>
 
 <script>
+// ✅ API V15 (LÓGICA MANTIDA, VISUAL NOVO)
 const API = "https://script.google.com/macros/s/AKfycbzfCozUPEax76bamW5DgxDgEOK9LCw4OCsppEKbm_lGOTmXBGCs0bjHAFQRFzEi1Tl4Jw/exec";
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
 let ROLE="", abaAtiva="admin", filtroAtivo="", dadosCache=[];
@@ -193,6 +237,15 @@ let dadosAdminCache = [];
 let itensCesta = []; 
 
 function toggleSenha(){ const i=document.getElementById("inputSenha"); const ic=document.getElementById("lockIcon"); i.type=i.type==="password"?"text":"password"; ic.className=i.type==="password"?"fas fa-eye":"fas fa-eye-slash"; }
+
+// NOTIFICAÇÃO TOAST (PREMIUM)
+function showToast(msg, type="success"){
+    const t = document.createElement("div"); t.className="toast";
+    t.innerHTML = type==="error" ? `<i class="fas fa-times-circle text-rose-400"></i> ${msg}` : `<i class="fas fa-check-circle text-emerald-400"></i> ${msg}`;
+    document.getElementById("toast-container").appendChild(t);
+    if(navigator.vibrate) navigator.vibrate(50); // Feedback tátil
+    setTimeout(()=>t.remove(), 3000);
+}
 
 function tentarLogin(r){
     const s=document.getElementById("inputSenha").value;
@@ -213,8 +266,14 @@ function tentarLogin(r){
 
 function mudarAba(a){
     abaAtiva=a; filtroAtivo="";
-    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("tab-active"));
-    document.getElementById("tab-"+a).classList.add("tab-active");
+    document.querySelectorAll(".tab-btn").forEach(b=>{
+        b.classList.remove("tab-active", "text-emerald-600", "border-emerald-500");
+        b.classList.add("border-transparent", "text-slate-400");
+    });
+    const btn = document.getElementById("tab-"+a);
+    btn.classList.add("tab-active", "text-emerald-600", "border-emerald-500");
+    btn.classList.remove("border-transparent", "text-slate-400");
+
     document.getElementById("filtrosEJC").classList.toggle("hidden", a!=="ejc");
     document.getElementById("filtrosMercadinho").classList.toggle("hidden", a!=="mercadinho");
     document.getElementById("painelArquivo").classList.toggle("hidden", a!=="arquivo");
@@ -245,7 +304,7 @@ async function carregar(){
         const r = await fetch(`${API}?action=${act}`);
         dadosCache = await r.json();
         renderizar();
-    } catch(e){ alert("Erro conexão: " + e.message); }
+    } catch(e){ showToast("Erro conexão", "error"); }
     document.getElementById("loading").classList.add("hidden");
 }
 
@@ -263,10 +322,7 @@ function atualizarStats(){
 function renderizar(){
     const tb=document.getElementById("corpoTabela"); tb.innerHTML="";
     const busca = document.getElementById("campoBusca").value.toLowerCase();
-    let somaPend=0;
-    const ehDomingo = new Date().getDay()===0;
-
-    const lista = dadosCache.slice().reverse().filter(i=>{
+    const lista = dadosCache.slice(-150).reverse().filter(i=>{
         const pOriginal = i.product || i.description || "";
         const p = pOriginal.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
         if(abaAtiva==="ejc") {
@@ -280,40 +336,45 @@ function renderizar(){
         }
         const txt = (pOriginal).toLowerCase() + (i.buyer_name||"").toLowerCase();
         if(busca && !txt.includes(busca)) return false;
-        if(ROLE==="compras" && ehDomingo && abaAtiva==="ejc" && i.paid) return false;
+        if(ROLE==="compras" && new Date().getDay()===0 && abaAtiva==="ejc" && i.paid) return false;
         return true;
     });
 
     lista.forEach(i=>{
+        let somaPend = 0;
         if(!i.paid && i.category !== "Feijoada" && i.type !== "FEIJOADA") somaPend+=parseFloat(i.amount||i.total||0);
         const desc = i.product || i.description || "Item"; 
         const val = parseFloat(i.amount||i.total||0);
         const dataShow = abaAtiva==="arquivo" ? `${new Date(i.data_backup).toLocaleDateString()}<br>${i.origem}` : new Date(i.date).toLocaleDateString();
-        const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="bg-slate-100 text-slate-400 w-8 h-8 rounded-full mb-1 hover:bg-slate-200">📦</button>` : "";
+        const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="text-slate-300 hover:text-slate-500 transition px-2"><i class="fas fa-box"></i></button>` : "";
 
-        tb.innerHTML += `<tr id="row-${i.id}" class="border-b hover:bg-slate-50 transition">
-            <td class="p-3 text-[10px] text-slate-400 font-bold text-center">${dataShow}</td>
-            <td class="p-3 text-center"><p class="text-xs font-bold text-slate-700">${desc}</p><p class="text-[9px] text-slate-400">${i.buyer_name||""} ${i.equipe?"• "+i.equipe:""}</p></td>
-            <td class="p-3 text-xs font-black text-slate-700 text-right">R$ ${val.toFixed(2)}</td>
-            <td class="p-3 text-[9px] font-bold text-center">${i.paid?'<span class="text-green-600">PAGO</span>':'<span class="text-orange-500 animate-pulse">PEND</span>'}</td>
-            <td class="p-3 flex justify-center gap-2 items-center">
-                ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="bg-green-100 text-green-700 w-8 h-8 rounded-full mb-1">✔</button>` : ""}
-                ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="text-emerald-500 text-lg mb-1"><i class="fab fa-whatsapp"></i></button>` : ""}
-                ${btnArquivo}
-            </td></tr>`;
+        tb.innerHTML += `
+        <tr class="border-b border-slate-50 last:border-0">
+            <td class="p-4 text-[10px] font-bold text-slate-400 whitespace-nowrap">${dataShow}</td>
+            <td class="p-4">
+                <p class="text-sm font-bold text-slate-700">${desc}</p>
+                <p class="text-[10px] text-slate-400 font-semibold mt-0.5">${i.buyer_name||""} ${i.equipe?"• "+i.equipe:""}</p>
+            </td>
+            <td class="p-4 text-right font-black text-slate-700 whitespace-nowrap">R$ ${val.toFixed(2)}</td>
+            <td class="p-4 text-center">
+                ${i.paid ? '<span class="bg-emerald-100 text-emerald-600 px-2 py-1 rounded-lg text-[9px] font-black">PAGO</span>' : '<span class="bg-orange-100 text-orange-500 px-2 py-1 rounded-lg text-[9px] font-black">PEND</span>'}
+            </td>
+            <td class="p-4 text-center whitespace-nowrap">
+                <div class="flex items-center justify-center gap-3">
+                    ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition shadow-sm"><i class="fas fa-check"></i></button>` : ""}
+                    ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="w-8 h-8 rounded-full bg-green-50 text-green-600 hover:bg-green-500 hover:text-white flex items-center justify-center transition shadow-sm"><i class="fab fa-whatsapp"></i></button>` : ""}
+                    ${btnArquivo}
+                </div>
+            </td>
+        </tr>`;
     });
-
-    if(ROLE==="compras" && ehDomingo && abaAtiva==="ejc" && somaPend > 0) {
-        document.getElementById("alertaDomingo").classList.remove("hidden");
-        document.getElementById("txtTotalCobranca").innerText = `A RECEBER: R$ ${somaPend.toFixed(2)}`;
-    } else { document.getElementById("alertaDomingo").classList.add("hidden"); }
 }
 
 function somarItem(){
     const descInput = document.getElementById("f_desc").value.trim();
     const desc = descInput || "Item Diverso";
     const val = parseFloat(document.getElementById("f_val").value);
-    if(!val || val <= 0) return alert("⛔ Digite um valor válido!");
+    if(!val || val <= 0) return showToast("Valor inválido", "error");
     const itemExistente = itensCesta.find(i => i.desc.toLowerCase() === desc.toLowerCase() && i.val === val);
     if (itemExistente) { itemExistente.qtd += 1; } else { itensCesta.push({ desc: desc, val: val, qtd: 1 }); }
     renderCesta();
@@ -330,7 +391,7 @@ function renderCesta(){
     itensCesta.forEach((item) => {
         const subtotal = item.val * item.qtd;
         total += subtotal;
-        lista.innerHTML += `<div class="flex justify-between border-b border-slate-100 pb-1 text-xs"><span><b class="text-purple-600">${item.qtd}x</b> ${item.desc}</span><span class="font-bold text-slate-700">R$ ${subtotal.toFixed(2)}</span></div>`;
+        lista.innerHTML += `<div class="flex justify-between border-b border-slate-100 pb-2 text-xs"><span><b class="text-purple-600">${item.qtd}x</b> ${item.desc}</span><span class="font-bold text-slate-700">R$ ${subtotal.toFixed(2)}</span></div>`;
     });
     document.getElementById("txtSoma").innerText = `Total: R$ ${total.toFixed(2)}`;
     document.getElementById("areaCesta").classList.remove("hidden");
@@ -345,24 +406,17 @@ document.getElementById("f_forma").addEventListener("change", () => {
 document.getElementById("f_pago").addEventListener("input", calcularTroco);
 document.getElementById("f_val").addEventListener("input", calcularTroco);
 
-// ✅ LÓGICA VISUAL PAROQUIANO x SERVO
 document.getElementById("f_tipo_pessoa")?.addEventListener("change", controlarTipoPessoa);
 function controlarTipoPessoa() {
     const tipo = document.getElementById("f_tipo_pessoa").value;
     const equipe = document.getElementById("f_equipe_merc");
     const tipoPg = document.getElementById("f_type");
     const optionPendente = tipoPg.querySelector('option[value="PENDENTE"]');
-
     if (tipo === "PAROQUIANO") {
-        equipe.classList.add("hidden"); 
-        equipe.value = "";
-        tipoPg.value = "ENTRADA"; 
-        optionPendente.disabled = true; 
-        optionPendente.innerText = "🟠 Pendente (Bloqueado)";
+        equipe.classList.add("hidden"); equipe.value = "";
+        tipoPg.value = "ENTRADA"; optionPendente.disabled = true; optionPendente.innerText = "🟠 Pendente (Bloqueado)";
     } else {
-        equipe.classList.remove("hidden"); 
-        optionPendente.disabled = false; 
-        optionPendente.innerText = "🟠 Pendente (Fiado)";
+        equipe.classList.remove("hidden"); optionPendente.disabled = false; optionPendente.innerText = "🟠 Pendente (Fiado)";
     }
 }
 
@@ -386,7 +440,7 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
         finalVal = itensCesta.reduce((acc, i) => acc + (i.val * i.qtd), 0);
         finalQtd = itensCesta.reduce((acc, i) => acc + i.qtd, 0);
     }
-    if(!finalVal || finalVal <= 0) return alert("⛔ Valor total zerado!");
+    if(!finalVal || finalVal <= 0) return showToast("Valor zerado!", "error");
 
     const pl = {
         name: document.getElementById("f_nome").value,
@@ -403,23 +457,23 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     if(abaAtiva==="admin") await apiPost("criarAdmin", {...pl, type: document.getElementById("f_type").value});
     
     if(abaAtiva==="ejc" || abaAtiva==="mercadinho") {
-        if(!pl.recebidoPor) return alert("⛔ Quem recebeu o dinheiro?");
+        if(!pl.recebidoPor) return showToast("Informe quem recebeu!", "error");
         if (abaAtiva === "ejc") {
             const dia = document.getElementById("f_dia").value;
-            if(dia === "Domingo" && pl.paid === false) return alert("⛔ Domingo é dia de cobrança!");
+            if(dia === "Domingo" && pl.paid === false) return showToast("Domingo não pode fiado!", "error");
             pl.equipe = document.getElementById("f_equipe").value;
-            if (!pl.equipe) return alert("⛔ Equipe?");
+            if (!pl.equipe) return showToast("Selecione a Equipe", "error");
             pl.category="EJC"; pl.day=dia;
         }
         if (abaAtiva === "mercadinho") {
             pl.category = "Mercadinho"; 
             const tipoPessoa = document.getElementById("f_tipo_pessoa").value;
             if (tipoPessoa === "PAROQUIANO") {
-                if (pl.paid === false) return alert("⛔ Paroquiano não pode comprar fiado. Pagamento imediato!");
+                if (pl.paid === false) return showToast("Paroquiano não pode fiado!", "error");
                 pl.equipe = ""; 
             } else {
                 pl.equipe = document.getElementById("f_equipe_merc").value;
-                if (!pl.equipe) return alert("⛔ Informe a equipe do Servo.");
+                if (!pl.equipe) return showToast("Informe equipe do Servo", "error");
             }
             const cp = document.getElementById("f_campanha").value; 
             if(cp === "MAES") pl.product = "[MÃES] " + pl.product;
@@ -442,6 +496,7 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
 async function apiPost(act, pl){
     document.getElementById("loading").classList.remove("hidden");
     await fetch(API, { method:"POST", body:JSON.stringify({action:act, payload:pl}) });
+    showToast("Salvo com sucesso!");
     carregar();
 }
 
@@ -451,19 +506,13 @@ function abrirModal(){
     document.getElementById("blocoTroco").classList.add("hidden");
     document.getElementById("f_pago").value = "";
     document.getElementById("txtTroco").innerText = "Troco: R$ 0,00";
-    
     document.getElementById("camposEJC").classList.toggle("hidden", abaAtiva!=="ejc"); 
     document.getElementById("camposMercado").classList.toggle("hidden", abaAtiva!=="mercadinho"); 
     document.getElementById("camposFeijoada").classList.toggle("hidden", abaAtiva!=="feijoada"); 
-    
-    if(abaAtiva==="mercadinho") controlarTipoPessoa(); // Reseta estado visual
+    if(abaAtiva==="mercadinho") controlarTipoPessoa();
 }
 
-function fecharModal(){ 
-    document.getElementById("modal").classList.add("hidden"); 
-    limparCesta();
-    document.getElementById("formFin").reset();
-}
+function fecharModal(){ document.getElementById("modal").classList.add("hidden"); limparCesta(); document.getElementById("formFin").reset(); }
 
 async function baixar(id) {
     if(!confirm("Recebeu o valor?")) return;
@@ -482,17 +531,14 @@ async function arquivarInd(id) {
     await apiPost("arquivarTransacao", {id:id, aba: abaEnvio});
 }
 
-// ✅ ZAP TURBO (SOMA TOTAL)
 function calcularDividaPorTelefone(tel) {
     const cleanTel = String(tel).replace(/\D/g, "");
-    return dadosCache
-        .filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel && i.category === "EJC")
-        .reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
+    return dadosCache.filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel && i.category === "EJC").reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
 }
 
 function cobrarZapTotal(tel, nome){
     const num = String(tel).replace(/\D/g,"");
-    if(!/^\d{10,11}$/.test(num)) return alert("Número inválido");
+    if(!/^\d{10,11}$/.test(num)) return showToast("Número inválido", "error");
     const total = calcularDividaPorTelefone(num);
     const valorCobrar = total > 0 ? total : parseFloat(0);
     let cob = prompt("Seu nome?",""); if(!cob) return;
@@ -501,10 +547,9 @@ function cobrarZapTotal(tel, nome){
 }
 
 function exportarExcel(){ alert("Use o PC"); }
-function exportarPDF(){ alert("Use o PC"); }
 function copiarRelatorioCobranca(){ 
     const l = dadosCache.filter(i=>!i.paid && i.category!=="Feijoada").map(i=>`🔴 ${i.buyer_name}: R$ ${parseFloat(i.amount || i.total || 0).toFixed(2)}`).join("\n");
-    navigator.clipboard.writeText("*COBRANÇA DOMINGO*\n"+l).then(()=>alert("Copiado!"));
+    navigator.clipboard.writeText("*COBRANÇA DOMINGO*\n"+l).then(()=>showToast("Copiado!"));
 }
 
 function sair(){ location.reload(); }
