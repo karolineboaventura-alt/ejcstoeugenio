@@ -110,7 +110,12 @@
 </div>
 
 <div id="modal" class="hidden fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-[100] p-2 sm:p-4 backdrop-blur-sm">
-  <div class="bg-white w-full max-w-md sm:max-w-lg lg:max-w-xl rounded-3xl p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
+  <div class="relative bg-white w-full max-w-md sm:max-w-lg lg:max-w-xl rounded-3xl p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
+    
+    <button onclick="fecharModal()" class="absolute top-4 right-4 text-slate-300 hover:text-red-500 text-2xl font-bold transition z-50 p-2">
+        <i class="fas fa-times"></i>
+    </button>
+
     <h2 class="text-center font-black text-purple-700 uppercase mb-4">Novo Lançamento</h2>
     <form id="formFin" class="space-y-3 text-center">
         
@@ -142,13 +147,17 @@
         <div id="camposEJC" class="hidden bg-blue-50 p-3 rounded-xl space-y-2"><p class="text-[10px] font-black text-blue-400 uppercase">EJC</p><select id="f_dia" class="w-full border p-2 rounded-lg font-bold text-center"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select><select id="f_equipe" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
         
         <div id="camposMercado" class="hidden bg-pink-50 p-3 rounded-xl space-y-2">
-            <p class="text-[10px] font-black text-pink-400 uppercase">Campanha (Obrigatório)</p>
+            <p class="text-[10px] font-black text-pink-400 uppercase">Configuração Venda</p>
+            <select id="f_tipo_pessoa" class="w-full border p-2 rounded-lg font-bold text-center">
+                <option value="PAROQUIANO">Paroquiano (Sem Equipe)</option>
+                <option value="SERVO">Servo do EJC</option>
+            </select>
             <select id="f_campanha" class="w-full border p-2 rounded-lg font-bold text-center">
                 <option value="GERAL">🛒 Mercadinho Geral</option>
                 <option value="MAES">🌸 Dia das Mães</option>
                 <option value="NAMORADOS">💘 Dia dos Namorados</option>
             </select>
-            <select id="f_equipe_merc" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
+            <select id="f_equipe_merc" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe (Se Servo)...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
         </div>
         
         <div id="camposFeijoada" class="hidden bg-orange-50 p-3 rounded-xl space-y-2">
@@ -236,8 +245,12 @@ async function carregar(){
     document.getElementById("loading").classList.remove("hidden");
     try {
         if (ROLE === "admin") {
-            const rAdmin = await fetch(`${API}?action=listarAdminFull`);
-            dadosAdminCache = await rAdmin.json();
+            const [rAdmin, rCompras, rFeijoada] = await Promise.all([
+                fetch(`${API}?action=listarAdminFull`).then(r => r.json()),
+                fetch(`${API}?action=listarCompras`).then(r => r.json()),
+                fetch(`${API}?action=listarFeijoada`).then(r => r.json())
+            ]);
+            dadosAdminCache = [...rAdmin, ...rCompras, ...rFeijoada];
             atualizarStats();
         }
         let act = "listarAdminFull";
@@ -255,7 +268,7 @@ async function carregar(){
 function atualizarStats(){
     let rec = 0, pen = 0;
     dadosAdminCache.forEach(i => {
-        let v = parseFloat(i.amount || 0);
+        let v = parseFloat(i.amount || i.total || 0);
         if(i.paid) rec += v;
         else pen += v;
     });
@@ -305,7 +318,7 @@ function renderizar(){
             <td class="p-3 text-[9px] font-bold text-center">${i.paid?'<span class="text-green-600">PAGO</span>':'<span class="text-orange-500 animate-pulse">PEND</span>'}</td>
             <td class="p-3 flex justify-center gap-2 items-center">
                 ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="bg-green-100 text-green-700 w-8 h-8 rounded-full mb-1">✔</button>` : ""}
-                ${!i.paid && i.phone ? `<button onclick="cobrarZap('${i.phone}','${i.buyer_name}','${val}')" class="text-emerald-500 text-lg mb-1"><i class="fab fa-whatsapp"></i></button>` : ""}
+                ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="text-emerald-500 text-lg mb-1"><i class="fab fa-whatsapp"></i></button>` : ""}
                 ${btnArquivo}
             </td></tr>`;
     });
@@ -394,27 +407,33 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     if(abaAtiva==="admin") await apiPost("criarAdmin", {...pl, type: document.getElementById("f_type").value});
     
     if(abaAtiva==="ejc" || abaAtiva==="mercadinho") {
-        if(abaAtiva==="mercadinho" && pl.paid === false) return alert("⛔ Mercadinho não permite fiado.");
-        if(abaAtiva==="ejc") {
-            const dia = document.getElementById("f_dia").value;
-            if(dia === "Domingo" && pl.paid === false) return alert("⛔ Domingo é dia de cobrança!");
-        }
         if(!pl.recebidoPor) return alert("⛔ Quem recebeu o dinheiro?");
         
-        if(abaAtiva==="ejc") pl.equipe = document.getElementById("f_equipe").value;
-        if(abaAtiva==="mercadinho") pl.equipe = document.getElementById("f_equipe_merc").value;
-        if(!pl.equipe) return alert("⛔ Equipe?");
-        
-        if(abaAtiva==="ejc") { pl.category="EJC"; pl.day=document.getElementById("f_dia").value; }
-        
-        // ✅ LÓGICA MERCADINHO (AUTO-TAG)
-        if(abaAtiva==="mercadinho") { 
-            pl.category="Mercadinho"; 
+        if (abaAtiva === "ejc") {
+            const dia = document.getElementById("f_dia").value;
+            if(dia === "Domingo" && pl.paid === false) return alert("⛔ Domingo é dia de cobrança!");
+            pl.equipe = document.getElementById("f_equipe").value;
+            if (!pl.equipe) return alert("⛔ Equipe?");
+            pl.category="EJC"; pl.day=dia;
+        }
+
+        if (abaAtiva === "mercadinho") {
+            pl.category = "Mercadinho"; 
+            const tipoPessoa = document.getElementById("f_tipo_pessoa").value;
+            
+            if (tipoPessoa === "PAROQUIANO") {
+                if (pl.paid === false) return alert("⛔ Paroquiano não pode comprar fiado. Pagamento imediato!");
+                pl.equipe = ""; 
+            } else {
+                pl.equipe = document.getElementById("f_equipe_merc").value;
+                if (!pl.equipe) return alert("⛔ Informe a equipe do Servo.");
+            }
+
             const cp = document.getElementById("f_campanha").value; 
             if(cp === "MAES") pl.product = "[MÃES] " + pl.product;
             if(cp === "NAMORADOS") pl.product = "[NAMORADOS] " + pl.product;
-            // GERAL NÃO ADICIONA NADA
         }
+
         await apiPost("criarVendaCompras", pl);
     }
     
@@ -450,7 +469,12 @@ function abrirModal(){
     document.getElementById("camposFeijoada").classList.toggle("hidden", abaAtiva!=="feijoada"); 
 }
 
-function fecharModal(){ document.getElementById("modal").classList.add("hidden"); }
+// ✅ FECHAR MODAL E LIMPAR DADOS
+function fecharModal(){ 
+    document.getElementById("modal").classList.add("hidden"); 
+    limparCesta(); // Limpa cesta visualmente
+    document.getElementById("formFin").reset(); // Limpa campos
+}
 
 async function baixar(id) {
     if(!confirm("Recebeu o valor?")) return;
@@ -469,22 +493,31 @@ async function arquivarInd(id) {
     await apiPost("arquivarTransacao", {id:id, aba: abaEnvio});
 }
 
-function cobrarZap(tel, nome, val){
+function calcularDividaPorTelefone(tel) {
+    const cleanTel = String(tel).replace(/\D/g, "");
+    return dadosCache
+        .filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel && i.category === "EJC")
+        .reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
+}
+
+function cobrarZapTotal(tel, nome){
     const num = String(tel).replace(/\D/g,"");
     if(!/^\d{10,11}$/.test(num)) return alert("Número inválido");
+    
+    const total = calcularDividaPorTelefone(num);
+    const valorCobrar = total > 0 ? total : parseFloat(0);
+
     let cob = prompt("Seu nome?",""); if(!cob) return;
-    const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* da Equipe de Compras.\nPassando só para lembrar que ficou um valor em aberto de *R$ ${parseFloat(val).toFixed(2)}*. Quando puder, você consegue passar no mercadinho para acertar até a hora do almoço?\nQualquer coisa, é só me avisar, tá bom? Deus abençoe!`);
+    
+    const msg = encodeURIComponent(
+        `Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* do EJC.\n` +
+        `Consta um total pendente de *R$ ${valorCobrar.toFixed(2)}* referente aos itens consumidos.\n` +
+        `Quando puder, pode passar no caixa para regularizar?\nDeus abençoe! ✝️`
+    );
     window.open(`https://wa.me/55${num}?text=${msg}`);
 }
 
 function exportarExcel(){ alert("Use o PC"); }
 function exportarPDF(){ alert("Use o PC"); }
 function copiarRelatorioCobranca(){ 
-    const l = dadosCache.filter(i=>!i.paid && i.category!=="Feijoada").map(i=>`🔴 ${i.buyer_name}: R$ ${i.total}`).join("\n");
-    navigator.clipboard.writeText("*COBRANÇA DOMINGO*\n"+l).then(()=>alert("Copiado!"));
-}
-
-function sair(){ location.reload(); }
-</script>
-</body>
-</html>
+    const l = dadosCache.filter(i=>!i.paid && i.category!=="Feijoada").map(i=>`🔴 ${i.buyer
