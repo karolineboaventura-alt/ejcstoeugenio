@@ -3,40 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EJC BANK • Premium</title>
+  <title>EJC BANK • NuStyle</title>
   
   <link rel="preconnect" href="https://script.google.com">
   <link rel="dns-prefetch" href="https://script.google.com">
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   
   <style>
-    /* ===== ESTILO PREMIUM ===== */
-    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; width: 100%; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+    /* ===== NU STYLE (ROXO FINTECH) ===== */
+    :root { --nu-roxo: #820ad1; --nu-roxo-dark: #6105a0; --nu-bg: #f5f5f7; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--nu-bg); width: 100%; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
     
-    /* Efeito Vidro (Glassmorphism) */
-    .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    /* Header Nubank */
+    .nu-header { background: var(--nu-roxo); color: white; padding-bottom: 10px; box-shadow: 0 4px 20px rgba(130, 10, 209, 0.2); }
     
-    /* Botões com Feedback */
-    button { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-    button:active { transform: scale(0.95); }
+    /* Botões & Interação */
+    button { transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
+    button:active { transform: scale(0.96); }
     
     /* Cards Flutuantes */
-    .card-shadow { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025); }
+    .nu-card { background: white; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.03); }
     
-    /* Tabela Premium */
-    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 80px; }
-    table { width: 100%; min-width: 600px; border-spacing: 0 8px; border-collapse: separate; }
-    tbody tr { background: white; transition: transform 0.1s; }
-    tbody tr:hover { transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-    td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
-    td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+    /* Tabela Clean */
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 100px; }
+    table { width: 100%; min-width: 600px; border-spacing: 0; }
+    tr { border-bottom: 1px solid #f0f0f5; }
+    tr:last-child { border-bottom: none; }
     
-    /* Toast Notification (Substitui Alert) */
+    /* Botão Flutuante (FAB) */
+    .fab { position: fixed; bottom: 24px; right: 24px; width: 64px; height: 64px; background: var(--nu-roxo); color: white; border-radius: 50%; box-shadow: 0 10px 25px rgba(130, 10, 209, 0.4); display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 50; transition: all 0.3s; }
+    .fab:active { transform: scale(0.9) rotate(90deg); }
+
+    /* Toast Notification */
     #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
-    .toast { background: #1e293b; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+    .toast { background: #262626; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideIn 0.3s ease; }
     @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     .admin-only { display: none; }
@@ -44,9 +47,7 @@
     .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     
-    /* Scrollbar invisível mas funcional */
     .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 
@@ -55,181 +56,175 @@
 <div id="toast-container"></div>
 
 <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-slate-900/95 backdrop-blur-sm">
-  <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 animate-fade-in-up">
+  <div class="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-8 animate-fade-in-up">
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4 text-3xl">✝️</div>
-      <h1 class="text-3xl font-black text-slate-800 tracking-tight">EJC <span class="text-emerald-500">BANK</span></h1>
-      <p class="text-[10px] font-bold text-purple-600 uppercase tracking-widest mt-1">Gestão Financeira 21º EJC</p>
+      <h1 class="text-3xl font-black text-slate-800 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Gestão Financeira 21º EJC</p>
     </div>
     
     <div class="relative mb-4 group">
-        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-lock text-slate-400 group-focus-within:text-emerald-500 transition"></i></div>
-        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-12 py-4 font-bold outline-none focus:border-emerald-500 focus:bg-white transition text-slate-700">
-        <button onclick="toggleSenha()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i id="lockIcon" class="fas fa-eye"></i></button>
+        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-4 font-bold outline-none focus:border-purple-600 focus:bg-white transition text-slate-700 text-center">
     </div>
     
     <div class="grid grid-cols-2 gap-3 mb-4">
-        <button onclick="tentarLogin('admin')" class="py-4 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 shadow-lg shadow-slate-200"><i class="fas fa-crown mr-2"></i>PILOTOS</button>
-        <button onclick="tentarLogin('compras')" class="py-4 rounded-2xl font-black text-white bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-200"><i class="fas fa-shopping-cart mr-2"></i>COMPRAS</button>
+        <button onclick="tentarLogin('admin')" class="py-4 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 shadow-lg shadow-slate-200">👑 PILOTOS</button>
+        <button onclick="tentarLogin('compras')" class="py-4 rounded-2xl font-black text-white bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-200">🛒 COMPRAS</button>
     </div>
     
-    <p id="msgErroLogin" class="hidden text-rose-500 text-xs font-bold text-center animate-pulse"><i class="fas fa-exclamation-circle mr-1"></i> Senha incorreta</p>
-    <div class="mt-8 text-[10px] text-center text-slate-400 font-bold uppercase tracking-wide opacity-50">Sistema V16.0 • Premium</div>
+    <p id="msgErroLogin" class="hidden text-rose-500 text-xs font-bold text-center animate-pulse">⛔ Senha incorreta</p>
   </div>
 </div>
 
 <div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
   
-  <header class="glass sticky top-0 z-40 px-4 py-3 flex justify-between items-center border-b border-slate-200/50">
-    <div class="flex items-center gap-2">
-        <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-emerald-200">E</div>
-        <div><h1 class="font-black text-lg leading-none text-slate-800">EJC BANK</h1><span class="text-[9px] text-slate-400 font-bold tracking-widest">ONLINE</span></div>
+  <header class="nu-header sticky top-0 z-40">
+    <div class="px-5 py-4 flex justify-between items-center">
+        <div>
+            <h1 id="headerTitle" class="font-black text-lg tracking-wide uppercase">EJC BANK</h1>
+        </div>
+        <div class="text-right">
+            <p class="text-[9px] font-bold opacity-70 tracking-widest uppercase">Encontro</p>
+            <p class="font-black text-sm">21º EJC</p>
+        </div>
     </div>
-    <div class="flex gap-2">
-      <button onclick="exportarExcel()" class="bg-white text-slate-600 w-10 h-10 rounded-xl font-black border border-slate-100 shadow-sm admin-only flex items-center justify-center"><i class="fas fa-file-excel"></i></button>
-      <button onclick="abrirModal()" class="bg-slate-900 text-white px-4 h-10 rounded-xl font-bold text-xs shadow-lg shadow-slate-200 flex items-center gap-2"><i class="fas fa-plus"></i> <span class="hidden sm:inline">NOVO</span></button>
-      <button onclick="location.reload()" class="bg-rose-50 text-rose-500 w-10 h-10 rounded-xl border border-rose-100 flex items-center justify-center"><i class="fas fa-power-off"></i></button>
+
+    <div class="mt-2 px-5 overflow-x-auto no-scrollbar flex gap-5 pb-2">
+        <button id="tab-admin" onclick="mudarAba('admin')" class="tab-btn text-white/70 hover:text-white font-bold text-sm whitespace-nowrap admin-only transition">📊 Visão Geral</button>
+        <button id="tab-ejc" onclick="mudarAba('ejc')" class="tab-btn text-white font-black text-sm whitespace-nowrap border-b-2 border-white pb-1 transition">⛪ EJC</button>
+        <button id="tab-mercadinho" onclick="mudarAba('mercadinho')" class="tab-btn text-white/70 hover:text-white font-bold text-sm whitespace-nowrap transition">🛒 Mercadinho</button>
+        <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="tab-btn text-white/70 hover:text-white font-bold text-sm whitespace-nowrap admin-only transition">🍛 Feijoada</button>
+        <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="tab-btn text-white/70 hover:text-white font-bold text-sm whitespace-nowrap admin-only transition">📦 Arquivo</button>
     </div>
   </header>
 
-  <div class="bg-white border-b border-slate-100 pt-2 pb-0 px-4 shadow-sm overflow-x-auto no-scrollbar whitespace-nowrap sticky top-[65px] z-30">
-    <div class="flex gap-4">
-        <button id="tab-admin" onclick="mudarAba('admin')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-emerald-500 admin-only">📊 Dashboard</button>
-        <button id="tab-ejc" onclick="mudarAba('ejc')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-blue-500">⛪ EJC</button>
-        <button id="tab-mercadinho" onclick="mudarAba('mercadinho')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-pink-500">🛒 Mercadinho</button>
-        <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-orange-500 admin-only">🍛 Feijoada</button>
-        <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="tab-btn pb-3 text-xs font-black uppercase tracking-wide border-b-2 border-transparent hover:text-slate-500 admin-only">📦 Arquivo</button>
-    </div>
-  </div>
-
-  <main class="px-4 py-6">
+  <main class="px-4 py-6 -mt-2 z-30 relative bg-transparent">
     
-    <div id="dashAdmin" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 admin-only animate-fade-in-up">
-       <div class="bg-white p-5 rounded-3xl card-shadow border border-slate-50 relative overflow-hidden">
-           <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fas fa-wallet text-6xl text-emerald-500"></i></div>
-           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Recebido</p>
-           <h2 id="totalRecebido" class="text-2xl font-black text-emerald-600">R$ 0,00</h2>
-           <div class="w-full bg-slate-100 h-1 mt-3 rounded-full"><div class="bg-emerald-500 h-1 rounded-full" style="width: 70%"></div></div>
-       </div>
-       <div class="bg-white p-5 rounded-3xl card-shadow border border-slate-50 relative overflow-hidden">
-           <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fas fa-clock text-6xl text-orange-500"></i></div>
-           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pendente</p>
-           <h2 id="totalPendente" class="text-2xl font-black text-orange-500">R$ 0,00</h2>
-           <div class="w-full bg-slate-100 h-1 mt-3 rounded-full"><div class="bg-orange-500 h-1 rounded-full" style="width: 30%"></div></div>
-       </div>
-       <div class="bg-white p-5 rounded-3xl card-shadow border border-slate-50 relative overflow-hidden">
-           <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fas fa-vault text-6xl text-purple-500"></i></div>
-           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Líquido</p>
-           <h2 id="totalLiquido" class="text-2xl font-black text-purple-600">R$ 0,00</h2>
-       </div>
+    <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl mb-6 grid grid-cols-1 sm:grid-cols-3 gap-6 admin-only animate-fade-in-up border border-slate-100">
+       <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Recebido</p><h2 id="totalRecebido" class="text-3xl font-black text-slate-800">R$ 0,00</h2></div>
+       <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">A Receber</p><h2 id="totalPendente" class="text-3xl font-black text-orange-500">R$ 0,00</h2></div>
+       <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Líquido</p><h2 id="totalLiquido" class="text-3xl font-black text-purple-600">R$ 0,00</h2></div>
     </div>
 
-    <div id="filtrosEJC" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
-        <button onclick="filtrarDia('Sexta')" class="flex-1 bg-white text-blue-600 py-3 px-4 rounded-xl text-xs font-bold border border-blue-100 shadow-sm whitespace-nowrap hover:bg-blue-50">Sexta</button>
-        <button onclick="filtrarDia('Sabado')" class="flex-1 bg-white text-blue-600 py-3 px-4 rounded-xl text-xs font-bold border border-blue-100 shadow-sm whitespace-nowrap hover:bg-blue-50">Sábado</button>
-        <button onclick="filtrarDia('Domingo')" class="flex-1 bg-white text-blue-600 py-3 px-4 rounded-xl text-xs font-bold border border-blue-100 shadow-sm whitespace-nowrap hover:bg-blue-50">Domingo</button>
+    <div id="filtrosEJC" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-1">
+        <button onclick="filtrarDia('Sexta')" class="flex-1 bg-white text-slate-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">Sexta</button>
+        <button onclick="filtrarDia('Sabado')" class="flex-1 bg-white text-slate-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">Sábado</button>
+        <button onclick="filtrarDia('Domingo')" class="flex-1 bg-white text-slate-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">Domingo</button>
     </div>
-    <div id="filtrosMercadinho" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
-        <button onclick="filtrarCampanha('[MÃES]')" class="flex-1 bg-white text-pink-600 py-3 px-4 rounded-xl text-xs font-bold border border-pink-100 shadow-sm whitespace-nowrap hover:bg-pink-50">🌸 Mães</button>
-        <button onclick="filtrarCampanha('[NAMORADOS]')" class="flex-1 bg-white text-rose-600 py-3 px-4 rounded-xl text-xs font-bold border border-rose-100 shadow-sm whitespace-nowrap hover:bg-rose-50">💘 Namorados</button>
-        <button onclick="filtrarCampanha('Geral')" class="flex-1 bg-white text-emerald-600 py-3 px-4 rounded-xl text-xs font-bold border border-emerald-100 shadow-sm whitespace-nowrap hover:bg-emerald-50">🛒 Geral</button>
-    </div>
-    <div id="painelArquivo" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
-        <button onclick="arquivar('Mercadinho', '[MÃES]')" class="bg-slate-200 text-slate-600 py-3 px-4 rounded-xl text-[10px] font-bold whitespace-nowrap">Arq. Mães</button>
-        <button onclick="arquivar('Mercadinho', '[NAMORADOS]')" class="bg-slate-200 text-slate-600 py-3 px-4 rounded-xl text-[10px] font-bold whitespace-nowrap">Arq. Namorados</button>
-        <button onclick="arquivar('FEIJOADA', '')" class="bg-slate-200 text-slate-600 py-3 px-4 rounded-xl text-[10px] font-bold whitespace-nowrap">Arq. Feijoada</button>
-    </div>
-
-    <div id="alertaDomingo" class="hidden bg-rose-500 text-white p-5 rounded-3xl shadow-xl shadow-rose-200 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
-        <div class="flex items-center gap-4"><div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"><i class="fas fa-hand-holding-dollar text-xl"></i></div><div><h3 class="font-black uppercase text-sm">COBRANÇA</h3><p id="txtTotalCobranca" class="text-xs font-bold opacity-90">Calculando...</p></div></div>
-        <div class="flex gap-2 w-full md:w-auto"><button onclick="copiarRelatorioCobranca()" class="bg-white/20 px-4 py-3 rounded-xl text-xs font-bold hover:bg-white/30 flex-1 backdrop-blur-md"><i class="fas fa-copy mr-2"></i>Relatório</button><button onclick="pagarTudoDomingo()" class="bg-white text-rose-600 px-4 py-3 rounded-xl text-xs font-black hover:bg-rose-50 shadow-md flex-1"><i class="fas fa-check-double mr-2"></i>BAIXAR TUDO</button></div>
-    </div>
-
-    <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-search text-slate-300"></i></div>
-        <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar nome, item..." class="w-full bg-white border border-slate-100 rounded-2xl pl-10 pr-4 py-4 text-sm font-bold shadow-sm focus:border-emerald-500 outline-none mb-4 transition">
-    </div>
-
-    <div id="loading" class="hidden py-10 text-center"><div class="animate-spin inline-block w-8 h-8 border-4 border-slate-200 border-t-emerald-500 rounded-full"></div><p class="text-xs font-bold text-slate-400 mt-3 animate-pulse">Sincronizando...</p></div>
     
-    <div class="table-wrapper">
-        <table class="text-left text-sm">
-            <thead class="text-[10px] font-black text-slate-400 uppercase"><tr class="bg-transparent"><th class="p-3">Data</th><th class="p-3">Detalhes</th><th class="p-3 text-right">Valor</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Ações</th></tr></thead>
-            <tbody id="corpoTabela" class="text-slate-600 font-medium"></tbody>
-        </table>
+    <div id="filtrosMercadinho" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-1">
+        <button onclick="filtrarCampanha('[MÃES]')" class="flex-1 bg-white text-pink-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">🌸 Mães</button>
+        <button onclick="filtrarCampanha('[NAMORADOS]')" class="flex-1 bg-white text-rose-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">💘 Namorados</button>
+        <button onclick="filtrarCampanha('Geral')" class="flex-1 bg-white text-emerald-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">🛒 Geral</button>
+    </div>
+
+    <div id="alertaDomingo" class="hidden bg-slate-800 text-white p-5 rounded-3xl shadow-xl mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
+        <div class="flex items-center gap-4"><div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center"><i class="fas fa-hand-holding-dollar"></i></div><div><h3 class="font-black uppercase text-sm">COBRANÇA</h3><p id="txtTotalCobranca" class="text-xs font-bold opacity-70">Calculando...</p></div></div>
+        <div class="flex gap-2 w-full md:w-auto"><button onclick="copiarRelatorioCobranca()" class="bg-white/10 px-4 py-3 rounded-xl text-xs font-bold flex-1">Relatório</button><button onclick="pagarTudoDomingo()" class="bg-white text-slate-900 px-4 py-3 rounded-xl text-xs font-black shadow-md flex-1">BAIXAR TUDO</button></div>
+    </div>
+
+    <div class="nu-card overflow-hidden mb-20">
+        <div class="p-4 border-b border-slate-50 flex gap-2 items-center">
+            <i class="fas fa-search text-slate-300"></i>
+            <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar lançamentos..." class="w-full text-sm font-semibold outline-none text-slate-700 placeholder:text-slate-300">
+        </div>
+        <div id="loading" class="hidden py-10 text-center"><div class="animate-spin inline-block w-8 h-8 border-4 border-slate-100 border-t-purple-600 rounded-full"></div></div>
+        
+        <div class="table-wrapper">
+            <table class="text-left text-sm w-full">
+                <thead class="text-[10px] font-black text-slate-400 uppercase bg-slate-50"><tr class=""><th class="p-4">Detalhes</th><th class="p-4 text-right">Valor</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Ação</th></tr></thead>
+                <tbody id="corpoTabela" class="text-slate-600 font-medium"></tbody>
+            </table>
+        </div>
     </div>
   </main>
+
+  <button onclick="abrirModal()" class="fab hover:scale-110 active:scale-95"><i class="fas fa-plus"></i></button>
+
 </div>
 
 <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
-  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="fecharModal()"></div>
-  <div class="relative bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
+  <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="fecharModal()"></div>
+  <div class="relative bg-white w-full max-w-lg rounded-t-[32px] sm:rounded-[32px] p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
     
-    <button onclick="fecharModal()" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition"><i class="fas fa-times"></i></button>
+    <button onclick="fecharModal()" class="absolute top-6 right-6 text-slate-300 hover:text-slate-800 text-xl transition z-50"><i class="fas fa-times"></i></button>
 
-    <div class="text-center mb-6">
-        <h2 class="font-black text-xl text-slate-800">Novo Lançamento</h2>
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Preencha os dados</p>
-    </div>
-
-    <form id="formFin" class="space-y-3">
-        <div class="flex gap-2">
-            <input id="f_desc" placeholder="Produto (ex: Coxinha)" class="flex-1 bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl font-bold text-center outline-none focus:border-purple-500 focus:bg-white transition text-slate-800">
+    <h2 class="text-xl font-black text-slate-800 mb-6">Novo Lançamento</h2>
+    <form id="formFin" class="space-y-4">
+        
+        <div class="flex gap-3">
+            <div class="flex-1 bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100 focus-within:border-purple-500 focus-within:bg-white transition">
+                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Item</label>
+                <input id="f_desc" placeholder="Ex: Coxinha" class="w-full bg-transparent font-bold text-slate-800 outline-none">
+            </div>
         </div>
         
-        <div class="flex gap-2">
-            <input id="f_val" type="number" step="0.01" placeholder="R$ 0,00" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl font-bold text-center outline-none focus:border-purple-500 focus:bg-white transition text-slate-800">
-            <button type="button" onclick="somarItem()" class="bg-purple-100 text-purple-600 w-16 rounded-2xl font-black text-xl hover:bg-purple-200 transition">+</button>
+        <div class="flex gap-3">
+            <div class="flex-[2] bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100 focus-within:border-purple-500 focus-within:bg-white transition">
+                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Valor Unitário</label>
+                <input id="f_val" type="number" step="0.01" placeholder="R$ 0,00" class="w-full bg-transparent font-bold text-slate-800 outline-none">
+            </div>
+            <button type="button" onclick="somarItem()" class="flex-1 bg-purple-50 text-purple-600 rounded-2xl font-black text-xl hover:bg-purple-100 transition">+</button>
         </div>
         
-        <div id="areaCesta" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-100">
+        <div id="areaCesta" class="hidden bg-purple-50 p-4 rounded-2xl border border-purple-100">
             <div id="listaItens" class="text-xs space-y-2 mb-3 max-h-32 overflow-y-auto"></div>
-            <div class="flex justify-between items-center border-t border-slate-200 pt-3">
+            <div class="flex justify-between items-center border-t border-purple-200 pt-3">
                 <button type="button" onclick="limparCesta()" class="text-[10px] text-rose-500 font-bold uppercase hover:underline">Limpar</button>
-                <p id="txtSoma" class="text-base font-black text-purple-700">Total: R$ 0.00</p>
+                <p id="txtSoma" class="text-base font-black text-purple-800">Total: R$ 0.00</p>
             </div>
         </div>
 
-        <select id="f_forma" class="w-full bg-white border-2 border-slate-100 p-4 rounded-2xl font-bold text-center text-slate-700"><option value="PIX">PIX</option><option value="DINHEIRO">DINHEIRO</option><option value="CARTAO">CARTAO</option></select>
+        <div class="grid grid-cols-2 gap-3">
+            <select id="f_forma" class="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 font-bold text-slate-700 outline-none"><option value="PIX">PIX</option><option value="DINHEIRO">DINHEIRO</option><option value="CARTAO">CARTAO</option></select>
+            <select id="f_type" class="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 font-bold text-slate-700 outline-none"><option value="ENTRADA">Pago ✅</option><option value="PENDENTE">Fiado 🟠</option><option value="SAIDA">Custo 🔴</option></select>
+        </div>
 
         <div id="blocoTroco" class="hidden bg-emerald-50 p-4 rounded-2xl border border-emerald-100 space-y-2">
-            <p class="text-[10px] font-black text-emerald-600 uppercase text-center">Calculadora de Troco</p>
-            <input id="f_pago" type="number" step="0.01" placeholder="Quanto o cliente deu?" class="w-full bg-white border border-emerald-200 p-2 rounded-xl font-bold text-center">
+            <p class="text-[10px] font-black text-emerald-600 uppercase">Troco</p>
+            <input id="f_pago" type="number" step="0.01" placeholder="Recebido do cliente?" class="w-full bg-white border border-emerald-200 p-2 rounded-xl font-bold text-center">
             <p id="txtTroco" class="text-center font-black text-emerald-700">Troco: R$ 0,00</p>
         </div>
-
-        <select id="f_type" class="w-full bg-white border-2 border-slate-100 p-4 rounded-2xl font-bold text-center text-slate-700"><option value="ENTRADA">🟢 Pago Agora</option><option value="PENDENTE">🟠 Pendente (Fiado)</option><option value="SAIDA">🔴 Saída (Custo)</option></select>
         
-        <div id="camposEJC" class="hidden bg-blue-50 p-4 rounded-2xl space-y-2 border border-blue-100"><p class="text-[10px] font-black text-blue-400 uppercase text-center">EJC</p><select id="f_dia" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select><select id="f_equipe" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
+        <div id="camposEJC" class="hidden bg-blue-50 p-4 rounded-2xl space-y-3"><p class="text-[10px] font-black text-blue-400 uppercase text-center">EJC</p><select id="f_dia" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select><select id="f_equipe" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
         
-        <div id="camposMercado" class="hidden bg-pink-50 p-4 rounded-2xl space-y-2 border border-pink-100">
+        <div id="camposMercado" class="hidden bg-pink-50 p-4 rounded-2xl space-y-3">
             <p class="text-[10px] font-black text-pink-400 uppercase text-center">Mercadinho</p>
-            <select id="f_tipo_pessoa" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="PAROQUIANO">👤 Paroquiano (Sem Equipe)</option><option value="SERVO">🙋‍♂️ Servo do EJC</option></select>
-            <select id="f_campanha" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="GERAL">🛒 Geral</option><option value="MAES">🌸 Mães</option><option value="NAMORADOS">💘 Namorados</option></select>
-            <select id="f_equipe_merc" class="hidden w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
+            <select id="f_tipo_pessoa" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="PAROQUIANO">👤 Paroquiano (Sem Equipe)</option><option value="SERVO">🙋‍♂️ Servo do EJC</option></select>
+            <select id="f_campanha" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="GERAL">🛒 Geral</option><option value="MAES">🌸 Mães</option><option value="NAMORADOS">💘 Namorados</option></select>
+            <select id="f_equipe_merc" class="hidden w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
         </div>
         
-        <div id="camposFeijoada" class="hidden bg-orange-50 p-4 rounded-2xl space-y-2 border border-orange-100">
+        <div id="camposFeijoada" class="hidden bg-orange-50 p-4 rounded-2xl space-y-3">
             <p class="text-[10px] font-black text-orange-400 uppercase text-center">Feijoada</p>
             <div class="grid grid-cols-2 gap-2">
-                <input id="f_qtd" type="number" value="1" class="w-full bg-white border p-2 rounded-xl font-bold text-center" placeholder="Qtd">
-                <select id="f_equipe_feijoada" class="w-full bg-white border p-2 rounded-xl font-bold text-center"><option value="">Sem Equipe</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
+                <input id="f_qtd" type="number" value="1" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm" placeholder="Qtd">
+                <select id="f_equipe_feijoada" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="">Sem Equipe</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
             </div>
-            <input id="f_comun" placeholder="Comunidade" class="w-full bg-white border p-2 rounded-xl font-bold text-center uppercase">
-            <input id="f_obs" placeholder="Obs" class="w-full bg-white border p-2 rounded-xl font-bold text-center text-xs">
+            <input id="f_comun" placeholder="Comunidade" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center uppercase text-sm shadow-sm">
+            <input id="f_obs" placeholder="Obs" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-xs shadow-sm">
         </div>
 
-        <input id="f_nome" placeholder="Nome da Pessoa" class="w-full border-2 border-slate-100 p-4 rounded-2xl font-bold text-center outline-none focus:border-emerald-500 transition text-slate-700">
-        <input id="f_tel" placeholder="WhatsApp (DDD+Num)" class="w-full border-2 border-slate-100 p-4 rounded-2xl font-bold text-center outline-none focus:border-emerald-500 transition text-slate-700">
-        <input id="f_recebido" placeholder="Quem Recebeu? (Obrigatório)" class="w-full border-2 border-slate-200 p-4 rounded-2xl font-bold text-center focus:border-rose-400 transition bg-slate-50">
+        <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100 focus-within:border-purple-500 focus-within:bg-white transition">
+            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Nome da Pessoa</label>
+            <input id="f_nome" class="w-full bg-transparent font-bold text-slate-800 outline-none">
+        </div>
+        
+        <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100 focus-within:border-purple-500 focus-within:bg-white transition">
+            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">WhatsApp</label>
+            <input id="f_tel" class="w-full bg-transparent font-bold text-slate-800 outline-none">
+        </div>
+        
+        <div class="bg-purple-50 rounded-2xl px-4 py-3 border border-purple-100 focus-within:border-purple-500 focus-within:bg-white transition">
+            <label class="text-[10px] font-bold text-purple-400 uppercase block mb-1">Quem Recebeu? (Obrigatório)</label>
+            <input id="f_recebido" class="w-full bg-transparent font-bold text-purple-900 outline-none">
+        </div>
 
-        <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black shadow-xl shadow-slate-200 mt-2 active:scale-95 transition">💾 SALVAR LANÇAMENTO</button>
+        <button type="submit" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-200 mt-4 active:scale-95 transition text-lg">SALVAR</button>
     </form>
   </div>
 </div>
 
 <script>
-// ✅ API V15 (LÓGICA MANTIDA, VISUAL NOVO)
 const API = "https://script.google.com/macros/s/AKfycbzfCozUPEax76bamW5DgxDgEOK9LCw4OCsppEKbm_lGOTmXBGCs0bjHAFQRFzEi1Tl4Jw/exec";
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
 let ROLE="", abaAtiva="admin", filtroAtivo="", dadosCache=[];
@@ -238,12 +233,11 @@ let itensCesta = [];
 
 function toggleSenha(){ const i=document.getElementById("inputSenha"); const ic=document.getElementById("lockIcon"); i.type=i.type==="password"?"text":"password"; ic.className=i.type==="password"?"fas fa-eye":"fas fa-eye-slash"; }
 
-// NOTIFICAÇÃO TOAST (PREMIUM)
 function showToast(msg, type="success"){
     const t = document.createElement("div"); t.className="toast";
     t.innerHTML = type==="error" ? `<i class="fas fa-times-circle text-rose-400"></i> ${msg}` : `<i class="fas fa-check-circle text-emerald-400"></i> ${msg}`;
     document.getElementById("toast-container").appendChild(t);
-    if(navigator.vibrate) navigator.vibrate(50); // Feedback tátil
+    if(navigator.vibrate) navigator.vibrate(50);
     setTimeout(()=>t.remove(), 3000);
 }
 
@@ -252,8 +246,15 @@ function tentarLogin(r){
     if(r==="admin" && s===PASS_ADMIN) ROLE="admin";
     else if(r==="compras" && s===PASS_COMPRAS) ROLE="compras";
     else return document.getElementById("msgErroLogin").classList.remove("hidden");
+    
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("appMain").classList.remove("hidden");
+    
+    // ✅ HEADER DINÂMICO
+    const headerTitle = document.getElementById("headerTitle");
+    if(ROLE==="admin") headerTitle.innerText = "EJC BANK PILOTOS";
+    else headerTitle.innerText = "EJC BANK COMPRAS";
+    
     if(ROLE==="compras") { 
         abaAtiva="ejc"; 
         document.getElementById("tab-admin").classList.add("hidden");
@@ -266,13 +267,19 @@ function tentarLogin(r){
 
 function mudarAba(a){
     abaAtiva=a; filtroAtivo="";
+    
+    // RESET VISUAL DOS BOTÕES
     document.querySelectorAll(".tab-btn").forEach(b=>{
-        b.classList.remove("tab-active", "text-emerald-600", "border-emerald-500");
-        b.classList.add("border-transparent", "text-slate-400");
+        b.classList.remove("text-white", "font-black", "border-white", "opacity-100");
+        b.classList.add("text-white/70", "font-bold", "border-transparent");
     });
+    
+    // ATIVA O BOTÃO CLICADO
     const btn = document.getElementById("tab-"+a);
-    btn.classList.add("tab-active", "text-emerald-600", "border-emerald-500");
-    btn.classList.remove("border-transparent", "text-slate-400");
+    if(btn){
+        btn.classList.add("text-white", "font-black", "border-white", "opacity-100");
+        btn.classList.remove("text-white/70", "border-transparent");
+    }
 
     document.getElementById("filtrosEJC").classList.toggle("hidden", a!=="ejc");
     document.getElementById("filtrosMercadinho").classList.toggle("hidden", a!=="mercadinho");
@@ -308,6 +315,12 @@ async function carregar(){
     document.getElementById("loading").classList.add("hidden");
 }
 
+setInterval(() => {
+    if(document.visibilityState === "visible" && !document.getElementById("modal").classList.contains("hidden") === false){
+        carregar();
+    }
+}, 10000);
+
 function atualizarStats(){
     let rec = 0, pen = 0;
     dadosAdminCache.forEach(i => {
@@ -341,33 +354,36 @@ function renderizar(){
     });
 
     lista.forEach(i=>{
-        let somaPend = 0;
-        if(!i.paid && i.category !== "Feijoada" && i.type !== "FEIJOADA") somaPend+=parseFloat(i.amount||i.total||0);
         const desc = i.product || i.description || "Item"; 
         const val = parseFloat(i.amount||i.total||0);
         const dataShow = abaAtiva==="arquivo" ? `${new Date(i.data_backup).toLocaleDateString()}<br>${i.origem}` : new Date(i.date).toLocaleDateString();
-        const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="text-slate-300 hover:text-slate-500 transition px-2"><i class="fas fa-box"></i></button>` : "";
+        const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="text-slate-300 hover:text-purple-600 transition p-2"><i class="fas fa-box"></i></button>` : "";
 
         tb.innerHTML += `
-        <tr class="border-b border-slate-50 last:border-0">
-            <td class="p-4 text-[10px] font-bold text-slate-400 whitespace-nowrap">${dataShow}</td>
+        <tr>
             <td class="p-4">
-                <p class="text-sm font-bold text-slate-700">${desc}</p>
-                <p class="text-[10px] text-slate-400 font-semibold mt-0.5">${i.buyer_name||""} ${i.equipe?"• "+i.equipe:""}</p>
+                <p class="text-xs font-bold text-slate-800">${desc}</p>
+                <p class="text-[10px] text-slate-400 font-medium mt-0.5">${i.buyer_name||"Anônimo"} ${i.equipe?"• "+i.equipe:""}</p>
+                <p class="text-[9px] text-slate-300 mt-1">${dataShow}</p>
             </td>
-            <td class="p-4 text-right font-black text-slate-700 whitespace-nowrap">R$ ${val.toFixed(2)}</td>
+            <td class="p-4 text-right font-black text-slate-800 whitespace-nowrap">R$ ${val.toFixed(2)}</td>
             <td class="p-4 text-center">
-                ${i.paid ? '<span class="bg-emerald-100 text-emerald-600 px-2 py-1 rounded-lg text-[9px] font-black">PAGO</span>' : '<span class="bg-orange-100 text-orange-500 px-2 py-1 rounded-lg text-[9px] font-black">PEND</span>'}
+                ${i.paid ? '<div class="inline-flex items-center justify-center w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full"><i class="fas fa-check text-xs"></i></div>' : '<div class="inline-flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-500 rounded-full"><i class="fas fa-clock text-xs"></i></div>'}
             </td>
             <td class="p-4 text-center whitespace-nowrap">
-                <div class="flex items-center justify-center gap-3">
-                    ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition shadow-sm"><i class="fas fa-check"></i></button>` : ""}
-                    ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="w-8 h-8 rounded-full bg-green-50 text-green-600 hover:bg-green-500 hover:text-white flex items-center justify-center transition shadow-sm"><i class="fab fa-whatsapp"></i></button>` : ""}
+                <div class="flex items-center justify-center gap-2">
+                    ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:bg-emerald-500 hover:text-white transition"><i class="fas fa-check"></i></button>` : ""}
+                    ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:bg-green-500 hover:text-white transition"><i class="fab fa-whatsapp"></i></button>` : ""}
                     ${btnArquivo}
                 </div>
             </td>
         </tr>`;
     });
+
+    if(ROLE==="compras" && ehDomingo && abaAtiva==="ejc" && somaPend > 0) {
+        document.getElementById("alertaDomingo").classList.remove("hidden");
+        document.getElementById("txtTotalCobranca").innerText = `A RECEBER: R$ ${somaPend.toFixed(2)}`;
+    } else { document.getElementById("alertaDomingo").classList.add("hidden"); }
 }
 
 function somarItem(){
@@ -391,7 +407,7 @@ function renderCesta(){
     itensCesta.forEach((item) => {
         const subtotal = item.val * item.qtd;
         total += subtotal;
-        lista.innerHTML += `<div class="flex justify-between border-b border-slate-100 pb-2 text-xs"><span><b class="text-purple-600">${item.qtd}x</b> ${item.desc}</span><span class="font-bold text-slate-700">R$ ${subtotal.toFixed(2)}</span></div>`;
+        lista.innerHTML += `<div class="flex justify-between border-b border-purple-100 pb-2 text-xs"><span><b class="text-purple-600">${item.qtd}x</b> ${item.desc}</span><span class="font-bold text-slate-700">R$ ${subtotal.toFixed(2)}</span></div>`;
     });
     document.getElementById("txtSoma").innerText = `Total: R$ ${total.toFixed(2)}`;
     document.getElementById("areaCesta").classList.remove("hidden");
@@ -547,6 +563,7 @@ function cobrarZapTotal(tel, nome){
 }
 
 function exportarExcel(){ alert("Use o PC"); }
+function exportarPDF(){ alert("Use o PC"); }
 function copiarRelatorioCobranca(){ 
     const l = dadosCache.filter(i=>!i.paid && i.category!=="Feijoada").map(i=>`🔴 ${i.buyer_name}: R$ ${parseFloat(i.amount || i.total || 0).toFixed(2)}`).join("\n");
     navigator.clipboard.writeText("*COBRANÇA DOMINGO*\n"+l).then(()=>showToast("Copiado!"));
