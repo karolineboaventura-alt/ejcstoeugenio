@@ -463,8 +463,8 @@ async function arquivarInd(id) {
 function cobrarZap(tel, nome, val){
     const num = String(tel).replace(/\D/g,"");
     if(!/^\d{10,11}$/.test(num)) return alert("Número inválido");
-    let cob = prompt("Seu nome?","Equipe"); if(!cob) return;
-    const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* da Equipe de Compras.\nPassando só para lembrar que você tem um valor em aberto de *R$ ${parseFloat(val).toFixed(2)}*. Quando puder, você consegue passar no mercadinho para regularizar essa pendência até a horadoalmoço?\nQualquer coisa, é só me avisar. Deus abençoe! 🙏✨️`);
+    let cob = prompt("Seu nome?",""); if(!cob) return;
+    const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* da Equipe de Compras.\nPassando só para lembrar que você tem um valor em aberto de *R$ ${parseFloat(val).toFixed(2)}*. Quando puder, você consegue passar no mercadinho para regularizar essa pendência até a hora do almoço?\nQualquer coisa, é só me avisar. Deus abençoe!`);
     window.open(`https://wa.me/55${num}?text=${msg}`);
 }
 
