@@ -112,9 +112,7 @@
 <div id="modal" class="hidden fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-[100] p-2 sm:p-4 backdrop-blur-sm">
   <div class="relative bg-white w-full max-w-md sm:max-w-lg lg:max-w-xl rounded-3xl p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
     
-    <button onclick="fecharModal()" class="absolute top-4 right-4 text-slate-300 hover:text-red-500 text-2xl font-bold transition z-50 p-2">
-        <i class="fas fa-times"></i>
-    </button>
+    <button onclick="fecharModal()" class="absolute top-4 right-4 text-slate-300 hover:text-red-500 text-2xl font-bold transition z-50 p-2"><i class="fas fa-times"></i></button>
 
     <h2 class="text-center font-black text-purple-700 uppercase mb-4">Novo Lançamento</h2>
     <form id="formFin" class="space-y-3 text-center">
@@ -157,7 +155,7 @@
                 <option value="MAES">🌸 Dia das Mães</option>
                 <option value="NAMORADOS">💘 Dia dos Namorados</option>
             </select>
-            <select id="f_equipe_merc" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe (Se Servo)...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
+            <select id="f_equipe_merc" class="hidden w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe (Se Servo)...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
         </div>
         
         <div id="camposFeijoada" class="hidden bg-orange-50 p-3 rounded-xl space-y-2">
@@ -188,9 +186,7 @@
 </div>
 
 <script>
-// ✅ API CONFIGURADA
 const API = "https://script.google.com/macros/s/AKfycbzfCozUPEax76bamW5DgxDgEOK9LCw4OCsppEKbm_lGOTmXBGCs0bjHAFQRFzEi1Tl4Jw/exec";
-
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
 let ROLE="", abaAtiva="admin", filtroAtivo="", dadosCache=[];
 let dadosAdminCache = [];
@@ -203,21 +199,15 @@ function tentarLogin(r){
     if(r==="admin" && s===PASS_ADMIN) ROLE="admin";
     else if(r==="compras" && s===PASS_COMPRAS) ROLE="compras";
     else return document.getElementById("msgErroLogin").classList.remove("hidden");
-    
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("appMain").classList.remove("hidden");
-    
     if(ROLE==="compras") { 
         abaAtiva="ejc"; 
         document.getElementById("tab-admin").classList.add("hidden");
         document.getElementById("tab-feijoada").classList.add("hidden"); 
         document.getElementById("tab-arquivo").classList.add("hidden");
     }
-    
-    if(ROLE==="admin") {
-        document.querySelectorAll(".admin-only").forEach(el => el.style.display = "block");
-    }
-    
+    if(ROLE==="admin") { document.querySelectorAll(".admin-only").forEach(el => el.style.display = "block"); }
     mudarAba(abaAtiva);
 }
 
@@ -228,13 +218,8 @@ function mudarAba(a){
     document.getElementById("filtrosEJC").classList.toggle("hidden", a!=="ejc");
     document.getElementById("filtrosMercadinho").classList.toggle("hidden", a!=="mercadinho");
     document.getElementById("painelArquivo").classList.toggle("hidden", a!=="arquivo");
-    
-    if(ROLE !== "admin") {
-        document.getElementById("dashAdmin").classList.add("hidden");
-    } else {
-        document.getElementById("dashAdmin").classList.toggle("hidden", a!=="admin");
-    }
-    
+    if(ROLE !== "admin") { document.getElementById("dashAdmin").classList.add("hidden"); } 
+    else { document.getElementById("dashAdmin").classList.toggle("hidden", a!=="admin"); }
     carregar();
 }
 
@@ -257,7 +242,6 @@ async function carregar(){
         if (abaAtiva==="ejc" || abaAtiva==="mercadinho") act = "listarCompras";
         if (abaAtiva==="feijoada") act = "listarFeijoada";
         if (abaAtiva==="arquivo") act = "listarArquivo";
-
         const r = await fetch(`${API}?action=${act}`);
         dadosCache = await r.json();
         renderizar();
@@ -269,8 +253,7 @@ function atualizarStats(){
     let rec = 0, pen = 0;
     dadosAdminCache.forEach(i => {
         let v = parseFloat(i.amount || i.total || 0);
-        if(i.paid) rec += v;
-        else pen += v;
+        if(i.paid) rec += v; else pen += v;
     });
     document.getElementById("totalRecebido").innerText = "R$ " + rec.toFixed(2);
     document.getElementById("totalPendente").innerText = "R$ " + pen.toFixed(2);
@@ -286,7 +269,6 @@ function renderizar(){
     const lista = dadosCache.slice().reverse().filter(i=>{
         const pOriginal = i.product || i.description || "";
         const p = pOriginal.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
-
         if(abaAtiva==="ejc") {
             if(i.category!=="EJC") return false;
             if(filtroAtivo && i.ejc_dia !== filtroAtivo) return false;
@@ -296,10 +278,8 @@ function renderizar(){
             if(filtroAtivo==="Geral" && (p.includes("MAES") || p.includes("NAMORADOS"))) return false;
             else if(filtroAtivo && !p.includes(filtroAtivo.replace(/[\[\]]/g,"").normalize("NFD").replace(/[\u0300-\u036f]/g, ""))) return false;
         }
-        
         const txt = (pOriginal).toLowerCase() + (i.buyer_name||"").toLowerCase();
         if(busca && !txt.includes(busca)) return false;
-        
         if(ROLE==="compras" && ehDomingo && abaAtiva==="ejc" && i.paid) return false;
         return true;
     });
@@ -326,9 +306,7 @@ function renderizar(){
     if(ROLE==="compras" && ehDomingo && abaAtiva==="ejc" && somaPend > 0) {
         document.getElementById("alertaDomingo").classList.remove("hidden");
         document.getElementById("txtTotalCobranca").innerText = `A RECEBER: R$ ${somaPend.toFixed(2)}`;
-    } else {
-        document.getElementById("alertaDomingo").classList.add("hidden");
-    }
+    } else { document.getElementById("alertaDomingo").classList.add("hidden"); }
 }
 
 function somarItem(){
@@ -367,6 +345,27 @@ document.getElementById("f_forma").addEventListener("change", () => {
 document.getElementById("f_pago").addEventListener("input", calcularTroco);
 document.getElementById("f_val").addEventListener("input", calcularTroco);
 
+// ✅ LÓGICA VISUAL PAROQUIANO x SERVO
+document.getElementById("f_tipo_pessoa")?.addEventListener("change", controlarTipoPessoa);
+function controlarTipoPessoa() {
+    const tipo = document.getElementById("f_tipo_pessoa").value;
+    const equipe = document.getElementById("f_equipe_merc");
+    const tipoPg = document.getElementById("f_type");
+    const optionPendente = tipoPg.querySelector('option[value="PENDENTE"]');
+
+    if (tipo === "PAROQUIANO") {
+        equipe.classList.add("hidden"); 
+        equipe.value = "";
+        tipoPg.value = "ENTRADA"; 
+        optionPendente.disabled = true; 
+        optionPendente.innerText = "🟠 Pendente (Bloqueado)";
+    } else {
+        equipe.classList.remove("hidden"); 
+        optionPendente.disabled = false; 
+        optionPendente.innerText = "🟠 Pendente (Fiado)";
+    }
+}
+
 function calcularTroco(){
     const totalCestaVal = itensCesta.reduce((acc, i) => acc + (i.val * i.qtd), 0);
     const valCampo = parseFloat(document.getElementById("f_val").value || 0);
@@ -379,17 +378,14 @@ function calcularTroco(){
 
 document.getElementById("formFin").addEventListener("submit", async function(e){
     e.preventDefault();
-    
     let finalDesc = document.getElementById("f_desc").value;
     let finalVal = parseFloat(document.getElementById("f_val").value);
     let finalQtd = 1;
-    
     if(itensCesta.length > 0) {
         finalDesc = itensCesta.map(i => `${i.qtd}x ${i.desc}`).join(", ");
         finalVal = itensCesta.reduce((acc, i) => acc + (i.val * i.qtd), 0);
         finalQtd = itensCesta.reduce((acc, i) => acc + i.qtd, 0);
     }
-    
     if(!finalVal || finalVal <= 0) return alert("⛔ Valor total zerado!");
 
     const pl = {
@@ -408,7 +404,6 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     
     if(abaAtiva==="ejc" || abaAtiva==="mercadinho") {
         if(!pl.recebidoPor) return alert("⛔ Quem recebeu o dinheiro?");
-        
         if (abaAtiva === "ejc") {
             const dia = document.getElementById("f_dia").value;
             if(dia === "Domingo" && pl.paid === false) return alert("⛔ Domingo é dia de cobrança!");
@@ -416,11 +411,9 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
             if (!pl.equipe) return alert("⛔ Equipe?");
             pl.category="EJC"; pl.day=dia;
         }
-
         if (abaAtiva === "mercadinho") {
             pl.category = "Mercadinho"; 
             const tipoPessoa = document.getElementById("f_tipo_pessoa").value;
-            
             if (tipoPessoa === "PAROQUIANO") {
                 if (pl.paid === false) return alert("⛔ Paroquiano não pode comprar fiado. Pagamento imediato!");
                 pl.equipe = ""; 
@@ -428,12 +421,10 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
                 pl.equipe = document.getElementById("f_equipe_merc").value;
                 if (!pl.equipe) return alert("⛔ Informe a equipe do Servo.");
             }
-
             const cp = document.getElementById("f_campanha").value; 
             if(cp === "MAES") pl.product = "[MÃES] " + pl.product;
             if(cp === "NAMORADOS") pl.product = "[NAMORADOS] " + pl.product;
         }
-
         await apiPost("criarVendaCompras", pl);
     }
     
@@ -445,10 +436,7 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
         pl.equipe = document.getElementById("f_equipe_feijoada").value;
         await apiPost("criarFeijoada", pl);
     }
-    
     fecharModal(); 
-    this.reset();
-    limparCesta();
 });
 
 async function apiPost(act, pl){
@@ -467,13 +455,14 @@ function abrirModal(){
     document.getElementById("camposEJC").classList.toggle("hidden", abaAtiva!=="ejc"); 
     document.getElementById("camposMercado").classList.toggle("hidden", abaAtiva!=="mercadinho"); 
     document.getElementById("camposFeijoada").classList.toggle("hidden", abaAtiva!=="feijoada"); 
+    
+    if(abaAtiva==="mercadinho") controlarTipoPessoa(); // Reseta estado visual
 }
 
-// ✅ FECHAR MODAL E LIMPAR DADOS
 function fecharModal(){ 
     document.getElementById("modal").classList.add("hidden"); 
-    limparCesta(); // Limpa cesta visualmente
-    document.getElementById("formFin").reset(); // Limpa campos
+    limparCesta();
+    document.getElementById("formFin").reset();
 }
 
 async function baixar(id) {
@@ -493,6 +482,7 @@ async function arquivarInd(id) {
     await apiPost("arquivarTransacao", {id:id, aba: abaEnvio});
 }
 
+// ✅ ZAP TURBO (SOMA TOTAL)
 function calcularDividaPorTelefone(tel) {
     const cleanTel = String(tel).replace(/\D/g, "");
     return dadosCache
@@ -503,21 +493,21 @@ function calcularDividaPorTelefone(tel) {
 function cobrarZapTotal(tel, nome){
     const num = String(tel).replace(/\D/g,"");
     if(!/^\d{10,11}$/.test(num)) return alert("Número inválido");
-    
     const total = calcularDividaPorTelefone(num);
     const valorCobrar = total > 0 ? total : parseFloat(0);
-
     let cob = prompt("Seu nome?",""); if(!cob) return;
-    
-    const msg = encodeURIComponent(
-        `Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* do EJC.\n` +
-        `Consta um total pendente de *R$ ${valorCobrar.toFixed(2)}* referente aos itens consumidos.\n` +
-        `Quando puder, pode passar no caixa para regularizar?\nDeus abençoe! ✝️`
-    );
+    const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* do EJC.\nConsta um total pendente de *R$ ${valorCobrar.toFixed(2)}* referente aos itens consumidos.\nQuando puder, pode passar no caixa para regularizar?\nDeus abençoe! ✝️`);
     window.open(`https://wa.me/55${num}?text=${msg}`);
 }
 
 function exportarExcel(){ alert("Use o PC"); }
 function exportarPDF(){ alert("Use o PC"); }
 function copiarRelatorioCobranca(){ 
-    const l = dadosCache.filter(i=>!i.paid && i.category!=="Feijoada").map(i=>`🔴 ${i.buyer
+    const l = dadosCache.filter(i=>!i.paid && i.category!=="Feijoada").map(i=>`🔴 ${i.buyer_name}: R$ ${parseFloat(i.amount || i.total || 0).toFixed(2)}`).join("\n");
+    navigator.clipboard.writeText("*COBRANÇA DOMINGO*\n"+l).then(()=>alert("Copiado!"));
+}
+
+function sair(){ location.reload(); }
+</script>
+</body>
+</html>
