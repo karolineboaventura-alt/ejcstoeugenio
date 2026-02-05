@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
   
   <style>
-    /* ===== AJUSTES DE RESPONSIVIDADE ===== */
+    /* ===== AJUSTES GLOBAIS ===== */
     body { font-family: 'Montserrat', sans-serif; background-color: #f3f4f6; width: 100%; overflow-x: hidden; }
     
     .tab-btn { opacity: 0.6; filter: grayscale(1); transition: all 0.3s; }
@@ -21,15 +21,12 @@
     .hidden { display: none !important; }
     .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
     
-    /* Proteção visual extra para Admin */
     .admin-only { display: none; }
     
-    /* Tabela com rolagem no celular */
     .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; min-width: 600px; display: inline-block; }
     
-    /* Ajuste de fonte para telas pequenas */
     @media (max-width: 640px) { body { font-size: 14px; } }
-    
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
@@ -51,9 +48,7 @@
     </div>
     <button onclick="tentarLogin('admin')" class="w-full py-3.5 rounded-xl font-bold text-white bg-purple-700 shadow-lg mb-3">👑 PILOTOS</button>
     <button onclick="tentarLogin('compras')" class="w-full py-3.5 rounded-xl font-bold text-white bg-emerald-600 shadow-lg">🛒 COMPRAS</button>
-    
     <p id="msgErroLogin" class="hidden text-red-500 text-xs font-bold text-center mt-3 animate-pulse">⛔ Senha incorreta. Tente novamente.</p>
-
     <div class="mt-8 text-[9px] text-center text-slate-400 font-bold uppercase"><p>Pilotos Finanças • EJC 2026</p><p class="mt-1">Paróquia Santo Eugênio de Mazenod ✝️🤍</p></div>
   </div>
 </div>
@@ -107,9 +102,8 @@
     <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
         <div class="p-3 bg-slate-50 border-b flex gap-2"><input id="campoBusca" onkeyup="renderizar()" placeholder="🔍 Buscar..." class="flex-1 bg-white border rounded-lg p-2 text-xs font-bold outline-none"></div>
         <div id="loading" class="hidden p-4 text-center text-xs font-bold text-slate-400 animate-pulse">Sincronizando...</div>
-        
         <div class="table-wrapper">
-            <table class="w-full min-w-[600px] text-left"><thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase text-center border-b"><tr><th class="p-3">Data</th><th class="p-3">Desc</th><th class="p-3">$$</th><th class="p-3">Sts</th><th class="p-3">Ação</th></tr></thead><tbody id="corpoTabela" class="text-xs font-medium text-slate-600 text-center divide-y divide-slate-100"></tbody></table>
+            <table class="text-left"><thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase text-center border-b"><tr><th class="p-3">Data</th><th class="p-3">Desc</th><th class="p-3">$$</th><th class="p-3">Sts</th><th class="p-3">Ação</th></tr></thead><tbody id="corpoTabela" class="text-xs font-medium text-slate-600 text-center divide-y divide-slate-100"></tbody></table>
         </div>
     </div>
   </main>
@@ -147,7 +141,15 @@
         
         <div id="camposEJC" class="hidden bg-blue-50 p-3 rounded-xl space-y-2"><p class="text-[10px] font-black text-blue-400 uppercase">EJC</p><select id="f_dia" class="w-full border p-2 rounded-lg font-bold text-center"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select><select id="f_equipe" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
         
-        <div id="camposMercado" class="hidden bg-pink-50 p-3 rounded-xl space-y-2"><p class="text-[10px] font-black text-pink-400 uppercase">Mercadinho</p><select id="f_campanha" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Geral</option><option value="[MÃES]">Mães</option><option value="[NAMORADOS]">Namorados</option></select><select id="f_equipe_merc" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
+        <div id="camposMercado" class="hidden bg-pink-50 p-3 rounded-xl space-y-2">
+            <p class="text-[10px] font-black text-pink-400 uppercase">Campanha (Obrigatório)</p>
+            <select id="f_campanha" class="w-full border p-2 rounded-lg font-bold text-center">
+                <option value="GERAL">🛒 Mercadinho Geral</option>
+                <option value="MAES">🌸 Dia das Mães</option>
+                <option value="NAMORADOS">💘 Dia dos Namorados</option>
+            </select>
+            <select id="f_equipe_merc" class="w-full border p-2 rounded-lg font-bold text-center"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
+        </div>
         
         <div id="camposFeijoada" class="hidden bg-orange-50 p-3 rounded-xl space-y-2">
             <p class="text-[10px] font-black text-orange-400 uppercase">Detalhes Feijoada</p>
@@ -177,11 +179,12 @@
 </div>
 
 <script>
-// ✅ SUA API CONFIGURADA
-const API = "https://script.google.com/macros/s/AKfycbxpdUDknyp92-QwDwqOz_fxtPoso62D2zZLJksI0astU1RJG8WTVrPjKNLlGq6UNTRu/exec";
+// ✅ API CONFIGURADA
+const API = "https://script.google.com/macros/s/AKfycbzfCozUPEax76bamW5DgxDgEOK9LCw4OCsppEKbm_lGOTmXBGCs0bjHAFQRFzEi1Tl4Jw/exec";
 
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
 let ROLE="", abaAtiva="admin", filtroAtivo="", dadosCache=[];
+let dadosAdminCache = [];
 let itensCesta = []; 
 
 function toggleSenha(){ const i=document.getElementById("inputSenha"); const ic=document.getElementById("lockIcon"); i.type=i.type==="password"?"text":"password"; ic.className=i.type==="password"?"fas fa-eye":"fas fa-eye-slash"; }
@@ -198,12 +201,10 @@ function tentarLogin(r){
     if(ROLE==="compras") { 
         abaAtiva="ejc"; 
         document.getElementById("tab-admin").classList.add("hidden");
-        // Feijoada oculta para Compras
         document.getElementById("tab-feijoada").classList.add("hidden"); 
         document.getElementById("tab-arquivo").classList.add("hidden");
     }
     
-    // ✅ MOSTRAR BOTÕES DE ADMIN SE FOR PILOTO
     if(ROLE==="admin") {
         document.querySelectorAll(".admin-only").forEach(el => el.style.display = "block");
     }
@@ -219,7 +220,6 @@ function mudarAba(a){
     document.getElementById("filtrosMercadinho").classList.toggle("hidden", a!=="mercadinho");
     document.getElementById("painelArquivo").classList.toggle("hidden", a!=="arquivo");
     
-    // Ocultar Dash Admin se não for admin
     if(ROLE !== "admin") {
         document.getElementById("dashAdmin").classList.add("hidden");
     } else {
@@ -234,23 +234,28 @@ function filtrarCampanha(c){ filtroAtivo=c; renderizar(); }
 
 async function carregar(){
     document.getElementById("loading").classList.remove("hidden");
-    let act = "listarAdminFull";
-    if(abaAtiva==="ejc" || abaAtiva==="mercadinho") act = "listarCompras";
-    if(abaAtiva==="feijoada") act = "listarFeijoada";
-    if(abaAtiva==="arquivo") act = "listarArquivo";
-    try { 
-        const r = await fetch(`${API}?action=${act}`); 
-        dadosCache = await r.json(); 
-        renderizar(); 
-        if(ROLE==="admin") atualizarStats();
+    try {
+        if (ROLE === "admin") {
+            const rAdmin = await fetch(`${API}?action=listarAdminFull`);
+            dadosAdminCache = await rAdmin.json();
+            atualizarStats();
+        }
+        let act = "listarAdminFull";
+        if (abaAtiva==="ejc" || abaAtiva==="mercadinho") act = "listarCompras";
+        if (abaAtiva==="feijoada") act = "listarFeijoada";
+        if (abaAtiva==="arquivo") act = "listarArquivo";
+
+        const r = await fetch(`${API}?action=${act}`);
+        dadosCache = await r.json();
+        renderizar();
     } catch(e){ alert("Erro conexão: " + e.message); }
     document.getElementById("loading").classList.add("hidden");
 }
 
 function atualizarStats(){
     let rec = 0, pen = 0;
-    dadosCache.forEach(i => {
-        let v = parseFloat(i.amount || i.total || 0);
+    dadosAdminCache.forEach(i => {
+        let v = parseFloat(i.amount || 0);
         if(i.paid) rec += v;
         else pen += v;
     });
@@ -266,17 +271,20 @@ function renderizar(){
     const ehDomingo = new Date().getDay()===0;
 
     const lista = dadosCache.slice().reverse().filter(i=>{
+        const pOriginal = i.product || i.description || "";
+        const p = pOriginal.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
+
         if(abaAtiva==="ejc") {
             if(i.category!=="EJC") return false;
             if(filtroAtivo && i.ejc_dia !== filtroAtivo) return false;
         }
         if(abaAtiva==="mercadinho") {
             if(i.category!=="Mercadinho") return false; 
-            const p=(i.product||"").toUpperCase();
-            if(filtroAtivo==="Geral" && (p.includes("MÃES") || p.includes("NAMORADOS"))) return false;
-            else if(filtroAtivo && !p.includes(filtroAtivo.replace(/[\[\]]/g,""))) return false;
+            if(filtroAtivo==="Geral" && (p.includes("MAES") || p.includes("NAMORADOS"))) return false;
+            else if(filtroAtivo && !p.includes(filtroAtivo.replace(/[\[\]]/g,"").normalize("NFD").replace(/[\u0300-\u036f]/g, ""))) return false;
         }
-        const txt = (i.description||i.product||"").toLowerCase() + (i.buyer_name||"").toLowerCase();
+        
+        const txt = (pOriginal).toLowerCase() + (i.buyer_name||"").toLowerCase();
         if(busca && !txt.includes(busca)) return false;
         
         if(ROLE==="compras" && ehDomingo && abaAtiva==="ejc" && i.paid) return false;
@@ -284,8 +292,8 @@ function renderizar(){
     });
 
     lista.forEach(i=>{
-        if(!i.paid) somaPend+=parseFloat(i.amount||i.total||0);
-        const desc = i.description||i.product||"Item";
+        if(!i.paid && i.category !== "Feijoada" && i.type !== "FEIJOADA") somaPend+=parseFloat(i.amount||i.total||0);
+        const desc = i.product || i.description || "Item"; 
         const val = parseFloat(i.amount||i.total||0);
         const dataShow = abaAtiva==="arquivo" ? `${new Date(i.data_backup).toLocaleDateString()}<br>${i.origem}` : new Date(i.date).toLocaleDateString();
         const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="bg-slate-100 text-slate-400 w-8 h-8 rounded-full mb-1 hover:bg-slate-200">📦</button>` : "";
@@ -315,10 +323,8 @@ function somarItem(){
     const desc = descInput || "Item Diverso";
     const val = parseFloat(document.getElementById("f_val").value);
     if(!val || val <= 0) return alert("⛔ Digite um valor válido!");
-    
     const itemExistente = itensCesta.find(i => i.desc.toLowerCase() === desc.toLowerCase() && i.val === val);
     if (itemExistente) { itemExistente.qtd += 1; } else { itensCesta.push({ desc: desc, val: val, qtd: 1 }); }
-    
     renderCesta();
     document.getElementById("f_desc").value = ""; 
     document.getElementById("f_desc").focus(); 
@@ -400,15 +406,18 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
         if(!pl.equipe) return alert("⛔ Equipe?");
         
         if(abaAtiva==="ejc") { pl.category="EJC"; pl.day=document.getElementById("f_dia").value; }
+        
+        // ✅ LÓGICA MERCADINHO (AUTO-TAG)
         if(abaAtiva==="mercadinho") { 
             pl.category="Mercadinho"; 
-            const cp=document.getElementById("f_campanha").value; 
-            if(cp) pl.product = cp+" "+pl.product; 
+            const cp = document.getElementById("f_campanha").value; 
+            if(cp === "MAES") pl.product = "[MÃES] " + pl.product;
+            if(cp === "NAMORADOS") pl.product = "[NAMORADOS] " + pl.product;
+            // GERAL NÃO ADICIONA NADA
         }
         await apiPost("criarVendaCompras", pl);
     }
     
-    // Feijoada Lógica V15.5 mantida
     if(abaAtiva==="feijoada") {
         delete pl.day; 
         pl.qtd = document.getElementById("f_qtd").value;
