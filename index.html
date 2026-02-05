@@ -15,33 +15,27 @@
   
   <style>
     /* ===== ULTIMATE STYLE ===== */
-    :root { --nu-roxo: #820ad1; --nu-bg: #f5f5f7; --nu-green: #25D366; }
+    :root { --nu-roxo: #820ad1; --nu-bg: #f5f5f7; }
     body { font-family: 'Inter', sans-serif; background-color: var(--nu-bg); width: 100%; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
     
-    /* Header Vivo */
     .nu-header { background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%); color: white; padding-bottom: 12px; box-shadow: 0 4px 25px rgba(130, 10, 209, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
     
-    /* Animações e Feedback */
-    button { transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    button:active { transform: scale(0.92); }
+    button { transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    button:active { transform: scale(0.94); }
     
-    /* Skeleton Loading (Efeito App) */
     .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* Cards e Tabelas */
     .nu-card { background: white; border-radius: 24px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.02); overflow: hidden; }
     .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 100px; }
     table { width: 100%; min-width: 600px; border-spacing: 0; }
     tr { transition: background 0.2s; }
     tr:active { background: #f9f9f9; }
     
-    /* Toast */
     #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; }
     .toast { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); color: white; padding: 14px 20px; border-radius: 16px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-    /* Utilitários */
     .fab { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; background: var(--nu-roxo); color: white; border-radius: 50%; box-shadow: 0 12px 30px rgba(130, 10, 209, 0.5); display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 50; transition: all 0.3s; }
     .admin-only { display: none; }
     .hidden { display: none !important; }
@@ -310,14 +304,14 @@ function mudarAba(a){
     abaAtiva=a; filtroAtivo="";
     
     document.querySelectorAll(".tab-btn").forEach(b=>{
-        b.classList.remove("bg-white", "text-purple-900");
-        b.classList.add("bg-white/10", "text-white");
+        b.classList.remove("text-white", "font-black", "border-white", "opacity-100");
+        b.classList.add("text-white/70", "font-bold", "border-transparent");
     });
     
     const btn = document.getElementById("tab-"+a);
     if(btn){
-        btn.classList.add("bg-white", "text-purple-900");
-        btn.classList.remove("bg-white/10", "text-white");
+        btn.classList.add("text-white", "font-black", "border-white", "opacity-100");
+        btn.classList.remove("text-white/70", "border-transparent");
     }
 
     document.getElementById("filtrosEJC").classList.toggle("hidden", a!=="ejc");
@@ -326,6 +320,7 @@ function mudarAba(a){
     if(ROLE !== "admin") { document.getElementById("dashAdmin").classList.add("hidden"); } 
     else { document.getElementById("dashAdmin").classList.toggle("hidden", a!=="admin"); }
     
+    // CACHE LOCAL
     const cached = localStorage.getItem("ejc_data_" + abaAtiva);
     if(cached) { dadosCache = JSON.parse(cached); renderizar(); }
     
@@ -358,7 +353,7 @@ async function carregar(){
         localStorage.setItem("ejc_data_" + abaAtiva, JSON.stringify(data));
         
         renderizar();
-    } catch(e){ showToast("Modo Offline", "error"); }
+    } catch(e){ console.warn("Falha silenciosa:", e); }
     document.getElementById("loading").classList.add("hidden");
 }
 
@@ -379,6 +374,7 @@ function atualizarStats(){
     document.getElementById("totalLiquido").innerText = "R$ " + (rec - pen).toFixed(2);
 }
 
+// DEBOUNCE
 let buscaTimer;
 function debounceBusca(){
   clearTimeout(buscaTimer);
@@ -411,8 +407,9 @@ function renderizar(){
         const desc = i.product || i.description || "Item"; 
         const val = parseFloat(i.amount||i.total||0);
         const dataShow = abaAtiva==="arquivo" ? `${new Date(i.data_backup).toLocaleDateString()}<br>${i.origem}` : new Date(i.date).toLocaleDateString();
-        const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="text-slate-300 hover:text-purple-600 transition p-3"><i class="fas fa-box"></i></button>` : "";
+        const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="text-slate-300 hover:text-purple-600 transition p-2"><i class="fas fa-box"></i></button>` : "";
 
+        // ✅ BOTÃO WHATSAPP POSICIONADO CORRETAMENTE E COR VERDE
         tb.innerHTML += `
         <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0">
             <td class="p-4">
@@ -430,8 +427,22 @@ function renderizar(){
             </td>
             <td class="p-4 text-center whitespace-nowrap">
                 <div class="flex items-center justify-center gap-2">
-                    ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 hover:bg-emerald-500 hover:text-white transition shadow-sm"><i class="fas fa-check"></i></button>` : ""}
-                    ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="w-10 h-10 rounded-full bg-[#25D366] text-white hover:scale-110 active:scale-90 transition shadow-lg shadow-green-200"><i class="fab fa-whatsapp"></i></button>` : ""}
+                    ${!i.paid && abaAtiva!=="arquivo" ? `
+                    <button onclick="baixar('${i.id}')"
+                    class="w-10 h-10 rounded-full bg-slate-100 text-slate-500
+                    hover:bg-emerald-500 hover:text-white transition shadow-sm
+                    flex items-center justify-center">
+                        <i class="fas fa-check"></i>
+                    </button>` : ""}
+
+                    ${!i.paid && i.phone ? `
+                    <button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')"
+                    class="w-10 h-10 rounded-full bg-[#25D366] text-white
+                    hover:bg-[#1ebe5d] active:scale-90 transition
+                    shadow-md flex items-center justify-center">
+                        <i class="fab fa-whatsapp"></i>
+                    </button>` : ""}
+
                     ${btnArquivo}
                 </div>
             </td>
@@ -568,6 +579,7 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     fecharModal(); 
 });
 
+// ✅ KEEPALIVE PARA MOBILE + TOAST + DELAY DE SEGURANÇA
 async function apiPost(act, pl){
     document.getElementById("loading").classList.remove("hidden");
     await fetch(API, { 
@@ -576,7 +588,7 @@ async function apiPost(act, pl){
         keepalive: true
     });
     showToast("Salvo!");
-    carregar();
+    setTimeout(carregar, 1200); // 1.2s delay para garantir sync do Sheets
 }
 
 function abrirModal(){ 
@@ -593,9 +605,14 @@ function abrirModal(){
 
 function fecharModal(){ document.getElementById("modal").classList.add("hidden"); limparCesta(); document.getElementById("formFin").reset(); }
 
+// ✅ MODO TEMPO REAL (OPTIMISTIC UI PARA BAIXAR)
 async function baixar(id) {
     if(!confirm("Recebeu o valor?")) return;
-    document.getElementById("row-"+id).remove();
+    
+    // Atualiza visualmente ANTES do servidor
+    const item = dadosCache.find(i => i.id === id);
+    if(item) { item.paid = true; renderizar(); }
+
     let abaEnvio = abaAtiva==="admin" ? "ADMIN" : abaAtiva==="feijoada" ? "FEIJOADA" : "COMPRAS";
     await apiPost("marcarPago", {id:id, aba: abaEnvio});
 }
@@ -605,22 +622,29 @@ async function pagarTudoDomingo(){ if(confirm("Quitar todos os pendentes?")) awa
 
 async function arquivarInd(id) {
     if(!confirm("Mover este item para o Arquivo Morto?")) return;
-    document.getElementById("row-"+id).remove();
+    // Otimista para arquivar também
+    dadosCache = dadosCache.filter(i => i.id !== id);
+    renderizar();
+    
     let abaEnvio = abaAtiva==="admin" ? "ADMIN" : abaAtiva==="feijoada" ? "FEIJOADA" : "COMPRAS";
     await apiPost("arquivarTransacao", {id:id, aba: abaEnvio});
 }
 
+// ✅ FUNÇÃO DE SOMA TOTAL AJUSTADA (IMPORTANTE)
 function calcularDividaPorTelefone(tel) {
     const cleanTel = String(tel).replace(/\D/g, "");
-    return dadosCache.filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel && i.category === "EJC").reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
+    return dadosCache.filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel).reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
 }
 
 function cobrarZapTotal(tel, nome){
     const num = String(tel).replace(/\D/g,"");
     if(!/^\d{10,11}$/.test(num)) return showToast("Número inválido", "error");
+    
     const total = calcularDividaPorTelefone(num);
     const valorCobrar = total > 0 ? total : 0;
+
     let cob = prompt("Seu nome?",""); if(!cob) return;
+    
     const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* do EJC.\nConsta um total pendente de *R$ ${valorCobrar.toFixed(2)}* referente aos itens consumidos.\nQuando puder, pode passar no caixa para regularizar?\nDeus abençoe! ✝️`);
     location.href = `https://wa.me/55${num}?text=${msg}`;
 }
