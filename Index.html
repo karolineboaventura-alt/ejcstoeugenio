@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EJC BANK</title>
+  <title>EJC BANK • 21º EJC</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,11 +13,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
   
   <style>
-    body { font-family: 'Montserrat', sans-serif; background-color: #f3f4f6; }
+    /* ===== AJUSTES DE RESPONSIVIDADE ===== */
+    body { font-family: 'Montserrat', sans-serif; background-color: #f3f4f6; width: 100%; overflow-x: hidden; }
+    
     .tab-btn { opacity: 0.6; filter: grayscale(1); transition: all 0.3s; }
     .tab-active { opacity: 1; filter: grayscale(0); border-bottom: 4px solid #10b981; transform: scale(1.05); }
     .hidden { display: none !important; }
     .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+    
+    /* Proteção visual extra para Admin */
+    .admin-only { display: none; }
+    
+    /* Tabela com rolagem no celular */
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    
+    /* Ajuste de fonte para telas pequenas */
+    @media (max-width: 640px) { body { font-size: 14px; } }
+    
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
@@ -56,12 +68,12 @@
     </div>
   </header>
 
-  <div class="flex bg-white p-1 shadow-sm mb-4 overflow-x-auto no-scrollbar">
-    <button id="tab-admin" onclick="mudarAba('admin')" class="tab-btn flex-1 py-3 px-4 text-xs font-black tab-active admin-only uppercase whitespace-nowrap">Caixa</button>
-    <button id="tab-ejc" onclick="mudarAba('ejc')" class="tab-btn flex-1 py-3 px-4 text-xs font-black uppercase whitespace-nowrap">⛪ EJC</button>
-    <button id="tab-mercadinho" onclick="mudarAba('mercadinho')" class="tab-btn flex-1 py-3 px-4 text-xs font-black uppercase whitespace-nowrap">🛒 Mercadinho</button>
-    <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="tab-btn flex-1 py-3 px-4 text-xs font-black admin-only uppercase whitespace-nowrap">🍛 Feijoada</button>
-    <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="tab-btn flex-1 py-3 px-4 text-xs font-black admin-only uppercase whitespace-nowrap">📦 Arquivo</button>
+  <div class="flex bg-white p-1 shadow-sm mb-4 overflow-x-auto no-scrollbar whitespace-nowrap">
+    <button id="tab-admin" onclick="mudarAba('admin')" class="tab-btn flex-1 py-3 px-4 text-xs font-black tab-active admin-only uppercase">Caixa</button>
+    <button id="tab-ejc" onclick="mudarAba('ejc')" class="tab-btn flex-1 py-3 px-4 text-xs font-black uppercase">⛪ EJC</button>
+    <button id="tab-mercadinho" onclick="mudarAba('mercadinho')" class="tab-btn flex-1 py-3 px-4 text-xs font-black uppercase">🛒 Mercadinho</button>
+    <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="tab-btn flex-1 py-3 px-4 text-xs font-black admin-only uppercase">🍛 Feijoada</button>
+    <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="tab-btn flex-1 py-3 px-4 text-xs font-black admin-only uppercase">📦 Arquivo</button>
   </div>
 
   <main class="px-4">
@@ -86,7 +98,7 @@
         <div class="flex gap-2 w-full md:w-auto"><button onclick="copiarRelatorioCobranca()" class="bg-white/20 px-3 py-2 rounded-lg text-xs font-bold hover:bg-white/30 flex-1"><i class="fas fa-copy mr-1"></i> Lista Zap</button><button onclick="pagarTudoDomingo()" class="bg-white text-rose-600 px-3 py-2 rounded-lg text-xs font-black hover:bg-rose-50 shadow-md flex-1"><i class="fas fa-check-double mr-1"></i> QUITAR LOTE</button></div>
     </div>
 
-    <div id="dashAdmin" class="mb-4 grid grid-cols-3 gap-2 admin-only">
+    <div id="dashAdmin" class="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 admin-only">
        <div class="bg-white p-3 rounded-xl border-l-4 border-emerald-500 shadow-sm"><p class="text-[9px] font-bold text-slate-400 uppercase">Recebido</p><h2 id="totalRecebido" class="text-lg font-black text-slate-700">R$ 0</h2></div>
        <div class="bg-white p-3 rounded-xl border-l-4 border-orange-500 shadow-sm"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><h2 id="totalPendente" class="text-lg font-black text-orange-600">R$ 0</h2></div>
        <div class="bg-white p-3 rounded-xl border-l-4 border-purple-600 shadow-sm"><p class="text-[9px] font-bold text-slate-400 uppercase">Líquido</p><h2 id="totalLiquido" class="text-lg font-black text-purple-700">R$ 0</h2></div>
@@ -95,13 +107,16 @@
     <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
         <div class="p-3 bg-slate-50 border-b flex gap-2"><input id="campoBusca" onkeyup="renderizar()" placeholder="🔍 Buscar..." class="flex-1 bg-white border rounded-lg p-2 text-xs font-bold outline-none"></div>
         <div id="loading" class="hidden p-4 text-center text-xs font-bold text-slate-400 animate-pulse">Sincronizando...</div>
-        <table class="w-full text-left"><thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase text-center border-b"><tr><th class="p-3">Data</th><th class="p-3">Desc</th><th class="p-3">$$</th><th class="p-3">Sts</th><th class="p-3">Ação</th></tr></thead><tbody id="corpoTabela" class="text-xs font-medium text-slate-600 text-center divide-y divide-slate-100"></tbody></table>
+        
+        <div class="table-wrapper">
+            <table class="w-full min-w-[600px] text-left"><thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase text-center border-b"><tr><th class="p-3">Data</th><th class="p-3">Desc</th><th class="p-3">$$</th><th class="p-3">Sts</th><th class="p-3">Ação</th></tr></thead><tbody id="corpoTabela" class="text-xs font-medium text-slate-600 text-center divide-y divide-slate-100"></tbody></table>
+        </div>
     </div>
   </main>
 </div>
 
-<div id="modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm">
-  <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
+<div id="modal" class="hidden fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-[100] p-2 sm:p-4 backdrop-blur-sm">
+  <div class="bg-white w-full max-w-md sm:max-w-lg lg:max-w-xl rounded-3xl p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
     <h2 class="text-center font-black text-purple-700 uppercase mb-4">Novo Lançamento</h2>
     <form id="formFin" class="space-y-3 text-center">
         
@@ -136,15 +151,17 @@
         
         <div id="camposFeijoada" class="hidden bg-orange-50 p-3 rounded-xl space-y-2">
             <p class="text-[10px] font-black text-orange-400 uppercase">Detalhes Feijoada</p>
-            <input id="f_qtd" type="number" value="1" class="w-full border p-2 rounded-lg font-bold text-center" placeholder="Qtd">
-            <select id="f_equipe_feijoada" class="w-full border p-2 rounded-lg font-bold text-center">
-                <option value="">Sem Equipe (Avulso)</option>
-                <option>Animação</option><option>Patrimônio</option><option>Café</option>
-                <option>Círculo</option><option>Compras</option><option>Cozinha</option>
-                <option>Intercessão</option><option>Liturgia</option><option>Ordem</option>
-                <option>Piloto</option><option>Sala</option><option>Secretaria</option>
-                <option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
-            </select>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input id="f_qtd" type="number" value="1" class="w-full border p-2 rounded-lg font-bold text-center" placeholder="Qtd">
+                <select id="f_equipe_feijoada" class="w-full border p-2 rounded-lg font-bold text-center">
+                    <option value="">Sem Equipe (Avulso)</option>
+                    <option>Animação</option><option>Patrimônio</option><option>Café</option>
+                    <option>Círculo</option><option>Compras</option><option>Cozinha</option>
+                    <option>Intercessão</option><option>Liturgia</option><option>Ordem</option>
+                    <option>Piloto</option><option>Sala</option><option>Secretaria</option>
+                    <option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
+                </select>
+            </div>
             <input id="f_comun" placeholder="Comunidade" class="w-full border p-2 rounded-lg font-bold text-center uppercase">
             <input id="f_obs" placeholder="Observação (ex: s/ cebola)" class="w-full border p-2 rounded-lg font-bold text-center text-xs">
         </div>
@@ -160,7 +177,7 @@
 </div>
 
 <script>
-// ✅ URL API V15 FINAL
+// ✅ SUA API CONFIGURADA
 const API = "https://script.google.com/macros/s/AKfycbxpdUDknyp92-QwDwqOz_fxtPoso62D2zZLJksI0astU1RJG8WTVrPjKNLlGq6UNTRu/exec";
 
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
@@ -174,16 +191,23 @@ function tentarLogin(r){
     if(r==="admin" && s===PASS_ADMIN) ROLE="admin";
     else if(r==="compras" && s===PASS_COMPRAS) ROLE="compras";
     else return document.getElementById("msgErroLogin").classList.remove("hidden");
+    
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("appMain").classList.remove("hidden");
     
     if(ROLE==="compras") { 
         abaAtiva="ejc"; 
         document.getElementById("tab-admin").classList.add("hidden");
-        // ✅ COMPRAS NÃO VÊ FEIJOADA, CONFIRMADO!
-        document.getElementById("tab-feijoada").classList.add("hidden");
+        // Feijoada oculta para Compras
+        document.getElementById("tab-feijoada").classList.add("hidden"); 
         document.getElementById("tab-arquivo").classList.add("hidden");
     }
+    
+    // ✅ MOSTRAR BOTÕES DE ADMIN SE FOR PILOTO
+    if(ROLE==="admin") {
+        document.querySelectorAll(".admin-only").forEach(el => el.style.display = "block");
+    }
+    
     mudarAba(abaAtiva);
 }
 
@@ -194,7 +218,14 @@ function mudarAba(a){
     document.getElementById("filtrosEJC").classList.toggle("hidden", a!=="ejc");
     document.getElementById("filtrosMercadinho").classList.toggle("hidden", a!=="mercadinho");
     document.getElementById("painelArquivo").classList.toggle("hidden", a!=="arquivo");
-    document.getElementById("dashAdmin").classList.toggle("hidden", a!=="admin");
+    
+    // Ocultar Dash Admin se não for admin
+    if(ROLE !== "admin") {
+        document.getElementById("dashAdmin").classList.add("hidden");
+    } else {
+        document.getElementById("dashAdmin").classList.toggle("hidden", a!=="admin");
+    }
+    
     carregar();
 }
 
@@ -377,16 +408,13 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
         await apiPost("criarVendaCompras", pl);
     }
     
-    // ✅ UPGRADE FINO: AJUSTE DE LÓGICA DA FEIJOADA
+    // Feijoada Lógica V15.5 mantida
     if(abaAtiva==="feijoada") {
-        // Remove 'day' para garantir que não conflite com EJC
         delete pl.day; 
-        
         pl.qtd = document.getElementById("f_qtd").value;
         pl.comunidade = document.getElementById("f_comun").value;
         pl.obs = document.getElementById("f_obs").value; 
         pl.equipe = document.getElementById("f_equipe_feijoada").value;
-        
         await apiPost("criarFeijoada", pl);
     }
     
