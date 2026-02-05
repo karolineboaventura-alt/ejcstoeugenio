@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#820ad1">
-  <title>EJC BANK • Ultimate</title>
+  <title>EJC BANK • Oficial</title>
   
   <link rel="preconnect" href="https://script.google.com">
   <link rel="dns-prefetch" href="https://script.google.com">
@@ -32,6 +32,10 @@
     tr { transition: background 0.2s; }
     tr:active { background: #f9f9f9; }
     
+    /* Sync Indicator Pulse */
+    @keyframes pulse-sync { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    .sync-active { animation: pulse-sync 1s infinite; }
+
     #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; }
     .toast { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); color: white; padding: 14px 20px; border-radius: 16px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -71,6 +75,7 @@
     
     <div class="mt-6 text-center border-t border-slate-100 pt-6">
         <p class="text-xs text-slate-500 font-bold italic">"A morte não venceu.<br>O teu amor me salvou!"</p>
+        <p class="text-[9px] text-slate-400 mt-1 font-bold">(Jo 11, 25-26)</p>
     </div>
   </div>
 </div>
@@ -83,7 +88,10 @@
             <div id="userAvatar" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-lg backdrop-blur-md shadow-inner">U</div>
             <div>
                 <p class="text-[10px] font-bold opacity-80 tracking-widest uppercase mb-0.5">Olá, <span id="userRoleDisplay">Visitante</span></p>
-                <h1 class="font-black text-xl tracking-tight leading-none">EJC BANK</h1>
+                <div class="flex items-center gap-2">
+                    <h1 id="headerTitle" class="font-black text-xl tracking-tight leading-none">EJC BANK</h1>
+                    <span id="syncIndicator" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-md transition-colors duration-500"></span>
+                </div>
             </div>
         </div>
         <button onclick="location.reload()" class="bg-white/10 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md hover:bg-white/20 transition"><i class="fas fa-power-off text-sm"></i></button>
@@ -105,12 +113,11 @@
         <p class="text-[10px] uppercase tracking-widest text-purple-600 font-bold mb-1">21º Encontro de Jovens com Cristo</p>
         <h2 class="font-black text-xl text-slate-800 leading-tight italic">"A morte não venceu.<br>O teu amor me salvou!"</h2>
         <div class="mt-3 inline-flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full">
-            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-            <p class="text-[10px] text-slate-500 font-bold">Sistema Online</p>
+            <p class="text-[10px] text-slate-500 font-bold">João 11, 25-26</p>
         </div>
     </div>
 
-    <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl grid grid-cols-1 sm:grid-cols-3 gap-6 admin-only border border-slate-100 animate-fade-in-up" style="animation-delay: 0.1s">
+    <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl grid grid-cols-1 sm:grid-cols-3 gap-6 border border-slate-100 animate-fade-in-up" style="animation-delay: 0.1s">
        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Recebido</p><h2 id="totalRecebido" class="text-3xl font-black text-slate-800">R$ 0,00</h2></div>
        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">A Receber</p><h2 id="totalPendente" class="text-3xl font-black text-orange-500">R$ 0,00</h2></div>
        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Líquido</p><h2 id="totalLiquido" class="text-3xl font-black text-purple-600">R$ 0,00</h2></div>
@@ -153,8 +160,8 @@
     </div>
 
     <footer class="mt-auto border-t border-slate-200 py-8 px-4 text-center opacity-60">
-        <p class="font-black text-xs text-slate-700 uppercase tracking-widest">Pilotos Finanças</p>
-        <p class="text-[10px] text-slate-500 mt-1 font-bold">Paróquia Santo Eugênio de Mazenod</p>
+        <p class="font-black text-xs text-slate-700 uppercase tracking-widest">Pilotos Finanças • EJC 2026</p>
+        <p class="text-[10px] text-slate-500 mt-1 font-bold">Paróquia Santo Eugênio de Mazenod ✝️🤍</p>
     </footer>
 
   </main>
@@ -286,12 +293,23 @@ function tentarLogin(r){
     document.getElementById("appMain").classList.remove("hidden");
     
     const headerTitle = document.getElementById("headerTitle");
+    const roleDisplay = document.getElementById("userRoleDisplay");
     const avatar = document.getElementById("userAvatar");
-    if(ROLE==="admin") { headerTitle.innerText = "EJC BANK PILOTOS"; avatar.innerText = "P"; }
-    else { headerTitle.innerText = "EJC BANK COMPRAS"; avatar.innerText = "C"; }
+    
+    // ✅ HEADER CORRIGIDO
+    if(ROLE==="admin") { 
+        headerTitle.innerText = "EJC BANK PILOTOS"; 
+        roleDisplay.innerText = "PILOTOS";
+        avatar.innerText = "P"; 
+    } else { 
+        headerTitle.innerText = "EJC BANK COMPRAS"; 
+        roleDisplay.innerText = "COMPRAS";
+        avatar.innerText = "C"; 
+    }
     
     if(ROLE==="compras") { 
         abaAtiva="ejc"; 
+        // REMOVIDO HIDE DO DASH-ADMIN PARA MOSTRAR SALDO COMPRAS
         document.getElementById("tab-admin").classList.add("hidden");
         document.getElementById("tab-feijoada").classList.add("hidden"); 
         document.getElementById("tab-arquivo").classList.add("hidden");
@@ -304,23 +322,20 @@ function mudarAba(a){
     abaAtiva=a; filtroAtivo="";
     
     document.querySelectorAll(".tab-btn").forEach(b=>{
-        b.classList.remove("text-white", "font-black", "border-white", "opacity-100");
-        b.classList.add("text-white/70", "font-bold", "border-transparent");
+        b.classList.remove("bg-white", "text-purple-900");
+        b.classList.add("bg-white/10", "text-white");
     });
     
     const btn = document.getElementById("tab-"+a);
     if(btn){
-        btn.classList.add("text-white", "font-black", "border-white", "opacity-100");
-        btn.classList.remove("text-white/70", "border-transparent");
+        btn.classList.add("bg-white", "text-purple-900");
+        btn.classList.remove("bg-white/10", "text-white");
     }
 
     document.getElementById("filtrosEJC").classList.toggle("hidden", a!=="ejc");
     document.getElementById("filtrosMercadinho").classList.toggle("hidden", a!=="mercadinho");
     document.getElementById("painelArquivo").classList.toggle("hidden", a!=="arquivo");
-    if(ROLE !== "admin") { document.getElementById("dashAdmin").classList.add("hidden"); } 
-    else { document.getElementById("dashAdmin").classList.toggle("hidden", a!=="admin"); }
     
-    // CACHE LOCAL
     const cached = localStorage.getItem("ejc_data_" + abaAtiva);
     if(cached) { dadosCache = JSON.parse(cached); renderizar(); }
     
@@ -330,7 +345,13 @@ function mudarAba(a){
 function filtrarDia(d){ filtroAtivo=d; renderizar(); }
 function filtrarCampanha(c){ filtroAtivo=c; renderizar(); }
 
+// ✅ ARRAY SAFE (PREVINE CRASH)
 async function carregar(){
+    // INDICADOR DE SYNC (AMARELO)
+    const sync = document.getElementById("syncIndicator");
+    sync.classList.remove("bg-emerald-400", "bg-rose-500");
+    sync.classList.add("bg-yellow-400", "sync-active");
+
     document.getElementById("loading").classList.remove("hidden");
     try {
         if (ROLE === "admin") {
@@ -339,9 +360,20 @@ async function carregar(){
                 fetch(`${API}?action=listarCompras`).then(r => r.json()),
                 fetch(`${API}?action=listarFeijoada`).then(r => r.json())
             ]);
-            dadosAdminCache = [...rAdmin, ...rCompras, ...rFeijoada];
-            atualizarStats();
+            
+            // ✅ CORREÇÃO CRÍTICA (ARRAY CHECK)
+            dadosAdminCache = [
+               ...(Array.isArray(rAdmin)?rAdmin:[]),
+               ...(Array.isArray(rCompras)?rCompras:[]),
+               ...(Array.isArray(rFeijoada)?rFeijoada:[])
+            ];
+        } else {
+            const r = await fetch(`${API}?action=listarCompras`);
+            dadosAdminCache = await r.json(); 
         }
+        
+        atualizarStats();
+
         let act = "listarAdminFull";
         if (abaAtiva==="ejc" || abaAtiva==="mercadinho") act = "listarCompras";
         if (abaAtiva==="feijoada") act = "listarFeijoada";
@@ -349,32 +381,48 @@ async function carregar(){
         
         const r = await fetch(`${API}?action=${act}`);
         const data = await r.json();
-        dadosCache = data;
-        localStorage.setItem("ejc_data_" + abaAtiva, JSON.stringify(data));
+        dadosCache = Array.isArray(data) ? data : []; // SAFE
+        localStorage.setItem("ejc_data_" + abaAtiva, JSON.stringify(dadosCache));
         
         renderizar();
-    } catch(e){ console.warn("Falha silenciosa:", e); }
+        
+        // SYNC VERDE
+        sync.classList.remove("bg-yellow-400", "bg-rose-500", "sync-active");
+        sync.classList.add("bg-emerald-400");
+
+    } catch(e){ 
+        console.warn("Sync error:", e);
+        // SYNC VERMELHO
+        sync.classList.remove("bg-emerald-400", "bg-yellow-400", "sync-active");
+        sync.classList.add("bg-rose-500");
+    }
     document.getElementById("loading").classList.add("hidden");
 }
 
+// ✅ REFRESH 10s (OPÇÃO D)
 setInterval(() => {
     if(document.visibilityState === "visible" && !document.getElementById("modal").classList.contains("hidden") === false){
         carregar();
     }
-}, 20000);
+}, 10000);
 
+// ✅ NOVA LÓGICA DE SOMA (ZERA ZERO)
 function atualizarStats(){
     let rec = 0, pen = 0;
+    
     dadosAdminCache.forEach(i => {
-        let v = parseFloat(i.amount || i.total || 0);
-        if(i.paid) rec += v; else pen += v;
+        let v = parseFloat(i.amount || i.total || i.valor || 0);
+        let pago = (i.paid === true || i.paid === "TRUE" || i.status === "Pago" || i.type === "ENTRADA");
+        
+        if(pago) rec += v; 
+        else pen += v;
     });
+
     document.getElementById("totalRecebido").innerText = "R$ " + rec.toFixed(2);
     document.getElementById("totalPendente").innerText = "R$ " + pen.toFixed(2);
     document.getElementById("totalLiquido").innerText = "R$ " + (rec - pen).toFixed(2);
 }
 
-// DEBOUNCE
 let buscaTimer;
 function debounceBusca(){
   clearTimeout(buscaTimer);
@@ -385,6 +433,10 @@ function renderizar(){
     const tb=document.getElementById("corpoTabela"); tb.innerHTML="";
     const busca = document.getElementById("campoBusca").value.toLowerCase();
     
+    // ✅ VARIÁVEIS INICIAIS (BUG FIX)
+    let somaPend = 0;
+    const ehDomingo = new Date().getDay() === 0;
+
     const lista = dadosCache.slice(-60).reverse().filter(i=>{
         const pOriginal = i.product || i.description || "";
         const p = pOriginal.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
@@ -404,12 +456,16 @@ function renderizar(){
     });
 
     lista.forEach(i=>{
+        // ✅ CÁLCULO ACUMULADO
+        if(!i.paid && i.category !== "Feijoada" && i.type !== "FEIJOADA") {
+            somaPend += parseFloat(i.amount||i.total||0);
+        }
+
         const desc = i.product || i.description || "Item"; 
         const val = parseFloat(i.amount||i.total||0);
         const dataShow = abaAtiva==="arquivo" ? `${new Date(i.data_backup).toLocaleDateString()}<br>${i.origem}` : new Date(i.date).toLocaleDateString();
         const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="text-slate-300 hover:text-purple-600 transition p-2"><i class="fas fa-box"></i></button>` : "";
 
-        // ✅ BOTÃO WHATSAPP POSICIONADO CORRETAMENTE E COR VERDE
         tb.innerHTML += `
         <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0">
             <td class="p-4">
@@ -462,7 +518,7 @@ function somarItem(){
     if(!val || val <= 0) return showToast("Valor inválido", "error");
     const itemExistente = itensCesta.find(i => i.desc.toLowerCase() === desc.toLowerCase() && i.val === val);
     if (itemExistente) { itemExistente.qtd += 1; } else { itensCesta.push({ desc: desc, val: val, qtd: 1 }); }
-    vibrate(30); // Feedback
+    vibrate(30); 
     renderCesta();
     document.getElementById("f_desc").value = ""; 
     document.getElementById("f_desc").focus(); 
@@ -579,7 +635,6 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     fecharModal(); 
 });
 
-// ✅ KEEPALIVE PARA MOBILE + TOAST + DELAY DE SEGURANÇA
 async function apiPost(act, pl){
     document.getElementById("loading").classList.remove("hidden");
     await fetch(API, { 
@@ -588,7 +643,7 @@ async function apiPost(act, pl){
         keepalive: true
     });
     showToast("Salvo!");
-    setTimeout(carregar, 1200); // 1.2s delay para garantir sync do Sheets
+    setTimeout(carregar, 1200); 
 }
 
 function abrirModal(){ 
@@ -605,14 +660,10 @@ function abrirModal(){
 
 function fecharModal(){ document.getElementById("modal").classList.add("hidden"); limparCesta(); document.getElementById("formFin").reset(); }
 
-// ✅ MODO TEMPO REAL (OPTIMISTIC UI PARA BAIXAR)
 async function baixar(id) {
     if(!confirm("Recebeu o valor?")) return;
-    
-    // Atualiza visualmente ANTES do servidor
     const item = dadosCache.find(i => i.id === id);
     if(item) { item.paid = true; renderizar(); }
-
     let abaEnvio = abaAtiva==="admin" ? "ADMIN" : abaAtiva==="feijoada" ? "FEIJOADA" : "COMPRAS";
     await apiPost("marcarPago", {id:id, aba: abaEnvio});
 }
@@ -622,15 +673,12 @@ async function pagarTudoDomingo(){ if(confirm("Quitar todos os pendentes?")) awa
 
 async function arquivarInd(id) {
     if(!confirm("Mover este item para o Arquivo Morto?")) return;
-    // Otimista para arquivar também
     dadosCache = dadosCache.filter(i => i.id !== id);
     renderizar();
-    
     let abaEnvio = abaAtiva==="admin" ? "ADMIN" : abaAtiva==="feijoada" ? "FEIJOADA" : "COMPRAS";
     await apiPost("arquivarTransacao", {id:id, aba: abaEnvio});
 }
 
-// ✅ FUNÇÃO DE SOMA TOTAL AJUSTADA (IMPORTANTE)
 function calcularDividaPorTelefone(tel) {
     const cleanTel = String(tel).replace(/\D/g, "");
     return dadosCache.filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel).reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
@@ -639,12 +687,9 @@ function calcularDividaPorTelefone(tel) {
 function cobrarZapTotal(tel, nome){
     const num = String(tel).replace(/\D/g,"");
     if(!/^\d{10,11}$/.test(num)) return showToast("Número inválido", "error");
-    
     const total = calcularDividaPorTelefone(num);
     const valorCobrar = total > 0 ? total : 0;
-
     let cob = prompt("Seu nome?",""); if(!cob) return;
-    
     const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* do EJC.\nConsta um total pendente de *R$ ${valorCobrar.toFixed(2)}* referente aos itens consumidos.\nQuando puder, pode passar no caixa para regularizar?\nDeus abençoe! ✝️`);
     location.href = `https://wa.me/55${num}?text=${msg}`;
 }
