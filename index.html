@@ -58,12 +58,14 @@
 <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-slate-900/95 backdrop-blur-sm">
   <div class="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-8 animate-fade-in-up">
     <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-full mb-4 text-3xl text-purple-600">✝️</div>
       <h1 class="text-3xl font-black text-slate-800 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
-      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Gestão Financeira 21º EJC</p>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">21º EJC • Santo Eugênio</p>
     </div>
     
     <div class="relative mb-4 group">
-        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-4 font-bold outline-none focus:border-purple-600 focus:bg-white transition text-slate-700 text-center">
+        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-12 py-4 font-bold outline-none focus:border-purple-600 focus:bg-white transition text-slate-700 text-center">
+        <button type="button" onclick="toggleSenha()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-600 text-lg p-2"><i id="eyeIcon" class="fas fa-eye"></i></button>
     </div>
     
     <div class="grid grid-cols-2 gap-3 mb-4">
@@ -72,6 +74,11 @@
     </div>
     
     <p id="msgErroLogin" class="hidden text-rose-500 text-xs font-bold text-center animate-pulse">⛔ Senha incorreta</p>
+    
+    <div class="mt-8 text-center border-t border-slate-100 pt-4">
+        <p class="text-xs text-slate-500 font-bold italic">"A morte não venceu.<br>O teu amor me salvou!"</p>
+        <p class="text-[9px] text-slate-400 mt-1 font-bold">(Jo 11, 25-26)</p>
+    </div>
   </div>
 </div>
 
@@ -99,6 +106,13 @@
 
   <main class="px-4 py-6 -mt-2 z-30 relative bg-transparent">
     
+    <div class="bg-white rounded-3xl shadow-sm p-5 mb-5 border border-slate-100 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+        <p class="text-[10px] uppercase tracking-widest text-purple-600 font-bold mb-1">21º Encontro de Jovens com Cristo</p>
+        <h2 class="font-black text-lg text-slate-800 leading-tight italic">"A morte não venceu.<br>O teu amor me salvou!"</h2>
+        <p class="text-[10px] text-slate-400 mt-2 font-bold bg-slate-50 inline-block px-2 py-1 rounded-lg">João 11, 25–26</p>
+    </div>
+
     <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl mb-6 grid grid-cols-1 sm:grid-cols-3 gap-6 admin-only animate-fade-in-up border border-slate-100">
        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Recebido</p><h2 id="totalRecebido" class="text-3xl font-black text-slate-800">R$ 0,00</h2></div>
        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">A Receber</p><h2 id="totalPendente" class="text-3xl font-black text-orange-500">R$ 0,00</h2></div>
@@ -122,13 +136,12 @@
         <div class="flex gap-2 w-full md:w-auto"><button onclick="copiarRelatorioCobranca()" class="bg-white/10 px-4 py-3 rounded-xl text-xs font-bold flex-1">Relatório</button><button onclick="pagarTudoDomingo()" class="bg-white text-slate-900 px-4 py-3 rounded-xl text-xs font-black shadow-md flex-1">BAIXAR TUDO</button></div>
     </div>
 
-    <div class="nu-card overflow-hidden mb-20">
+    <div class="nu-card overflow-hidden mb-10">
         <div class="p-4 border-b border-slate-50 flex gap-2 items-center">
             <i class="fas fa-search text-slate-300"></i>
-            <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar lançamentos..." class="w-full text-sm font-semibold outline-none text-slate-700 placeholder:text-slate-300">
+            <input id="campoBusca" onkeyup="debounceBusca()" placeholder="Buscar lançamentos..." class="w-full text-sm font-semibold outline-none text-slate-700 placeholder:text-slate-300">
         </div>
         <div id="loading" class="hidden py-10 text-center"><div class="animate-spin inline-block w-8 h-8 border-4 border-slate-100 border-t-purple-600 rounded-full"></div></div>
-        
         <div class="table-wrapper">
             <table class="text-left text-sm w-full">
                 <thead class="text-[10px] font-black text-slate-400 uppercase bg-slate-50"><tr class=""><th class="p-4">Detalhes</th><th class="p-4 text-right">Valor</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Ação</th></tr></thead>
@@ -136,6 +149,15 @@
             </table>
         </div>
     </div>
+
+    <footer class="mt-auto border-t border-slate-200 py-8 px-4 text-center opacity-60">
+        <p class="font-black text-xs text-slate-700 uppercase tracking-widest">Pilotos Finanças • EJC 2026</p>
+        <p class="text-[10px] text-slate-500 mt-1 font-bold">Paróquia Santo Eugênio de Mazenod ✝️🤍</p>
+        <div class="mt-4 inline-block bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-[9px] font-bold border border-purple-100">
+            "A morte não venceu."
+        </div>
+    </footer>
+
   </main>
 
   <button onclick="abrirModal()" class="fab hover:scale-110 active:scale-95"><i class="fas fa-plus"></i></button>
@@ -225,13 +247,23 @@
 </div>
 
 <script>
+// ✅ LINK API V16
 const API = "https://script.google.com/macros/s/AKfycbzfCozUPEax76bamW5DgxDgEOK9LCw4OCsppEKbm_lGOTmXBGCs0bjHAFQRFzEi1Tl4Jw/exec";
+
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
 let ROLE="", abaAtiva="admin", filtroAtivo="", dadosCache=[];
 let dadosAdminCache = [];
 let itensCesta = []; 
 
-function toggleSenha(){ const i=document.getElementById("inputSenha"); const ic=document.getElementById("lockIcon"); i.type=i.type==="password"?"text":"password"; ic.className=i.type==="password"?"fas fa-eye":"fas fa-eye-slash"; }
+function toggleSenha(){ 
+    const input = document.getElementById("inputSenha"); 
+    const icon = document.getElementById("eyeIcon"); 
+    if(input.type === "password"){
+        input.type = "text"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye");
+    }
+}
 
 function showToast(msg, type="success"){
     const t = document.createElement("div"); t.className="toast";
@@ -250,7 +282,6 @@ function tentarLogin(r){
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("appMain").classList.remove("hidden");
     
-    // ✅ HEADER DINÂMICO
     const headerTitle = document.getElementById("headerTitle");
     if(ROLE==="admin") headerTitle.innerText = "EJC BANK PILOTOS";
     else headerTitle.innerText = "EJC BANK COMPRAS";
@@ -268,13 +299,11 @@ function tentarLogin(r){
 function mudarAba(a){
     abaAtiva=a; filtroAtivo="";
     
-    // RESET VISUAL DOS BOTÕES
     document.querySelectorAll(".tab-btn").forEach(b=>{
         b.classList.remove("text-white", "font-black", "border-white", "opacity-100");
         b.classList.add("text-white/70", "font-bold", "border-transparent");
     });
     
-    // ATIVA O BOTÃO CLICADO
     const btn = document.getElementById("tab-"+a);
     if(btn){
         btn.classList.add("text-white", "font-black", "border-white", "opacity-100");
@@ -286,6 +315,11 @@ function mudarAba(a){
     document.getElementById("painelArquivo").classList.toggle("hidden", a!=="arquivo");
     if(ROLE !== "admin") { document.getElementById("dashAdmin").classList.add("hidden"); } 
     else { document.getElementById("dashAdmin").classList.toggle("hidden", a!=="admin"); }
+    
+    // CACHE LOCAL
+    const cached = localStorage.getItem("ejc_data_" + abaAtiva);
+    if(cached) { dadosCache = JSON.parse(cached); renderizar(); }
+    
     carregar();
 }
 
@@ -308,8 +342,12 @@ async function carregar(){
         if (abaAtiva==="ejc" || abaAtiva==="mercadinho") act = "listarCompras";
         if (abaAtiva==="feijoada") act = "listarFeijoada";
         if (abaAtiva==="arquivo") act = "listarArquivo";
+        
         const r = await fetch(`${API}?action=${act}`);
-        dadosCache = await r.json();
+        const data = await r.json();
+        dadosCache = data;
+        localStorage.setItem("ejc_data_" + abaAtiva, JSON.stringify(data));
+        
         renderizar();
     } catch(e){ showToast("Erro conexão", "error"); }
     document.getElementById("loading").classList.add("hidden");
@@ -319,7 +357,7 @@ setInterval(() => {
     if(document.visibilityState === "visible" && !document.getElementById("modal").classList.contains("hidden") === false){
         carregar();
     }
-}, 10000);
+}, 20000);
 
 function atualizarStats(){
     let rec = 0, pen = 0;
@@ -332,10 +370,18 @@ function atualizarStats(){
     document.getElementById("totalLiquido").innerText = "R$ " + (rec - pen).toFixed(2);
 }
 
+// DEBOUNCE
+let buscaTimer;
+function debounceBusca(){
+  clearTimeout(buscaTimer);
+  buscaTimer = setTimeout(renderizar, 300);
+}
+
 function renderizar(){
     const tb=document.getElementById("corpoTabela"); tb.innerHTML="";
     const busca = document.getElementById("campoBusca").value.toLowerCase();
-    const lista = dadosCache.slice(-150).reverse().filter(i=>{
+    
+    const lista = dadosCache.slice(-60).reverse().filter(i=>{
         const pOriginal = i.product || i.description || "";
         const p = pOriginal.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
         if(abaAtiva==="ejc") {
@@ -372,8 +418,8 @@ function renderizar(){
             </td>
             <td class="p-4 text-center whitespace-nowrap">
                 <div class="flex items-center justify-center gap-2">
-                    ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:bg-emerald-500 hover:text-white transition"><i class="fas fa-check"></i></button>` : ""}
-                    ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:bg-green-500 hover:text-white transition"><i class="fab fa-whatsapp"></i></button>` : ""}
+                    ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="w-9 h-9 rounded-full bg-slate-100 text-slate-400 hover:bg-emerald-500 hover:text-white transition shadow-sm"><i class="fas fa-check"></i></button>` : ""}
+                    ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="w-9 h-9 rounded-full bg-green-500 text-white hover:bg-green-600 active:scale-90 transition shadow-md"><i class="fab fa-whatsapp"></i></button>` : ""}
                     ${btnArquivo}
                 </div>
             </td>
@@ -509,10 +555,15 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     fecharModal(); 
 });
 
+// ✅ KEEPALIVE PARA MOBILE + TOAST
 async function apiPost(act, pl){
     document.getElementById("loading").classList.remove("hidden");
-    await fetch(API, { method:"POST", body:JSON.stringify({action:act, payload:pl}) });
-    showToast("Salvo com sucesso!");
+    await fetch(API, { 
+        method:"POST", 
+        body:JSON.stringify({action:act, payload:pl}),
+        keepalive: true
+    });
+    showToast("Salvo!");
     carregar();
 }
 
@@ -547,19 +598,26 @@ async function arquivarInd(id) {
     await apiPost("arquivarTransacao", {id:id, aba: abaEnvio});
 }
 
+// ✅ FUNÇÃO DE SOMA TOTAL AJUSTADA
 function calcularDividaPorTelefone(tel) {
     const cleanTel = String(tel).replace(/\D/g, "");
-    return dadosCache.filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel && i.category === "EJC").reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
+    return dadosCache
+        .filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel)
+        .reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
 }
 
 function cobrarZapTotal(tel, nome){
     const num = String(tel).replace(/\D/g,"");
     if(!/^\d{10,11}$/.test(num)) return showToast("Número inválido", "error");
+    
     const total = calcularDividaPorTelefone(num);
-    const valorCobrar = total > 0 ? total : parseFloat(0);
+    const valorCobrar = total > 0 ? total : 0;
+
     let cob = prompt("Seu nome?",""); if(!cob) return;
+    
+    // ✅ LINK DIRETO SEM POPUP
     const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* do EJC.\nConsta um total pendente de *R$ ${valorCobrar.toFixed(2)}* referente aos itens consumidos.\nQuando puder, pode passar no caixa para regularizar?\nDeus abençoe! ✝️`);
-    window.open(`https://wa.me/55${num}?text=${msg}`);
+    location.href = `https://wa.me/55${num}?text=${msg}`;
 }
 
 function exportarExcel(){ alert("Use o PC"); }
@@ -568,6 +626,12 @@ function copiarRelatorioCobranca(){
     const l = dadosCache.filter(i=>!i.paid && i.category!=="Feijoada").map(i=>`🔴 ${i.buyer_name}: R$ ${parseFloat(i.amount || i.total || 0).toFixed(2)}`).join("\n");
     navigator.clipboard.writeText("*COBRANÇA DOMINGO*\n"+l).then(()=>showToast("Copiado!"));
 }
+
+// ✅ FOCO AUTOMÁTICO
+window.addEventListener("load", ()=>{
+  const input = document.getElementById("inputSenha");
+  if(input) input.focus();
+});
 
 function sair(){ location.reload(); }
 </script>
