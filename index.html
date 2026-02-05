@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EJC BANK • NuStyle</title>
+  <meta name="theme-color" content="#820ad1">
+  <title>EJC BANK • Ultimate</title>
   
   <link rel="preconnect" href="https://script.google.com">
   <link rel="dns-prefetch" href="https://script.google.com">
@@ -13,40 +14,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   
   <style>
-    /* ===== NU STYLE (ROXO FINTECH) ===== */
-    :root { --nu-roxo: #820ad1; --nu-roxo-dark: #6105a0; --nu-bg: #f5f5f7; }
+    /* ===== ULTIMATE STYLE ===== */
+    :root { --nu-roxo: #820ad1; --nu-bg: #f5f5f7; --nu-green: #25D366; }
     body { font-family: 'Inter', sans-serif; background-color: var(--nu-bg); width: 100%; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
     
-    /* Header Nubank */
-    .nu-header { background: var(--nu-roxo); color: white; padding-bottom: 10px; box-shadow: 0 4px 20px rgba(130, 10, 209, 0.2); }
+    /* Header Vivo */
+    .nu-header { background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%); color: white; padding-bottom: 12px; box-shadow: 0 4px 25px rgba(130, 10, 209, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
     
-    /* Botões & Interação */
-    button { transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
-    button:active { transform: scale(0.96); }
+    /* Animações e Feedback */
+    button { transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    button:active { transform: scale(0.92); }
     
-    /* Cards Flutuantes */
-    .nu-card { background: white; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.03); }
-    
-    /* Tabela Clean */
+    /* Skeleton Loading (Efeito App) */
+    .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Cards e Tabelas */
+    .nu-card { background: white; border-radius: 24px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.02); overflow: hidden; }
     .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 100px; }
     table { width: 100%; min-width: 600px; border-spacing: 0; }
-    tr { border-bottom: 1px solid #f0f0f5; }
-    tr:last-child { border-bottom: none; }
+    tr { transition: background 0.2s; }
+    tr:active { background: #f9f9f9; }
     
-    /* Botão Flutuante (FAB) */
-    .fab { position: fixed; bottom: 24px; right: 24px; width: 64px; height: 64px; background: var(--nu-roxo); color: white; border-radius: 50%; box-shadow: 0 10px 25px rgba(130, 10, 209, 0.4); display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 50; transition: all 0.3s; }
-    .fab:active { transform: scale(0.9) rotate(90deg); }
+    /* Toast */
+    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; }
+    .toast { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); color: white; padding: 14px 20px; border-radius: 16px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-    /* Toast Notification */
-    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
-    .toast { background: #262626; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideIn 0.3s ease; }
-    @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
+    /* Utilitários */
+    .fab { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; background: var(--nu-roxo); color: white; border-radius: 50%; box-shadow: 0 12px 30px rgba(130, 10, 209, 0.5); display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 50; transition: all 0.3s; }
     .admin-only { display: none; }
     .hidden { display: none !important; }
-    .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    
+    .animate-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
 </head>
@@ -55,29 +55,28 @@
 
 <div id="toast-container"></div>
 
-<div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-slate-900/95 backdrop-blur-sm">
-  <div class="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-8 animate-fade-in-up">
+<div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-[#820ad1] bg-opacity-95 backdrop-blur-sm">
+  <div class="relative w-full max-w-sm bg-white rounded-[36px] shadow-2xl p-8 animate-fade-in-up">
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-full mb-4 text-3xl text-purple-600">✝️</div>
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-purple-50 rounded-full mb-4 text-4xl shadow-inner">✝️</div>
       <h1 class="text-3xl font-black text-slate-800 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
-      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">21º EJC • Santo Eugênio</p>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Gestão Financeira 21º EJC</p>
     </div>
     
-    <div class="relative mb-4 group">
-        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-12 py-4 font-bold outline-none focus:border-purple-600 focus:bg-white transition text-slate-700 text-center">
-        <button type="button" onclick="toggleSenha()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-600 text-lg p-2"><i id="eyeIcon" class="fas fa-eye"></i></button>
+    <div class="relative mb-5 group">
+        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl pl-4 pr-14 py-4 font-bold outline-none focus:border-purple-600 focus:bg-white transition text-slate-700 text-center text-lg">
+        <button type="button" onclick="toggleSenha()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-sm border border-slate-100 w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-purple-600 transition"><i id="eyeIcon" class="fas fa-eye"></i></button>
     </div>
     
-    <div class="grid grid-cols-2 gap-3 mb-4">
-        <button onclick="tentarLogin('admin')" class="py-4 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 shadow-lg shadow-slate-200">👑 PILOTOS</button>
-        <button onclick="tentarLogin('compras')" class="py-4 rounded-2xl font-black text-white bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-200">🛒 COMPRAS</button>
+    <div class="grid grid-cols-2 gap-3 mb-6">
+        <button onclick="tentarLogin('admin')" class="py-4 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 shadow-lg shadow-slate-300 transform transition">👑 PILOTOS</button>
+        <button onclick="tentarLogin('compras')" class="py-4 rounded-2xl font-black text-white bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-300 transform transition">🛒 COMPRAS</button>
     </div>
     
-    <p id="msgErroLogin" class="hidden text-rose-500 text-xs font-bold text-center animate-pulse">⛔ Senha incorreta</p>
+    <p id="msgErroLogin" class="hidden text-rose-500 text-xs font-bold text-center animate-pulse bg-rose-50 py-2 rounded-lg"><i class="fas fa-exclamation-circle mr-1"></i> Senha incorreta</p>
     
-    <div class="mt-8 text-center border-t border-slate-100 pt-4">
+    <div class="mt-6 text-center border-t border-slate-100 pt-6">
         <p class="text-xs text-slate-500 font-bold italic">"A morte não venceu.<br>O teu amor me salvou!"</p>
-        <p class="text-[9px] text-slate-400 mt-1 font-bold">(Jo 11, 25-26)</p>
     </div>
   </div>
 </div>
@@ -85,77 +84,83 @@
 <div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
   
   <header class="nu-header sticky top-0 z-40">
-    <div class="px-5 py-4 flex justify-between items-center">
-        <div>
-            <h1 id="headerTitle" class="font-black text-lg tracking-wide uppercase">EJC BANK</h1>
+    <div class="px-5 pt-5 pb-2 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div id="userAvatar" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-lg backdrop-blur-md shadow-inner">U</div>
+            <div>
+                <p class="text-[10px] font-bold opacity-80 tracking-widest uppercase mb-0.5">Olá, <span id="userRoleDisplay">Visitante</span></p>
+                <h1 class="font-black text-xl tracking-tight leading-none">EJC BANK</h1>
+            </div>
         </div>
-        <div class="text-right">
-            <p class="text-[9px] font-bold opacity-70 tracking-widest uppercase">Encontro</p>
-            <p class="font-black text-sm">21º EJC</p>
-        </div>
+        <button onclick="location.reload()" class="bg-white/10 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md hover:bg-white/20 transition"><i class="fas fa-power-off text-sm"></i></button>
     </div>
 
-    <div class="mt-2 px-5 overflow-x-auto no-scrollbar flex gap-5 pb-2">
-        <button id="tab-admin" onclick="mudarAba('admin')" class="tab-btn text-white/70 hover:text-white font-bold text-sm whitespace-nowrap admin-only transition">📊 Visão Geral</button>
-        <button id="tab-ejc" onclick="mudarAba('ejc')" class="tab-btn text-white font-black text-sm whitespace-nowrap border-b-2 border-white pb-1 transition">⛪ EJC</button>
-        <button id="tab-mercadinho" onclick="mudarAba('mercadinho')" class="tab-btn text-white/70 hover:text-white font-bold text-sm whitespace-nowrap transition">🛒 Mercadinho</button>
-        <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="tab-btn text-white/70 hover:text-white font-bold text-sm whitespace-nowrap admin-only transition">🍛 Feijoada</button>
-        <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="tab-btn text-white/70 hover:text-white font-bold text-sm whitespace-nowrap admin-only transition">📦 Arquivo</button>
+    <div class="mt-4 px-5 overflow-x-auto no-scrollbar flex gap-2 pb-2">
+        <button id="tab-admin" onclick="mudarAba('admin')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition admin-only whitespace-nowrap">📊 Geral</button>
+        <button id="tab-ejc" onclick="mudarAba('ejc')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap">⛪ EJC</button>
+        <button id="tab-mercadinho" onclick="mudarAba('mercadinho')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap">🛒 Mercadinho</button>
+        <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition admin-only whitespace-nowrap">🍛 Feijoada</button>
+        <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition admin-only whitespace-nowrap">📦 Arquivo</button>
     </div>
   </header>
 
-  <main class="px-4 py-6 -mt-2 z-30 relative bg-transparent">
+  <main class="px-4 py-6 -mt-4 z-30 relative bg-transparent space-y-6">
     
-    <div class="bg-white rounded-3xl shadow-sm p-5 mb-5 border border-slate-100 text-center relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+    <div class="bg-white rounded-3xl shadow-sm p-5 border border-slate-100 text-center relative overflow-hidden animate-fade-in-up">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-purple-500 to-purple-700"></div>
         <p class="text-[10px] uppercase tracking-widest text-purple-600 font-bold mb-1">21º Encontro de Jovens com Cristo</p>
-        <h2 class="font-black text-lg text-slate-800 leading-tight italic">"A morte não venceu.<br>O teu amor me salvou!"</h2>
-        <p class="text-[10px] text-slate-400 mt-2 font-bold bg-slate-50 inline-block px-2 py-1 rounded-lg">João 11, 25–26</p>
+        <h2 class="font-black text-xl text-slate-800 leading-tight italic">"A morte não venceu.<br>O teu amor me salvou!"</h2>
+        <div class="mt-3 inline-flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full">
+            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+            <p class="text-[10px] text-slate-500 font-bold">Sistema Online</p>
+        </div>
     </div>
 
-    <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl mb-6 grid grid-cols-1 sm:grid-cols-3 gap-6 admin-only animate-fade-in-up border border-slate-100">
+    <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl grid grid-cols-1 sm:grid-cols-3 gap-6 admin-only border border-slate-100 animate-fade-in-up" style="animation-delay: 0.1s">
        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Recebido</p><h2 id="totalRecebido" class="text-3xl font-black text-slate-800">R$ 0,00</h2></div>
        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">A Receber</p><h2 id="totalPendente" class="text-3xl font-black text-orange-500">R$ 0,00</h2></div>
        <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Líquido</p><h2 id="totalLiquido" class="text-3xl font-black text-purple-600">R$ 0,00</h2></div>
     </div>
 
-    <div id="filtrosEJC" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-1">
-        <button onclick="filtrarDia('Sexta')" class="flex-1 bg-white text-slate-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">Sexta</button>
-        <button onclick="filtrarDia('Sabado')" class="flex-1 bg-white text-slate-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">Sábado</button>
-        <button onclick="filtrarDia('Domingo')" class="flex-1 bg-white text-slate-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">Domingo</button>
+    <div id="filtrosEJC" class="hidden flex gap-2 overflow-x-auto no-scrollbar pb-1 animate-fade-in-up">
+        <button onclick="filtrarDia('Sexta')" class="flex-1 bg-white text-slate-600 py-3 px-5 rounded-2xl text-xs font-bold border border-slate-100 shadow-sm whitespace-nowrap active:bg-slate-100">Sexta</button>
+        <button onclick="filtrarDia('Sabado')" class="flex-1 bg-white text-slate-600 py-3 px-5 rounded-2xl text-xs font-bold border border-slate-100 shadow-sm whitespace-nowrap active:bg-slate-100">Sábado</button>
+        <button onclick="filtrarDia('Domingo')" class="flex-1 bg-white text-slate-600 py-3 px-5 rounded-2xl text-xs font-bold border border-slate-100 shadow-sm whitespace-nowrap active:bg-slate-100">Domingo</button>
     </div>
     
-    <div id="filtrosMercadinho" class="hidden flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-1">
-        <button onclick="filtrarCampanha('[MÃES]')" class="flex-1 bg-white text-pink-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">🌸 Mães</button>
-        <button onclick="filtrarCampanha('[NAMORADOS]')" class="flex-1 bg-white text-rose-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">💘 Namorados</button>
-        <button onclick="filtrarCampanha('Geral')" class="flex-1 bg-white text-emerald-600 py-3 px-6 rounded-2xl text-xs font-bold shadow-sm whitespace-nowrap">🛒 Geral</button>
+    <div id="filtrosMercadinho" class="hidden flex gap-2 overflow-x-auto no-scrollbar pb-1 animate-fade-in-up">
+        <button onclick="filtrarCampanha('[MÃES]')" class="flex-1 bg-white text-pink-600 py-3 px-5 rounded-2xl text-xs font-bold border border-pink-100 shadow-sm whitespace-nowrap">🌸 Mães</button>
+        <button onclick="filtrarCampanha('[NAMORADOS]')" class="flex-1 bg-white text-rose-600 py-3 px-5 rounded-2xl text-xs font-bold border border-rose-100 shadow-sm whitespace-nowrap">💘 Namorados</button>
+        <button onclick="filtrarCampanha('Geral')" class="flex-1 bg-white text-emerald-600 py-3 px-5 rounded-2xl text-xs font-bold border border-emerald-100 shadow-sm whitespace-nowrap">🛒 Geral</button>
     </div>
 
-    <div id="alertaDomingo" class="hidden bg-slate-800 text-white p-5 rounded-3xl shadow-xl mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
-        <div class="flex items-center gap-4"><div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center"><i class="fas fa-hand-holding-dollar"></i></div><div><h3 class="font-black uppercase text-sm">COBRANÇA</h3><p id="txtTotalCobranca" class="text-xs font-bold opacity-70">Calculando...</p></div></div>
-        <div class="flex gap-2 w-full md:w-auto"><button onclick="copiarRelatorioCobranca()" class="bg-white/10 px-4 py-3 rounded-xl text-xs font-bold flex-1">Relatório</button><button onclick="pagarTudoDomingo()" class="bg-white text-slate-900 px-4 py-3 rounded-xl text-xs font-black shadow-md flex-1">BAIXAR TUDO</button></div>
+    <div id="alertaDomingo" class="hidden bg-slate-800 text-white p-5 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
+        <div class="flex items-center gap-4"><div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-xl">⚠️</div><div><h3 class="font-black uppercase text-sm">Modo Cobrança</h3><p id="txtTotalCobranca" class="text-xs font-bold opacity-70">Calculando...</p></div></div>
+        <div class="flex gap-2 w-full md:w-auto"><button onclick="copiarRelatorioCobranca()" class="bg-white/10 px-5 py-3 rounded-xl text-xs font-bold flex-1 hover:bg-white/20 transition">Relatório</button><button onclick="pagarTudoDomingo()" class="bg-white text-slate-900 px-5 py-3 rounded-xl text-xs font-black shadow-md flex-1 hover:bg-slate-100 transition">BAIXAR TUDO</button></div>
     </div>
 
-    <div class="nu-card overflow-hidden mb-10">
-        <div class="p-4 border-b border-slate-50 flex gap-2 items-center">
-            <i class="fas fa-search text-slate-300"></i>
-            <input id="campoBusca" onkeyup="debounceBusca()" placeholder="Buscar lançamentos..." class="w-full text-sm font-semibold outline-none text-slate-700 placeholder:text-slate-300">
+    <div class="nu-card mb-20 animate-fade-in-up" style="animation-delay: 0.2s">
+        <div class="p-4 border-b border-slate-50 flex gap-3 items-center sticky top-0 bg-white z-10">
+            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><i class="fas fa-search text-xs"></i></div>
+            <input id="campoBusca" onkeyup="debounceBusca()" placeholder="Buscar lançamentos..." class="w-full text-sm font-bold outline-none text-slate-700 placeholder:text-slate-300 bg-transparent">
         </div>
-        <div id="loading" class="hidden py-10 text-center"><div class="animate-spin inline-block w-8 h-8 border-4 border-slate-100 border-t-purple-600 rounded-full"></div></div>
+        
+        <div id="loading" class="hidden p-4 space-y-3">
+            <div class="skeleton h-12 w-full"></div>
+            <div class="skeleton h-12 w-full"></div>
+            <div class="skeleton h-12 w-full"></div>
+        </div>
+        
         <div class="table-wrapper">
             <table class="text-left text-sm w-full">
-                <thead class="text-[10px] font-black text-slate-400 uppercase bg-slate-50"><tr class=""><th class="p-4">Detalhes</th><th class="p-4 text-right">Valor</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Ação</th></tr></thead>
                 <tbody id="corpoTabela" class="text-slate-600 font-medium"></tbody>
             </table>
         </div>
     </div>
 
     <footer class="mt-auto border-t border-slate-200 py-8 px-4 text-center opacity-60">
-        <p class="font-black text-xs text-slate-700 uppercase tracking-widest">Pilotos Finanças • EJC 2026</p>
-        <p class="text-[10px] text-slate-500 mt-1 font-bold">Paróquia Santo Eugênio de Mazenod ✝️🤍</p>
-        <div class="mt-4 inline-block bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-[9px] font-bold border border-purple-100">
-            "A morte não venceu."
-        </div>
+        <p class="font-black text-xs text-slate-700 uppercase tracking-widest">Pilotos Finanças</p>
+        <p class="text-[10px] text-slate-500 mt-1 font-bold">Paróquia Santo Eugênio de Mazenod</p>
     </footer>
 
   </main>
@@ -165,10 +170,10 @@
 </div>
 
 <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
-  <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="fecharModal()"></div>
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="fecharModal()"></div>
   <div class="relative bg-white w-full max-w-lg rounded-t-[32px] sm:rounded-[32px] p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
     
-    <button onclick="fecharModal()" class="absolute top-6 right-6 text-slate-300 hover:text-slate-800 text-xl transition z-50"><i class="fas fa-times"></i></button>
+    <button onclick="fecharModal()" class="absolute top-6 right-6 w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-500 transition z-50"><i class="fas fa-times"></i></button>
 
     <h2 class="text-xl font-black text-slate-800 mb-6">Novo Lançamento</h2>
     <form id="formFin" class="space-y-4">
@@ -185,7 +190,7 @@
                 <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Valor Unitário</label>
                 <input id="f_val" type="number" step="0.01" placeholder="R$ 0,00" class="w-full bg-transparent font-bold text-slate-800 outline-none">
             </div>
-            <button type="button" onclick="somarItem()" class="flex-1 bg-purple-50 text-purple-600 rounded-2xl font-black text-xl hover:bg-purple-100 transition">+</button>
+            <button type="button" onclick="somarItem()" class="flex-1 bg-purple-100 text-purple-600 rounded-2xl font-black text-xl hover:bg-purple-200 transition active:scale-95">+</button>
         </div>
         
         <div id="areaCesta" class="hidden bg-purple-50 p-4 rounded-2xl border border-purple-100">
@@ -247,13 +252,14 @@
 </div>
 
 <script>
-// ✅ LINK API V16
 const API = "https://script.google.com/macros/s/AKfycbzfCozUPEax76bamW5DgxDgEOK9LCw4OCsppEKbm_lGOTmXBGCs0bjHAFQRFzEi1Tl4Jw/exec";
-
 const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
 let ROLE="", abaAtiva="admin", filtroAtivo="", dadosCache=[];
 let dadosAdminCache = [];
 let itensCesta = []; 
+
+// VIBRAÇÃO HAPTIC
+function vibrate(ms){ if(navigator.vibrate) navigator.vibrate(ms); }
 
 function toggleSenha(){ 
     const input = document.getElementById("inputSenha"); 
@@ -269,7 +275,7 @@ function showToast(msg, type="success"){
     const t = document.createElement("div"); t.className="toast";
     t.innerHTML = type==="error" ? `<i class="fas fa-times-circle text-rose-400"></i> ${msg}` : `<i class="fas fa-check-circle text-emerald-400"></i> ${msg}`;
     document.getElementById("toast-container").appendChild(t);
-    if(navigator.vibrate) navigator.vibrate(50);
+    vibrate(50);
     setTimeout(()=>t.remove(), 3000);
 }
 
@@ -277,14 +283,18 @@ function tentarLogin(r){
     const s=document.getElementById("inputSenha").value;
     if(r==="admin" && s===PASS_ADMIN) ROLE="admin";
     else if(r==="compras" && s===PASS_COMPRAS) ROLE="compras";
-    else return document.getElementById("msgErroLogin").classList.remove("hidden");
+    else {
+        vibrate([50, 100, 50]); // Vibra erro
+        return document.getElementById("msgErroLogin").classList.remove("hidden");
+    }
     
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("appMain").classList.remove("hidden");
     
     const headerTitle = document.getElementById("headerTitle");
-    if(ROLE==="admin") headerTitle.innerText = "EJC BANK PILOTOS";
-    else headerTitle.innerText = "EJC BANK COMPRAS";
+    const avatar = document.getElementById("userAvatar");
+    if(ROLE==="admin") { headerTitle.innerText = "EJC BANK PILOTOS"; avatar.innerText = "P"; }
+    else { headerTitle.innerText = "EJC BANK COMPRAS"; avatar.innerText = "C"; }
     
     if(ROLE==="compras") { 
         abaAtiva="ejc"; 
@@ -300,14 +310,14 @@ function mudarAba(a){
     abaAtiva=a; filtroAtivo="";
     
     document.querySelectorAll(".tab-btn").forEach(b=>{
-        b.classList.remove("text-white", "font-black", "border-white", "opacity-100");
-        b.classList.add("text-white/70", "font-bold", "border-transparent");
+        b.classList.remove("bg-white", "text-purple-900");
+        b.classList.add("bg-white/10", "text-white");
     });
     
     const btn = document.getElementById("tab-"+a);
     if(btn){
-        btn.classList.add("text-white", "font-black", "border-white", "opacity-100");
-        btn.classList.remove("text-white/70", "border-transparent");
+        btn.classList.add("bg-white", "text-purple-900");
+        btn.classList.remove("bg-white/10", "text-white");
     }
 
     document.getElementById("filtrosEJC").classList.toggle("hidden", a!=="ejc");
@@ -316,7 +326,6 @@ function mudarAba(a){
     if(ROLE !== "admin") { document.getElementById("dashAdmin").classList.add("hidden"); } 
     else { document.getElementById("dashAdmin").classList.toggle("hidden", a!=="admin"); }
     
-    // CACHE LOCAL
     const cached = localStorage.getItem("ejc_data_" + abaAtiva);
     if(cached) { dadosCache = JSON.parse(cached); renderizar(); }
     
@@ -349,7 +358,7 @@ async function carregar(){
         localStorage.setItem("ejc_data_" + abaAtiva, JSON.stringify(data));
         
         renderizar();
-    } catch(e){ showToast("Erro conexão", "error"); }
+    } catch(e){ showToast("Modo Offline", "error"); }
     document.getElementById("loading").classList.add("hidden");
 }
 
@@ -370,7 +379,6 @@ function atualizarStats(){
     document.getElementById("totalLiquido").innerText = "R$ " + (rec - pen).toFixed(2);
 }
 
-// DEBOUNCE
 let buscaTimer;
 function debounceBusca(){
   clearTimeout(buscaTimer);
@@ -403,14 +411,18 @@ function renderizar(){
         const desc = i.product || i.description || "Item"; 
         const val = parseFloat(i.amount||i.total||0);
         const dataShow = abaAtiva==="arquivo" ? `${new Date(i.data_backup).toLocaleDateString()}<br>${i.origem}` : new Date(i.date).toLocaleDateString();
-        const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="text-slate-300 hover:text-purple-600 transition p-2"><i class="fas fa-box"></i></button>` : "";
+        const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="text-slate-300 hover:text-purple-600 transition p-3"><i class="fas fa-box"></i></button>` : "";
 
         tb.innerHTML += `
-        <tr>
+        <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0">
             <td class="p-4">
-                <p class="text-xs font-bold text-slate-800">${desc}</p>
-                <p class="text-[10px] text-slate-400 font-medium mt-0.5">${i.buyer_name||"Anônimo"} ${i.equipe?"• "+i.equipe:""}</p>
-                <p class="text-[9px] text-slate-300 mt-1">${dataShow}</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-[10px]">${i.buyer_name ? i.buyer_name.charAt(0) : "?"}</div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-800">${desc}</p>
+                        <p class="text-[10px] text-slate-400 font-medium">${i.buyer_name||"Anônimo"} ${i.equipe?"• "+i.equipe:""}</p>
+                    </div>
+                </div>
             </td>
             <td class="p-4 text-right font-black text-slate-800 whitespace-nowrap">R$ ${val.toFixed(2)}</td>
             <td class="p-4 text-center">
@@ -418,8 +430,8 @@ function renderizar(){
             </td>
             <td class="p-4 text-center whitespace-nowrap">
                 <div class="flex items-center justify-center gap-2">
-                    ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="w-9 h-9 rounded-full bg-slate-100 text-slate-400 hover:bg-emerald-500 hover:text-white transition shadow-sm"><i class="fas fa-check"></i></button>` : ""}
-                    ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="w-9 h-9 rounded-full bg-green-500 text-white hover:bg-green-600 active:scale-90 transition shadow-md"><i class="fab fa-whatsapp"></i></button>` : ""}
+                    ${!i.paid && abaAtiva!=="arquivo" ? `<button onclick="baixar('${i.id}')" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 hover:bg-emerald-500 hover:text-white transition shadow-sm"><i class="fas fa-check"></i></button>` : ""}
+                    ${!i.paid && i.phone ? `<button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')" class="w-10 h-10 rounded-full bg-[#25D366] text-white hover:scale-110 active:scale-90 transition shadow-lg shadow-green-200"><i class="fab fa-whatsapp"></i></button>` : ""}
                     ${btnArquivo}
                 </div>
             </td>
@@ -439,6 +451,7 @@ function somarItem(){
     if(!val || val <= 0) return showToast("Valor inválido", "error");
     const itemExistente = itensCesta.find(i => i.desc.toLowerCase() === desc.toLowerCase() && i.val === val);
     if (itemExistente) { itemExistente.qtd += 1; } else { itensCesta.push({ desc: desc, val: val, qtd: 1 }); }
+    vibrate(30); // Feedback
     renderCesta();
     document.getElementById("f_desc").value = ""; 
     document.getElementById("f_desc").focus(); 
@@ -555,7 +568,6 @@ document.getElementById("formFin").addEventListener("submit", async function(e){
     fecharModal(); 
 });
 
-// ✅ KEEPALIVE PARA MOBILE + TOAST
 async function apiPost(act, pl){
     document.getElementById("loading").classList.remove("hidden");
     await fetch(API, { 
@@ -598,24 +610,17 @@ async function arquivarInd(id) {
     await apiPost("arquivarTransacao", {id:id, aba: abaEnvio});
 }
 
-// ✅ FUNÇÃO DE SOMA TOTAL AJUSTADA
 function calcularDividaPorTelefone(tel) {
     const cleanTel = String(tel).replace(/\D/g, "");
-    return dadosCache
-        .filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel)
-        .reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
+    return dadosCache.filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel && i.category === "EJC").reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
 }
 
 function cobrarZapTotal(tel, nome){
     const num = String(tel).replace(/\D/g,"");
     if(!/^\d{10,11}$/.test(num)) return showToast("Número inválido", "error");
-    
     const total = calcularDividaPorTelefone(num);
     const valorCobrar = total > 0 ? total : 0;
-
     let cob = prompt("Seu nome?",""); if(!cob) return;
-    
-    // ✅ LINK DIRETO SEM POPUP
     const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* do EJC.\nConsta um total pendente de *R$ ${valorCobrar.toFixed(2)}* referente aos itens consumidos.\nQuando puder, pode passar no caixa para regularizar?\nDeus abençoe! ✝️`);
     location.href = `https://wa.me/55${num}?text=${msg}`;
 }
@@ -627,7 +632,6 @@ function copiarRelatorioCobranca(){
     navigator.clipboard.writeText("*COBRANÇA DOMINGO*\n"+l).then(()=>showToast("Copiado!"));
 }
 
-// ✅ FOCO AUTOMÁTICO
 window.addEventListener("load", ()=>{
   const input = document.getElementById("inputSenha");
   if(input) input.focus();
