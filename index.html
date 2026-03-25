@@ -15,107 +15,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    :root {
-      --nu-roxo: #820ad1;
-      --nu-bg: #f5f5f7;
-    }
-
-    body {
-      font-family: "Inter", sans-serif;
-      background-color: var(--nu-bg);
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .nu-header {
-      background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
-      color: white;
-      padding-bottom: 12px;
-      border-bottom-left-radius: 24px;
-      border-bottom-right-radius: 24px;
-      box-shadow: 0 4px 20px rgba(130, 10, 209, 0.2);
-    }
-
-    .nu-card {
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
-    }
-
-    .fab {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 60px;
-      height: 60px;
-      background: var(--nu-roxo);
-      color: white;
-      border-radius: 50%;
-      box-shadow: 0 12px 30px rgba(130, 10, 209, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      z-index: 50;
-      transition: transform 0.2s;
-    }
-
-    .fab:active {
-      transform: scale(0.9);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    #toast-container {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 90%;
-      max-width: 380px;
-    }
-
-    .toast {
-      background: rgba(30, 41, 59, 0.95);
-      backdrop-filter: blur(10px);
-      color: white;
-      padding: 14px 20px;
-      border-radius: 16px;
-      font-size: 14px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      animation: slideDown 0.3s ease-out;
-    }
-
-    @keyframes slideDown {
-      from { transform: translateY(-100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .animate-fade-in-up {
-      animation: fadeInUp 0.4s ease-out forwards;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    :root { --nu-roxo: #820ad1; --nu-bg: #f5f5f7; }
+    body { font-family: "Inter", sans-serif; background-color: var(--nu-bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+    .nu-header { background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%); color: white; padding-bottom: 12px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 20px rgba(130, 10, 209, 0.2); }
+    .nu-card { background: white; border-radius: 24px; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05); overflow: hidden; }
+    .fab { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; background: var(--nu-roxo); color: white; border-radius: 50%; box-shadow: 0 12px 30px rgba(130, 10, 209, 0.4); display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 50; transition: transform 0.2s; }
+    .fab:active { transform: scale(0.9); }
+    .hidden { display: none !important; }
+    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; }
+    .toast { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); color: white; padding: 14px 20px; border-radius: 16px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; animation: slideDown 0.3s ease-out; }
+    @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col">
 
   <div id="toast-container"></div>
 
-  <!-- LOGIN -->
   <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-[#820ad1]">
     <div class="w-full max-w-sm bg-white rounded-[36px] shadow-2xl p-8 animate-fade-in-up">
       <div class="text-center mb-6">
@@ -160,10 +77,8 @@
     </div>
   </div>
 
-  <!-- TELA PUBLICA DE DOACAO -->
-  <div id="doacaoPublicaScreen" class="hidden fixed inset-0 z-[998] bg-[#f5f5f7] overflow-y-auto">
+  <div id="doacaoPublicaScreen" class="hidden fixed inset-0 z-[1000] bg-[#f5f5f7] overflow-y-auto">
     <div class="min-h-screen max-w-3xl mx-auto px-4 py-6">
-
       <div class="bg-white rounded-3xl shadow-sm p-5 border border-slate-100 mb-5">
         <div class="flex items-center justify-between gap-3">
           <div>
@@ -186,25 +101,21 @@
 
       <div class="bg-white rounded-3xl shadow-sm p-5 border border-slate-100 mb-10">
         <h3 class="text-base font-black text-slate-800 mb-4">Registrar minha doação</h3>
-
         <form id="formDoacaoPublica" class="space-y-4">
           <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
             <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Seu nome</label>
             <input id="d_nome" placeholder="Ex: Maria Aparecida" class="w-full bg-transparent font-bold text-slate-800 outline-none" />
           </div>
-
           <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
             <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Item que deseja doar</label>
             <select id="d_item" required class="w-full bg-transparent font-bold text-slate-800 outline-none">
               <option value="">Selecione um item</option>
             </select>
           </div>
-
           <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
             <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Quantidade</label>
             <input id="d_qtd" type="number" min="1" value="1" required class="w-full bg-transparent font-bold text-slate-800 outline-none text-center" />
           </div>
-
           <button type="submit" id="btnEnviarDoacao" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-200 active:scale-95 transition text-lg">
             CONFIRMAR DOAÇÃO
           </button>
@@ -213,7 +124,6 @@
     </div>
   </div>
 
-  <!-- APP -->
   <div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
     <header class="nu-header sticky top-0 z-40">
       <div class="px-5 pt-5 pb-2 flex justify-between items-center">
@@ -289,7 +199,6 @@
     </button>
   </div>
 
-  <!-- MODAL -->
   <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="fecharModal()"></div>
 
@@ -373,16 +282,7 @@
     let abaAtiva = "ADMIN";
     let dadosCache = [];
 
-    const esc = (str) =>
-      str
-        ? str.toString().replace(/[&<>'"]/g, (t) => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            "'": '&#39;',
-            '"': '&quot;'
-          }[t]))
-        : "";
+    const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t])) : "";
 
     function showToast(msg, type = "success") {
       const t = document.createElement("div");
@@ -395,7 +295,6 @@
 
     function mudarAbaLogin(aba) {
       document.getElementById("msgErroLogin").classList.add("hidden");
-
       if (aba === "compras") {
         document.getElementById("formCompras").classList.remove("hidden");
         document.getElementById("formPilotos").classList.add("hidden");
@@ -421,7 +320,6 @@
         showToast("Usuário sem acesso liberado no sistema.", "error");
         return null;
       }
-
       return profile;
     }
 
@@ -473,7 +371,7 @@
     async function carregarMetasDoacao() {
       const lista = document.getElementById("listaMetasDoacao");
       const select = document.getElementById("d_item");
-
+      
       lista.innerHTML = `<p class="text-sm text-slate-400 font-bold">Carregando lista...</p>`;
       select.innerHTML = `<option value="">Selecione um item</option>`;
 
@@ -494,7 +392,6 @@
       }
 
       lista.innerHTML = "";
-
       data.forEach(meta => {
         const faltante = Math.max(0, (meta.qtd_necessaria || 0) - (meta.qtd_arrecadada || 0));
 
@@ -523,54 +420,34 @@
       });
     }
 
-    function iniciarApp() {
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("appMain").classList.remove("hidden");
-
-      document.getElementById("userRoleDisplay").innerText = currentProfile?.nome || ROLE;
-      document.getElementById("userAvatar").innerText = (currentProfile?.nome || ROLE).charAt(0).toUpperCase();
-
-      if (ROLE === "ADMIN") {
-        const tabAdmin = document.getElementById("tab-admin");
-        const tabFeijoada = document.getElementById("tab-feijoada");
-        const tabDoacao = document.getElementById("tab-doacao");
-        const dashAdmin = document.getElementById("dashAdmin");
-        const blocoPDF = document.getElementById("blocoPDF");
-
-        if (tabAdmin) {
-          tabAdmin.classList.remove("hidden");
-          tabAdmin.style.display = "inline-flex";
-        }
-
-        if (tabFeijoada) {
-          tabFeijoada.classList.remove("hidden");
-          tabFeijoada.style.display = "inline-flex";
-        }
-
-        if (tabDoacao) {
-          tabDoacao.classList.remove("hidden");
-          tabDoacao.style.display = "inline-flex";
-        }
-
-        if (dashAdmin) {
-          dashAdmin.classList.remove("hidden");
-          dashAdmin.style.display = "grid";
-        }
-
-        if (blocoPDF) {
-          blocoPDF.classList.remove("hidden");
-          blocoPDF.style.display = "block";
-        }
-
-        document.getElementById("headerTitle").innerText = "EJC BANK PILOTOS";
-        abaAtiva = "ADMIN";
-      } else {
-        document.getElementById("headerTitle").innerText = "EJC BANK COMPRAS";
-        abaAtiva = "EJC";
-      }
-
-      mudarAba(abaAtiva);
-    }
+    function iniciarApp() { 
+        document.getElementById("loginScreen").classList.add("hidden"); 
+        document.getElementById("appMain").classList.remove("hidden"); 
+        document.getElementById("userRoleDisplay").innerText = currentUser?.email ? currentUser.email.split("@")[0] : ROLE; 
+        document.getElementById("userAvatar").innerText = currentUser?.email ? currentUser.email.charAt(0).toUpperCase() : ROLE.charAt(0).toUpperCase(); 
+        
+        if (ROLE === "ADMIN") { 
+            const tabAdmin = document.getElementById("tab-admin"); 
+            const tabFeijoada = document.getElementById("tab-feijoada"); 
+            const tabDoacao = document.getElementById("tab-doacao"); 
+            const dashAdmin = document.getElementById("dashAdmin"); 
+            const blocoPDF = document.getElementById("blocoPDF"); 
+            
+            if (tabAdmin) { tabAdmin.classList.remove("hidden"); tabAdmin.style.display = "inline-flex"; } 
+            if (tabFeijoada) { tabFeijoada.classList.remove("hidden"); tabFeijoada.style.display = "inline-flex"; } 
+            if (tabDoacao) { tabDoacao.classList.remove("hidden"); tabDoacao.style.display = "inline-flex"; } 
+            if (dashAdmin) { dashAdmin.classList.remove("hidden"); dashAdmin.style.display = "grid"; } 
+            if (blocoPDF) { blocoPDF.classList.remove("hidden"); blocoPDF.style.display = "block"; } 
+            
+            document.getElementById("headerTitle").innerText = "EJC BANK PILOTOS"; 
+            abaAtiva = "ADMIN"; 
+        } else { 
+            document.getElementById("headerTitle").innerText = "EJC BANK COMPRAS"; 
+            abaAtiva = "EJC"; 
+        } 
+        
+        mudarAba(abaAtiva); 
+    } 
 
     async function mudarAba(a) {
       abaAtiva = a;
@@ -586,7 +463,6 @@
 
     async function carregarDados() {
       document.getElementById("loading").classList.remove("hidden");
-
       let query = _supabase
         .from('transacoes')
         .select('*')
@@ -608,7 +484,6 @@
 
     function atualizarStats() {
       let rec = 0, pen = 0, sai = 0;
-
       dadosCache.forEach(i => {
         const v = parseFloat(i.valor || 0);
         if (i.natureza === "SAIDA") sai += v;
@@ -636,13 +511,7 @@
         .filter(i => ((i.descricao || "") + (i.nome_pessoa || "")).toLowerCase().includes(busca))
         .forEach(i => {
           const val = parseFloat(i.valor || 0).toFixed(2);
-          const iconColor = i.modulo === "DOACAO"
-            ? "purple"
-            : i.natureza === "SAIDA"
-            ? "rose"
-            : i.status === "PENDENTE"
-            ? "orange"
-            : "emerald";
+          const iconColor = i.modulo === "DOACAO" ? "purple" : i.natureza === "SAIDA" ? "rose" : i.status === "PENDENTE" ? "orange" : "emerald";
 
           tb.innerHTML += `
             <tr class="hover:bg-slate-50 transition-colors">
@@ -655,9 +524,7 @@
                 <span class="w-2 h-2 rounded-full bg-${iconColor}-500 inline-block shadow-sm"></span>
               </td>
               <td class="p-4 text-right">
-                ${i.status === 'PENDENTE'
-                  ? `<button onclick="baixar('${i.id}', ${i.version})" class="w-8 h-8 rounded-full bg-emerald-500 text-white shadow-md active:scale-90 transition flex items-center justify-center ml-auto"><i class="fas fa-check text-[10px]"></i></button>`
-                  : ""}
+                ${i.status === 'PENDENTE' ? `<button onclick="baixar('${i.id}', ${i.version})" class="w-8 h-8 rounded-full bg-emerald-500 text-white shadow-md active:scale-90 transition flex items-center justify-center ml-auto"><i class="fas fa-check text-[10px]"></i></button>` : ""}
               </td>
             </tr>
           `;
@@ -666,7 +533,6 @@
 
     document.getElementById("formFin").addEventListener("submit", async function(e) {
       e.preventDefault();
-
       const type = document.getElementById("f_type").value;
       const valorDigitado = parseFloat(document.getElementById("f_val").value);
       const moduloDestino = abaAtiva === "ADMIN" ? document.getElementById("f_modulo").value : abaAtiva;
@@ -705,7 +571,6 @@
 
     document.getElementById("formDoacaoPublica").addEventListener("submit", async function(e) {
       e.preventDefault();
-
       const btn = document.getElementById("btnEnviarDoacao");
       const nome = document.getElementById("d_nome").value.trim();
       const item = document.getElementById("d_item").value;
@@ -791,13 +656,7 @@
         ["Saldo Líquido", document.getElementById("totalLiquido").innerText]
       ];
 
-      doc.autoTable({
-        head: [['Resumo Financeiro', 'Valor']],
-        body: resumo,
-        startY: 35,
-        theme: 'striped',
-        headStyles: { fillColor: [130, 10, 209] }
-      });
+      doc.autoTable({ head: [['Resumo Financeiro', 'Valor']], body: resumo, startY: 35, theme: 'striped', headStyles: { fillColor: [130, 10, 209] } });
 
       const trans = dadosCache.map(i => [
         new Date(i.criado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
@@ -807,12 +666,7 @@
         `R$ ${parseFloat(i.valor || 0).toFixed(2)}`
       ]);
 
-      doc.autoTable({
-        head: [['Hora', 'Módulo', 'Item', 'Status', 'Valor']],
-        body: trans,
-        startY: doc.lastAutoTable.finalY + 10,
-        theme: 'grid'
-      });
+      doc.autoTable({ head: [['Hora', 'Módulo', 'Item', 'Status', 'Valor']], body: trans, startY: doc.lastAutoTable.finalY + 10, theme: 'grid' });
 
       doc.save(`Fechamento_EJC_${dataRef.replace(/\//g, '-')}.pdf`);
       showToast("Relatório PDF gerado!");
@@ -837,6 +691,7 @@
       mudarAbaLogin('compras');
 
       const { data: { session } } = await _supabase.auth.getSession();
+
       if (session) {
         const profile = await carregarPerfilUsuario(session.user);
         if (profile) {
