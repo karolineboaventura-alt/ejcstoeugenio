@@ -1,712 +1,862 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#820ad1">
-  <title>EJC BANK • Oficial</title>
-  
-  <link rel="preconnect" href="https://script.google.com">
-  <link rel="dns-prefetch" href="https://script.google.com">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#820ad1" />
+  <title>EJC BANK • 21º EJC Oficial</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
   <style>
-    /* ===== ULTIMATE STYLE ===== */
-    :root { --nu-roxo: #820ad1; --nu-bg: #f5f5f7; }
-    body { font-family: 'Inter', sans-serif; background-color: var(--nu-bg); width: 100%; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-    
-    .nu-header { background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%); color: white; padding-bottom: 12px; box-shadow: 0 4px 25px rgba(130, 10, 209, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
-    
-    button { transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    button:active { transform: scale(0.94); }
-    
-    .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    :root {
+      --nu-roxo: #820ad1;
+      --nu-bg: #f5f5f7;
+    }
 
-    .nu-card { background: white; border-radius: 24px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.02); overflow: hidden; }
-    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 100px; }
-    table { width: 100%; min-width: 600px; border-spacing: 0; }
-    tr { transition: background 0.2s; }
-    tr:active { background: #f9f9f9; }
-    
-    /* Sync Indicator Pulse */
-    @keyframes pulse-sync { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-    .sync-active { animation: pulse-sync 1s infinite; }
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: var(--nu-bg);
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; }
-    .toast { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); color: white; padding: 14px 20px; border-radius: 16px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .nu-header {
+      background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
+      color: white;
+      padding-bottom: 12px;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+      box-shadow: 0 4px 20px rgba(130, 10, 209, 0.2);
+    }
 
-    .fab { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; background: var(--nu-roxo); color: white; border-radius: 50%; box-shadow: 0 12px 30px rgba(130, 10, 209, 0.5); display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 50; transition: all 0.3s; }
-    .admin-only { display: none; }
-    .hidden { display: none !important; }
-    .animate-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .nu-card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 60px;
+      height: 60px;
+      background: var(--nu-roxo);
+      color: white;
+      border-radius: 50%;
+      box-shadow: 0 12px 30px rgba(130, 10, 209, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      z-index: 50;
+      transition: transform 0.2s;
+    }
+
+    .fab:active {
+      transform: scale(0.9);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 90%;
+      max-width: 380px;
+    }
+
+    .toast {
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.4s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
-
 <body class="text-slate-800 min-h-screen flex flex-col">
 
-<div id="toast-container"></div>
+  <div id="toast-container"></div>
 
-<div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-[#820ad1] bg-opacity-95 backdrop-blur-sm">
-  <div class="relative w-full max-w-sm bg-white rounded-[36px] shadow-2xl p-8 animate-fade-in-up">
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-20 h-20 bg-purple-50 rounded-full mb-4 text-4xl shadow-inner">✝️</div>
-      <h1 class="text-3xl font-black text-slate-800 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
-      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Gestão Financeira 21º EJC</p>
-    </div>
-    
-    <div class="relative mb-5 group">
-        <input type="password" id="inputSenha" placeholder="Senha de Acesso" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl pl-4 pr-14 py-4 font-bold outline-none focus:border-purple-600 focus:bg-white transition text-slate-700 text-center text-lg">
-        <button type="button" onclick="toggleSenha()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-sm border border-slate-100 w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-purple-600 transition"><i id="eyeIcon" class="fas fa-eye"></i></button>
-    </div>
-    
-    <div class="grid grid-cols-2 gap-3 mb-6">
-        <button onclick="tentarLogin('admin')" class="py-4 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 shadow-lg shadow-slate-300 transform transition">👑 PILOTOS</button>
-        <button onclick="tentarLogin('compras')" class="py-4 rounded-2xl font-black text-white bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-300 transform transition">🛒 COMPRAS</button>
-    </div>
-    
-    <p id="msgErroLogin" class="hidden text-rose-500 text-xs font-bold text-center animate-pulse bg-rose-50 py-2 rounded-lg"><i class="fas fa-exclamation-circle mr-1"></i> Senha incorreta</p>
-    
-    <div class="mt-6 text-center border-t border-slate-100 pt-6">
-        <p class="text-xs text-slate-500 font-bold italic">"A morte não venceu.<br>O teu amor me salvou!"</p>
-        <p class="text-[9px] text-slate-400 mt-1 font-bold">(Jo 11, 25-26)</p>
+  <!-- LOGIN -->
+  <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-[#820ad1]">
+    <div class="w-full max-w-sm bg-white rounded-[36px] shadow-2xl p-8 animate-fade-in-up">
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-purple-50 rounded-full mb-4 text-4xl shadow-inner">✝️</div>
+        <h1 class="text-3xl font-black text-slate-800 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Paróquia Santo Eugênio</p>
+      </div>
+
+      <div class="flex bg-slate-100 rounded-2xl p-1 mb-6">
+        <button type="button" id="tabBtnCompras" onclick="mudarAbaLogin('compras')" class="flex-1 py-3 rounded-xl font-black text-sm bg-white shadow-sm text-purple-700 transition">
+          🛒 COMPRAS
+        </button>
+        <button type="button" id="tabBtnPilotos" onclick="mudarAbaLogin('pilotos')" class="flex-1 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-slate-600 transition">
+          👑 PILOTOS
+        </button>
+      </div>
+
+      <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-4">
+        <input type="password" id="senhaCompras" placeholder="Senha do Caixa" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-4 font-bold outline-none focus:border-purple-600 transition-all text-center text-lg text-slate-700" />
+        <button type="submit" id="btnCompras" class="w-full py-4 rounded-2xl font-black text-white bg-purple-600 hover:bg-purple-700 shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+          ENTRAR RÁPIDO
+        </button>
+      </form>
+
+      <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
+        <input type="email" id="emailPiloto" placeholder="Seu e-mail" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-4 font-bold outline-none focus:border-slate-800 transition-all text-slate-700" />
+        <input type="password" id="senhaPiloto" placeholder="Sua senha" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-4 font-bold outline-none focus:border-slate-800 transition-all text-slate-700" />
+        <button type="submit" id="btnPiloto" class="w-full py-4 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+          ENTRAR NO PAINEL
+        </button>
+      </form>
+
+      <p id="msgErroLogin" class="hidden mt-4 text-rose-500 text-xs font-bold text-center bg-rose-50 py-2 rounded-lg px-2">
+        <i class="fas fa-exclamation-circle mr-1"></i> Credenciais inválidas ou inativas
+      </p>
+
+      <div class="mt-4">
+        <button type="button" onclick="abrirTelaDoacao()" class="w-full py-4 rounded-2xl font-black text-purple-700 bg-purple-50 border border-purple-100 hover:bg-purple-100 transition flex items-center justify-center gap-2">
+          💝 Quero fazer uma doação
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
-  
-  <header class="nu-header sticky top-0 z-40">
-    <div class="px-5 pt-5 pb-2 flex justify-between items-center">
+  <!-- TELA PUBLICA DE DOACAO -->
+  <div id="doacaoPublicaScreen" class="hidden fixed inset-0 z-[998] bg-[#f5f5f7] overflow-y-auto">
+    <div class="min-h-screen max-w-3xl mx-auto px-4 py-6">
+
+      <div class="bg-white rounded-3xl shadow-sm p-5 border border-slate-100 mb-5">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <p class="text-[10px] uppercase tracking-widest text-purple-600 font-bold mb-1">21º EJC</p>
+            <h2 class="text-2xl font-black text-slate-800">💝 Lista de Doações</h2>
+            <p class="text-sm text-slate-500 mt-1">Veja o que ainda precisamos e registre sua ajuda.</p>
+          </div>
+          <button type="button" onclick="fecharTelaDoacao()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl shadow-sm p-5 border border-slate-100 mb-5">
+        <h3 class="text-base font-black text-slate-800 mb-4">Itens necessários</h3>
+        <div id="listaMetasDoacao" class="space-y-3">
+          <p class="text-sm text-slate-400 font-bold">Carregando lista...</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl shadow-sm p-5 border border-slate-100 mb-10">
+        <h3 class="text-base font-black text-slate-800 mb-4">Registrar minha doação</h3>
+
+        <form id="formDoacaoPublica" class="space-y-4">
+          <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Seu nome</label>
+            <input id="d_nome" placeholder="Ex: Maria Aparecida" class="w-full bg-transparent font-bold text-slate-800 outline-none" />
+          </div>
+
+          <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Item que deseja doar</label>
+            <select id="d_item" required class="w-full bg-transparent font-bold text-slate-800 outline-none">
+              <option value="">Selecione um item</option>
+            </select>
+          </div>
+
+          <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Quantidade</label>
+            <input id="d_qtd" type="number" min="1" value="1" required class="w-full bg-transparent font-bold text-slate-800 outline-none text-center" />
+          </div>
+
+          <button type="submit" id="btnEnviarDoacao" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-200 active:scale-95 transition text-lg">
+            CONFIRMAR DOAÇÃO
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
+    <header class="nu-header sticky top-0 z-40">
+      <div class="px-5 pt-5 pb-2 flex justify-between items-center">
         <div class="flex items-center gap-3">
-            <div id="userAvatar" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-lg backdrop-blur-md shadow-inner">U</div>
-            <div>
-                <p class="text-[10px] font-bold opacity-80 tracking-widest uppercase mb-0.5">Olá, <span id="userRoleDisplay">Visitante</span></p>
-                <div class="flex items-center gap-2">
-                    <h1 id="headerTitle" class="font-black text-xl tracking-tight leading-none">EJC BANK</h1>
-                    <span id="syncIndicator" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-md transition-colors duration-500"></span>
-                </div>
-            </div>
+          <div id="userAvatar" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white font-black text-lg backdrop-blur-md">U</div>
+          <div>
+            <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-0.5">Olá, <span id="userRoleDisplay">...</span></p>
+            <h1 id="headerTitle" class="font-black text-xl tracking-tight leading-none">EJC BANK</h1>
+          </div>
         </div>
-        <button onclick="location.reload()" class="bg-white/10 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md hover:bg-white/20 transition"><i class="fas fa-power-off text-sm"></i></button>
-    </div>
+        <button onclick="sair()" class="bg-white/10 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md hover:bg-white/20 transition">
+          <i class="fas fa-power-off text-sm"></i>
+        </button>
+      </div>
 
-    <div class="mt-4 px-5 overflow-x-auto no-scrollbar flex gap-2 pb-2">
-        <button id="tab-admin" onclick="mudarAba('admin')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition admin-only whitespace-nowrap">📊 Geral</button>
-        <button id="tab-ejc" onclick="mudarAba('ejc')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap">⛪ EJC</button>
-        <button id="tab-mercadinho" onclick="mudarAba('mercadinho')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap">🛒 Mercadinho</button>
-        <button id="tab-feijoada" onclick="mudarAba('feijoada')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition admin-only whitespace-nowrap">🍛 Feijoada</button>
-        <button id="tab-arquivo" onclick="mudarAba('arquivo')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition admin-only whitespace-nowrap">📦 Arquivo</button>
-    </div>
-  </header>
+      <div class="mt-4 px-5 overflow-x-auto flex gap-2 pb-2">
+        <button id="tab-admin" onclick="mudarAba('ADMIN')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap hidden">📊 Geral</button>
+        <button id="tab-ejc" onclick="mudarAba('EJC')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap">⛪ EJC</button>
+        <button id="tab-mercadinho" onclick="mudarAba('MERCADINHO')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap">🛒 Mercado</button>
+        <button id="tab-feijoada" onclick="mudarAba('FEIJOADA')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap hidden">🍛 Feijoada</button>
+        <button id="tab-doacao" onclick="mudarAba('DOACAO')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap hidden">💝 Doações</button>
+      </div>
+    </header>
 
-  <main class="px-4 py-6 -mt-4 z-30 relative bg-transparent space-y-6">
-    
-    <div class="bg-white rounded-3xl shadow-sm p-5 border border-slate-100 text-center relative overflow-hidden animate-fade-in-up">
-        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-purple-500 to-purple-700"></div>
-        <p class="text-[10px] uppercase tracking-widest text-purple-600 font-bold mb-1">21º Encontro de Jovens com Cristo</p>
-        <h2 class="font-black text-xl text-slate-800 leading-tight italic">"A morte não venceu.<br>O teu amor me salvou!"</h2>
-        <div class="mt-3 inline-flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full">
-            <p class="text-[10px] text-slate-500 font-bold">João 11, 25-26</p>
+    <main class="px-4 py-6 -mt-4 z-30 space-y-6">
+      <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 animate-fade-in-up hidden">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
+          <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Entradas</p>
+            <h2 id="totalRecebido" class="text-3xl font-black text-slate-800">R$ 0,00</h2>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Fiados</p>
+            <h2 id="totalPendente" class="text-3xl font-black text-orange-500">R$ 0,00</h2>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Saídas</p>
+            <h2 id="totalSaidas" class="text-3xl font-black text-rose-500">R$ 0,00</h2>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Líquido</p>
+            <h2 id="totalLiquido" class="text-3xl font-black text-purple-600">R$ 0,00</h2>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl grid grid-cols-1 sm:grid-cols-3 gap-6 border border-slate-100 animate-fade-in-up" style="animation-delay: 0.1s">
-       <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Recebido</p><h2 id="totalRecebido" class="text-3xl font-black text-slate-800">R$ 0,00</h2></div>
-       <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">A Receber</p><h2 id="totalPendente" class="text-3xl font-black text-orange-500">R$ 0,00</h2></div>
-       <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Líquido</p><h2 id="totalLiquido" class="text-3xl font-black text-purple-600">R$ 0,00</h2></div>
-    </div>
+      <div id="blocoPDF" class="hidden">
+        <button onclick="gerarPDFRelatorio()" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-black shadow-lg flex items-center justify-center gap-3 active:scale-95 transition">
+          <i class="fas fa-file-pdf text-rose-400"></i> GERAR RELATÓRIO DO DIA (PDF)
+        </button>
+      </div>
 
-    <div id="filtrosEJC" class="hidden flex gap-2 overflow-x-auto no-scrollbar pb-1 animate-fade-in-up">
-        <button onclick="filtrarDia('Sexta')" class="flex-1 bg-white text-slate-600 py-3 px-5 rounded-2xl text-xs font-bold border border-slate-100 shadow-sm whitespace-nowrap active:bg-slate-100">Sexta</button>
-        <button onclick="filtrarDia('Sabado')" class="flex-1 bg-white text-slate-600 py-3 px-5 rounded-2xl text-xs font-bold border border-slate-100 shadow-sm whitespace-nowrap active:bg-slate-100">Sábado</button>
-        <button onclick="filtrarDia('Domingo')" class="flex-1 bg-white text-slate-600 py-3 px-5 rounded-2xl text-xs font-bold border border-slate-100 shadow-sm whitespace-nowrap active:bg-slate-100">Domingo</button>
-    </div>
-    
-    <div id="filtrosMercadinho" class="hidden flex gap-2 overflow-x-auto no-scrollbar pb-1 animate-fade-in-up">
-        <button onclick="filtrarCampanha('[MÃES]')" class="flex-1 bg-white text-pink-600 py-3 px-5 rounded-2xl text-xs font-bold border border-pink-100 shadow-sm whitespace-nowrap">🌸 Mães</button>
-        <button onclick="filtrarCampanha('[NAMORADOS]')" class="flex-1 bg-white text-rose-600 py-3 px-5 rounded-2xl text-xs font-bold border border-rose-100 shadow-sm whitespace-nowrap">💘 Namorados</button>
-        <button onclick="filtrarCampanha('Geral')" class="flex-1 bg-white text-emerald-600 py-3 px-5 rounded-2xl text-xs font-bold border border-emerald-100 shadow-sm whitespace-nowrap">🛒 Geral</button>
-    </div>
-
-    <div id="alertaDomingo" class="hidden bg-slate-800 text-white p-5 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
-        <div class="flex items-center gap-4"><div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-xl">⚠️</div><div><h3 class="font-black uppercase text-sm">Modo Cobrança</h3><p id="txtTotalCobranca" class="text-xs font-bold opacity-70">Calculando...</p></div></div>
-        <div class="flex gap-2 w-full md:w-auto"><button onclick="copiarRelatorioCobranca()" class="bg-white/10 px-5 py-3 rounded-xl text-xs font-bold flex-1 hover:bg-white/20 transition">Relatório</button><button onclick="pagarTudoDomingo()" class="bg-white text-slate-900 px-5 py-3 rounded-xl text-xs font-black shadow-md flex-1 hover:bg-slate-100 transition">BAIXAR TUDO</button></div>
-    </div>
-
-    <div class="nu-card mb-20 animate-fade-in-up" style="animation-delay: 0.2s">
+      <div class="nu-card mb-20 animate-fade-in-up">
         <div class="p-4 border-b border-slate-50 flex gap-3 items-center sticky top-0 bg-white z-10">
-            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><i class="fas fa-search text-xs"></i></div>
-            <input id="campoBusca" onkeyup="debounceBusca()" placeholder="Buscar lançamentos..." class="w-full text-sm font-bold outline-none text-slate-700 placeholder:text-slate-300 bg-transparent">
+          <i class="fas fa-search text-slate-300"></i>
+          <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar lançamentos..." class="w-full text-sm font-bold outline-none text-slate-700" />
         </div>
-        
-        <div id="loading" class="hidden p-4 space-y-3">
-            <div class="skeleton h-12 w-full"></div>
-            <div class="skeleton h-12 w-full"></div>
-            <div class="skeleton h-12 w-full"></div>
+
+        <div id="loading" class="hidden p-8 text-center">
+          <i class="fas fa-circle-notch fa-spin text-purple-600 text-2xl"></i>
         </div>
-        
-        <div class="table-wrapper">
-            <table class="text-left text-sm w-full">
-                <tbody id="corpoTabela" class="text-slate-600 font-medium"></tbody>
-            </table>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <tbody id="corpoTabela" class="divide-y divide-slate-50"></tbody>
+          </table>
         </div>
-    </div>
+      </div>
+    </main>
 
-    <footer class="mt-auto border-t border-slate-200 py-8 px-4 text-center opacity-60">
-        <p class="font-black text-xs text-slate-700 uppercase tracking-widest">Pilotos Finanças • EJC 2026</p>
-        <p class="text-[10px] text-slate-500 mt-1 font-bold">Paróquia Santo Eugênio de Mazenod ✝️🤍</p>
-    </footer>
+    <button onclick="abrirModal()" class="fab">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
 
-  </main>
+  <!-- MODAL -->
+  <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="fecharModal()"></div>
 
-  <button onclick="abrirModal()" class="fab hover:scale-110 active:scale-95"><i class="fas fa-plus"></i></button>
+    <div class="relative bg-white w-full max-w-lg rounded-t-[32px] sm:rounded-[32px] p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-black text-slate-800">Novo Lançamento</h2>
+        <button type="button" onclick="fecharModal()" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
 
-</div>
+      <form id="formFin" class="space-y-4">
+        <div id="blocoModulo" class="hidden bg-blue-50 rounded-2xl px-4 py-3 border border-blue-100">
+          <label class="text-[10px] font-bold text-blue-500 uppercase block mb-1">Destino do Lançamento</label>
+          <select id="f_modulo" class="w-full bg-transparent font-bold text-slate-800 outline-none">
+            <option value="EJC">EJC (Caixa Principal)</option>
+            <option value="MERCADINHO">Mercadinho</option>
+            <option value="FEIJOADA">Feijoada</option>
+            <option value="DOACAO">Doação / Oferta</option>
+            <option value="ADMIN">Administrativo (Outros)</option>
+          </select>
+        </div>
 
-<div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
-  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="fecharModal()"></div>
-  <div class="relative bg-white w-full max-w-lg rounded-t-[32px] sm:rounded-[32px] p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
-    
-    <button onclick="fecharModal()" class="absolute top-6 right-6 w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-500 transition z-50"><i class="fas fa-times"></i></button>
-
-    <h2 class="text-xl font-black text-slate-800 mb-6">Novo Lançamento</h2>
-    <form id="formFin" class="space-y-4">
-        
         <div class="flex gap-3">
-            <div class="flex-1 bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100 focus-within:border-purple-500 focus-within:bg-white transition">
-                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Item</label>
-                <input id="f_desc" placeholder="Ex: Coxinha" class="w-full bg-transparent font-bold text-slate-800 outline-none">
-            </div>
-        </div>
-        
-        <div class="flex gap-3">
-            <div class="flex-[2] bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100 focus-within:border-purple-500 focus-within:bg-white transition">
-                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Valor Unitário</label>
-                <input id="f_val" type="number" step="0.01" placeholder="R$ 0,00" class="w-full bg-transparent font-bold text-slate-800 outline-none">
-            </div>
-            <button type="button" onclick="somarItem()" class="flex-1 bg-purple-100 text-purple-600 rounded-2xl font-black text-xl hover:bg-purple-200 transition active:scale-95">+</button>
-        </div>
-        
-        <div id="areaCesta" class="hidden bg-purple-50 p-4 rounded-2xl border border-purple-100">
-            <div id="listaItens" class="text-xs space-y-2 mb-3 max-h-32 overflow-y-auto"></div>
-            <div class="flex justify-between items-center border-t border-purple-200 pt-3">
-                <button type="button" onclick="limparCesta()" class="text-[10px] text-rose-500 font-bold uppercase hover:underline">Limpar</button>
-                <p id="txtSoma" class="text-base font-black text-purple-800">Total: R$ 0.00</p>
-            </div>
+          <div class="flex-[2] bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Item / Descrição</label>
+            <input id="f_desc" placeholder="Ex: Doação Padrinho" required class="w-full bg-transparent font-bold text-slate-800 outline-none" />
+          </div>
+          <div class="flex-1 bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Valor</label>
+            <input id="f_val" type="number" step="0.01" required placeholder="0,00" class="w-full bg-transparent font-bold text-slate-800 outline-none text-right" />
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-            <select id="f_forma" class="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 font-bold text-slate-700 outline-none"><option value="PIX">PIX</option><option value="DINHEIRO">DINHEIRO</option><option value="CARTAO">CARTAO</option></select>
-            <select id="f_type" class="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 font-bold text-slate-700 outline-none"><option value="ENTRADA">Pago ✅</option><option value="PENDENTE">Fiado 🟠</option><option value="SAIDA">Custo 🔴</option></select>
+          <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Status</label>
+            <select id="f_type" class="w-full bg-transparent font-bold text-slate-700 outline-none">
+              <option value="ENTRADA">Pago ✅</option>
+              <option value="PENDENTE">Fiado 🟠</option>
+              <option value="SAIDA">Custo 🔴</option>
+            </select>
+          </div>
+
+          <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Pagamento</label>
+            <select id="f_forma" class="w-full bg-transparent font-bold text-slate-700 outline-none">
+              <option value="PIX">PIX</option>
+              <option value="DINHEIRO">DINHEIRO</option>
+              <option value="CARTAO">CARTÃO</option>
+            </select>
+          </div>
         </div>
 
-        <div id="blocoTroco" class="hidden bg-emerald-50 p-4 rounded-2xl border border-emerald-100 space-y-2">
-            <p class="text-[10px] font-black text-emerald-600 uppercase">Troco</p>
-            <input id="f_pago" type="number" step="0.01" placeholder="Recebido do cliente?" class="w-full bg-white border border-emerald-200 p-2 rounded-xl font-bold text-center">
-            <p id="txtTroco" class="text-center font-black text-emerald-700">Troco: R$ 0,00</p>
-        </div>
-        
-        <div id="camposEJC" class="hidden bg-blue-50 p-4 rounded-2xl space-y-3"><p class="text-[10px] font-black text-blue-400 uppercase text-center">EJC</p><select id="f_dia" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="Sexta">Sexta</option><option value="Sabado">Sábado</option><option value="Domingo">Domingo</option></select><select id="f_equipe" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select></div>
-        
-        <div id="camposMercado" class="hidden bg-pink-50 p-4 rounded-2xl space-y-3">
-            <p class="text-[10px] font-black text-pink-400 uppercase text-center">Mercadinho</p>
-            <select id="f_tipo_pessoa" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="PAROQUIANO">👤 Paroquiano (Sem Equipe)</option><option value="SERVO">🙋‍♂️ Servo do EJC</option></select>
-            <select id="f_campanha" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="GERAL">🛒 Geral</option><option value="MAES">🌸 Mães</option><option value="NAMORADOS">💘 Namorados</option></select>
-            <select id="f_equipe_merc" class="hidden w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="">Equipe...</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
-        </div>
-        
-        <div id="camposFeijoada" class="hidden bg-orange-50 p-4 rounded-2xl space-y-3">
-            <p class="text-[10px] font-black text-orange-400 uppercase text-center">Feijoada</p>
-            <div class="grid grid-cols-2 gap-2">
-                <input id="f_qtd" type="number" value="1" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm" placeholder="Qtd">
-                <select id="f_equipe_feijoada" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm"><option value="">Sem Equipe</option><option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option></select>
-            </div>
-            <input id="f_comun" placeholder="Comunidade" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center uppercase text-sm shadow-sm">
-            <input id="f_obs" placeholder="Obs" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-xs shadow-sm">
+        <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+          <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Nome / Doador</label>
+          <input id="f_nome" placeholder="Quem doou/comprou?" class="w-full bg-transparent font-bold text-slate-800 outline-none" />
         </div>
 
-        <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100 focus-within:border-purple-500 focus-within:bg-white transition">
-            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Nome da Pessoa</label>
-            <input id="f_nome" class="w-full bg-transparent font-bold text-slate-800 outline-none">
-        </div>
-        
-        <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100 focus-within:border-purple-500 focus-within:bg-white transition">
-            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">WhatsApp</label>
-            <input id="f_tel" class="w-full bg-transparent font-bold text-slate-800 outline-none">
-        </div>
-        
-        <div class="bg-purple-50 rounded-2xl px-4 py-3 border border-purple-100 focus-within:border-purple-500 focus-within:bg-white transition">
-            <label class="text-[10px] font-bold text-purple-400 uppercase block mb-1">Quem Recebeu? (Obrigatório)</label>
-            <input id="f_recebido" class="w-full bg-transparent font-bold text-purple-900 outline-none">
+        <div class="bg-purple-50 rounded-2xl px-4 py-3 border border-purple-100">
+          <label class="text-[10px] font-bold text-purple-400 uppercase block mb-1">Recebido por</label>
+          <input id="f_recebido" required class="w-full bg-transparent font-bold text-purple-900 outline-none" />
         </div>
 
-        <button type="submit" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-200 mt-4 active:scale-95 transition text-lg">SALVAR</button>
-    </form>
+        <button type="submit" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-200 mt-4 active:scale-95 transition text-lg">
+          SALVAR NO BANCO
+        </button>
+      </form>
+    </div>
   </div>
-</div>
 
-<script>
-const API = "https://script.google.com/macros/s/AKfycbzfCozUPEax76bamW5DgxDgEOK9LCw4OCsppEKbm_lGOTmXBGCs0bjHAFQRFzEi1Tl4Jw/exec";
-const PASS_ADMIN="@admpilotos2026#", PASS_COMPRAS="$compras2026";
-let ROLE="", abaAtiva="admin", filtroAtivo="", dadosCache=[];
-let dadosAdminCache = [];
-let itensCesta = []; 
+  <script>
+    const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmeGxma2ZqcWFlbWpvdHNlZGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDU1MDQsImV4cCI6MjA4OTk4MTUwNH0.2JWeglgFALa88C9nWMrTmsIlogxcNg3rD2SrE1DJWyM';
 
-// VIBRAÇÃO HAPTIC
-function vibrate(ms){ if(navigator.vibrate) navigator.vibrate(ms); }
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-function toggleSenha(){ 
-    const input = document.getElementById("inputSenha"); 
-    const icon = document.getElementById("eyeIcon"); 
-    if(input.type === "password"){
-        input.type = "text"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash");
-    } else {
-        input.type = "password"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye");
-    }
-}
+    let currentUser = null;
+    let currentProfile = null;
+    let ROLE = "";
+    let abaAtiva = "ADMIN";
+    let dadosCache = [];
 
-function showToast(msg, type="success"){
-    const t = document.createElement("div"); t.className="toast";
-    t.innerHTML = type==="error" ? `<i class="fas fa-times-circle text-rose-400"></i> ${msg}` : `<i class="fas fa-check-circle text-emerald-400"></i> ${msg}`;
-    document.getElementById("toast-container").appendChild(t);
-    vibrate(50);
-    setTimeout(()=>t.remove(), 3000);
-}
+    const esc = (str) =>
+      str
+        ? str.toString().replace(/[&<>'"]/g, (t) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            "'": '&#39;',
+            '"': '&quot;'
+          }[t]))
+        : "";
 
-function tentarLogin(r){
-    const s=document.getElementById("inputSenha").value;
-    if(r==="admin" && s===PASS_ADMIN) ROLE="admin";
-    else if(r==="compras" && s===PASS_COMPRAS) ROLE="compras";
-    else {
-        vibrate([50, 100, 50]); // Vibra erro
-        return document.getElementById("msgErroLogin").classList.remove("hidden");
-    }
-    
-    document.getElementById("loginScreen").classList.add("hidden");
-    document.getElementById("appMain").classList.remove("hidden");
-    
-    const headerTitle = document.getElementById("headerTitle");
-    const roleDisplay = document.getElementById("userRoleDisplay");
-    const avatar = document.getElementById("userAvatar");
-    
-    // ✅ HEADER CORRIGIDO
-    if(ROLE==="admin") { 
-        headerTitle.innerText = "EJC BANK PILOTOS"; 
-        roleDisplay.innerText = "PILOTOS";
-        avatar.innerText = "P"; 
-    } else { 
-        headerTitle.innerText = "EJC BANK COMPRAS"; 
-        roleDisplay.innerText = "COMPRAS";
-        avatar.innerText = "C"; 
-    }
-    
-    if(ROLE==="compras") { 
-        abaAtiva="ejc"; 
-        // REMOVIDO HIDE DO DASH-ADMIN PARA MOSTRAR SALDO COMPRAS
-        document.getElementById("tab-admin").classList.add("hidden");
-        document.getElementById("tab-feijoada").classList.add("hidden"); 
-        document.getElementById("tab-arquivo").classList.add("hidden");
-    }
-    if(ROLE==="admin") { document.querySelectorAll(".admin-only").forEach(el => el.style.display = "block"); }
-    mudarAba(abaAtiva);
-}
-
-function mudarAba(a){
-    abaAtiva=a; filtroAtivo="";
-    
-    document.querySelectorAll(".tab-btn").forEach(b=>{
-        b.classList.remove("bg-white", "text-purple-900");
-        b.classList.add("bg-white/10", "text-white");
-    });
-    
-    const btn = document.getElementById("tab-"+a);
-    if(btn){
-        btn.classList.add("bg-white", "text-purple-900");
-        btn.classList.remove("bg-white/10", "text-white");
+    function showToast(msg, type = "success") {
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.innerHTML = `<i class="fas ${type === "error" ? "fa-times-circle text-rose-400" : "fa-check-circle text-emerald-400"}"></i> ${esc(msg)}`;
+      document.getElementById("toast-container").appendChild(t);
+      if (navigator.vibrate) navigator.vibrate(50);
+      setTimeout(() => t.remove(), 3000);
     }
 
-    document.getElementById("filtrosEJC").classList.toggle("hidden", a!=="ejc");
-    document.getElementById("filtrosMercadinho").classList.toggle("hidden", a!=="mercadinho");
-    document.getElementById("painelArquivo").classList.toggle("hidden", a!=="arquivo");
-    
-    const cached = localStorage.getItem("ejc_data_" + abaAtiva);
-    if(cached) { dadosCache = JSON.parse(cached); renderizar(); }
-    
-    carregar();
-}
+    function mudarAbaLogin(aba) {
+      document.getElementById("msgErroLogin").classList.add("hidden");
 
-function filtrarDia(d){ filtroAtivo=d; renderizar(); }
-function filtrarCampanha(c){ filtroAtivo=c; renderizar(); }
-
-// ✅ ARRAY SAFE (PREVINE CRASH)
-async function carregar(){
-    // INDICADOR DE SYNC (AMARELO)
-    const sync = document.getElementById("syncIndicator");
-    sync.classList.remove("bg-emerald-400", "bg-rose-500");
-    sync.classList.add("bg-yellow-400", "sync-active");
-
-    document.getElementById("loading").classList.remove("hidden");
-    try {
-        if (ROLE === "admin") {
-            const [rAdmin, rCompras, rFeijoada] = await Promise.all([
-                fetch(`${API}?action=listarAdminFull`).then(r => r.json()),
-                fetch(`${API}?action=listarCompras`).then(r => r.json()),
-                fetch(`${API}?action=listarFeijoada`).then(r => r.json())
-            ]);
-            
-            // ✅ CORREÇÃO CRÍTICA (ARRAY CHECK)
-            dadosAdminCache = [
-               ...(Array.isArray(rAdmin)?rAdmin:[]),
-               ...(Array.isArray(rCompras)?rCompras:[]),
-               ...(Array.isArray(rFeijoada)?rFeijoada:[])
-            ];
-        } else {
-            const r = await fetch(`${API}?action=listarCompras`);
-            dadosAdminCache = await r.json(); 
-        }
-        
-        atualizarStats();
-
-        let act = "listarAdminFull";
-        if (abaAtiva==="ejc" || abaAtiva==="mercadinho") act = "listarCompras";
-        if (abaAtiva==="feijoada") act = "listarFeijoada";
-        if (abaAtiva==="arquivo") act = "listarArquivo";
-        
-        const r = await fetch(`${API}?action=${act}`);
-        const data = await r.json();
-        dadosCache = Array.isArray(data) ? data : []; // SAFE
-        localStorage.setItem("ejc_data_" + abaAtiva, JSON.stringify(dadosCache));
-        
-        renderizar();
-        
-        // SYNC VERDE
-        sync.classList.remove("bg-yellow-400", "bg-rose-500", "sync-active");
-        sync.classList.add("bg-emerald-400");
-
-    } catch(e){ 
-        console.warn("Sync error:", e);
-        // SYNC VERMELHO
-        sync.classList.remove("bg-emerald-400", "bg-yellow-400", "sync-active");
-        sync.classList.add("bg-rose-500");
+      if (aba === "compras") {
+        document.getElementById("formCompras").classList.remove("hidden");
+        document.getElementById("formPilotos").classList.add("hidden");
+        document.getElementById("tabBtnCompras").className = "flex-1 py-3 rounded-xl font-black text-sm bg-white shadow-sm text-purple-700 transition";
+        document.getElementById("tabBtnPilotos").className = "flex-1 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-slate-600 transition";
+      } else {
+        document.getElementById("formPilotos").classList.remove("hidden");
+        document.getElementById("formCompras").classList.add("hidden");
+        document.getElementById("tabBtnPilotos").className = "flex-1 py-3 rounded-xl font-black text-sm bg-white shadow-sm text-slate-800 transition";
+        document.getElementById("tabBtnCompras").className = "flex-1 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-slate-600 transition";
+      }
     }
-    document.getElementById("loading").classList.add("hidden");
-}
 
-// ✅ REFRESH 10s (OPÇÃO D)
-setInterval(() => {
-    if(document.visibilityState === "visible" && !document.getElementById("modal").classList.contains("hidden") === false){
-        carregar();
+    async function carregarPerfilUsuario(user) {
+      const { data: profile, error } = await _supabase
+        .from('profiles')
+        .select('role, active, nome')
+        .eq('id', user.id)
+        .single();
+
+      if (error || !profile || !profile.active) {
+        await _supabase.auth.signOut();
+        showToast("Usuário sem acesso liberado no sistema.", "error");
+        return null;
+      }
+
+      return profile;
     }
-}, 10000);
 
-// ✅ NOVA LÓGICA DE SOMA (ZERA ZERO)
-function atualizarStats(){
-    let rec = 0, pen = 0;
-    
-    dadosAdminCache.forEach(i => {
-        let v = parseFloat(i.amount || i.total || i.valor || 0);
-        let pago = (i.paid === true || i.paid === "TRUE" || i.status === "Pago" || i.type === "ENTRADA");
-        
-        if(pago) rec += v; 
-        else pen += v;
-    });
+    async function executarLogin(email, senha, btnElement) {
+      const textoOriginal = btnElement.innerHTML;
+      btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+      document.getElementById("msgErroLogin").classList.add("hidden");
 
-    document.getElementById("totalRecebido").innerText = "R$ " + rec.toFixed(2);
-    document.getElementById("totalPendente").innerText = "R$ " + pen.toFixed(2);
-    document.getElementById("totalLiquido").innerText = "R$ " + (rec - pen).toFixed(2);
-}
+      const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
 
-let buscaTimer;
-function debounceBusca(){
-  clearTimeout(buscaTimer);
-  buscaTimer = setTimeout(renderizar, 300);
-}
+      if (error) {
+        document.getElementById("msgErroLogin").classList.remove("hidden");
+        btnElement.innerHTML = textoOriginal;
+        return;
+      }
 
-function renderizar(){
-    const tb=document.getElementById("corpoTabela"); tb.innerHTML="";
-    const busca = document.getElementById("campoBusca").value.toLowerCase();
-    
-    // ✅ VARIÁVEIS INICIAIS (BUG FIX)
-    let somaPend = 0;
-    const ehDomingo = new Date().getDay() === 0;
+      const profile = await carregarPerfilUsuario(data.user);
+      if (!profile) {
+        btnElement.innerHTML = textoOriginal;
+        return;
+      }
 
-    const lista = dadosCache.slice(-60).reverse().filter(i=>{
-        const pOriginal = i.product || i.description || "";
-        const p = pOriginal.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
-        if(abaAtiva==="ejc") {
-            if(i.category!=="EJC") return false;
-            if(filtroAtivo && i.ejc_dia !== filtroAtivo) return false;
-        }
-        if(abaAtiva==="mercadinho") {
-            if(i.category!=="Mercadinho") return false; 
-            if(filtroAtivo==="Geral" && (p.includes("MAES") || p.includes("NAMORADOS"))) return false;
-            else if(filtroAtivo && !p.includes(filtroAtivo.replace(/[\[\]]/g,"").normalize("NFD").replace(/[\u0300-\u036f]/g, ""))) return false;
-        }
-        const txt = (pOriginal).toLowerCase() + (i.buyer_name||"").toLowerCase();
-        if(busca && !txt.includes(busca)) return false;
-        if(ROLE==="compras" && new Date().getDay()===0 && abaAtiva==="ejc" && i.paid) return false;
-        return true;
-    });
+      currentUser = data.user;
+      currentProfile = profile;
+      ROLE = profile.role.toUpperCase();
+      iniciarApp();
+    }
 
-    lista.forEach(i=>{
-        // ✅ CÁLCULO ACUMULADO
-        if(!i.paid && i.category !== "Feijoada" && i.type !== "FEIJOADA") {
-            somaPend += parseFloat(i.amount||i.total||0);
+    function loginCompras() {
+      const s = document.getElementById("senhaCompras").value;
+      executarLogin('compras@ejcbank.com.br', s, document.getElementById('btnCompras'));
+    }
+
+    function loginPiloto() {
+      const e = document.getElementById("emailPiloto").value.trim().toLowerCase();
+      const s = document.getElementById("senhaPiloto").value;
+      executarLogin(e, s, document.getElementById('btnPiloto'));
+    }
+
+    async function abrirTelaDoacao() {
+      document.getElementById("doacaoPublicaScreen").classList.remove("hidden");
+      await carregarMetasDoacao();
+    }
+
+    function fecharTelaDoacao() {
+      document.getElementById("doacaoPublicaScreen").classList.add("hidden");
+    }
+
+    async function carregarMetasDoacao() {
+      const lista = document.getElementById("listaMetasDoacao");
+      const select = document.getElementById("d_item");
+
+      lista.innerHTML = `<p class="text-sm text-slate-400 font-bold">Carregando lista...</p>`;
+      select.innerHTML = `<option value="">Selecione um item</option>`;
+
+      const { data, error } = await _supabase
+        .from('metas_doacao')
+        .select('*')
+        .eq('ativo', true)
+        .order('item', { ascending: true });
+
+      if (error) {
+        lista.innerHTML = `<p class="text-sm text-rose-500 font-bold">Erro ao carregar as metas.</p>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        lista.innerHTML = `<p class="text-sm text-slate-400 font-bold">Nenhuma meta cadastrada no momento.</p>`;
+        return;
+      }
+
+      lista.innerHTML = "";
+
+      data.forEach(meta => {
+        const faltante = Math.max(0, (meta.qtd_necessaria || 0) - (meta.qtd_arrecadada || 0));
+
+        const itemHtml = document.createElement("div");
+        itemHtml.className = "bg-slate-50 rounded-2xl p-4 border border-slate-100";
+        itemHtml.innerHTML = `
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-black text-slate-800">${esc(meta.item)}</p>
+              <p class="text-xs text-slate-500 font-medium mt-1">
+                Arrecadado: ${meta.qtd_arrecadada} ${esc(meta.unidade)} • Necessário: ${meta.qtd_necessaria} ${esc(meta.unidade)}
+              </p>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Faltam</p>
+              <p class="text-lg font-black text-purple-600">${faltante}</p>
+            </div>
+          </div>
+        `;
+        lista.appendChild(itemHtml);
+
+        const opt = document.createElement("option");
+        opt.value = meta.item;
+        opt.textContent = `${meta.item} (${faltante} faltando)`;
+        select.appendChild(opt);
+      });
+    }
+
+    function iniciarApp() {
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("appMain").classList.remove("hidden");
+
+      document.getElementById("userRoleDisplay").innerText = currentProfile?.nome || ROLE;
+      document.getElementById("userAvatar").innerText = (currentProfile?.nome || ROLE).charAt(0).toUpperCase();
+
+      if (ROLE === "ADMIN") {
+        const tabAdmin = document.getElementById("tab-admin");
+        const tabFeijoada = document.getElementById("tab-feijoada");
+        const tabDoacao = document.getElementById("tab-doacao");
+        const dashAdmin = document.getElementById("dashAdmin");
+        const blocoPDF = document.getElementById("blocoPDF");
+
+        if (tabAdmin) {
+          tabAdmin.classList.remove("hidden");
+          tabAdmin.style.display = "inline-flex";
         }
 
-        const desc = i.product || i.description || "Item"; 
-        const val = parseFloat(i.amount||i.total||0);
-        const dataShow = abaAtiva==="arquivo" ? `${new Date(i.data_backup).toLocaleDateString()}<br>${i.origem}` : new Date(i.date).toLocaleDateString();
-        const btnArquivo = (ROLE==="admin" && abaAtiva!=="arquivo") ? `<button onclick="arquivarInd('${i.id}')" class="text-slate-300 hover:text-purple-600 transition p-2"><i class="fas fa-box"></i></button>` : "";
+        if (tabFeijoada) {
+          tabFeijoada.classList.remove("hidden");
+          tabFeijoada.style.display = "inline-flex";
+        }
 
-        tb.innerHTML += `
-        <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0">
-            <td class="p-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-[10px]">${i.buyer_name ? i.buyer_name.charAt(0) : "?"}</div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-800">${desc}</p>
-                        <p class="text-[10px] text-slate-400 font-medium">${i.buyer_name||"Anônimo"} ${i.equipe?"• "+i.equipe:""}</p>
-                    </div>
-                </div>
-            </td>
-            <td class="p-4 text-right font-black text-slate-800 whitespace-nowrap">R$ ${val.toFixed(2)}</td>
-            <td class="p-4 text-center">
-                ${i.paid ? '<div class="inline-flex items-center justify-center w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full"><i class="fas fa-check text-xs"></i></div>' : '<div class="inline-flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-500 rounded-full"><i class="fas fa-clock text-xs"></i></div>'}
-            </td>
-            <td class="p-4 text-center whitespace-nowrap">
-                <div class="flex items-center justify-center gap-2">
-                    ${!i.paid && abaAtiva!=="arquivo" ? `
-                    <button onclick="baixar('${i.id}')"
-                    class="w-10 h-10 rounded-full bg-slate-100 text-slate-500
-                    hover:bg-emerald-500 hover:text-white transition shadow-sm
-                    flex items-center justify-center">
-                        <i class="fas fa-check"></i>
-                    </button>` : ""}
+        if (tabDoacao) {
+          tabDoacao.classList.remove("hidden");
+          tabDoacao.style.display = "inline-flex";
+        }
 
-                    ${!i.paid && i.phone ? `
-                    <button onclick="cobrarZapTotal('${i.phone}','${i.buyer_name}')"
-                    class="w-10 h-10 rounded-full bg-[#25D366] text-white
-                    hover:bg-[#1ebe5d] active:scale-90 transition
-                    shadow-md flex items-center justify-center">
-                        <i class="fab fa-whatsapp"></i>
-                    </button>` : ""}
+        if (dashAdmin) {
+          dashAdmin.classList.remove("hidden");
+          dashAdmin.style.display = "grid";
+        }
 
-                    ${btnArquivo}
-                </div>
-            </td>
-        </tr>`;
+        if (blocoPDF) {
+          blocoPDF.classList.remove("hidden");
+          blocoPDF.style.display = "block";
+        }
+
+        document.getElementById("headerTitle").innerText = "EJC BANK PILOTOS";
+        abaAtiva = "ADMIN";
+      } else {
+        document.getElementById("headerTitle").innerText = "EJC BANK COMPRAS";
+        abaAtiva = "EJC";
+      }
+
+      mudarAba(abaAtiva);
+    }
+
+    async function mudarAba(a) {
+      abaAtiva = a;
+      document.querySelectorAll(".tab-btn").forEach(b => {
+        const isSelected = b.id === "tab-" + a.toLowerCase();
+        b.classList.toggle("bg-white", isSelected);
+        b.classList.toggle("text-purple-900", isSelected);
+        b.classList.toggle("bg-white/10", !isSelected);
+        b.classList.toggle("text-white", !isSelected);
+      });
+      await carregarDados();
+    }
+
+    async function carregarDados() {
+      document.getElementById("loading").classList.remove("hidden");
+
+      let query = _supabase
+        .from('transacoes')
+        .select('*')
+        .order('criado_em', { ascending: false });
+
+      if (abaAtiva !== "ADMIN") {
+        query = query.eq('modulo', abaAtiva);
+      }
+
+      const { data, error } = await query;
+      dadosCache = error ? [] : (data || []);
+
+      if (error) showToast("Erro ao carregar dados.", "error");
+
+      atualizarStats();
+      renderizar();
+      document.getElementById("loading").classList.add("hidden");
+    }
+
+    function atualizarStats() {
+      let rec = 0, pen = 0, sai = 0;
+
+      dadosCache.forEach(i => {
+        const v = parseFloat(i.valor || 0);
+        if (i.natureza === "SAIDA") sai += v;
+        else if (i.status === "PENDENTE") pen += v;
+        else rec += v;
+      });
+
+      const totalRecebido = document.getElementById("totalRecebido");
+      const totalPendente = document.getElementById("totalPendente");
+      const totalSaidas = document.getElementById("totalSaidas");
+      const totalLiquido = document.getElementById("totalLiquido");
+
+      if (totalRecebido) totalRecebido.innerText = "R$ " + rec.toFixed(2);
+      if (totalPendente) totalPendente.innerText = "R$ " + pen.toFixed(2);
+      if (totalSaidas) totalSaidas.innerText = "R$ " + sai.toFixed(2);
+      if (totalLiquido) totalLiquido.innerText = "R$ " + (rec - sai).toFixed(2);
+    }
+
+    function renderizar() {
+      const tb = document.getElementById("corpoTabela");
+      tb.innerHTML = "";
+      const busca = document.getElementById("campoBusca").value.toLowerCase();
+
+      dadosCache
+        .filter(i => ((i.descricao || "") + (i.nome_pessoa || "")).toLowerCase().includes(busca))
+        .forEach(i => {
+          const val = parseFloat(i.valor || 0).toFixed(2);
+          const iconColor = i.modulo === "DOACAO"
+            ? "purple"
+            : i.natureza === "SAIDA"
+            ? "rose"
+            : i.status === "PENDENTE"
+            ? "orange"
+            : "emerald";
+
+          tb.innerHTML += `
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="p-4">
+                <p class="text-xs font-bold text-slate-800">${esc(i.descricao)}</p>
+                <p class="text-[10px] text-slate-400 font-medium uppercase">${esc(i.nome_pessoa) || "-"} • ${esc(i.modulo)}</p>
+              </td>
+              <td class="p-4 text-right font-black">R$ ${val}</td>
+              <td class="p-4 text-center">
+                <span class="w-2 h-2 rounded-full bg-${iconColor}-500 inline-block shadow-sm"></span>
+              </td>
+              <td class="p-4 text-right">
+                ${i.status === 'PENDENTE'
+                  ? `<button onclick="baixar('${i.id}', ${i.version})" class="w-8 h-8 rounded-full bg-emerald-500 text-white shadow-md active:scale-90 transition flex items-center justify-center ml-auto"><i class="fas fa-check text-[10px]"></i></button>`
+                  : ""}
+              </td>
+            </tr>
+          `;
+        });
+    }
+
+    document.getElementById("formFin").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const type = document.getElementById("f_type").value;
+      const valorDigitado = parseFloat(document.getElementById("f_val").value);
+      const moduloDestino = abaAtiva === "ADMIN" ? document.getElementById("f_modulo").value : abaAtiva;
+
+      if (!valorDigitado && valorDigitado !== 0) {
+        showToast("Informe um valor válido.", "error");
+        return;
+      }
+
+      if (valorDigitado < 0) {
+        showToast("O valor não pode ser negativo.", "error");
+        return;
+      }
+
+      const { error } = await _supabase.from('transacoes').insert([{
+        modulo: moduloDestino,
+        descricao: document.getElementById("f_desc").value.trim(),
+        valor: valorDigitado,
+        quantidade: 1,
+        natureza: type === "SAIDA" ? "SAIDA" : "ENTRADA",
+        status: type === "PENDENTE" ? "PENDENTE" : "PAGO",
+        forma_pagamento: document.getElementById("f_forma").value,
+        nome_pessoa: document.getElementById("f_nome").value.trim(),
+        recebido_por: document.getElementById("f_recebido").value.trim(),
+        user_id: currentUser.id
+      }]);
+
+      if (!error) {
+        showToast("Salvo!");
+        fecharModal();
+        carregarDados();
+      } else {
+        showToast("Erro ao salvar no banco!", "error");
+      }
     });
 
-    if(ROLE==="compras" && ehDomingo && abaAtiva==="ejc" && somaPend > 0) {
-        document.getElementById("alertaDomingo").classList.remove("hidden");
-        document.getElementById("txtTotalCobranca").innerText = `A RECEBER: R$ ${somaPend.toFixed(2)}`;
-    } else { document.getElementById("alertaDomingo").classList.add("hidden"); }
-}
+    document.getElementById("formDoacaoPublica").addEventListener("submit", async function(e) {
+      e.preventDefault();
 
-function somarItem(){
-    const descInput = document.getElementById("f_desc").value.trim();
-    const desc = descInput || "Item Diverso";
-    const val = parseFloat(document.getElementById("f_val").value);
-    if(!val || val <= 0) return showToast("Valor inválido", "error");
-    const itemExistente = itensCesta.find(i => i.desc.toLowerCase() === desc.toLowerCase() && i.val === val);
-    if (itemExistente) { itemExistente.qtd += 1; } else { itensCesta.push({ desc: desc, val: val, qtd: 1 }); }
-    vibrate(30); 
-    renderCesta();
-    document.getElementById("f_desc").value = ""; 
-    document.getElementById("f_desc").focus(); 
-    calcularTroco();
-}
+      const btn = document.getElementById("btnEnviarDoacao");
+      const nome = document.getElementById("d_nome").value.trim();
+      const item = document.getElementById("d_item").value;
+      const quantidade = parseInt(document.getElementById("d_qtd").value, 10);
 
-function renderCesta(){
-    const lista = document.getElementById("listaItens");
-    lista.innerHTML = "";
-    let total = 0;
-    if(itensCesta.length === 0){ document.getElementById("areaCesta").classList.add("hidden"); document.getElementById("txtSoma").innerText = "Total: R$ 0.00"; return; }
-    itensCesta.forEach((item) => {
-        const subtotal = item.val * item.qtd;
-        total += subtotal;
-        lista.innerHTML += `<div class="flex justify-between border-b border-purple-100 pb-2 text-xs"><span><b class="text-purple-600">${item.qtd}x</b> ${item.desc}</span><span class="font-bold text-slate-700">R$ ${subtotal.toFixed(2)}</span></div>`;
+      if (!item) {
+        showToast("Selecione um item para doar.", "error");
+        return;
+      }
+
+      if (!quantidade || quantidade <= 0) {
+        showToast("Informe uma quantidade válida.", "error");
+        return;
+      }
+
+      const textoOriginal = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+      btn.disabled = true;
+
+      const { error } = await _supabase.rpc('registrar_doacao_publica', {
+        p_item: item,
+        p_quantidade: quantidade,
+        p_nome: nome || null,
+        p_forma_pagamento: 'DOACAO'
+      });
+
+      btn.innerHTML = textoOriginal;
+      btn.disabled = false;
+
+      if (error) {
+        showToast("Não foi possível registrar a doação.", "error");
+        return;
+      }
+
+      showToast("Doação registrada com sucesso!");
+      document.getElementById("formDoacaoPublica").reset();
+      document.getElementById("d_qtd").value = 1;
+      await carregarMetasDoacao();
     });
-    document.getElementById("txtSoma").innerText = `Total: R$ ${total.toFixed(2)}`;
-    document.getElementById("areaCesta").classList.remove("hidden");
-}
 
-function limparCesta(){ itensCesta = []; renderCesta(); calcularTroco(); }
+    async function baixar(id, currentVersion) {
+      if (!confirm("Recebeu este valor em mãos/PIX?")) return;
 
-document.getElementById("f_forma").addEventListener("change", () => {
-    const forma = document.getElementById("f_forma").value;
-    document.getElementById("blocoTroco").classList.toggle("hidden", forma !== "DINHEIRO");
-});
-document.getElementById("f_pago").addEventListener("input", calcularTroco);
-document.getElementById("f_val").addEventListener("input", calcularTroco);
+      const { data, error } = await _supabase
+        .from('transacoes')
+        .update({ status: 'PAGO' })
+        .eq('id', id)
+        .eq('version', currentVersion)
+        .select();
 
-document.getElementById("f_tipo_pessoa")?.addEventListener("change", controlarTipoPessoa);
-function controlarTipoPessoa() {
-    const tipo = document.getElementById("f_tipo_pessoa").value;
-    const equipe = document.getElementById("f_equipe_merc");
-    const tipoPg = document.getElementById("f_type");
-    const optionPendente = tipoPg.querySelector('option[value="PENDENTE"]');
-    if (tipo === "PAROQUIANO") {
-        equipe.classList.add("hidden"); equipe.value = "";
-        tipoPg.value = "ENTRADA"; optionPendente.disabled = true; optionPendente.innerText = "🟠 Pendente (Bloqueado)";
-    } else {
-        equipe.classList.remove("hidden"); optionPendente.disabled = false; optionPendente.innerText = "🟠 Pendente (Fiado)";
+      if (error) {
+        showToast("Erro técnico na atualização", "error");
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        showToast("Conflito: este registro já foi alterado.", "error");
+        carregarDados();
+        return;
+      }
+
+      showToast("Baixa realizada!");
+      carregarDados();
     }
-}
 
-function calcularTroco(){
-    const totalCestaVal = itensCesta.reduce((acc, i) => acc + (i.val * i.qtd), 0);
-    const valCampo = parseFloat(document.getElementById("f_val").value || 0);
-    const totalFinal = totalCestaVal > 0 ? totalCestaVal : valCampo;
-    const pago = parseFloat(document.getElementById("f_pago").value || 0);
-    let troco = pago - totalFinal;
-    if(troco < 0) troco = 0;
-    document.getElementById("txtTroco").innerText = "Troco: R$ " + troco.toFixed(2);
-}
+    function gerarPDFRelatorio() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const dataRef = new Date().toLocaleDateString();
 
-document.getElementById("formFin").addEventListener("submit", async function(e){
-    e.preventDefault();
-    let finalDesc = document.getElementById("f_desc").value;
-    let finalVal = parseFloat(document.getElementById("f_val").value);
-    let finalQtd = 1;
-    if(itensCesta.length > 0) {
-        finalDesc = itensCesta.map(i => `${i.qtd}x ${i.desc}`).join(", ");
-        finalVal = itensCesta.reduce((acc, i) => acc + (i.val * i.qtd), 0);
-        finalQtd = itensCesta.reduce((acc, i) => acc + i.qtd, 0);
+      doc.setFontSize(22);
+      doc.setTextColor(130, 10, 209);
+      doc.text("EJC BANK • RELATÓRIO", 14, 20);
+
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`21º EJC - Paróquia Santo Eugênio | Data: ${dataRef}`, 14, 28);
+
+      const resumo = [
+        ["Total Entradas", document.getElementById("totalRecebido").innerText],
+        ["Total Fiados", document.getElementById("totalPendente").innerText],
+        ["Total Saídas", document.getElementById("totalSaidas").innerText],
+        ["Saldo Líquido", document.getElementById("totalLiquido").innerText]
+      ];
+
+      doc.autoTable({
+        head: [['Resumo Financeiro', 'Valor']],
+        body: resumo,
+        startY: 35,
+        theme: 'striped',
+        headStyles: { fillColor: [130, 10, 209] }
+      });
+
+      const trans = dadosCache.map(i => [
+        new Date(i.criado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        i.modulo,
+        i.descricao,
+        i.status,
+        `R$ ${parseFloat(i.valor || 0).toFixed(2)}`
+      ]);
+
+      doc.autoTable({
+        head: [['Hora', 'Módulo', 'Item', 'Status', 'Valor']],
+        body: trans,
+        startY: doc.lastAutoTable.finalY + 10,
+        theme: 'grid'
+      });
+
+      doc.save(`Fechamento_EJC_${dataRef.replace(/\//g, '-')}.pdf`);
+      showToast("Relatório PDF gerado!");
     }
-    if(!finalVal || finalVal <= 0) return showToast("Valor zerado!", "error");
 
-    const pl = {
-        name: document.getElementById("f_nome").value,
-        phone: document.getElementById("f_tel").value.replace(/\D/g,""),
-        amount: finalVal,
-        qtd: finalQtd,
-        recebidoPor: document.getElementById("f_recebido").value,
-        description: finalDesc,
-        product: finalDesc,
-        forma: document.getElementById("f_forma").value,
-        paid: document.getElementById("f_type").value === "ENTRADA"
+    function abrirModal() {
+      document.getElementById("modal").classList.remove("hidden");
+      document.getElementById("blocoModulo").classList.toggle("hidden", abaAtiva !== "ADMIN");
+    }
+
+    function fecharModal() {
+      document.getElementById("modal").classList.add("hidden");
+      document.getElementById("formFin").reset();
+    }
+
+    async function sair() {
+      await _supabase.auth.signOut();
+      location.reload();
+    }
+
+    window.onload = async () => {
+      mudarAbaLogin('compras');
+
+      const { data: { session } } = await _supabase.auth.getSession();
+      if (session) {
+        const profile = await carregarPerfilUsuario(session.user);
+        if (profile) {
+          currentUser = session.user;
+          currentProfile = profile;
+          ROLE = profile.role.toUpperCase();
+          iniciarApp();
+        }
+      }
     };
 
-    if(abaAtiva==="admin") await apiPost("criarAdmin", {...pl, type: document.getElementById("f_type").value});
-    
-    if(abaAtiva==="ejc" || abaAtiva==="mercadinho") {
-        if(!pl.recebidoPor) return showToast("Informe quem recebeu!", "error");
-        if (abaAtiva === "ejc") {
-            const dia = document.getElementById("f_dia").value;
-            if(dia === "Domingo" && pl.paid === false) return showToast("Domingo não pode fiado!", "error");
-            pl.equipe = document.getElementById("f_equipe").value;
-            if (!pl.equipe) return showToast("Selecione a Equipe", "error");
-            pl.category="EJC"; pl.day=dia;
-        }
-        if (abaAtiva === "mercadinho") {
-            pl.category = "Mercadinho"; 
-            const tipoPessoa = document.getElementById("f_tipo_pessoa").value;
-            if (tipoPessoa === "PAROQUIANO") {
-                if (pl.paid === false) return showToast("Paroquiano não pode fiado!", "error");
-                pl.equipe = ""; 
-            } else {
-                pl.equipe = document.getElementById("f_equipe_merc").value;
-                if (!pl.equipe) return showToast("Informe equipe do Servo", "error");
-            }
-            const cp = document.getElementById("f_campanha").value; 
-            if(cp === "MAES") pl.product = "[MÃES] " + pl.product;
-            if(cp === "NAMORADOS") pl.product = "[NAMORADOS] " + pl.product;
-        }
-        await apiPost("criarVendaCompras", pl);
-    }
-    
-    if(abaAtiva==="feijoada") {
-        delete pl.day; 
-        pl.qtd = document.getElementById("f_qtd").value;
-        pl.comunidade = document.getElementById("f_comun").value;
-        pl.obs = document.getElementById("f_obs").value; 
-        pl.equipe = document.getElementById("f_equipe_feijoada").value;
-        await apiPost("criarFeijoada", pl);
-    }
-    fecharModal(); 
-});
-
-async function apiPost(act, pl){
-    document.getElementById("loading").classList.remove("hidden");
-    await fetch(API, { 
-        method:"POST", 
-        body:JSON.stringify({action:act, payload:pl}),
-        keepalive: true
-    });
-    showToast("Salvo!");
-    setTimeout(carregar, 1200); 
-}
-
-function abrirModal(){ 
-    document.getElementById("modal").classList.remove("hidden"); 
-    limparCesta();
-    document.getElementById("blocoTroco").classList.add("hidden");
-    document.getElementById("f_pago").value = "";
-    document.getElementById("txtTroco").innerText = "Troco: R$ 0,00";
-    document.getElementById("camposEJC").classList.toggle("hidden", abaAtiva!=="ejc"); 
-    document.getElementById("camposMercado").classList.toggle("hidden", abaAtiva!=="mercadinho"); 
-    document.getElementById("camposFeijoada").classList.toggle("hidden", abaAtiva!=="feijoada"); 
-    if(abaAtiva==="mercadinho") controlarTipoPessoa();
-}
-
-function fecharModal(){ document.getElementById("modal").classList.add("hidden"); limparCesta(); document.getElementById("formFin").reset(); }
-
-async function baixar(id) {
-    if(!confirm("Recebeu o valor?")) return;
-    const item = dadosCache.find(i => i.id === id);
-    if(item) { item.paid = true; renderizar(); }
-    let abaEnvio = abaAtiva==="admin" ? "ADMIN" : abaAtiva==="feijoada" ? "FEIJOADA" : "COMPRAS";
-    await apiPost("marcarPago", {id:id, aba: abaEnvio});
-}
-
-async function arquivar(cat, fil){ if(confirm("Arquivar e limpar?")) await apiPost("arquivar", {category:cat, filtro:fil}); }
-async function pagarTudoDomingo(){ if(confirm("Quitar todos os pendentes?")) await apiPost("pagarLote", {ids: dadosCache.filter(i=>!i.paid && i.category!=="Feijoada").map(i=>i.id)}); }
-
-async function arquivarInd(id) {
-    if(!confirm("Mover este item para o Arquivo Morto?")) return;
-    dadosCache = dadosCache.filter(i => i.id !== id);
-    renderizar();
-    let abaEnvio = abaAtiva==="admin" ? "ADMIN" : abaAtiva==="feijoada" ? "FEIJOADA" : "COMPRAS";
-    await apiPost("arquivarTransacao", {id:id, aba: abaEnvio});
-}
-
-function calcularDividaPorTelefone(tel) {
-    const cleanTel = String(tel).replace(/\D/g, "");
-    return dadosCache.filter(i => !i.paid && String(i.phone).replace(/\D/g, "") === cleanTel).reduce((soma, i) => soma + parseFloat(i.amount || i.total || 0), 0);
-}
-
-function cobrarZapTotal(tel, nome){
-    const num = String(tel).replace(/\D/g,"");
-    if(!/^\d{10,11}$/.test(num)) return showToast("Número inválido", "error");
-    const total = calcularDividaPorTelefone(num);
-    const valorCobrar = total > 0 ? total : 0;
-    let cob = prompt("Seu nome?",""); if(!cob) return;
-    const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é *${cob}* do EJC.\nConsta um total pendente de *R$ ${valorCobrar.toFixed(2)}* referente aos itens consumidos.\nQuando puder, pode passar no caixa para regularizar?\nDeus abençoe! ✝️`);
-    location.href = `https://wa.me/55${num}?text=${msg}`;
-}
-
-function exportarExcel(){ alert("Use o PC"); }
-function exportarPDF(){ alert("Use o PC"); }
-function copiarRelatorioCobranca(){ 
-    const l = dadosCache.filter(i=>!i.paid && i.category!=="Feijoada").map(i=>`🔴 ${i.buyer_name}: R$ ${parseFloat(i.amount || i.total || 0).toFixed(2)}`).join("\n");
-    navigator.clipboard.writeText("*COBRANÇA DOMINGO*\n"+l).then(()=>showToast("Copiado!"));
-}
-
-window.addEventListener("load", ()=>{
-  const input = document.getElementById("inputSenha");
-  if(input) input.focus();
-});
-
-function sair(){ location.reload(); }
-</script>
+    setInterval(() => {
+      if (
+        document.visibilityState === "visible" &&
+        document.getElementById("modal").classList.contains("hidden") &&
+        !document.getElementById("appMain").classList.contains("hidden")
+      ) {
+        carregarDados();
+      }
+    }, 30000);
+  </script>
 </body>
 </html>
