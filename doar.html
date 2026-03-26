@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#820ad1" />
+  <title>Doações • 21º EJC</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body { font-family: "Inter", sans-serif; background-color: #f5f5f7; -webkit-tap-highlight-color: transparent; }
+    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; }
+    .toast { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); color: white; padding: 14px 20px; border-radius: 16px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; animation: slideDown 0.3s ease-out; }
+    @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  </style>
+</head>
+<body class="min-h-screen p-4 py-10 flex flex-col items-center justify-center">
+
+  <div id="toast-container"></div>
+
+  <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-full mb-4 text-3xl shadow-inner">✝️</div>
+      <p class="text-[10px] uppercase tracking-widest text-purple-600 font-bold mb-1">21º EJC • Santo Eugênio</p>
+      <h2 class="text-2xl font-black text-slate-800">Lista de Doações</h2>
+      <p class="text-sm text-slate-500 mt-2">Escolha um item abaixo e nos ajude a realizar este encontro!</p>
+    </div>
+
+    <form id="formDoacao" class="space-y-4">
+      <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Seu nome completo</label>
+        <input id="d_nome" placeholder="Ex: Maria Aparecida" required class="w-full bg-transparent font-bold text-slate-800 outline-none" />
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">O que você vai nos doar?</label>
+        <select id="d_item" required class="w-full bg-transparent font-bold text-slate-800 outline-none">
+          <option value="">Carregando lista de itens...</option>
+        </select>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+        <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Quantidade</label>
+        <input id="d_qtd" type="number" min="1" value="1" required class="w-full bg-transparent font-bold text-slate-800 outline-none text-center text-lg" />
+      </div>
+
+      <button type="submit" id="btnEnviar" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-200 active:scale-95 transition text-lg mt-4">
+        CONFIRMAR DOAÇÃO
+      </button>
+    </form>
+    
+    <div class="mt-8 text-center border-t border-slate-100 pt-6">
+        <p class="text-xs text-slate-500 font-bold italic">"A morte não venceu.<br>O teu amor me salvou!"</p>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmeGxma2ZqcWFlbWpvdHNlZGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDU1MDQsImV4cCI6MjA4OTk4MTUwNH0.2JWeglgFALa88C9nWMrTmsIlogxcNg3rD2SrE1DJWyM';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t])) : "";
+
+    function showToast(msg, type = "success") {
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.innerHTML = `<i class="fas ${type === "error" ? "fa-times-circle text-rose-400" : "fa-check-circle text-emerald-400"}"></i> ${esc(msg)}`;
+      document.getElementById("toast-container").appendChild(t);
+      setTimeout(() => t.remove(), 3000);
+    }
+
+    async function carregarMetas() {
+      const select = document.getElementById("d_item");
+      const { data, error } = await _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item');
+
+      if (error || !data || data.length === 0) {
+        select.innerHTML = `<option value="">Nenhum item necessário no momento. Obrigado!</option>`;
+        document.getElementById("btnEnviar").disabled = true;
+        document.getElementById("btnEnviar").classList.add("opacity-50");
+        return;
+      }
+
+      select.innerHTML = `<option value="">Selecione um item...</option>`;
+      let temItensFaltando = false;
+
+      data.forEach(meta => {
+        const faltante = Math.max(0, (meta.qtd_necessaria || 0) - (meta.qtd_arrecadada || 0));
+        if (faltante > 0) {
+          temItensFaltando = true;
+          const opt = document.createElement("option");
+          opt.value = meta.item;
+          opt.textContent = `${meta.item} (Precisamos de mais ${faltante} ${meta.unidade})`;
+          select.appendChild(opt);
+        }
+      });
+
+      if (!temItensFaltando) {
+        select.innerHTML = `<option value="">Graças a Deus, todas as metas foram batidas!</option>`;
+        document.getElementById("btnEnviar").disabled = true;
+        document.getElementById("btnEnviar").classList.add("opacity-50");
+      }
+    }
+
+    document.getElementById("formDoacao").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById("btnEnviar");
+      const nome = document.getElementById("d_nome").value.trim();
+      const item = document.getElementById("d_item").value;
+      const quantidade = parseInt(document.getElementById("d_qtd").value, 10);
+
+      if (!item) return showToast("Selecione um item da lista.", "error");
+      
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Registrando...';
+      btn.disabled = true;
+
+      const { error } = await _supabase.rpc('registrar_doacao_publica', {
+        p_item: item,
+        p_quantidade: quantidade,
+        p_nome: nome,
+        p_forma_pagamento: null
+      });
+
+      if (error) {
+        btn.innerHTML = 'CONFIRMAR DOAÇÃO';
+        btn.disabled = false;
+        return showToast("Não foi possível registrar a doação.", "error");
+      }
+
+      // TELA DE SUCESSO
+      document.getElementById("formDoacao").innerHTML = `
+        <div class="text-center py-6 animate-fade-in-up">
+          <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 shadow-sm">
+            <i class="fas fa-check"></i>
+          </div>
+          <h3 class="text-2xl font-black text-slate-800 mb-2">Deus abençoe!</h3>
+          <p class="text-slate-600 font-medium">Sua doação de <b class="text-purple-600">${quantidade}x ${esc(item)}</b> foi registrada com sucesso.</p>
+          <button type="button" onclick="location.reload()" class="mt-8 text-sm font-bold text-slate-400 hover:text-purple-600 transition">
+            Fazer outra doação
+          </button>
+        </div>
+      `;
+    });
+
+    window.onload = carregarMetas;
+  </script>
+</body>
+</html>
