@@ -2,226 +2,196 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#820ad1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>21º EJC • Lista de Providência</title>
-  
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet"/>
 
   <style>
-    :root { --nu-roxo: #820ad1; --nu-roxo-dark: #4b0082; }
-    body { font-family: "Plus Jakarta Sans", sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
-    .premium-card { background: #ffffff; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08); }
-    .vault-input { background: #f8fafc; border: 2px solid #f1f5f9; transition: all 0.3s ease; }
-    .vault-input:focus { background: white; border-color: var(--nu-roxo); box-shadow: 0 0 0 4px rgba(130, 10, 209, 0.1); outline: none; }
-    .progress-bar { height: 6px; border-radius: 10px; background: #f1f5f9; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, #820ad1, #a855f7); transition: width 1.2s ease; }
-    .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 380px; }
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: linear-gradient(180deg,#faf7ff,#f8fafc);
+    }
+    .card {
+      background:white;
+      border-radius:28px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.08);
+    }
+    .input {
+      background:#f8fafc;
+      border:2px solid #eef2f7;
+    }
+    .input:focus {
+      border-color:#820ad1;
+      outline:none;
+      background:white;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4 py-10 bg-slate-50">
 
-  <div id="toast-container"></div>
+<body class="p-4 flex justify-center">
 
-  <div class="w-full max-w-md premium-card p-8 sm:p-10 animate-fade-in border border-slate-100">
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-2xl mb-6 text-purple-700 text-3xl shadow-inner"> ✝️ </div>
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-purple-600 mb-2">21º EJC • Santo Eugênio</p>
-      <h2 class="text-2xl font-black text-slate-800 leading-tight">Lista de Providência</h2>
-      <p class="text-sm text-slate-500 mt-2 font-medium">Sua ajuda é a providência de Deus!</p>
-    </div>
+<div class="w-full max-w-md card p-6">
 
-    <div id="listaProgresso" class="mb-10 space-y-4">
-      <p class="text-center text-xs text-slate-300 animate-pulse">Sincronizando necessidades...</p>
-    </div>
+  <h1 class="text-2xl font-black text-center mb-2">
+    Lista de Providência
+  </h1>
 
-    <div id="areaForm">
-      <form id="formDoacao" class="space-y-5">
-        <div class="space-y-1">
-          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome Completo</label>
-          <input id="d_nome" placeholder="Seu nome" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
-        </div>
+  <p class="text-center text-sm text-gray-500 mb-6">
+    Sua ajuda é a providência de Deus ✝️
+  </p>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">WhatsApp (com DDD)</label>
-            <input id="d_tel" type="tel" placeholder="11999998888" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
-          </div>
-          <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Equipe</label>
-            <select id="d_equipe" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
-              <option value="">Selecione...</option>
-              <option value="Externo">Paroquiano / Visitante</option>
-              <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">O que vai doar?</label>
-            <select id="d_item" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
-              <option value="">Carregando...</option>
-            </select>
-          </div>
-          <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
-            <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-center text-slate-800" />
-          </div>
-        </div>
-
-        <div class="space-y-1">
-          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de Entrega</label>
-          <input id="d_data" type="date" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
-        </div>
-
-        <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
-          Confirmar Doação
-        </button>
-      </form>
-    </div>
-    
-    <div class="mt-12 text-center border-t border-slate-50 pt-8">
-      <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] italic">"Tudo por Jesus, nada sem Maria"</p>
-    </div>
+  <!-- CONTAGEM -->
+  <div class="text-center mb-6">
+    <div id="countdown" class="text-lg font-bold text-purple-700"></div>
   </div>
 
-  <script>
-    const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmeGxma2ZqcWFlbWpvdHNlZGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDU1MDQsImV4cCI6MjA4OTk4MTUwNH0.2JWeglgFALa88C9nWMrTmsIlogxcNg3rD2SrE1DJWyM';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <!-- PROGRESSO -->
+  <div id="lista" class="space-y-3 mb-6 text-sm"></div>
 
-    const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t])) : "";
+  <!-- ÚLTIMAS -->
+  <div class="mb-6">
+    <p class="text-xs font-bold text-gray-400 mb-2">Últimas ofertas</p>
+    <div id="ultimas" class="text-sm"></div>
+  </div>
 
-    function showToast(msg, type = "success") {
-      const t = document.createElement("div");
-      t.className = `p-4 rounded-2xl shadow-2xl mb-2 text-white font-bold text-center text-sm animate-fade-in ${type === 'error' ? 'bg-rose-600' : 'bg-slate-900'}`;
-      t.innerText = msg;
-      document.getElementById("toast-container").appendChild(t);
-      setTimeout(() => t.remove(), 5000);
+  <!-- FORM -->
+  <form id="form" class="space-y-3">
+
+    <input id="nome" placeholder="Nome completo" class="input w-full p-3 rounded-xl" required />
+
+    <input id="tel" placeholder="WhatsApp" class="input w-full p-3 rounded-xl" required />
+
+    <select id="item" class="input w-full p-3 rounded-xl" required></select>
+
+    <input id="qtd" type="number" value="1" min="1" class="input w-full p-3 rounded-xl" required />
+
+    <input id="data" type="date" class="input w-full p-3 rounded-xl" required />
+
+    <button class="w-full bg-purple-700 text-white p-4 rounded-xl font-bold hover:bg-purple-800 transition">
+      Confirmar Oferta
+    </button>
+
+  </form>
+
+</div>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://sfxlfkfjqaemjotsedep.supabase.co",
+  "sb_publishable_cMEBXmudaJN7pALr1aV9-g_EPwoTfiB"
+);
+
+// CONTAGEM REGRESSIVA
+function countdown(){
+  const alvo = new Date("2026-07-11T06:00:00-03:00");
+  const agora = new Date();
+  const diff = alvo - agora;
+
+  if(diff <= 0){
+    document.getElementById("countdown").innerText = "O encontro começou!";
+    return;
+  }
+
+  const dias = Math.floor(diff/(1000*60*60*24));
+  const horas = Math.floor((diff/(1000*60*60)) % 24);
+
+  document.getElementById("countdown").innerText =
+    `Faltam ${dias} dias e ${horas}h para o encontro`;
+}
+setInterval(countdown,1000);
+countdown();
+
+// CARREGAR METAS
+async function carregar(){
+  const {data} = await supabase.from("metas_doacao").select("*");
+
+  const lista = document.getElementById("lista");
+  const select = document.getElementById("item");
+
+  lista.innerHTML="";
+  select.innerHTML='<option value="">Escolha um item</option>';
+
+  data.forEach(i=>{
+    const arr = i.qtd_arrecadada || 0;
+    const nec = i.qtd_necessaria || 0;
+
+    lista.innerHTML += `
+      <div class="flex justify-between">
+        <span>${i.item}</span>
+        <span>${arr}/${nec}</span>
+      </div>
+    `;
+
+    if(arr < nec){
+      const opt = document.createElement("option");
+      opt.value = i.item;
+      opt.textContent = `${i.item} (faltam ${nec-arr})`;
+      select.appendChild(opt);
     }
+  });
+}
 
-    async function carregarDados() {
-      const select = document.getElementById("d_item");
-      const list = document.getElementById("listaProgresso");
-      
-      const { data, error } = await _supabase
-        .from('metas_doacao')
-        .select('*')
-        .eq('ativo', true)
-        .order('item');
-      
-      if (error) {
-        console.error("Erro ao buscar metas:", error);
-        list.innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar necessidades.</p>';
-        return;
-      }
+// ÚLTIMAS OFERTAS
+async function ultimas(){
+  const {data} = await supabase
+    .from("transacoes")
+    .select("*")
+    .eq("modulo","DOACAO")
+    .order("id",{ascending:false})
+    .limit(5);
 
-      const lista = data || [];
-      select.innerHTML = '<option value="">Escolha um item...</option>';
-      list.innerHTML = '';
-      let pendentes = 0;
+  const div = document.getElementById("ultimas");
+  div.innerHTML="";
 
-      lista.forEach(m => {
-        const arr = m.qtd_arrecadada || 0;
-        const nec = m.qtd_necessaria || 1;
-        const faltam = Math.max(0, nec - arr);
-        const perc = Math.min(100, Math.round((arr / nec) * 100));
-        
-        if (faltam > 0) {
-          pendentes++;
-          const opt = document.createElement("option");
-          opt.value = m.item;
-          opt.textContent = `${m.item} (Faltam ${faltam} ${m.unidade || ''})`;
-          select.appendChild(opt);
-        }
+  if(!data || data.length===0){
+    div.innerHTML = `<div class="text-gray-400 text-xs">Ainda não há ofertas</div>`;
+    return;
+  }
 
-        list.innerHTML += `
-          <div class="space-y-1.5">
-            <div class="flex justify-between items-end">
-              <span class="text-xs font-bold text-slate-700">${esc(m.item)}</span>
-              <span class="text-[10px] font-black text-purple-600">${perc}%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${perc}%"></div>
-            </div>
-          </div>`;
-      });
+  data.forEach(d=>{
+    const nome = (d.nome_pessoa || "Alguém").split(" ")[0];
+    div.innerHTML += `
+      <div class="mb-1">
+        <b>${nome}</b> ofertou ${d.quantidade} ${d.descricao}
+      </div>
+    `;
+  });
+}
 
-      if (pendentes === 0 && lista.length > 0) {
-        document.getElementById("areaForm").innerHTML = `
-          <div class="text-center p-8 bg-purple-50 rounded-[32px] border border-purple-100">
-            <p class="text-purple-700 font-bold italic">Graças a Deus, todas as providências já foram alcançadas! 💜</p>
-          </div>`;
-      }
-    }
+// ENVIO
+document.getElementById("form").addEventListener("submit", async e=>{
+  e.preventDefault();
 
-    document.getElementById("formDoacao").addEventListener("submit", async function(e) {
-      e.preventDefault();
+  const btn = e.target.querySelector("button");
+  btn.innerText = "Enviando...";
+  btn.disabled = true;
 
-      const btn = document.getElementById("btnEnviar");
-      const textoOriginal = btn.innerHTML;
-      
-      const qtd = parseInt(document.getElementById("d_qtd").value, 10);
-      const item = document.getElementById("d_item").value;
-      const nome = document.getElementById("d_nome").value.trim();
-      const telefone = document.getElementById("d_tel").value.replace(/\D/g, "");
-      const equipe = document.getElementById("d_equipe").value;
-      const dataEntrega = document.getElementById("d_data").value;
+  const {error} = await supabase.rpc("registrar_doacao_publica",{
+    p_item:document.getElementById("item").value,
+    p_quantidade:parseInt(document.getElementById("qtd").value),
+    p_nome:document.getElementById("nome").value,
+    p_telefone:document.getElementById("tel").value,
+    p_equipe:"Externo",
+    p_data_entrega:document.getElementById("data").value
+  });
 
-      if (!Number.isInteger(qtd) || qtd <= 0) {
-        return showToast("Informe uma quantidade válida.", "error");
-      }
+  if(error){
+    alert("Erro ao registrar.");
+    btn.innerText = "Confirmar Oferta";
+    btn.disabled = false;
+    return;
+  }
 
-      if (!item || !nome || !equipe || !dataEntrega) {
-        return showToast("Preencha todos os campos corretamente.", "error");
-      }
+  alert("Oferta registrada com sucesso! Deus lhe pague! ✝️");
+  location.reload();
+});
 
-      if (!/^\d{10,11}$/.test(telefone)) {
-        return showToast("WhatsApp inválido (use DDD e número).", "error");
-      }
+carregar();
+ultimas();
+</script>
 
-      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> PROCESSANDO...';
-      btn.disabled = true;
-
-      const { error } = await _supabase.rpc('registrar_doacao_publica', {
-        p_item: item,
-        p_quantidade: qtd,
-        p_nome: nome,
-        p_telefone: telefone,
-        p_equipe: equipe,
-        p_data_entrega: dataEntrega || null
-      });
-
-      if (error) {
-        console.error("Erro detalhado do RPC:", error);
-        showToast(error.message || error.details || error.hint || "Erro no banco. Tente novamente.", "error");
-        btn.disabled = false;
-        btn.innerHTML = textoOriginal;
-        return;
-      }
-
-      document.body.innerHTML = `
-        <div class="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-fade-in bg-slate-50">
-          <div class="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-5xl mb-8 shadow-inner">
-            <i class="fas fa-check"></i>
-          </div>
-          <h3 class="text-3xl font-black text-slate-800 mb-4">Deus lhe pague!</h3>
-          <p class="text-slate-600 font-medium max-w-xs mx-auto mb-10 leading-relaxed">
-            Sua oferta de <b class="text-purple-700">${qtd}x ${esc(item)}</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜
-          </p>
-          <button onclick="location.reload()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold shadow-xl active:scale-95 transition-all uppercase tracking-widest text-xs">
-            Voltar à Lista
-          </button>
-        </div>`;
-    });
-
-    window.onload = carregarDados;
-  </script>
 </body>
 </html>
