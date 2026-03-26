@@ -146,40 +146,49 @@
       </div>
 
       <div class="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm mb-20">
-        
         <div id="filtrosProvidenciaWrap" class="p-6 pb-0 hidden">
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Filtrar Situação</p>
-            <div class="flex flex-wrap gap-2">
-                <button data-filtro="TODOS" onclick="setFiltroProv('TODOS')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-md ring-2 ring-slate-900 ring-offset-1">Todos</button>
-                <button data-filtro="PENDENTE" onclick="setFiltroProv('PENDENTE')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">Prometidos</button>
-                <button data-filtro="ATRASADO" onclick="setFiltroProv('ATRASADO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">Atrasados</button>
-                <button data-filtro="PAGO" onclick="setFiltroProv('PAGO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Entregues</button>
-            </div>
+          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Filtrar Situação</p>
+          <div class="flex flex-wrap gap-2">
+            <button data-filtro="TODOS" onclick="setFiltroProv('TODOS')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-md ring-2 ring-slate-900 ring-offset-1">Todos</button>
+            <button data-filtro="PENDENTE" onclick="setFiltroProv('PENDENTE')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">Prometidos</button>
+            <button data-filtro="ATRASADO" onclick="setFiltroProv('ATRASADO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">Atrasados</button>
+            <button data-filtro="PAGO" onclick="setFiltroProv('PAGO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Entregues</button>
+          </div>
         </div>
 
         <div class="p-6 border-b border-slate-50 flex gap-4 items-center">
           <i class="fas fa-search text-slate-300"></i>
           <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar nos registros..." class="w-full text-sm font-semibold outline-none text-slate-700" />
         </div>
-        <div id="loading" class="hidden p-12 text-center text-slate-300"><i class="fas fa-circle-notch fa-spin text-2xl"></i></div>
-        <div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><tbody id="corpoTabela" class="divide-y divide-slate-50"></tbody></table></div>
+
+        <div id="loading" class="hidden p-12 text-center text-slate-300">
+          <i class="fas fa-circle-notch fa-spin text-2xl"></i>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <tbody id="corpoTabela" class="divide-y divide-slate-50"></tbody>
+          </table>
+        </div>
       </div>
     </main>
 
-    <button onclick="abrirModal()" class="fixed bottom-8 right-8 w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition z-50"><i class="fas fa-plus"></i></button>
+    <button onclick="abrirModal()" class="fixed bottom-8 right-8 w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition z-50">
+      <i class="fas fa-plus"></i>
+    </button>
   </div>
 
   <div id="modalMeta" class="hidden fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
       <h2 class="text-xl font-black text-slate-800 mb-6 text-center">Nova Meta de Providência</h2>
       <form id="formMeta" onsubmit="event.preventDefault(); salvarMeta();" class="space-y-4">
-          <input id="m_item" placeholder="Ex: Arroz ou Óleo" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
-          <div class="flex gap-2">
-            <input id="m_qtd" type="number" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
-            <input id="m_un" placeholder="Unid (kg, un)" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
-          </div>
-          <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black active:scale-95 transition">CADASTRAR META</button>
-          <button type="button" onclick="document.getElementById('modalMeta').classList.add('hidden')" class="w-full py-2 font-bold text-slate-400 mt-2">Cancelar</button>
+        <input id="m_item" placeholder="Ex: Arroz ou Óleo" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
+        <div class="flex gap-2">
+          <input id="m_qtd" type="number" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
+          <input id="m_un" placeholder="Unid (kg, un)" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
+        </div>
+        <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black active:scale-95 transition">CADASTRAR META</button>
+        <button type="button" onclick="document.getElementById('modalMeta').classList.add('hidden')" class="w-full py-2 font-bold text-slate-400 mt-2">Cancelar</button>
       </form>
     </div>
   </div>
@@ -191,12 +200,16 @@
         <h2 class="text-xl font-black text-slate-900 uppercase">Novo Registro</h2>
         <button type="button" onclick="fecharModal()" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button>
       </div>
+
       <form id="formFin" class="space-y-4">
-        
         <div id="blocoModulo" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-100">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Destino</label>
           <select id="f_modulo" class="w-full bg-transparent font-bold text-slate-900 outline-none" onchange="atualizarModalDinamico()">
-            <option value="EJC">Fundo Principal</option><option value="MERCADINHO">Mercadinho</option><option value="FEIJOADA">Feijoada</option><option value="DOACAO">Providência</option><option value="ADMIN">Outros</option>
+            <option value="EJC">Fundo Principal</option>
+            <option value="MERCADINHO">Mercadinho</option>
+            <option value="FEIJOADA">Feijoada</option>
+            <option value="DOACAO">Providência</option>
+            <option value="ADMIN">Outros</option>
           </select>
         </div>
 
@@ -217,42 +230,56 @@
         </div>
 
         <div id="camposMercado" class="hidden bg-pink-50 p-5 rounded-2xl border border-pink-100 space-y-4">
-            <select id="f_tipo_pessoa" onchange="controlarTipoPessoa()" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
-                <option value="SERVO">🙋‍♂️ Servo do EJC (Pode Fiado)</option><option value="PAROQUIANO">👤 Paroquiano (Somente Pago)</option>
-            </select>
+          <select id="f_tipo_pessoa" onchange="controlarTipoPessoa()" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
+            <option value="SERVO">🙋‍♂️ Servo do EJC (Pode Fiado)</option>
+            <option value="PAROQUIANO">👤 Paroquiano (Somente Pago)</option>
+          </select>
+
+          <label id="labelEquipeWrap" class="block">
+            <span id="labelEquipeTexto" class="text-[9px] font-black text-slate-400 uppercase block mb-2">Equipe do Responsável</span>
             <select id="f_equipe_merc" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
-                <option value="">Equipe do Responsável...</option>
-                <option value="Externo">Externo / Paroquiano</option>
-                <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
+              <option value="">Selecione a equipe...</option>
+              <option value="Externo">Externo / Paroquiano</option>
+              <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
             </select>
+          </label>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="vault-input rounded-2xl px-4 py-3">
             <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Status</label>
             <select id="f_type" class="w-full bg-transparent font-bold text-slate-900 outline-none">
-              <option value="ENTRADA">Recebido / Entregue ✅</option><option value="PENDENTE">A receber / Prometido 🟠</option><option value="SAIDA">Gasto 🔴</option>
+              <option value="ENTRADA">Recebido / Entregue ✅</option>
+              <option value="PENDENTE">A receber / Prometido 🟠</option>
+              <option value="SAIDA">Gasto 🔴</option>
             </select>
           </div>
           <div class="vault-input rounded-2xl px-4 py-3">
             <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Forma</label>
             <select id="f_forma" class="w-full bg-transparent font-bold text-slate-900 outline-none">
-              <option value="PIX">PIX</option><option value="DINHEIRO">Dinheiro</option><option value="CARTAO">Cartão</option><option value="FISICO">Doação Física</option>
+              <option value="PIX">PIX</option>
+              <option value="DINHEIRO">Dinheiro</option>
+              <option value="CARTAO">Cartão</option>
+              <option value="FISICO">Doação Física</option>
             </select>
           </div>
         </div>
+
         <div class="vault-input rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Nome do Doador / Cliente</label>
           <input id="f_nome" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
         </div>
+
         <div class="vault-input rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">WhatsApp</label>
           <input id="f_tel" type="tel" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
         </div>
+
         <div class="bg-purple-50 rounded-2xl px-4 py-3 border border-purple-100">
           <label class="text-[9px] font-black text-purple-400 uppercase block mb-1">Responsável pelo Lançamento</label>
           <input id="f_recebido" required class="w-full bg-transparent font-bold text-purple-900 outline-none" />
         </div>
+
         <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">CONCLUIR REGISTRO</button>
       </form>
     </div>
@@ -269,17 +296,18 @@
     const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t])) : "";
 
     function showToast(msg, type = "success") {
-      const t = document.createElement("div"); t.className = "toast";
+      const t = document.createElement("div");
+      t.className = "toast";
       t.innerHTML = `<i class="fas ${type === "error" ? "fa-circle-xmark text-rose-500" : "fa-circle-check text-emerald-500"}"></i> ${esc(msg)}`;
-      document.getElementById("toast-container").appendChild(t); setTimeout(() => t.remove(), 3500);
+      document.getElementById("toast-container").appendChild(t);
+      setTimeout(() => t.remove(), 3500);
     }
 
-    /* ====== LOGIN E PERFIS ====== */
     function escolherPerfil(p) {
       document.getElementById("msgErroLogin").classList.add("hidden");
       document.getElementById("stepProfile").classList.add("hidden");
       document.getElementById("stepAuth").classList.remove("hidden");
-      const isCompras = p === 'compras';
+      const isCompras = p === "compras";
       document.getElementById("formCompras").classList.toggle("hidden", !isCompras);
       document.getElementById("formPilotos").classList.toggle("hidden", isCompras);
       document.getElementById("authTitle").innerText = isCompras ? "Acesso Compras" : "Acesso Pilotos";
@@ -294,37 +322,72 @@
     }
 
     async function carregarPerfilUsuario(user) {
-      const { data: profile, error } = await _supabase.from('profiles').select('role, active, nome').eq('id', user.id).single();
-      if (error || !profile || !profile.active) { await _supabase.auth.signOut(); return null; }
+      const { data: profile, error } = await _supabase
+        .from("profiles")
+        .select("role, active, nome")
+        .eq("id", user.id)
+        .single();
+
+      if (error || !profile || !profile.active) {
+        await _supabase.auth.signOut();
+        return null;
+      }
       return profile;
     }
 
     async function executarLogin(email, senha, btnElement) {
-      const tO = btnElement.innerHTML; btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Entrando...';
+      const tO = btnElement.innerHTML;
+      btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Entrando...';
+
       const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
-      if (error) { document.getElementById("msgErroLogin").classList.remove("hidden"); btnElement.innerHTML = tO; return; }
+
+      if (error) {
+        document.getElementById("msgErroLogin").classList.remove("hidden");
+        btnElement.innerHTML = tO;
+        return;
+      }
+
       const profile = await carregarPerfilUsuario(data.user);
-      if (!profile) { document.getElementById("msgErroLogin").classList.remove("hidden"); btnElement.innerHTML = tO; return; }
-      currentUser = data.user; currentProfile = profile; ROLE = profile.role.toUpperCase(); iniciarApp();
+
+      if (!profile) {
+        document.getElementById("msgErroLogin").classList.remove("hidden");
+        btnElement.innerHTML = tO;
+        return;
+      }
+
+      currentUser = data.user;
+      currentProfile = profile;
+      ROLE = profile.role.toUpperCase();
+      iniciarApp();
     }
 
-    function loginCompras() { const s = document.getElementById("senhaCompras").value; executarLogin('compras@ejcbank.com.br', s, document.getElementById('btnCompras')); }
-    function loginPiloto() { const e = document.getElementById("emailPiloto").value.trim().toLowerCase(); const s = document.getElementById("senhaPiloto").value; executarLogin(e, s, document.getElementById('btnPiloto')); }
+    function loginCompras() {
+      const s = document.getElementById("senhaCompras").value;
+      executarLogin("compras@ejcbank.com.br", s, document.getElementById("btnCompras"));
+    }
 
-    /* ====== INICIALIZAÇÃO ====== */
+    function loginPiloto() {
+      const e = document.getElementById("emailPiloto").value.trim().toLowerCase();
+      const s = document.getElementById("senhaPiloto").value;
+      executarLogin(e, s, document.getElementById("btnPiloto"));
+    }
+
     function iniciarApp() {
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appMain").classList.remove("hidden");
+
       const nomeExibicao = currentProfile?.nome || ROLE;
       document.getElementById("userAvatar").innerText = nomeExibicao.charAt(0).toUpperCase();
+
       if (ROLE === "ADMIN") {
         document.querySelectorAll("#tab-admin, #tab-feijoada, #tab-doacao, #dashAdmin").forEach(el => el.classList.remove("hidden"));
         document.getElementById("headerTitle").innerText = "EJC BANK • PILOTOS";
         abaAtiva = "ADMIN";
-      } else { 
+      } else {
         document.getElementById("headerTitle").innerText = "EJC BANK • COMPRAS";
-        abaAtiva = "EJC"; 
+        abaAtiva = "EJC";
       }
+
       mudarAba(abaAtiva);
     }
 
@@ -343,7 +406,7 @@
 
       document.getElementById("blocoAdminDoacao").classList.toggle("hidden", !isDoacao);
       document.getElementById("dashAdmin").classList.toggle("hidden", isDoacao || ROLE !== "ADMIN");
-      
+
       filtroProvidencia = "TODOS";
       atualizarBotoesFiltro();
       document.getElementById("filtrosProvidenciaWrap").classList.toggle("hidden", !isDoacao);
@@ -365,47 +428,55 @@
       await carregarDados();
     }
 
-    /* ====== FILTROS DA PROVIDÊNCIA ====== */
     function setFiltroProv(f) {
-        filtroProvidencia = f;
-        atualizarBotoesFiltro();
-        renderizar();
+      filtroProvidencia = f;
+      atualizarBotoesFiltro();
+      renderizar();
     }
 
     function atualizarBotoesFiltro() {
-        document.querySelectorAll('.btn-filtro-prov').forEach(b => {
-            b.classList.remove('ring-2', 'ring-slate-900', 'ring-offset-1', 'shadow-md');
-            if (b.dataset.filtro === filtroProvidencia) {
-                b.classList.add('ring-2', 'ring-slate-900', 'ring-offset-1', 'shadow-md');
-            }
-        });
+      document.querySelectorAll(".btn-filtro-prov").forEach(b => {
+        b.classList.remove("ring-2", "ring-slate-900", "ring-offset-1", "shadow-md");
+        if (b.dataset.filtro === filtroProvidencia) {
+          b.classList.add("ring-2", "ring-slate-900", "ring-offset-1", "shadow-md");
+        }
+      });
     }
 
-    /* ====== BUSCA E RENDERIZAÇÃO ====== */
     async function carregarDados() {
       document.getElementById("loading").classList.remove("hidden");
-      let query = _supabase.from('transacoes').select('*').order('criado_em', { ascending: false });
-      if (abaAtiva !== "ADMIN") query = query.eq('modulo', abaAtiva);
-      const { data } = await query; dadosCache = data || [];
-      atualizarStats(); renderizar(); document.getElementById("loading").classList.add("hidden");
+
+      let query = _supabase.from("transacoes").select("*").order("criado_em", { ascending: false });
+      if (abaAtiva !== "ADMIN") query = query.eq("modulo", abaAtiva);
+
+      const { data } = await query;
+      dadosCache = data || [];
+
+      atualizarStats();
+      renderizar();
+      document.getElementById("loading").classList.add("hidden");
     }
 
     function atualizarStats() {
       let rec = 0, pen = 0, sai = 0;
+
       dadosCache.forEach(i => {
         const v = parseFloat(i.valor || 0);
-        if (i.natureza === "SAIDA") sai += v; else if (i.status === "PENDENTE") pen += v; else rec += v;
+        if (i.natureza === "SAIDA") sai += v;
+        else if (i.status === "PENDENTE") pen += v;
+        else rec += v;
       });
-      document.getElementById("totalRecebido").innerText = "R$ " + rec.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-      document.getElementById("totalPendente").innerText = "R$ " + pen.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-      document.getElementById("totalSaidas").innerText = "R$ " + sai.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-      document.getElementById("totalLiquido").innerText = "R$ " + (rec - sai).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+
+      document.getElementById("totalRecebido").innerText = "R$ " + rec.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+      document.getElementById("totalPendente").innerText = "R$ " + pen.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+      document.getElementById("totalSaidas").innerText = "R$ " + sai.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+      document.getElementById("totalLiquido").innerText = "R$ " + (rec - sai).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
     }
 
     function renderizar() {
       const tb = document.getElementById("corpoTabela");
       const busca = document.getElementById("campoBusca").value.toLowerCase();
-      
+
       const hoje = new Date();
       hoje.setHours(0, 0, 0, 0);
       const hojeTempo = hoje.getTime();
@@ -450,10 +521,7 @@
           if (i.data_entrega) {
             const dataPrev = new Date(i.data_entrega + "T00:00:00");
             entregaPrevista = dataPrev.toLocaleDateString("pt-BR");
-
-            if (i.status === "PENDENTE" && dataPrev.getTime() < hojeTempo) {
-              isAtrasado = true;
-            }
+            if (i.status === "PENDENTE" && dataPrev.getTime() < hojeTempo) isAtrasado = true;
           }
 
           if (i.recebido_em) {
@@ -481,25 +549,19 @@
                 <div class="mt-3 space-y-1">
                   <p class="text-[10px] text-slate-400 uppercase tracking-widest">${nome} • ${equipe}</p>
                   <p class="text-[10px] text-slate-500">${telefone || "Sem WhatsApp"}</p>
-                  <p class="text-[10px] ${isAtrasado ? 'text-rose-600 font-bold' : 'text-slate-500'}">
-                    Entrega prevista: ${entregaPrevista}
-                  </p>
-                  <p class="text-[10px] ${i.status === 'PAGO' ? 'text-emerald-600 font-bold' : 'text-slate-400'}">
-                    Recebido em: ${entregaRecebida}
-                  </p>
+                  <p class="text-[10px] ${isAtrasado ? 'text-rose-600 font-bold' : 'text-slate-500'}">Entrega prevista: ${entregaPrevista}</p>
+                  <p class="text-[10px] ${i.status === 'PAGO' ? 'text-emerald-600 font-bold' : 'text-slate-400'}">Recebido em: ${entregaRecebida}</p>
                 </div>
               </td>
 
               <td class="p-6 text-right">
                 <div class="flex justify-end items-center gap-2">
                   ${statusBadge}
-
                   ${i.status === "PENDENTE" ? `
                     <button onclick="baixar('${i.id}', ${i.version})" class="w-10 h-10 rounded-xl bg-purple-700 text-white shadow-lg active:scale-95 transition">
                       <i class="fas fa-check text-xs"></i>
                     </button>
                   ` : ""}
-
                   ${telefone ? `
                     <button onclick='${zapParams}' class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100 active:scale-95 transition">
                       <i class="fab fa-whatsapp"></i>
@@ -513,11 +575,7 @@
       } else {
         filtrados.forEach(i => {
           const val = parseFloat(i.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
-          const iconClass = i.natureza === "SAIDA"
-            ? "bg-rose-500"
-            : i.status === "PENDENTE"
-            ? "bg-amber-500"
-            : "bg-emerald-500";
+          const iconClass = i.natureza === "SAIDA" ? "bg-rose-500" : i.status === "PENDENTE" ? "bg-amber-500" : "bg-emerald-500";
 
           const zapBtn = (i.status === "PENDENTE" && i.telefone)
             ? `<button onclick="cobrarZapTotal('${esc(i.telefone)}', ${JSON.stringify(i.nome_pessoa || "")})" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 ml-2 hover:bg-emerald-100 transition"><i class="fab fa-whatsapp"></i></button>`
@@ -527,7 +585,7 @@
             <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-colors">
               <td class="p-6">
                 <p class="text-sm font-bold text-slate-900">${esc(i.descricao)}</p>
-                <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">${esc(i.nome_pessoa) || "Sem nome"} ${i.equipe ? ' • ' + esc(i.equipe) : ""}</p>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">${esc(i.nome_pessoa) || "Sem nome"} ${i.equipe ? " • " + esc(i.equipe) : ""}</p>
               </td>
               <td class="p-6 text-right font-extrabold text-slate-900">R$ ${val}</td>
               <td class="p-6 text-center"><span class="w-2 h-2 rounded-full ${iconClass} inline-block shadow-sm"></span></td>
@@ -545,16 +603,15 @@
         : '<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">Nenhum registro encontrado.</td></tr>';
     }
 
-    /* ====== METAS ====== */
     async function carregarMetasAdmin() {
       const container = document.getElementById("listaGerenciarMetas");
       container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center py-4"><i class="fas fa-circle-notch fa-spin mr-2"></i> Calculando necessidades...</p>';
 
       const { data: metas, error: metasError } = await _supabase
-        .from('metas_doacao')
-        .select('*')
-        .eq('ativo', true)
-        .order('item');
+        .from("metas_doacao")
+        .select("*")
+        .eq("ativo", true)
+        .order("item");
 
       if (metasError || !metas || metas.length === 0) {
         container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center py-4">Sem metas cadastradas.</p>';
@@ -562,9 +619,9 @@
       }
 
       const { data: registros } = await _supabase
-        .from('transacoes')
-        .select('descricao, quantidade, status')
-        .eq('modulo', 'DOACAO');
+        .from("transacoes")
+        .select("descricao, quantidade, status")
+        .eq("modulo", "DOACAO");
 
       const mapa = {};
 
@@ -582,7 +639,7 @@
         const meta = Number(m.qtd_necessaria || 0);
         const prometido = mapa[m.item]?.prometido || 0;
         const entregue = mapa[m.item]?.entregue || 0;
-        const faltamReais = Math.max(0, meta - entregue);
+        const faltamEntregar = Math.max(0, meta - entregue);
         const percReal = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
 
         return `
@@ -611,56 +668,86 @@
                 <p class="text-sm font-extrabold text-emerald-500">${entregue}</p>
               </div>
               <div class="bg-white rounded-xl p-3 border border-purple-100 shadow-sm bg-purple-50">
-                <p class="text-[9px] font-black uppercase tracking-wider text-purple-400">Faltam reais</p>
-                <p class="text-sm font-extrabold text-purple-700">${faltamReais}</p>
+                <p class="text-[9px] font-black uppercase tracking-wider text-purple-400">Faltam entregar</p>
+                <p class="text-sm font-extrabold text-purple-700">${faltamEntregar}</p>
               </div>
             </div>
           </div>
         `;
       });
 
-      container.innerHTML = cards.join('');
+      container.innerHTML = cards.join("");
     }
 
-    async function excluirMeta(id) { if (confirm("Remover esta necessidade?")) { await _supabase.from('metas_doacao').delete().eq('id', id); carregarMetasAdmin(); } }
-    
-    async function salvarMeta() { 
-      const item = document.getElementById("m_item").value.trim(); 
-      const qtd = parseInt(document.getElementById("m_qtd").value, 10); 
-      const un = document.getElementById("m_un").value.trim(); 
-      const { error } = await _supabase.from('metas_doacao').insert([{ item, qtd_necessaria: qtd, unidade: un }]); 
-      if (error) { showToast("Não foi possível salvar a meta.", "error"); return; } 
-      showToast("Meta cadastrada com sucesso!"); 
-      document.getElementById("modalMeta").classList.add("hidden"); 
-      document.getElementById("formMeta").reset(); 
-      carregarMetasAdmin(); 
+    async function excluirMeta(id) {
+      if (confirm("Remover esta necessidade?")) {
+        await _supabase.from("metas_doacao").delete().eq("id", id);
+        carregarMetasAdmin();
+      }
     }
 
-    /* ====== WHATSAPP ====== */
+    async function salvarMeta() {
+      const item = document.getElementById("m_item").value.trim();
+      const qtd = parseInt(document.getElementById("m_qtd").value, 10);
+      const un = document.getElementById("m_un").value.trim();
+
+      const { error } = await _supabase.from("metas_doacao").insert([{ item, qtd_necessaria: qtd, unidade: un }]);
+
+      if (error) {
+        showToast("Não foi possível salvar a meta.", "error");
+        return;
+      }
+
+      showToast("Meta cadastrada com sucesso!");
+      document.getElementById("modalMeta").classList.add("hidden");
+      document.getElementById("formMeta").reset();
+      carregarMetasAdmin();
+    }
+
     function cobrarZapTotal(telefone, nome) {
-        const num = String(telefone).replace(/\D/g,"");
-        if(!/^\d{10,11}$/.test(num)) return showToast("Número inválido", "error");
-        const total = dadosCache.filter(i => i.status === 'PENDENTE' && i.telefone && i.telefone.replace(/\D/g,"") === num).reduce((acc, i) => acc + parseFloat(i.valor || 0), 0);
-        if (total <= 0) return showToast("Sem pendências.", "success");
-        const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Tudo bem?\nPassando para lembrar da pendência de *R$ ${total.toFixed(2)}* no mercadinho do EJC.\n\nQualquer dúvida, estou à disposição. Deus abençoe! ✝️💜`);
-        window.open(`https://wa.me/55${num}?text=${msg}`, '_blank');
+      const num = String(telefone).replace(/\D/g, "");
+      if (!/^\d{10,11}$/.test(num)) return showToast("Número inválido", "error");
+
+      const total = dadosCache
+        .filter(i => i.status === "PENDENTE" && i.telefone && i.telefone.replace(/\D/g, "") === num)
+        .reduce((acc, i) => acc + parseFloat(i.valor || 0), 0);
+
+      if (total <= 0) return showToast("Sem pendências.", "success");
+
+      const primeiroNome = (nome || "Irmão(ã)").trim().split(" ")[0];
+      const msg = encodeURIComponent(`Olá *${primeiroNome}*! Tudo bem?\nPassando para lembrar da pendência de *R$ ${total.toFixed(2)}* no mercadinho do EJC.\n\nQualquer dúvida, estou à disposição. Deus abençoe! ✝️💜`);
+      window.open(`https://wa.me/55${num}?text=${msg}`, "_blank");
     }
 
     function cobrarZapPromessa(telefone, nome, item, quantidade) {
       const num = String(telefone || "").replace(/\D/g, "");
-      if (!/^\d{10,11}$/.test(num)) { return showToast("Número de contato inválido.", "error"); }
+      if (!/^\d{10,11}$/.test(num)) return showToast("Número de contato inválido.", "error");
+
       const primeiroNome = (nome || "Irmão(ã)").trim().split(" ")[0];
-      const msg = encodeURIComponent(`Olá, *${primeiroNome}*! ✝️💜\n\nEstamos conferindo as promessas da Providência do 21º EJC.\n\nConsta para você:\n• Item: *${item}*\n• Quantidade: *${quantidade}*\n\nVocê ainda pretende entregar?\nSe sim, poderia nos confirmar a previsão para a equipe de compras se organizar?\n\nDeus abençoe!`);
+      const msg = encodeURIComponent(
+        `Olá, *${primeiroNome}*! ✝️💜\n\nEstamos conferindo a Providência do 21º EJC.\n\nConsta para você:\n• Item: *${item}*\n• Quantidade: *${quantidade}*\n\nVocê consegue nos confirmar se ainda fará a entrega e, se possível, a previsão?\n\nDeus abençoe!`
+      );
+
       window.open(`https://wa.me/55${num}?text=${msg}`, "_blank");
     }
 
-    /* ====== MODAL DE REGISTRO ====== */
     function controlarTipoPessoa() {
-        const mod = abaAtiva === "ADMIN" ? document.getElementById("f_modulo").value : abaAtiva;
-        if (mod === "DOACAO") return;
+      const mod = abaAtiva === "ADMIN" ? document.getElementById("f_modulo").value : abaAtiva;
+      if (mod === "DOACAO") return;
 
-        const tipo = document.getElementById("f_tipo_pessoa").value, eqp = document.getElementById("f_equipe_merc"), stat = document.getElementById("f_type"), optF = stat.querySelector('option[value="PENDENTE"]');
-        if (tipo === "PAROQUIANO") { eqp.classList.add("hidden"); stat.value = "ENTRADA"; if(optF) optF.disabled = true; } else { eqp.classList.remove("hidden"); if(optF) optF.disabled = false; }
+      const tipo = document.getElementById("f_tipo_pessoa").value;
+      const eqp = document.getElementById("f_equipe_merc");
+      const stat = document.getElementById("f_type");
+      const optF = stat.querySelector('option[value="PENDENTE"]');
+
+      if (tipo === "PAROQUIANO") {
+        eqp.classList.add("hidden");
+        stat.value = "ENTRADA";
+        if (optF) optF.disabled = true;
+      } else {
+        eqp.classList.remove("hidden");
+        if (optF) optF.disabled = false;
+      }
     }
 
     function atualizarModalDinamico() {
@@ -670,14 +757,24 @@
 
       document.getElementById("blocoModulo").classList.toggle("hidden", abaAtiva !== "ADMIN");
       document.getElementById("camposMercado").classList.toggle("hidden", !(isMercado || isDoacao));
-      document.getElementById("f_tipo_pessoa").classList.toggle("hidden", isDoacao);
-      if (isDoacao) document.getElementById("f_equipe_merc").classList.remove("hidden");
-
       document.getElementById("campoDataEntregaWrap").classList.toggle("hidden", !isDoacao);
+
+      const tipoPessoa = document.getElementById("f_tipo_pessoa");
+      const equipeMerc = document.getElementById("f_equipe_merc");
+      const labelEquipeTexto = document.getElementById("labelEquipeTexto");
+
+      if (isDoacao) {
+        tipoPessoa.classList.add("hidden");
+        equipeMerc.classList.remove("hidden");
+        labelEquipeTexto.textContent = "Equipe do doador / responsável";
+      } else if (isMercado) {
+        tipoPessoa.classList.remove("hidden");
+        labelEquipeTexto.textContent = "Equipe do Responsável";
+      }
 
       const labelValor = document.getElementById("labelVal");
       const inputVal = document.getElementById("f_val");
-      
+
       if (isDoacao) {
         labelValor.textContent = "Quantidade";
         inputVal.step = "1";
@@ -704,9 +801,9 @@
       document.getElementById("formFin").reset();
       document.getElementById("camposMercado").classList.add("hidden");
       document.getElementById("campoDataEntregaWrap").classList.add("hidden");
-      
+
       const btn = document.getElementById("btnSubmitRegistro");
-      btn.innerHTML = 'CONCLUIR REGISTRO';
+      btn.innerHTML = "CONCLUIR REGISTRO";
       btn.disabled = false;
     }
 
@@ -715,7 +812,7 @@
 
       const btn = document.getElementById("btnSubmitRegistro");
       const txtOriginal = btn.innerHTML;
-      
+
       const type = document.getElementById("f_type").value;
       const mod = abaAtiva === "ADMIN" ? document.getElementById("f_modulo").value : abaAtiva;
       const valorBruto = document.getElementById("f_val").value;
@@ -734,9 +831,19 @@
 
       let eqp = "";
       if (mod === "MERCADINHO") {
-        eqp = document.getElementById("f_tipo_pessoa").value === "SERVO" ? document.getElementById("f_equipe_merc").value : "PAROQUIANO";
+        eqp = document.getElementById("f_tipo_pessoa").value === "SERVO"
+          ? document.getElementById("f_equipe_merc").value
+          : "PAROQUIANO";
       } else if (mod === "DOACAO") {
-        eqp = document.getElementById("f_equipe_merc").value || "Externo";
+        eqp = document.getElementById("f_equipe_merc").value;
+      }
+
+      if (mod === "DOACAO" && !eqp) {
+        return showToast("Selecione a equipe do responsável.", "error");
+      }
+
+      if (mod === "DOACAO" && !document.getElementById("f_data_entrega").value) {
+        return showToast("Informe a data prevista de entrega.", "error");
       }
 
       const payload = {
@@ -755,16 +862,16 @@
       };
 
       if (mod === "DOACAO") {
-        payload.data_entrega = document.getElementById("f_data_entrega").value || null;
+        payload.data_entrega = document.getElementById("f_data_entrega").value;
         if (payload.status === "PAGO") {
-            payload.recebido_em = new Date().toISOString();
+          payload.recebido_em = new Date().toISOString();
         }
       }
 
       btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> SALVANDO...';
       btn.disabled = true;
 
-      const { error } = await _supabase.from('transacoes').insert([payload]);
+      const { error } = await _supabase.from("transacoes").insert([payload]);
 
       if (error) {
         showToast("Não foi possível salvar o registro.", "error");
@@ -782,13 +889,13 @@
     async function baixar(id, ver) {
       if (confirm("Você confirma que recebeu fisicamente este item?")) {
         const { error } = await _supabase
-          .from('transacoes')
+          .from("transacoes")
           .update({
-            status: 'PAGO',
+            status: "PAGO",
             recebido_em: new Date().toISOString()
           })
-          .eq('id', id)
-          .eq('version', ver);
+          .eq("id", id)
+          .eq("version", ver);
 
         if (error) {
           showToast("Não foi possível confirmar.", "error");
@@ -801,17 +908,32 @@
       }
     }
 
-    async function sair() { await _supabase.auth.signOut(); location.reload(); }
+    async function sair() {
+      await _supabase.auth.signOut();
+      location.reload();
+    }
 
     window.onload = async () => {
       const { data: { session } } = await _supabase.auth.getSession();
-      if (session) { const p = await carregarPerfilUsuario(session.user); if (p) { currentUser = session.user; currentProfile = p; ROLE = p.role.toUpperCase(); iniciarApp(); } }
+      if (session) {
+        const p = await carregarPerfilUsuario(session.user);
+        if (p) {
+          currentUser = session.user;
+          currentProfile = p;
+          ROLE = p.role.toUpperCase();
+          iniciarApp();
+        }
+      }
     };
 
-    setInterval(() => { 
-      if ( document.visibilityState === "visible" && !document.getElementById("appMain").classList.contains("hidden") && document.getElementById("modal").classList.contains("hidden") ) { 
-        carregarDados(); 
-      } 
+    setInterval(() => {
+      if (
+        document.visibilityState === "visible" &&
+        !document.getElementById("appMain").classList.contains("hidden") &&
+        document.getElementById("modal").classList.contains("hidden")
+      ) {
+        carregarDados();
+      }
     }, 30000);
   </script>
 </body>
