@@ -2,196 +2,631 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#820ad1" />
   <title>21º EJC • Lista de Providência</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet"/>
 
   <style>
+    :root {
+      --nu-roxo: #820ad1;
+      --nu-roxo-dark: #4b0082;
+      --nu-soft: #f6effd;
+      --nu-line: #eee7f8;
+      --nu-text: #1f2937;
+    }
+
     body {
       font-family: "Plus Jakarta Sans", sans-serif;
-      background: linear-gradient(180deg,#faf7ff,#f8fafc);
+      background:
+        radial-gradient(circle at top right, rgba(130, 10, 209, 0.10), transparent 28%),
+        radial-gradient(circle at top left, rgba(168, 85, 247, 0.06), transparent 24%),
+        #f8fafc;
+      -webkit-tap-highlight-color: transparent;
+      color: var(--nu-text);
     }
-    .card {
-      background:white;
-      border-radius:28px;
-      box-shadow:0 20px 50px rgba(0,0,0,0.08);
+
+    .premium-card {
+      background: rgba(255,255,255,0.96);
+      border-radius: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(10px);
     }
-    .input {
-      background:#f8fafc;
-      border:2px solid #eef2f7;
+
+    .hero-top {
+      background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
+      border-radius: 32px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -25px rgba(75, 0, 130, 0.55);
     }
-    .input:focus {
-      border-color:#820ad1;
-      outline:none;
-      background:white;
+
+    .hero-top::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+      opacity: 0.08;
+    }
+
+    .vault-input {
+      background: #f8fafc;
+      border: 2px solid #f1f5f9;
+      transition: all 0.25s ease;
+    }
+
+    .vault-input:focus {
+      background: white;
+      border-color: var(--nu-roxo);
+      box-shadow: 0 0 0 4px rgba(130, 10, 209, 0.10);
+      outline: none;
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: #eceff3;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #820ad1, #a855f7);
+      border-radius: 999px;
+      transition: width 1s ease;
+    }
+
+    .need-card {
+      position: relative;
+      border: 1px solid var(--nu-line);
+      background: linear-gradient(180deg, #ffffff 0%, #fbf8ff 100%);
+      border-radius: 24px;
+      padding: 16px;
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+
+    .need-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 72px;
+      height: 72px;
+      background: radial-gradient(circle, rgba(130,10,209,0.10), transparent 68%);
+      pointer-events: none;
+    }
+
+    .need-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 30px -24px rgba(0,0,0,0.30);
+    }
+
+    .mini-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .selected-glow {
+      animation: glowPulse 0.8s ease;
+    }
+
+    @keyframes glowPulse {
+      0% { box-shadow: 0 0 0 rgba(130,10,209,0); }
+      50% { box-shadow: 0 0 0 8px rgba(130,10,209,0.10); }
+      100% { box-shadow: 0 0 0 rgba(130,10,209,0); }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.55s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      width: 90%;
+      max-width: 390px;
+    }
+
+    .toast {
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: white;
+      font-weight: 700;
+      margin-bottom: 8px;
+      box-shadow: 0 18px 30px -18px rgba(0,0,0,0.45);
+    }
+
+    .msg-card {
+      background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
+      border: 1px solid #efe7fb;
+      border-radius: 20px;
+      padding: 14px;
+    }
+
+    .count-card {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 10px 8px;
+      text-align: center;
+      min-width: 66px;
+      backdrop-filter: blur(8px);
+    }
+
+    .soft-panel {
+      background: linear-gradient(180deg, #fcfaff 0%, #f7f1ff 100%);
+      border: 1px solid #eee5fb;
+      border-radius: 24px;
     }
   </style>
 </head>
+<body class="min-h-screen flex flex-col items-center p-4 py-8">
 
-<body class="p-4 flex justify-center">
+  <div id="toast-container"></div>
 
-<div class="w-full max-w-md card p-6">
+  <div class="w-full max-w-md premium-card p-5 sm:p-6 border border-slate-100 animate-fade-in">
+    
+    <div class="hero-top p-6 text-white mb-6">
+      <div class="relative z-10 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-white/15 border border-white/20 rounded-2xl mb-5 text-3xl shadow-inner">
+          ✝️
+        </div>
+        <p class="text-[10px] font-black uppercase tracking-[0.28em] text-white/80 mb-2">21º EJC • Santo Eugênio</p>
+        <h1 class="text-2xl font-black leading-tight">Lista de Providência</h1>
+        <p class="text-sm text-white/80 mt-2 font-medium">
+          Sua doação ajuda a construir este encontro.
+        </p>
 
-  <h1 class="text-2xl font-black text-center mb-2">
-    Lista de Providência
-  </h1>
-
-  <p class="text-center text-sm text-gray-500 mb-6">
-    Sua ajuda é a providência de Deus ✝️
-  </p>
-
-  <!-- CONTAGEM -->
-  <div class="text-center mb-6">
-    <div id="countdown" class="text-lg font-bold text-purple-700"></div>
-  </div>
-
-  <!-- PROGRESSO -->
-  <div id="lista" class="space-y-3 mb-6 text-sm"></div>
-
-  <!-- ÚLTIMAS -->
-  <div class="mb-6">
-    <p class="text-xs font-bold text-gray-400 mb-2">Últimas ofertas</p>
-    <div id="ultimas" class="text-sm"></div>
-  </div>
-
-  <!-- FORM -->
-  <form id="form" class="space-y-3">
-
-    <input id="nome" placeholder="Nome completo" class="input w-full p-3 rounded-xl" required />
-
-    <input id="tel" placeholder="WhatsApp" class="input w-full p-3 rounded-xl" required />
-
-    <select id="item" class="input w-full p-3 rounded-xl" required></select>
-
-    <input id="qtd" type="number" value="1" min="1" class="input w-full p-3 rounded-xl" required />
-
-    <input id="data" type="date" class="input w-full p-3 rounded-xl" required />
-
-    <button class="w-full bg-purple-700 text-white p-4 rounded-xl font-bold hover:bg-purple-800 transition">
-      Confirmar Oferta
-    </button>
-
-  </form>
-
-</div>
-
-<script>
-const supabase = window.supabase.createClient(
-  "https://sfxlfkfjqaemjotsedep.supabase.co",
-  "sb_publishable_cMEBXmudaJN7pALr1aV9-g_EPwoTfiB"
-);
-
-// CONTAGEM REGRESSIVA
-function countdown(){
-  const alvo = new Date("2026-07-11T06:00:00-03:00");
-  const agora = new Date();
-  const diff = alvo - agora;
-
-  if(diff <= 0){
-    document.getElementById("countdown").innerText = "O encontro começou!";
-    return;
-  }
-
-  const dias = Math.floor(diff/(1000*60*60*24));
-  const horas = Math.floor((diff/(1000*60*60)) % 24);
-
-  document.getElementById("countdown").innerText =
-    `Faltam ${dias} dias e ${horas}h para o encontro`;
-}
-setInterval(countdown,1000);
-countdown();
-
-// CARREGAR METAS
-async function carregar(){
-  const {data} = await supabase.from("metas_doacao").select("*");
-
-  const lista = document.getElementById("lista");
-  const select = document.getElementById("item");
-
-  lista.innerHTML="";
-  select.innerHTML='<option value="">Escolha um item</option>';
-
-  data.forEach(i=>{
-    const arr = i.qtd_arrecadada || 0;
-    const nec = i.qtd_necessaria || 0;
-
-    lista.innerHTML += `
-      <div class="flex justify-between">
-        <span>${i.item}</span>
-        <span>${arr}/${nec}</span>
+        <div class="mt-5 px-4 py-3 rounded-2xl bg-white/10 border border-white/15">
+          <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/75 mb-3">Contagem regressiva</p>
+          <div id="contadorWrap" class="grid grid-cols-4 gap-2">
+            <div class="count-card">
+              <div id="cdDias" class="text-xl font-black">--</div>
+              <div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Dias</div>
+            </div>
+            <div class="count-card">
+              <div id="cdHoras" class="text-xl font-black">--</div>
+              <div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Horas</div>
+            </div>
+            <div class="count-card">
+              <div id="cdMin" class="text-xl font-black">--</div>
+              <div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Min</div>
+            </div>
+            <div class="count-card">
+              <div id="cdSeg" class="text-xl font-black">--</div>
+              <div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Seg</div>
+            </div>
+          </div>
+          <p class="text-[11px] text-white/75 font-medium mt-3">Até 11/07/2026 às 6h</p>
+        </div>
       </div>
-    `;
+    </div>
 
-    if(arr < nec){
-      const opt = document.createElement("option");
-      opt.value = i.item;
-      opt.textContent = `${i.item} (faltam ${nec-arr})`;
-      select.appendChild(opt);
+    <div class="soft-panel p-4 mb-6">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-white text-purple-700 flex items-center justify-center shadow-sm">
+          <i class="fas fa-hands-helping"></i>
+        </div>
+        <div>
+          <p class="text-sm font-extrabold text-slate-800">Como funciona?</p>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+            Você registra sua doação aqui, e nossa equipe acompanha até a entrega. Assim evitamos duplicidade e organizamos melhor a Providência.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-black uppercase tracking-widest text-slate-700">Necessidades atuais</h2>
+        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Providência</span>
+      </div>
+
+      <div id="listaProgresso" class="space-y-3">
+        <p class="text-center text-xs text-slate-300 animate-pulse">Sincronizando necessidades...</p>
+      </div>
+    </div>
+
+    <div id="areaForm">
+      <form id="formDoacao" class="space-y-5">
+        <div class="space-y-1">
+          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome Completo</label>
+          <input id="d_nome" placeholder="Seu nome" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">WhatsApp (com DDD)</label>
+            <input id="d_tel" type="tel" placeholder="(11) 99999-8888" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Equipe</label>
+            <select id="d_equipe" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
+              <option value="">Selecione...</option>
+              <option value="Externo">Paroquiano / Visitante</option>
+              <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">O que vai doar?</label>
+            <select id="d_item" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
+              <option value="">Carregando...</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
+            <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-center text-slate-800" />
+          </div>
+        </div>
+
+        <div id="itemEscolhidoBox" class="hidden bg-amber-50 border border-amber-100 rounded-2xl px-4 py-3">
+          <p class="text-[10px] font-black uppercase tracking-widest text-amber-700">Você escolheu</p>
+          <p id="itemEscolhidoTexto" class="text-sm font-bold text-slate-800 mt-1"></p>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de Entrega</label>
+          <input id="d_data" type="date" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+        </div>
+
+        <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
+          Confirmar Doação
+        </button>
+      </form>
+    </div>
+
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-black uppercase tracking-widest text-slate-700">Últimas doações registradas</h3>
+      </div>
+      <div id="ultimasDoacoes" class="space-y-2">
+        <p class="text-xs text-slate-300">Carregando...</p>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-black uppercase tracking-widest text-slate-700">Mural de mensagens</h3>
+      </div>
+
+      <div class="space-y-3 mb-4">
+        <textarea id="m_msg" rows="3" maxlength="220" placeholder="Escreva uma mensagem de carinho para o EJC..." class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700 resize-none"></textarea>
+        <button id="btnMsg" type="button" onclick="enviarMensagem()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-black active:scale-95 transition-all uppercase tracking-widest text-xs">
+          Enviar mensagem
+        </button>
+      </div>
+
+      <div id="listaMensagens" class="space-y-3">
+        <p class="text-xs text-slate-300">Carregando mural...</p>
+      </div>
+    </div>
+    
+    <div class="mt-10 text-center border-t border-slate-50 pt-7">
+      <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] italic">"Tudo por Jesus, nada sem Maria"</p>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_cMEBXmudaJN7pALr1aV9-g_EPwoTfiB';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    }[t])) : "";
+
+    function showToast(msg, type = "success") {
+      const t = document.createElement("div");
+      t.className = `toast animate-fade-in ${type === 'error' ? 'bg-rose-600' : 'bg-slate-900'}`;
+      t.innerText = msg;
+      document.getElementById("toast-container").appendChild(t);
+      setTimeout(() => t.remove(), 4500);
     }
-  });
-}
 
-// ÚLTIMAS OFERTAS
-async function ultimas(){
-  const {data} = await supabase
-    .from("transacoes")
-    .select("*")
-    .eq("modulo","DOACAO")
-    .order("id",{ascending:false})
-    .limit(5);
+    function aplicarAnimacaoSelecao() {
+      const campo = document.getElementById("d_item");
+      campo.classList.remove("selected-glow");
+      void campo.offsetWidth;
+      campo.classList.add("selected-glow");
+    }
 
-  const div = document.getElementById("ultimas");
-  div.innerHTML="";
+    function mascararWhatsapp(valor) {
+      const nums = valor.replace(/\D/g, "").slice(0, 11);
+      if (nums.length <= 2) return nums;
+      if (nums.length <= 7) return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
+      if (nums.length <= 11) return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
+      return nums;
+    }
 
-  if(!data || data.length===0){
-    div.innerHTML = `<div class="text-gray-400 text-xs">Ainda não há ofertas</div>`;
-    return;
-  }
+    function iniciarContador() {
+      const destino = new Date('2026-07-11T06:00:00');
 
-  data.forEach(d=>{
-    const nome = (d.nome_pessoa || "Alguém").split(" ")[0];
-    div.innerHTML += `
-      <div class="mb-1">
-        <b>${nome}</b> ofertou ${d.quantidade} ${d.descricao}
-      </div>
-    `;
-  });
-}
+      function atualizar() {
+        const agora = new Date();
+        let diff = destino.getTime() - agora.getTime();
 
-// ENVIO
-document.getElementById("form").addEventListener("submit", async e=>{
-  e.preventDefault();
+        if (diff < 0) diff = 0;
 
-  const btn = e.target.querySelector("button");
-  btn.innerText = "Enviando...";
-  btn.disabled = true;
+        const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const min = Math.floor((diff / (1000 * 60)) % 60);
+        const seg = Math.floor((diff / 1000) % 60);
 
-  const {error} = await supabase.rpc("registrar_doacao_publica",{
-    p_item:document.getElementById("item").value,
-    p_quantidade:parseInt(document.getElementById("qtd").value),
-    p_nome:document.getElementById("nome").value,
-    p_telefone:document.getElementById("tel").value,
-    p_equipe:"Externo",
-    p_data_entrega:document.getElementById("data").value
-  });
+        document.getElementById('cdDias').innerText = String(dias).padStart(2, '0');
+        document.getElementById('cdHoras').innerText = String(horas).padStart(2, '0');
+        document.getElementById('cdMin').innerText = String(min).padStart(2, '0');
+        document.getElementById('cdSeg').innerText = String(seg).padStart(2, '0');
+      }
 
-  if(error){
-    alert("Erro ao registrar.");
-    btn.innerText = "Confirmar Oferta";
-    btn.disabled = false;
-    return;
-  }
+      atualizar();
+      setInterval(atualizar, 1000);
+    }
 
-  alert("Oferta registrada com sucesso! Deus lhe pague! ✝️");
-  location.reload();
-});
+    async function carregarDados() {
+      const select = document.getElementById("d_item");
+      const list = document.getElementById("listaProgresso");
+      const ultimas = document.getElementById("ultimasDoacoes");
 
-carregar();
-ultimas();
-</script>
+      const { data: metas, error } = await _supabase
+        .from('metas_doacao')
+        .select('*')
+        .eq('ativo', true)
+        .order('item');
 
+      if (error) {
+        console.error("Erro ao buscar metas:", error);
+        list.innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar necessidades.</p>';
+        return;
+      }
+
+      const lista = metas || [];
+      select.innerHTML = '<option value="">Escolha um item...</option>';
+      list.innerHTML = '';
+      let pendentes = 0;
+
+      lista.forEach(m => {
+        const arr = Number(m.qtd_arrecadada || 0);
+        const nec = Number(m.qtd_necessaria || 1);
+        const faltam = Math.max(0, nec - arr);
+        const perc = Math.min(100, Math.round((arr / nec) * 100));
+
+        if (faltam > 0) {
+          pendentes++;
+          const opt = document.createElement("option");
+          opt.value = m.item;
+          opt.textContent = `${m.item} (Faltam ${faltam} ${m.unidade || ''})`;
+          select.appendChild(opt);
+        }
+
+        list.innerHTML += `
+          <div class="need-card">
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <p class="text-sm font-extrabold text-slate-800">${esc(m.item)}</p>
+                <p class="text-[11px] text-slate-500 mt-1">Necessário: ${nec} ${esc(m.unidade || '')}</p>
+              </div>
+              <div class="text-right">
+                <span class="mini-badge bg-purple-50 text-purple-700 border border-purple-100">${perc}%</span>
+              </div>
+            </div>
+
+            <div class="progress-bar mb-3">
+              <div class="progress-fill" style="width:${perc}%"></div>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="font-bold text-slate-500">Já registrado: ${arr}</span>
+              <span class="font-black ${faltam > 0 ? 'text-purple-700' : 'text-emerald-600'}">
+                ${faltam > 0 ? `Faltam ${faltam}` : 'Completo'}
+              </span>
+            </div>
+          </div>
+        `;
+      });
+
+      if (pendentes === 0 && lista.length > 0) {
+        document.getElementById("areaForm").innerHTML = `
+          <div class="text-center p-8 bg-purple-50 rounded-[32px] border border-purple-100">
+            <p class="text-purple-700 font-bold italic">Graças a Deus, todas as providências já foram alcançadas! 💜</p>
+          </div>`;
+      }
+
+      const { data: ultimosRegistros } = await _supabase
+        .from('transacoes')
+        .select('nome_pessoa, descricao, quantidade, criado_em')
+        .eq('modulo', 'DOACAO')
+        .order('criado_em', { ascending: false })
+        .limit(5);
+
+      const registros = ultimosRegistros || [];
+      if (!registros.length) {
+        ultimas.innerHTML = `<p class="text-xs text-slate-400">Ainda não há doações registradas.</p>`;
+      } else {
+        ultimas.innerHTML = registros.map(r => `
+          <div class="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3">
+            <p class="text-sm font-bold text-slate-800">${esc(r.nome_pessoa || "Doação registrada")}</p>
+            <p class="text-xs text-slate-500 mt-1">${Number(r.quantidade || 0)}x ${esc(r.descricao || "-")}</p>
+          </div>
+        `).join("");
+      }
+    }
+
+    async function carregarMensagens() {
+      const wrap = document.getElementById("listaMensagens");
+
+      const { data, error } = await _supabase
+        .from('mural_mensagens')
+        .select('nome, mensagem, criado_em')
+        .eq('aprovada', true)
+        .order('criado_em', { ascending: false })
+        .limit(8);
+
+      if (error) {
+        wrap.innerHTML = `<p class="text-xs text-slate-400">Mural indisponível no momento.</p>`;
+        return;
+      }
+
+      const msgs = data || [];
+      if (!msgs.length) {
+        wrap.innerHTML = `<p class="text-xs text-slate-400">Ainda não há mensagens no mural.</p>`;
+        return;
+      }
+
+      wrap.innerHTML = msgs.map(m => `
+        <div class="msg-card">
+          <p class="text-sm font-bold text-slate-800">${esc(m.nome || "Participante")}</p>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(m.mensagem || "")}</p>
+        </div>
+      `).join("");
+    }
+
+    async function enviarMensagem() {
+      const nome = document.getElementById("d_nome").value.trim();
+      const mensagem = document.getElementById("m_msg").value.trim();
+      const btn = document.getElementById("btnMsg");
+      const original = btn.innerHTML;
+
+      if (!nome) return showToast("Preencha seu nome para enviar a mensagem.", "error");
+      if (!mensagem) return showToast("Escreva uma mensagem para o mural.", "error");
+      if (mensagem.length < 3) return showToast("Mensagem muito curta.", "error");
+
+      btn.disabled = true;
+      btn.innerHTML = 'ENVIANDO...';
+
+      const { error } = await _supabase
+        .from('mural_mensagens')
+        .insert([{
+          nome,
+          mensagem,
+          aprovada: true
+        }]);
+
+      if (error) {
+        console.error(error);
+        showToast("Não foi possível enviar a mensagem.", "error");
+        btn.disabled = false;
+        btn.innerHTML = original;
+        return;
+      }
+
+      document.getElementById("m_msg").value = "";
+      btn.disabled = false;
+      btn.innerHTML = original;
+      showToast("Mensagem enviada com sucesso!");
+      carregarMensagens();
+    }
+
+    document.getElementById("d_item").addEventListener("change", function() {
+      aplicarAnimacaoSelecao();
+
+      const box = document.getElementById("itemEscolhidoBox");
+      const texto = document.getElementById("itemEscolhidoTexto");
+      const valor = this.value;
+
+      if (!valor) {
+        box.classList.add("hidden");
+        texto.innerText = "";
+        return;
+      }
+
+      texto.innerText = valor;
+      box.classList.remove("hidden");
+    });
+
+    document.getElementById("d_tel").addEventListener("input", function() {
+      this.value = mascararWhatsapp(this.value);
+    });
+
+    document.getElementById("formDoacao").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const btn = document.getElementById("btnEnviar");
+      const textoOriginal = btn.innerHTML;
+
+      const qtd = parseInt(document.getElementById("d_qtd").value, 10);
+      const item = document.getElementById("d_item").value;
+      const nome = document.getElementById("d_nome").value.trim();
+      const telefoneBruto = document.getElementById("d_tel").value;
+      const telefone = telefoneBruto.replace(/\D/g, "");
+      const equipe = document.getElementById("d_equipe").value;
+      const dataEntrega = document.getElementById("d_data").value;
+
+      if (!Number.isInteger(qtd) || qtd <= 0) {
+        return showToast("Informe uma quantidade válida.", "error");
+      }
+
+      if (!item || !nome || !equipe || !dataEntrega) {
+        return showToast("Preencha todos os campos corretamente.", "error");
+      }
+
+      if (!/^\d{10,11}$/.test(telefone)) {
+        return showToast("WhatsApp inválido (use DDD e número).", "error");
+      }
+
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> PROCESSANDO...';
+      btn.disabled = true;
+
+      const { error } = await _supabase.rpc('registrar_doacao_publica', {
+        p_item: item,
+        p_quantidade: qtd,
+        p_nome: nome,
+        p_telefone: telefone,
+        p_equipe: equipe,
+        p_data_entrega: dataEntrega || null
+      });
+
+      if (error) {
+        console.error("Erro detalhado do RPC:", error);
+        showToast(error.message || error.details || error.hint || "Erro no banco. Tente novamente.", "error");
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
+        return;
+      }
+
+      document.body.innerHTML = `
+        <div class="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-fade-in bg-slate-50">
+          <div class="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-5xl mb-8 shadow-inner">
+            <i class="fas fa-check"></i>
+          </div>
+          <h3 class="text-3xl font-black text-slate-800 mb-4">Deus lhe pague, ${esc(nome)}!</h3>
+          <p class="text-slate-600 font-medium max-w-xs mx-auto mb-10 leading-relaxed">
+            Sua doação de <b class="text-purple-700">${qtd}x ${esc(item)}</b> foi registrada.<br><br>
+            Agora você faz parte da providência deste encontro. ✝️💜
+          </p>
+          <button onclick="location.reload()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold shadow-xl active:scale-95 transition-all uppercase tracking-widest text-xs">
+            Voltar à Lista
+          </button>
+        </div>`;
+    });
+
+    window.onload = async function() {
+      iniciarContador();
+      await carregarDados();
+      await carregarMensagens();
+    };
+  </script>
 </body>
 </html>
