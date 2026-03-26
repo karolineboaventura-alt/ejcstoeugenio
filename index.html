@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#820ad1" />
-  <title>EJC BANK • Terminal de Operações</title>
+  <title>EJC BANK • A Serviço do Reino</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -70,8 +70,8 @@
       <div id="stepProfile">
         <div class="text-center mb-10">
           <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-2xl mb-6 text-purple-700 text-3xl shadow-inner"> ✝️ </div>
-          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">EJC <span class="text-purple-700">BANK</span></h1>
-          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Escolha seu perfil</p>
+          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Escolha seu perfil de acesso</p>
         </div>
 
         <div class="space-y-4">
@@ -80,7 +80,7 @@
               <i class="fas fa-shopping-cart"></i>
             </div>
             <div class="text-left">
-              <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-0.5">Terminal</p>
+              <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-0.5">Operacional</p>
               <p class="text-lg font-bold text-slate-800">🛍️ COMPRAS</p>
             </div>
           </button>
@@ -90,7 +90,7 @@
               <i class="fas fa-user-shield"></i>
             </div>
             <div class="text-left">
-              <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-0.5">Gestão</p>
+              <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-0.5">Liderança</p>
               <p class="text-lg font-bold text-slate-800">✈️ PILOTOS</p>
             </div>
           </button>
@@ -104,21 +104,21 @@
 
         <div class="mb-8">
           <h2 id="authTitle" class="text-2xl font-black text-slate-800">Acesso Seguro</h2>
-          <p id="authSubtitle" class="text-xs text-slate-400 font-bold mt-1">Identifique-se</p>
+          <p id="authSubtitle" class="text-xs text-slate-400 font-bold mt-1">Informe suas credenciais</p>
         </div>
 
         <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-6 hidden">
           <div class="space-y-2">
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Senha do Terminal</p>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Senha de acesso</p>
             <input type="password" id="senhaCompras" placeholder="••••" required class="vault-input w-full rounded-xl py-4 px-5 font-bold outline-none text-center text-2xl tracking-[0.5em] text-slate-800" />
           </div>
-          <button type="submit" id="btnCompras" class="w-full py-4 rounded-xl font-black text-white bg-purple-700 shadow-lg shadow-purple-200 hover:bg-purple-800 transition-all">ENTRAR NO CAIXA</button>
+          <button type="submit" id="btnCompras" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700 shadow-lg shadow-purple-200 hover:bg-purple-800 transition-all">ENTRAR NO SISTEMA</button>
         </form>
 
         <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
           <input type="email" id="emailPiloto" placeholder="E-mail" required class="vault-input w-full rounded-xl py-4 px-5 font-bold outline-none text-slate-700" />
           <input type="password" id="senhaPiloto" placeholder="Senha" required class="vault-input w-full rounded-xl py-4 px-5 font-bold outline-none text-slate-700" />
-          <button type="submit" id="btnPiloto" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900 shadow-xl hover:bg-black transition-all mt-2 uppercase">Acessar Painel</button>
+          <button type="submit" id="btnPiloto" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900 shadow-xl hover:bg-black transition-all mt-2">ACESSAR PAINEL</button>
         </form>
 
         <p id="msgErroLogin" class="hidden mt-6 text-rose-600 text-[10px] font-bold text-center uppercase tracking-widest bg-rose-50 py-3 rounded-lg border border-rose-100">Credenciais inválidas</p>
@@ -130,47 +130,47 @@
     <header class="nu-header sticky top-0 z-40 px-6 pt-8 text-white">
       <div class="flex justify-between items-center mb-8">
         <div class="flex items-center gap-4">
-          <div id="userAvatar" class="w-12 h-12 bg-white/20 border border-white/30 rounded-xl flex items-center justify-center font-bold text-xl backdrop-blur-sm">U</div>
+          <div id="userAvatar" class="w-12 h-12 bg-white/20 border border-white/30 rounded-xl flex items-center justify-center font-bold text-xl backdrop-blur-sm shadow-inner">U</div>
           <div>
-            <p class="text-[10px] font-bold text-white/60 uppercase tracking-widest mb-1">Status: Autorizado</p>
-            <h1 id="headerTitle" class="font-extrabold text-xl tracking-tight leading-none uppercase italic">EJC BANK</h1>
+            <p class="text-[10px] font-bold text-white/60 uppercase tracking-widest mb-1 italic">"A morte não venceu!"</p>
+            <h1 id="headerTitle" class="font-extrabold text-xl tracking-tight leading-none uppercase">EJC BANK</h1>
           </div>
         </div>
-        <button onclick="sair()" class="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition"><i class="fas fa-power-off"></i></button>
+        <button onclick="sair()" class="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition shadow-sm"><i class="fas fa-power-off"></i></button>
       </div>
 
-      <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+      <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
         <button id="tab-admin" onclick="mudarAba('ADMIN')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Geral</button>
         <button id="tab-ejc" onclick="mudarAba('EJC')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white">Caixa EJC</button>
         <button id="tab-mercadinho" onclick="mudarAba('MERCADINHO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white">Mercadinho</button>
         <button id="tab-feijoada" onclick="mudarAba('FEIJOADA')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Feijoada</button>
-        <button id="tab-doacao" onclick="mudarAba('DOACAO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Doações</button>
+        <button id="tab-doacao" onclick="mudarAba('DOACAO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Providência</button>
       </div>
     </header>
 
     <main class="px-6 py-8 space-y-8">
       <div id="blocoAdminDoacao" class="hidden">
         <button onclick="document.getElementById('modalMeta').classList.remove('hidden')" class="w-full bg-white text-purple-700 border-2 border-purple-100 py-5 rounded-3xl font-extrabold shadow-sm flex items-center justify-center gap-3 active:scale-95 transition mb-6">
-          <i class="fas fa-bullseye"></i> CRIAR META DE DOAÇÃO
+          <i class="fas fa-bullseye"></i> REGISTRAR NOVA NECESSIDADE
         </button>
         <div id="listaGerenciarMetas" class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-2"></div>
       </div>
 
       <div id="dashAdmin" class="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 hidden">
         <div id="dashGrid" class="grid grid-cols-1 sm:grid-cols-4 gap-8">
-          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Total Recebido</p><h2 id="totalRecebido" class="text-3xl font-extrabold text-slate-900">R$ 0,00</h2></div>
-          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Pendente (Fiado)</p><h2 id="totalPendente" class="text-3xl font-extrabold text-amber-500">R$ 0,00</h2></div>
-          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Saídas (Custo)</p><h2 id="totalSaidas" class="text-3xl font-black text-rose-500">R$ 0,00</h2></div>
-          <div id="cardSaldoLiquido"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Saldo Líquido</p><h2 id="totalLiquido" class="text-3xl font-extrabold text-purple-700">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Doações Recebidas</p><h2 id="totalRecebido" class="text-3xl font-extrabold text-slate-900">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Pendências (Fiado)</p><h2 id="totalPendente" class="text-3xl font-extrabold text-amber-600">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Custos do Encontro</p><h2 id="totalSaidas" class="text-3xl font-black text-rose-500">R$ 0,00</h2></div>
+          <div id="cardSaldoLiquido"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Fundo do EJC</p><h2 id="totalLiquido" class="text-3xl font-extrabold text-purple-700">R$ 0,00</h2></div>
         </div>
       </div>
 
-      <div id="blocoPDF" class="hidden"><button onclick="gerarPDFRelatorio()" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 active:scale-95 transition border border-slate-200"><i class="fas fa-file-pdf"></i> RELATÓRIO DO DIA (PDF)</button></div>
+      <div id="blocoPDF" class="hidden"><button onclick="gerarPDFRelatorio()" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 active:scale-95 transition border border-slate-200"><i class="fas fa-file-pdf"></i> LIVRO DO TOMBO DIGITAL (PDF)</button></div>
 
       <div class="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm mb-20">
         <div class="p-6 border-b border-slate-50 flex gap-4 items-center">
           <i class="fas fa-search text-slate-300"></i>
-          <input id="campoBusca" onkeyup="renderizar()" placeholder="Pesquisar..." class="w-full text-sm font-semibold outline-none text-slate-700" />
+          <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar nos registros..." class="w-full text-sm font-semibold outline-none text-slate-700" />
         </div>
         <div id="loading" class="hidden p-12 text-center text-slate-300"><i class="fas fa-circle-notch fa-spin text-2xl"></i></div>
         <div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><tbody id="corpoTabela" class="divide-y divide-slate-50"></tbody></table></div>
@@ -182,14 +182,14 @@
 
   <div id="modalMeta" class="hidden fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
-      <h2 class="text-xl font-black text-slate-800 mb-6 text-center">Nova Meta de Doação</h2>
+      <h2 class="text-xl font-black text-slate-800 mb-6 text-center">Nova Meta de Providência</h2>
       <form id="formMeta" onsubmit="event.preventDefault(); salvarMeta();" class="space-y-4">
-          <input id="m_item" placeholder="Ex: Arroz" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
+          <input id="m_item" placeholder="Ex: Arroz ou Óleo" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
           <div class="flex gap-2">
             <input id="m_qtd" type="number" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
             <input id="m_un" placeholder="Unid (kg, un)" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
           </div>
-          <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black active:scale-95 transition">CRIAR META</button>
+          <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black active:scale-95 transition">CADASTRAR META</button>
           <button type="button" onclick="document.getElementById('modalMeta').classList.add('hidden')" class="w-full py-2 font-bold text-slate-400 mt-2">Cancelar</button>
       </form>
     </div>
@@ -199,14 +199,14 @@
     <div class="absolute inset-0" onclick="fecharModal()"></div>
     <div class="relative bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-8">
-        <h2 class="text-xl font-black text-slate-900">Novo Lançamento</h2>
+        <h2 class="text-xl font-black text-slate-900 uppercase">Novo Registro</h2>
         <button type="button" onclick="fecharModal()" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button>
       </div>
       <form id="formFin" class="space-y-4">
         <div id="blocoModulo" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-100">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Destino</label>
           <select id="f_modulo" class="w-full bg-transparent font-bold text-slate-900 outline-none">
-            <option value="EJC">Caixa Principal</option><option value="MERCADINHO">Mercadinho</option><option value="FEIJOADA">Feijoada</option><option value="DOACAO">Doação</option><option value="ADMIN">Administrativo</option>
+            <option value="EJC">Fundo Principal</option><option value="MERCADINHO">Mercadinho</option><option value="FEIJOADA">Feijoada</option><option value="DOACAO">Providência</option><option value="ADMIN">Outros</option>
           </select>
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -220,11 +220,11 @@
           </div>
         </div>
         <div id="camposMercado" class="hidden bg-pink-50 p-5 rounded-2xl border border-pink-100 space-y-4">
-            <select id="f_tipo_pessoa" onchange="controlarTipoPessoa()" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none">
+            <select id="f_tipo_pessoa" onchange="controlarTipoPessoa()" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
                 <option value="SERVO">🙋‍♂️ Servo do EJC (Pode Fiado)</option><option value="PAROQUIANO">👤 Paroquiano (Somente Pago)</option>
             </select>
-            <select id="f_equipe_merc" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none">
-                <option value="">Qual a Equipe?</option>
+            <select id="f_equipe_merc" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
+                <option value="">Equipe do Servo...</option>
                 <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
             </select>
         </div>
@@ -232,7 +232,7 @@
           <div class="vault-input rounded-2xl px-4 py-3">
             <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Status</label>
             <select id="f_type" class="w-full bg-transparent font-bold text-slate-900 outline-none">
-              <option value="ENTRADA">Pago ✅</option><option value="PENDENTE">Fiado 🟠</option><option value="SAIDA">Gasto 🔴</option>
+              <option value="ENTRADA">Recebido ✅</option><option value="PENDENTE">A receber 🟠</option><option value="SAIDA">Gasto 🔴</option>
             </select>
           </div>
           <div class="vault-input rounded-2xl px-4 py-3">
@@ -243,18 +243,18 @@
           </div>
         </div>
         <div class="vault-input rounded-2xl px-4 py-3">
-          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Nome da Pessoa</label>
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Nome</label>
           <input id="f_nome" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
         </div>
         <div class="vault-input rounded-2xl px-4 py-3">
-          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">WhatsApp para Cobrança</label>
-          <input id="f_tel" type="tel" placeholder="11999999999" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">WhatsApp</label>
+          <input id="f_tel" type="tel" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
         </div>
         <div class="bg-purple-50 rounded-2xl px-4 py-3 border border-purple-100">
-          <label class="text-[9px] font-black text-purple-400 uppercase block mb-1">Registrado por</label>
+          <label class="text-[9px] font-black text-purple-400 uppercase block mb-1">Servo Responsável</label>
           <input id="f_recebido" required class="w-full bg-transparent font-bold text-purple-900 outline-none" />
         </div>
-        <button type="submit" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all">SALVAR NO BANCO</button>
+        <button type="submit" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all">CONCLUIR REGISTRO</button>
       </form>
     </div>
   </div>
@@ -274,6 +274,7 @@
     }
 
     function escolherPerfil(p) {
+      document.getElementById("msgErroLogin").classList.add("hidden");
       document.getElementById("stepProfile").classList.add("hidden");
       document.getElementById("stepAuth").classList.remove("hidden");
       const isCompras = p === 'compras';
@@ -285,6 +286,9 @@
     function voltarParaSelecao() {
       document.getElementById("stepAuth").classList.add("hidden");
       document.getElementById("stepProfile").classList.remove("hidden");
+      document.getElementById("msgErroLogin").classList.add("hidden");
+      document.getElementById("formCompras").reset();
+      document.getElementById("formPilotos").reset();
     }
 
     async function carregarPerfilUsuario(user) {
@@ -294,7 +298,7 @@
     }
 
     async function executarLogin(email, senha, btnElement) {
-      const tO = btnElement.innerHTML; btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      const tO = btnElement.innerHTML; btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Entrando...';
       const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
       if (error) { document.getElementById("msgErroLogin").classList.remove("hidden"); btnElement.innerHTML = tO; return; }
       const profile = await carregarPerfilUsuario(data.user);
@@ -306,7 +310,10 @@
     function loginPiloto() { const e = document.getElementById("emailPiloto").value.trim().toLowerCase(); const s = document.getElementById("senhaPiloto").value; executarLogin(e, s, document.getElementById('btnPiloto')); }
 
     function iniciarApp() {
-      document.getElementById("loginScreen").classList.add("hidden"); document.getElementById("appMain").classList.remove("hidden");
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("appMain").classList.remove("hidden");
+      const nomeExibicao = currentProfile?.nome || ROLE;
+      document.getElementById("userAvatar").innerText = nomeExibicao.charAt(0).toUpperCase();
       if (ROLE === "ADMIN") {
         document.querySelectorAll("#tab-admin, #tab-feijoada, #tab-doacao, #dashAdmin, #blocoPDF").forEach(el => el.classList.remove("hidden"));
         document.getElementById("headerTitle").innerText = "EJC BANK • PILOTOS";
@@ -357,13 +364,12 @@
       document.getElementById("totalLiquido").innerText = "R$ " + (rec - sai).toLocaleString('pt-BR', {minimumFractionDigits: 2});
     }
 
-    // FUNÇÃO DE COBRANÇA WHATSAPP (SOMA O TOTAL DO SERVO)
     function cobrarZapTotal(telefone, nome) {
         const num = String(telefone).replace(/\D/g,"");
-        if(!/^\d{10,11}$/.test(num)) return showToast("WhatsApp inválido", "error");
+        if(!/^\d{10,11}$/.test(num)) return showToast("Número inválido", "error");
         const total = dadosCache.filter(i => i.status === 'PENDENTE' && i.telefone && i.telefone.replace(/\D/g,"") === num).reduce((acc, i) => acc + parseFloat(i.valor || 0), 0);
         if (total <= 0) return showToast("Sem pendências.", "success");
-        const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Tudo bem? Aqui é da equipe de Compras do EJC.\nConsta um total pendente de *R$ ${total.toFixed(2)}* referente ao seu consumo. Quando puder, passa no caixa para regularizarmos? Deus abençoe! ✝️💜`);
+        const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Tudo bem? Passando para lembrar das pendências de *R$ ${total.toFixed(2)}* no mercadinho do EJC. Deus abençoe! ✝️💜`);
         window.open(`https://wa.me/55${num}?text=${msg}`, '_blank');
     }
 
@@ -371,16 +377,15 @@
       const tb = document.getElementById("corpoTabela"); tb.innerHTML = "";
       const busca = document.getElementById("campoBusca").value.toLowerCase();
       dadosCache.filter(i => ((i.descricao || "") + (i.nome_pessoa || "")).toLowerCase().includes(busca)).forEach(i => {
-        const valorNum = parseFloat(i.valor || 0);
-        const val = valorNum.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        const val = parseFloat(i.valor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2});
         const iconClass = i.modulo === "DOACAO" ? "bg-purple-400" : i.natureza === "SAIDA" ? "bg-rose-500" : i.status === "PENDENTE" ? "bg-amber-500" : "bg-emerald-500";
-        const zapBtn = (i.status === 'PENDENTE' && i.telefone) ? `<button onclick="cobrarZapTotal('${i.telefone}', '${esc(i.nome_pessoa)}')" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 ml-2 shadow-sm"><i class="fab fa-whatsapp"></i></button>` : "";
-        tb.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0"><td class="p-6"><p class="text-sm font-bold text-slate-900">${esc(i.descricao)}</p><p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">${esc(i.nome_pessoa) || "---"} ${i.equipe ? ' • '+esc(i.equipe) : ""}</p></td><td class="p-6 text-right font-extrabold text-slate-900">R$ ${val}</td><td class="p-6 text-center"><span class="w-2 h-2 rounded-full ${iconClass} inline-block shadow-sm"></span></td><td class="p-6 text-right flex justify-end items-center">${i.status === 'PENDENTE' ? `<button onclick="baixar('${i.id}', ${i.version})" class="w-10 h-10 rounded-xl bg-purple-700 text-white shadow-lg"><i class="fas fa-check text-xs"></i></button>` : ""}${zapBtn}</td></tr>`;
+        const zapBtn = (i.status === 'PENDENTE' && i.telefone) ? `<button onclick="cobrarZapTotal('${i.telefone}', '${esc(i.nome_pessoa)}')" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 ml-2"><i class="fab fa-whatsapp"></i></button>` : "";
+        tb.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0"><td class="p-6"><p class="text-sm font-bold text-slate-900">${esc(i.descricao)}</p><p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">${esc(i.nome_pessoa) || "Oferta Anônima"} ${i.equipe ? ' • '+esc(i.equipe) : ""}</p></td><td class="p-6 text-right font-extrabold text-slate-900">R$ ${val}</td><td class="p-6 text-center"><span class="w-2 h-2 rounded-full ${iconClass} inline-block shadow-sm"></span></td><td class="p-6 text-right flex justify-end items-center">${i.status === 'PENDENTE' ? `<button onclick="baixar('${i.id}', ${i.version})" class="w-10 h-10 rounded-xl bg-purple-700 text-white shadow-lg"><i class="fas fa-check text-xs"></i></button>` : ""}${zapBtn}</td></tr>`;
       });
     }
 
     async function carregarMetasAdmin() {
-        const container = document.getElementById("listaGerenciarMetas"); container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center">Sincronizando...</p>';
+        const container = document.getElementById("listaGerenciarMetas"); container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center">Sincronizando com a Providência...</p>';
         const { data } = await _supabase.from('metas_doacao').select('*').eq('ativo', true).order('criado_em', { ascending: false });
         if (!data || data.length === 0) { container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center">Sem metas.</p>'; return; }
         data.forEach(m => {
@@ -388,11 +393,18 @@
         });
     }
 
-    async function excluirMeta(id) { if (confirm("Apagar meta?")) { await _supabase.from('metas_doacao').delete().eq('id', id); carregarMetasAdmin(); } }
-    async function salvarMeta() {
-        const item = document.getElementById("m_item").value, qtd = parseInt(document.getElementById("m_qtd").value), un = document.getElementById("m_un").value;
-        await _supabase.from('metas_doacao').insert([{ item, qtd_necessaria: qtd, unidade: un }]);
-        document.getElementById("modalMeta").classList.add("hidden"); document.getElementById("formMeta").reset(); carregarMetasAdmin();
+    async function excluirMeta(id) { if (confirm("Remover esta necessidade?")) { await _supabase.from('metas_doacao').delete().eq('id', id); carregarMetasAdmin(); } }
+    
+    async function salvarMeta() { 
+      const item = document.getElementById("m_item").value.trim(); 
+      const qtd = parseInt(document.getElementById("m_qtd").value, 10); 
+      const un = document.getElementById("m_un").value.trim(); 
+      const { error } = await _supabase.from('metas_doacao').insert([{ item, qtd_necessaria: qtd, unidade: un }]); 
+      if (error) { showToast("Não foi possível salvar a meta.", "error"); return; } 
+      showToast("Meta cadastrada com sucesso!"); 
+      document.getElementById("modalMeta").classList.add("hidden"); 
+      document.getElementById("formMeta").reset(); 
+      carregarMetasAdmin(); 
     }
 
     document.getElementById("formFin").addEventListener("submit", async function(e) {
@@ -400,10 +412,10 @@
       const type = document.getElementById("f_type").value, val = parseFloat(document.getElementById("f_val").value), mod = abaAtiva === "ADMIN" ? document.getElementById("f_modulo").value : abaAtiva;
       let eqp = ""; if (mod === "MERCADINHO") { eqp = document.getElementById("f_tipo_pessoa").value === "SERVO" ? document.getElementById("f_equipe_merc").value : "PAROQUIANO"; }
       const { error } = await _supabase.from('transacoes').insert([{ modulo: mod, descricao: document.getElementById("f_desc").value, valor: val, quantidade: 1, natureza: type === "SAIDA" ? "SAIDA" : "ENTRADA", status: type === "PENDENTE" ? "PENDENTE" : "PAGO", forma_pagamento: document.getElementById("f_forma").value, nome_pessoa: document.getElementById("f_nome").value, equipe: eqp, telefone: document.getElementById("f_tel").value.replace(/\D/g,""), recebido_por: document.getElementById("f_recebido").value, user_id: currentUser.id }]);
-      if (!error) { showToast("Sucesso!"); fecharModal(); carregarDados(); }
+      if (!error) { showToast("Registro Concluído!"); fecharModal(); carregarDados(); }
     });
 
-    async function baixar(id, ver) { if (confirm("Dar baixa?")) { await _supabase.from('transacoes').update({ status: 'PAGO' }).eq('id', id).eq('version', ver); carregarDados(); } }
+    async function baixar(id, ver) { if (confirm("Confirmar recebimento?")) { await _supabase.from('transacoes').update({ status: 'PAGO' }).eq('id', id).eq('version', ver); carregarDados(); } }
     async function sair() { await _supabase.auth.signOut(); location.reload(); }
     function fecharModal() { document.getElementById("modal").classList.add("hidden"); document.getElementById("formFin").reset(); }
 
@@ -422,6 +434,13 @@
       const { data: { session } } = await _supabase.auth.getSession();
       if (session) { const p = await carregarPerfilUsuario(session.user); if (p) { currentUser = session.user; currentProfile = p; ROLE = p.role.toUpperCase(); iniciarApp(); } }
     };
+
+    // MOTOR DE AUTOATUALIZAÇÃO (DADOS AO VIVO)
+    setInterval(() => { 
+      if ( document.visibilityState === "visible" && !document.getElementById("appMain").classList.contains("hidden") && document.getElementById("modal").classList.contains("hidden") ) { 
+        carregarDados(); 
+      } 
+    }, 30000);
   </script>
 </body>
 </html>
