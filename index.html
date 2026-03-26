@@ -150,10 +150,13 @@
 
     <main class="px-4 py-6 -mt-4 z-30 space-y-6">
       
-      <div id="blocoAdminDoacao" class="hidden mb-2 animate-fade-in-up">
-        <button onclick="document.getElementById('modalMeta').classList.remove('hidden')" class="w-full bg-purple-100 text-purple-700 border border-purple-200 py-4 rounded-2xl font-black shadow-sm flex items-center justify-center gap-3 active:scale-95 transition">
+      <div id="blocoAdminDoacao" class="hidden mb-4 animate-fade-in-up">
+        <button onclick="document.getElementById('modalMeta').classList.remove('hidden')" class="w-full bg-purple-100 text-purple-700 border border-purple-200 py-4 rounded-2xl font-black shadow-sm flex items-center justify-center gap-3 active:scale-95 transition mb-4">
           <i class="fas fa-bullseye"></i> CADASTRAR NOVA META DE DOAÇÃO
         </button>
+        
+        <div id="listaGerenciarMetas" class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-2">
+        </div>
       </div>
 
       <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 animate-fade-in-up hidden">
@@ -520,8 +523,46 @@
         b.classList.toggle("bg-white/10", !isSelected);
         b.classList.toggle("text-white", !isSelected);
       });
-      document.getElementById("blocoAdminDoacao").classList.toggle("hidden", abaAtiva !== "DOACAO" || ROLE !== "ADMIN");
+      
+      const isAdminDoacao = (abaAtiva === "DOACAO" && ROLE === "ADMIN");
+      document.getElementById("blocoAdminDoacao").classList.toggle("hidden", !isAdminDoacao);
+      if (isAdminDoacao) carregarMetasAdmin();
+
       await carregarDados();
+    }
+
+    async function carregarMetasAdmin() {
+        const container = document.getElementById("listaGerenciarMetas");
+        container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center"><i class="fas fa-circle-notch fa-spin"></i> Carregando metas...</p>';
+
+        const { data, error } = await _supabase.from('metas_doacao').select('*').eq('ativo', true).order('criado_em', { ascending: false });
+
+        if (error || !data || data.length === 0) {
+            container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center">Nenhuma meta cadastrada.</p>';
+            return;
+        }
+
+        container.innerHTML = '<p class="text-[10px] font-black text-slate-400 uppercase mb-2">Gerenciar Metas Ativas</p>';
+        data.forEach(m => {
+            container.innerHTML += `
+            <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100 mt-2">
+                <div>
+                    <p class="text-sm font-bold text-slate-800">${esc(m.item)}</p>
+                    <p class="text-[10px] text-slate-500 font-medium">Meta: ${m.qtd_necessaria} ${esc(m.unidade)} | Arrecadado: ${m.qtd_arrecadada}</p>
+                </div>
+                <button onclick="excluirMeta('${m.id}')" class="w-8 h-8 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center shadow-sm active:scale-90 transition">
+                    <i class="fas fa-trash text-xs"></i>
+                </button>
+            </div>`;
+        });
+    }
+
+    async function excluirMeta(id) {
+        if (!confirm("Tem certeza que deseja excluir esta meta permanentemente?")) return;
+        const { error } = await _supabase.from('metas_doacao').delete().eq('id', id);
+        if (error) return showToast("Erro ao excluir meta.", "error");
+        showToast("Meta excluída com sucesso!");
+        carregarMetasAdmin();
     }
 
     async function carregarDados() {
@@ -565,10 +606,17 @@
       if (totalLiquido) totalLiquido.innerText = "R$ " + (rec - sai).toFixed(2);
     }
 
-    function abrirZap(telefone, nome, valor) {
+    function cobrarZapTotal(telefone, nome) {
         const num = String(telefone).replace(/\D/g,"");
         if(!/^\d{10,11}$/.test(num)) return showToast("WhatsApp inválido no cadastro", "error");
-        const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é do financeiro do EJC.\nConsta um valor pendente de *R$ ${valor.toFixed(2)}* no mercadinho.\nQuando puder, passa no caixa pra gente dar baixa? Deus abençoe! ✝️🤍`);
+
+        const totalDevido = dadosCache
+            .filter(i => i.status === 'PENDENTE' && i.telefone && i.telefone.replace(/\D/g,"") === num)
+            .reduce((acc, i) => acc + parseFloat(i.valor || 0), 0);
+
+        if (totalDevido <= 0) return showToast("Não há pendências para este servo.", "success");
+
+        const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é da equipe de Compras do EJC.\nConsta um total pendente de *R$ ${totalDevido.toFixed(2)}* referente aos seus consumos no mercadinho.\nQuando puder, dá uma passadinha no caixa para regularizar? Deus abençoe! ✝️🤍`);
         window.open(`https://wa.me/55${num}?text=${msg}`, '_blank');
     }
 
@@ -593,7 +641,7 @@
           
           const equipeDisplay = i.equipe && i.equipe !== "Paroquiano" ? ` • ${esc(i.equipe)}` : "";
           const zapBtn = (i.status === 'PENDENTE' && i.telefone) 
-            ? `<button onclick="abrirZap('${i.telefone}', '${esc(i.nome_pessoa)}', ${valorNumero})" class="w-8 h-8 rounded-full bg-[#25D366] text-white shadow-md active:scale-90 transition flex items-center justify-center ml-2"><i class="fab fa-whatsapp text-[10px]"></i></button>` 
+            ? `<button onclick="cobrarZapTotal('${i.telefone}', '${esc(i.nome_pessoa)}')" class="w-8 h-8 rounded-full bg-[#25D366] text-white shadow-md active:scale-90 transition flex items-center justify-center ml-2"><i class="fab fa-whatsapp text-[10px]"></i></button>` 
             : "";
 
           tb.innerHTML += `
@@ -640,7 +688,7 @@
         showToast("Meta criada com sucesso!");
         document.getElementById("modalMeta").classList.add("hidden");
         document.getElementById("formMeta").reset();
-        if(abaAtiva === "DOACAO") carregarMetasDoacao(); 
+        if(abaAtiva === "DOACAO") carregarMetasAdmin(); 
     }
 
     document.getElementById("formFin").addEventListener("submit", async function(e) {
@@ -709,17 +757,19 @@
       btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
       btn.disabled = true;
 
+      // CORREÇÃO AQUI: Mandando p_forma_pagamento nulo para não esbarrar no Check da Tabela ('PIX', 'DINHEIRO', 'CARTAO')
       const { error } = await _supabase.rpc('registrar_doacao_publica', {
         p_item: item,
         p_quantidade: quantidade,
         p_nome: nome || null,
-        p_forma_pagamento: 'DOACAO'
+        p_forma_pagamento: null 
       });
 
       btn.innerHTML = textoOriginal;
       btn.disabled = false;
 
       if (error) {
+        console.error("Erro na doação:", error);
         showToast("Não foi possível registrar a doação.", "error");
         return;
       }
