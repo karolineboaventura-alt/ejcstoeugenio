@@ -160,7 +160,7 @@
       </div>
 
       <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 animate-fade-in-up hidden">
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
+        <div id="dashGrid" class="grid grid-cols-1 sm:grid-cols-4 gap-6">
           <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Entradas</p>
             <h2 id="totalRecebido" class="text-3xl font-black text-slate-800">R$ 0,00</h2>
@@ -173,7 +173,7 @@
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Saídas</p>
             <h2 id="totalSaidas" class="text-3xl font-black text-rose-500">R$ 0,00</h2>
           </div>
-          <div>
+          <div id="cardSaldoLiquido">
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Líquido</p>
             <h2 id="totalLiquido" class="text-3xl font-black text-purple-600">R$ 0,00</h2>
           </div>
@@ -501,7 +501,7 @@
         if (tabAdmin) { tabAdmin.classList.remove("hidden"); tabAdmin.style.display = "inline-flex"; }
         if (tabFeijoada) { tabFeijoada.classList.remove("hidden"); tabFeijoada.style.display = "inline-flex"; }
         if (tabDoacao) { tabDoacao.classList.remove("hidden"); tabDoacao.style.display = "inline-flex"; }
-        if (dashAdmin) { dashAdmin.classList.remove("hidden"); dashAdmin.style.display = "grid"; }
+        if (dashAdmin) { dashAdmin.classList.remove("hidden"); dashAdmin.style.display = "block"; }
         if (blocoPDF) { blocoPDF.classList.remove("hidden"); blocoPDF.style.display = "block"; }
 
         document.getElementById("headerTitle").innerText = "EJC BANK PILOTOS";
@@ -527,6 +527,18 @@
       const isAdminDoacao = (abaAtiva === "DOACAO" && ROLE === "ADMIN");
       document.getElementById("blocoAdminDoacao").classList.toggle("hidden", !isAdminDoacao);
       if (isAdminDoacao) carregarMetasAdmin();
+
+      const cardSaldo = document.getElementById("cardSaldoLiquido");
+      const dashGrid = document.getElementById("dashGrid");
+      if (cardSaldo && dashGrid) {
+          if (abaAtiva === "ADMIN") {
+              cardSaldo.classList.remove("hidden");
+              dashGrid.className = "grid grid-cols-1 sm:grid-cols-4 gap-6";
+          } else {
+              cardSaldo.classList.add("hidden");
+              dashGrid.className = "grid grid-cols-1 sm:grid-cols-3 gap-6";
+          }
+      }
 
       await carregarDados();
     }
@@ -757,7 +769,6 @@
       btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
       btn.disabled = true;
 
-      // CORREÇÃO AQUI: Mandando p_forma_pagamento nulo para não esbarrar no Check da Tabela ('PIX', 'DINHEIRO', 'CARTAO')
       const { error } = await _supabase.rpc('registrar_doacao_publica', {
         p_item: item,
         p_quantidade: quantidade,
