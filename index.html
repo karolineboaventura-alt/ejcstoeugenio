@@ -33,50 +33,6 @@
 
   <div id="toast-container"></div>
 
-  <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-[#820ad1]">
-    <div class="w-full max-w-sm bg-white rounded-[36px] shadow-2xl p-8 animate-fade-in-up">
-      <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-20 h-20 bg-purple-50 rounded-full mb-4 text-4xl shadow-inner">✝️</div>
-        <h1 class="text-3xl font-black text-slate-800 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Paróquia Santo Eugênio</p>
-      </div>
-
-      <div class="flex bg-slate-100 rounded-2xl p-1 mb-6">
-        <button type="button" id="tabBtnCompras" onclick="mudarAbaLogin('compras')" class="flex-1 py-3 rounded-xl font-black text-sm bg-white shadow-sm text-purple-700 transition">
-          🛒 COMPRAS
-        </button>
-        <button type="button" id="tabBtnPilotos" onclick="mudarAbaLogin('pilotos')" class="flex-1 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-slate-600 transition">
-          👑 PILOTOS
-        </button>
-      </div>
-
-      <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-4">
-        <input type="password" id="senhaCompras" placeholder="Senha do Caixa" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-4 font-bold outline-none focus:border-purple-600 transition-all text-center text-lg text-slate-700" />
-        <button type="submit" id="btnCompras" class="w-full py-4 rounded-2xl font-black text-white bg-purple-600 hover:bg-purple-700 shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
-          ENTRAR RÁPIDO
-        </button>
-      </form>
-
-      <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
-        <input type="email" id="emailPiloto" placeholder="Seu e-mail" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-4 font-bold outline-none focus:border-slate-800 transition-all text-slate-700" />
-        <input type="password" id="senhaPiloto" placeholder="Sua senha" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-4 font-bold outline-none focus:border-slate-800 transition-all text-slate-700" />
-        <button type="submit" id="btnPiloto" class="w-full py-4 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
-          ENTRAR NO PAINEL
-        </button>
-      </form>
-
-      <p id="msgErroLogin" class="hidden mt-4 text-rose-500 text-xs font-bold text-center bg-rose-50 py-2 rounded-lg px-2">
-        <i class="fas fa-exclamation-circle mr-1"></i> Credenciais inválidas ou inativas
-      </p>
-
-      <div class="mt-4">
-        <button type="button" onclick="abrirTelaDoacao()" class="w-full py-4 rounded-2xl font-black text-purple-700 bg-purple-50 border border-purple-100 hover:bg-purple-100 transition flex items-center justify-center gap-2">
-          💝 Quero fazer uma doação
-        </button>
-      </div>
-    </div>
-  </div>
-
   <div id="doacaoPublicaScreen" class="hidden fixed inset-0 z-[1000] bg-[#f5f5f7] overflow-y-auto">
     <div class="min-h-screen max-w-3xl mx-auto px-4 py-6">
       <div class="bg-white rounded-3xl shadow-sm p-5 border border-slate-100 mb-5">
@@ -86,7 +42,7 @@
             <h2 class="text-2xl font-black text-slate-800">💝 Lista de Doações</h2>
             <p class="text-sm text-slate-500 mt-1">Veja o que ainda precisamos e registre sua ajuda.</p>
           </div>
-          <button type="button" onclick="fecharTelaDoacao()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center">
+          <button type="button" onclick="fecharTelaDoacao()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200 transition">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -124,6 +80,50 @@
     </div>
   </div>
 
+  <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-[#820ad1]">
+    <div class="w-full max-w-sm bg-white rounded-[36px] shadow-2xl p-8 animate-fade-in-up">
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-purple-50 rounded-full mb-4 text-4xl shadow-inner">✝️</div>
+        <h1 class="text-3xl font-black text-slate-800 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Paróquia Santo Eugênio</p>
+      </div>
+
+      <div class="flex bg-slate-100 rounded-2xl p-1 mb-6">
+        <button type="button" id="tabBtnCompras" onclick="mudarAbaLogin('compras')" class="flex-1 py-3 rounded-xl font-black text-sm bg-white shadow-sm text-purple-700 transition">
+          🛒 COMPRAS
+        </button>
+        <button type="button" id="tabBtnPilotos" onclick="mudarAbaLogin('pilotos')" class="flex-1 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-slate-600 transition">
+          👑 PILOTOS
+        </button>
+      </div>
+
+      <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-4">
+        <input type="password" id="senhaCompras" placeholder="Senha do Caixa" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-4 font-bold outline-none focus:border-purple-600 transition-all text-center text-lg text-slate-700" />
+        <button type="submit" id="btnCompras" class="w-full py-4 rounded-2xl font-black text-white bg-purple-600 hover:bg-purple-700 shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+          ENTRAR RÁPIDO
+        </button>
+      </form>
+
+      <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
+        <input type="email" id="emailPiloto" placeholder="Seu e-mail" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-4 font-bold outline-none focus:border-slate-800 transition-all text-slate-700" />
+        <input type="password" id="senhaPiloto" placeholder="Sua senha" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-4 font-bold outline-none focus:border-slate-800 transition-all text-slate-700" />
+        <button type="submit" id="btnPiloto" class="w-full py-4 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+          ENTRAR NO PAINEL
+        </button>
+      </form>
+
+      <p id="msgErroLogin" class="hidden mt-4 text-rose-500 text-xs font-bold text-center bg-rose-50 py-2 rounded-lg px-2">
+        <i class="fas fa-exclamation-circle mr-1"></i> Credenciais inválidas ou inativas
+      </p>
+
+      <div class="mt-4 border-t border-slate-100 pt-4">
+        <button type="button" onclick="abrirTelaDoacao()" class="w-full py-4 rounded-2xl font-black text-purple-700 bg-purple-50 border border-purple-100 hover:bg-purple-100 transition flex items-center justify-center gap-2">
+          💝 Quero fazer uma doação
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
     <header class="nu-header sticky top-0 z-40">
       <div class="px-5 pt-5 pb-2 flex justify-between items-center">
@@ -139,7 +139,7 @@
         </button>
       </div>
 
-      <div class="mt-4 px-5 overflow-x-auto flex gap-2 pb-2">
+      <div class="mt-4 px-5 overflow-x-auto flex gap-2 pb-2 no-scrollbar">
         <button id="tab-admin" onclick="mudarAba('ADMIN')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap hidden">📊 Geral</button>
         <button id="tab-ejc" onclick="mudarAba('EJC')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap">⛪ EJC</button>
         <button id="tab-mercadinho" onclick="mudarAba('MERCADINHO')" class="tab-btn px-4 py-2 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white hover:text-purple-900 transition whitespace-nowrap">🛒 Mercado</button>
@@ -360,12 +360,14 @@
     }
 
     async function abrirTelaDoacao() {
+      document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("doacaoPublicaScreen").classList.remove("hidden");
       await carregarMetasDoacao();
     }
 
     function fecharTelaDoacao() {
       document.getElementById("doacaoPublicaScreen").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
     }
 
     async function carregarMetasDoacao() {
