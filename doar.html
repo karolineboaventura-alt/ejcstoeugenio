@@ -228,9 +228,12 @@
           <i class="fas fa-hands-helping"></i>
         </div>
         <div>
-          <p class="text-sm font-extrabold text-slate-800">Como funciona?</p>
+          <p class="text-sm font-extrabold text-slate-800">Como funciona para doar?</p>
           <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Você registra sua doação aqui, e nossa equipe acompanha até a entrega. Assim evitamos duplicidade e organizamos melhor a Providência.
+            Escolha um item da lista, informe a quantidade, preencha seus dados e registre a sua doação. Assim, nossa equipe consegue organizar melhor a Providência e acompanhar cada entrega sem duplicidade.
+          </p>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Logo abaixo, você também pode deixar uma mensagem no mural para partilhar carinho, fé e incentivo com o EJC. 💜
           </p>
         </div>
       </div>
@@ -300,15 +303,6 @@
 
     <div class="mt-8">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-black uppercase tracking-widest text-slate-700">Últimas doações registradas</h3>
-      </div>
-      <div id="ultimasDoacoes" class="space-y-2">
-        <p class="text-xs text-slate-300">Carregando...</p>
-      </div>
-    </div>
-
-    <div class="mt-8">
-      <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-black uppercase tracking-widest text-slate-700">Mural de mensagens</h3>
       </div>
 
@@ -357,8 +351,7 @@
       const nums = valor.replace(/\D/g, "").slice(0, 11);
       if (nums.length <= 2) return nums;
       if (nums.length <= 7) return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
-      if (nums.length <= 11) return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
-      return nums;
+      return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
     }
 
     function iniciarContador() {
@@ -367,7 +360,6 @@
       function atualizar() {
         const agora = new Date();
         let diff = destino.getTime() - agora.getTime();
-
         if (diff < 0) diff = 0;
 
         const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -388,7 +380,6 @@
     async function carregarDados() {
       const select = document.getElementById("d_item");
       const list = document.getElementById("listaProgresso");
-      const ultimas = document.getElementById("ultimasDoacoes");
 
       const { data: metas, error } = await _supabase
         .from('metas_doacao')
@@ -452,25 +443,6 @@
           <div class="text-center p-8 bg-purple-50 rounded-[32px] border border-purple-100">
             <p class="text-purple-700 font-bold italic">Graças a Deus, todas as providências já foram alcançadas! 💜</p>
           </div>`;
-      }
-
-      const { data: ultimosRegistros } = await _supabase
-        .from('transacoes')
-        .select('nome_pessoa, descricao, quantidade, criado_em')
-        .eq('modulo', 'DOACAO')
-        .order('criado_em', { ascending: false })
-        .limit(5);
-
-      const registros = ultimosRegistros || [];
-      if (!registros.length) {
-        ultimas.innerHTML = `<p class="text-xs text-slate-400">Ainda não há doações registradas.</p>`;
-      } else {
-        ultimas.innerHTML = registros.map(r => `
-          <div class="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3">
-            <p class="text-sm font-bold text-slate-800">${esc(r.nome_pessoa || "Doação registrada")}</p>
-            <p class="text-xs text-slate-500 mt-1">${Number(r.quantidade || 0)}x ${esc(r.descricao || "-")}</p>
-          </div>
-        `).join("");
       }
     }
 
