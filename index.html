@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0f172a" />
-  <title>EJC BANK • Private Wealth Management</title>
+  <meta name="theme-color" content="#820ad1" />
+  <title>EJC BANK • Acesso Restrito</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -15,95 +15,122 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    :root { --brand-primary: #820ad1; --vault-dark: #0f172a; --vault-silver: #f8fafc; }
-    body { font-family: "Plus Jakarta Sans", sans-serif; background-color: var(--vault-silver); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+    :root { --nu-roxo: #820ad1; --nu-roxo-dark: #4b0082; --nu-bg: #f8fafc; }
+    body { font-family: "Plus Jakarta Sans", sans-serif; background-color: var(--nu-bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
     
-    .bg-elite {
-      background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+    /* Fundo Roxo Premium Animado */
+    .bg-roxo-premium {
+      background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
       position: relative;
     }
-    .bg-elite::before {
+    .bg-roxo-premium::before {
       content: ""; position: absolute; inset: 0;
       background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
-      opacity: 0.05;
+      opacity: 0.1;
     }
 
     .premium-card {
       background: rgba(255, 255, 255, 0.98);
-      border-radius: 32px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border-radius: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(10px);
     }
 
-    /* Seletor de Perfil Estilo Apple */
-    .profile-selector { background: #f1f5f9; border-radius: 16px; padding: 4px; display: flex; gap: 4px; }
-    .profile-btn { 
-      flex: 1; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 800; 
-      text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.3s ease;
-    }
-    .profile-btn.active { background: white; color: var(--vault-dark); shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .profile-btn.inactive { color: #94a3b8; }
-
     .vault-input {
-      background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.3s ease;
+      background: #f8fafc; border: 2px solid #f1f5f9; transition: all 0.3s ease;
     }
-    .vault-input:focus { background: white; border-color: var(--brand-primary); box-shadow: 0 0 0 1px var(--brand-primary); }
+    .vault-input:focus { background: white; border-color: var(--nu-roxo); box-shadow: 0 0 0 4px rgba(130, 10, 209, 0.1); outline: none; }
 
     .nu-header {
-      background: var(--vault-dark);
+      background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
       color: white; padding-bottom: 24px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px;
     }
 
-    .fab {
-      position: fixed; bottom: 32px; right: 32px; width: 64px; height: 64px; background: var(--vault-dark); color: white;
-      border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 50; transition: transform 0.2s;
+    .choice-card {
+      background: #ffffff;
+      border: 2px solid #f1f5f9;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .choice-card:active { transform: scale(0.95); border-color: var(--nu-roxo); }
 
     .hidden { display: none !important; }
     #toast-container { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 400px; }
-    .toast { background: white; color: var(--vault-dark); border-left: 4px solid var(--brand-primary); padding: 16px 20px; border-radius: 12px; font-weight: 600; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; }
+    .toast { background: #1e293b; color: white; padding: 16px 20px; border-radius: 16px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); }
     
-    @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .animate-elite { animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .animate-elite { animation: slideIn 0.5s ease-out forwards; }
   </style>
 </head>
 <body class="text-slate-900 min-h-screen flex flex-col">
 
   <div id="toast-container"></div>
 
-  <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-elite">
-    <div class="w-full max-w-sm premium-card p-10 animate-elite">
+  <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-roxo-premium">
+    <div class="w-full max-w-sm premium-card p-10 animate-elite overflow-hidden">
       
-      <div class="text-center mb-10">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-2xl mb-6 text-white text-3xl shadow-2xl">
-          <i class="fas fa-shield-halved"></i>
+      <div id="stepProfile">
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-2xl mb-6 text-purple-700 text-3xl shadow-inner"> ✝️ </div>
+          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Escolha seu perfil de acesso</p>
         </div>
-        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">EJC<span class="font-light text-slate-500">BANK</span></h1>
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-3">Secure Financial Access</p>
-      </div>
 
-      <div class="profile-selector mb-8">
-        <button type="button" id="tabBtnCompras" onclick="mudarAbaLogin('compras')" class="profile-btn active">Caixa</button>
-        <button type="button" id="tabBtnPilotos" onclick="mudarAbaLogin('pilotos')" class="profile-btn inactive">Liderança</button>
-      </div>
-
-      <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-6">
-        <div class="space-y-2">
-          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Access Pin</p>
-          <input type="password" id="senhaCompras" placeholder="••••" required class="vault-input w-full rounded-xl py-4 px-5 font-bold outline-none text-center text-2xl tracking-[0.5em] text-slate-800" />
-        </div>
-        <button type="submit" id="btnCompras" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900 hover:bg-black transition-all">AUTHORIZED LOGIN</button>
-      </form>
-
-      <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-5 hidden">
         <div class="space-y-4">
-          <input type="email" id="emailPiloto" placeholder="Executive Email" required class="vault-input w-full rounded-xl py-4 px-5 font-bold outline-none text-slate-700" />
-          <input type="password" id="senhaPiloto" placeholder="Secure Password" required class="vault-input w-full rounded-xl py-4 px-5 font-bold outline-none text-slate-700" />
-        </div>
-        <button type="submit" id="btnPiloto" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900 hover:bg-black transition-all">EXECUTIVE ACCESS</button>
-      </form>
+          <button onclick="escolherPerfil('compras')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5 hover:bg-slate-50">
+            <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-2xl flex items-center justify-center text-xl">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-0.5">Operacional</p>
+              <p class="text-lg font-bold text-slate-800">🛍️ COMPRAS</p>
+            </div>
+          </button>
 
-      <p id="msgErroLogin" class="hidden mt-8 text-rose-600 text-[10px] font-bold text-center uppercase tracking-widest bg-rose-50 py-3 rounded-lg border border-rose-100">Authentication Failed</p>
+          <button onclick="escolherPerfil('pilotos')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5 hover:bg-slate-50">
+            <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center text-xl">
+              <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-0.5">Gerencial</p>
+              <p class="text-lg font-bold text-slate-800">✈️ PILOTOS</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div id="stepAuth" class="hidden">
+        <button onclick="voltarParaSelecao()" class="text-slate-400 hover:text-purple-700 transition text-[10px] font-black uppercase tracking-widest mb-8 flex items-center gap-2">
+          <i class="fas fa-chevron-left"></i> Voltar à seleção
+        </button>
+
+        <div class="mb-8">
+          <h2 id="authTitle" class="text-2xl font-black text-slate-800">Acesso Seguro</h2>
+          <p id="authSubtitle" class="text-xs text-slate-400 font-bold mt-1">Identifique-se para continuar</p>
+        </div>
+
+        <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-6 hidden">
+          <div class="space-y-2">
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Senha do Caixa</p>
+            <input type="password" id="senhaCompras" placeholder="••••" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-center text-2xl tracking-[0.5em] text-slate-800" />
+          </div>
+          <button type="submit" id="btnCompras" class="w-full py-4 rounded-2xl font-black text-white bg-purple-700 shadow-lg shadow-purple-200 hover:bg-purple-800 active:scale-95 transition-all">ENTRAR NO SISTEMA</button>
+        </form>
+
+        <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">E-mail</label>
+            <input type="email" id="emailPiloto" placeholder="exemplo@email.com" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Senha</label>
+            <input type="password" id="senhaPiloto" placeholder="••••••••" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+          </div>
+          <button type="submit" id="btnPiloto" class="w-full py-4 rounded-2xl font-black text-white bg-slate-900 shadow-xl hover:bg-black active:scale-95 transition-all mt-2">ACESSAR PAINEL</button>
+        </form>
+
+        <p id="msgErroLogin" class="hidden mt-6 text-rose-600 text-[10px] font-bold text-center uppercase tracking-widest bg-rose-50 py-3 rounded-lg border border-rose-100">Credenciais inválidas</p>
+      </div>
+
     </div>
   </div>
 
@@ -111,49 +138,133 @@
     <header class="nu-header sticky top-0 z-40 px-6 pt-8">
       <div class="flex justify-between items-center mb-8">
         <div class="flex items-center gap-4">
-          <div id="userAvatar" class="w-12 h-12 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center text-white font-bold text-xl">U</div>
+          <div id="userAvatar" class="w-12 h-12 bg-white/20 border border-white/30 rounded-xl flex items-center justify-center text-white font-bold text-xl backdrop-blur-sm">U</div>
           <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">System Authorized</p>
-            <h1 id="headerTitle" class="font-extrabold text-xl tracking-tight leading-none">EJC BANK</h1>
+            <p class="text-[10px] font-bold text-white/60 uppercase tracking-widest mb-1">Bem-vindo(a)</p>
+            <h1 id="headerTitle" class="font-extrabold text-xl tracking-tight leading-none text-white uppercase">EJC BANK</h1>
           </div>
         </div>
-        <button onclick="sair()" class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition"><i class="fas fa-arrow-right-from-bracket"></i></button>
+        <button onclick="sair()" class="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition"><i class="fas fa-power-off"></i></button>
       </div>
 
       <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-        <button id="tab-admin" onclick="mudarAba('ADMIN')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/5 text-slate-400 hidden">Overview</button>
-        <button id="tab-ejc" onclick="mudarAba('EJC')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/5 text-slate-400">Core Fund</button>
-        <button id="tab-mercadinho" onclick="mudarAba('MERCADINHO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/5 text-slate-400">Retail</button>
-        <button id="tab-feijoada" onclick="mudarAba('FEIJOADA')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/5 text-slate-400 hidden">Catering</button>
-        <button id="tab-doacao" onclick="mudarAba('DOACAO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/5 text-slate-400 hidden">Philanthropy</button>
+        <button id="tab-admin" onclick="mudarAba('ADMIN')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Geral</button>
+        <button id="tab-ejc" onclick="mudarAba('EJC')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white">Caixa EJC</button>
+        <button id="tab-mercadinho" onclick="mudarAba('MERCADINHO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white">Mercadinho</button>
+        <button id="tab-feijoada" onclick="mudarAba('FEIJOADA')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Feijoada</button>
+        <button id="tab-doacao" onclick="mudarAba('DOACAO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Doações</button>
       </div>
     </header>
 
     <main class="px-6 py-8 space-y-8">
-      <div id="blocoAdminDoacao" class="hidden animate-elite">
-        <button onclick="document.getElementById('modalMeta').classList.remove('hidden')" class="w-full bg-white text-slate-900 border border-slate-200 py-5 rounded-2xl font-extrabold shadow-sm flex items-center justify-center gap-3 active:scale-95 transition mb-4"><i class="fas fa-plus"></i> NEW PHILANTHROPIC TARGET</button>
-        <div id="listaGerenciarMetas" class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-2"></div>
+      <div id="blocoAdminDoacao" class="hidden">
+        <button onclick="document.getElementById('modalMeta').classList.remove('hidden')" class="w-full bg-white text-purple-700 border-2 border-purple-100 py-5 rounded-3xl font-extrabold shadow-sm flex items-center justify-center gap-3 active:scale-95 transition mb-6">
+          <i class="fas fa-plus-circle"></i> CADASTRAR NOVA META DE DOAÇÃO
+        </button>
+        <div id="listaGerenciarMetas" class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-2"></div>
       </div>
 
-      <div id="dashAdmin" class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 hidden">
+      <div id="dashAdmin" class="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 hidden">
         <div id="dashGrid" class="grid grid-cols-1 sm:grid-cols-4 gap-8">
-          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Gross Inflow</p><h2 id="totalRecebido" class="text-3xl font-extrabold text-slate-900">R$ 0,00</h2></div>
-          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Pending</p><h2 id="totalPendente" class="text-3xl font-extrabold text-amber-500">R$ 0,00</h2></div>
-          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Expenses</p><h2 id="totalSaidas" class="text-3xl font-extrabold text-rose-500">R$ 0,00</h2></div>
-          <div id="cardSaldoLiquido"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Net Capital</p><h2 id="totalLiquido" class="text-3xl font-extrabold text-brand-primary">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Total Recebido</p><h2 id="totalRecebido" class="text-3xl font-extrabold text-slate-900">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Total Fiados</p><h2 id="totalPendente" class="text-3xl font-extrabold text-amber-500">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Total Saídas</p><h2 id="totalSaidas" class="text-3xl font-black text-rose-500">R$ 0,00</h2></div>
+          <div id="cardSaldoLiquido"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Saldo Líquido</p><h2 id="totalLiquido" class="text-3xl font-extrabold text-purple-700">R$ 0,00</h2></div>
         </div>
       </div>
 
-      <div id="blocoPDF" class="hidden"><button onclick="gerarPDFRelatorio()" class="w-full bg-slate-100 text-slate-600 py-4 rounded-xl font-bold flex items-center justify-center gap-3 active:scale-95 transition border border-slate-200"><i class="fas fa-file-invoice"></i> EXPORT DAILY LEDGER (PDF)</button></div>
+      <div id="blocoPDF" class="hidden"><button onclick="gerarPDFRelatorio()" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 active:scale-95 transition border border-slate-200"><i class="fas fa-file-pdf"></i> GERAR RELATÓRIO DO DIA (PDF)</button></div>
 
-      <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm mb-20">
-        <div class="p-6 border-b border-slate-50 flex gap-4 items-center"><i class="fas fa-magnifying-glass text-slate-300"></i><input id="campoBusca" onkeyup="renderizar()" placeholder="Search Ledger..." class="w-full text-sm font-semibold outline-none text-slate-700" /></div>
-        <div id="loading" class="hidden p-12 text-center text-slate-300"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
+      <div class="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm mb-20">
+        <div class="p-6 border-b border-slate-50 flex gap-4 items-center">
+          <i class="fas fa-search text-slate-300"></i>
+          <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar nos lançamentos..." class="w-full text-sm font-semibold outline-none text-slate-700" />
+        </div>
+        <div id="loading" class="hidden p-12 text-center text-slate-300"><i class="fas fa-circle-notch fa-spin text-2xl"></i></div>
         <div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><tbody id="corpoTabela" class="divide-y divide-slate-50"></tbody></table></div>
       </div>
     </main>
 
-    <button onclick="abrirModal()" class="fab"><i class="fas fa-plus"></i></button>
+    <button onclick="abrirModal()" class="fixed bottom-8 right-8 w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition z-50"><i class="fas fa-plus"></i></button>
+  </div>
+
+  <div id="modalMeta" class="hidden fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
+      <h2 class="text-xl font-black text-slate-800 mb-6 text-center">Nova Meta de Doação</h2>
+      <form id="formMeta" onsubmit="event.preventDefault(); salvarMeta();" class="space-y-4">
+          <input id="m_item" placeholder="Ex: Arroz" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
+          <div class="flex gap-2">
+            <input id="m_qtd" type="number" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
+            <input id="m_un" placeholder="Unid (kg, un)" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
+          </div>
+          <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black active:scale-95 transition">CADASTRAR META</button>
+          <button type="button" onclick="document.getElementById('modalMeta').classList.add('hidden')" class="w-full py-2 font-bold text-slate-400 mt-2">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="absolute inset-0" onclick="fecharModal()"></div>
+    <div class="relative bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-xl font-black text-slate-900">Novo Lançamento</h2>
+        <button type="button" onclick="fecharModal()" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="formFin" class="space-y-4">
+        <div id="blocoModulo" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-100">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Destino</label>
+          <select id="f_modulo" class="w-full bg-transparent font-bold text-slate-900 outline-none">
+            <option value="EJC">Caixa Principal</option><option value="MERCADINHO">Mercadinho</option><option value="FEIJOADA">Feijoada</option><option value="DOACAO">Doação</option><option value="ADMIN">Administrativo</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="vault-input rounded-2xl px-4 py-3">
+            <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Descrição</label>
+            <input id="f_desc" required class="w-full bg-transparent font-bold text-slate-900 outline-none" />
+          </div>
+          <div class="vault-input rounded-2xl px-4 py-3">
+            <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Valor R$</label>
+            <input id="f_val" type="number" step="0.01" required class="w-full bg-transparent font-bold text-slate-900 outline-none text-right" />
+          </div>
+        </div>
+        <div id="camposMercado" class="hidden bg-pink-50 p-5 rounded-2xl border border-pink-100 space-y-4">
+            <select id="f_tipo_pessoa" onchange="controlarTipoPessoa()" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none">
+                <option value="SERVO">🙋‍♂️ Servo do EJC (Aceita Fiado)</option><option value="PAROQUIANO">👤 Paroquiano (Somente Pago)</option>
+            </select>
+            <select id="f_equipe_merc" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none">
+                <option value="">Selecione a Equipe...</option>
+                <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
+            </select>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="vault-input rounded-2xl px-4 py-3">
+            <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Status</label>
+            <select id="f_type" class="w-full bg-transparent font-bold text-slate-900 outline-none">
+              <option value="ENTRADA">Pago ✅</option><option value="PENDENTE">Fiado 🟠</option><option value="SAIDA">Gasto 🔴</option>
+            </select>
+          </div>
+          <div class="vault-input rounded-2xl px-4 py-3">
+            <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Forma</label>
+            <select id="f_forma" class="w-full bg-transparent font-bold text-slate-900 outline-none">
+              <option value="PIX">PIX</option><option value="DINHEIRO">Dinheiro</option><option value="CARTAO">Cartão</option>
+            </select>
+          </div>
+        </div>
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Nome da Pessoa</label>
+          <input id="f_nome" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
+        </div>
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Telefone (WhatsApp)</label>
+          <input id="f_tel" type="tel" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
+        </div>
+        <div class="bg-purple-50 rounded-2xl px-4 py-3 border border-purple-100">
+          <label class="text-[9px] font-black text-purple-400 uppercase block mb-1">Registrado por</label>
+          <input id="f_recebido" required class="w-full bg-transparent font-bold text-purple-900 outline-none" />
+        </div>
+        <button type="submit" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all uppercase">Salvar no Banco</button>
+      </form>
+    </div>
   </div>
 
   <script>
@@ -166,21 +277,24 @@
 
     function showToast(msg, type = "success") {
       const t = document.createElement("div"); t.className = "toast";
-      t.innerHTML = `<i class="fas ${type === "error" ? "fa-circle-xmark text-rose-500" : "fa-circle-check text-emerald-400"}"></i> ${esc(msg)}`;
+      t.innerHTML = `<i class="fas ${type === "error" ? "fa-circle-xmark text-rose-500" : "fa-circle-check text-emerald-500"}"></i> ${esc(msg)}`;
       document.getElementById("toast-container").appendChild(t); setTimeout(() => t.remove(), 3500);
     }
 
-    function mudarAbaLogin(aba) {
+    function escolherPerfil(p) {
+      document.getElementById("stepProfile").classList.add("hidden");
+      document.getElementById("stepAuth").classList.remove("hidden");
       document.getElementById("msgErroLogin").classList.add("hidden");
-      const isCompras = aba === "compras";
+      const isCompras = p === 'compras';
       document.getElementById("formCompras").classList.toggle("hidden", !isCompras);
       document.getElementById("formPilotos").classList.toggle("hidden", isCompras);
-      
-      const btnC = document.getElementById("tabBtnCompras");
-      const btnP = document.getElementById("tabBtnPilotos");
-      
-      btnC.className = isCompras ? "profile-btn active" : "profile-btn inactive";
-      btnP.className = !isCompras ? "profile-btn active" : "profile-btn inactive";
+      document.getElementById("authTitle").innerText = isCompras ? "Acesso Compras" : "Acesso Pilotos";
+      document.getElementById("authSubtitle").innerText = isCompras ? "Informe a senha do terminal" : "Identifique-se com e-mail e senha";
+    }
+
+    function voltarParaSelecao() {
+      document.getElementById("stepAuth").classList.add("hidden");
+      document.getElementById("stepProfile").classList.remove("hidden");
     }
 
     async function carregarPerfilUsuario(user) {
@@ -190,12 +304,12 @@
     }
 
     async function executarLogin(email, senha, btnElement) {
-      const textoOriginal = btnElement.innerHTML; btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+      const tO = btnElement.innerHTML; btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Autenticando...';
       document.getElementById("msgErroLogin").classList.add("hidden");
       const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
-      if (error) { document.getElementById("msgErroLogin").classList.remove("hidden"); btnElement.innerHTML = textoOriginal; return; }
+      if (error) { document.getElementById("msgErroLogin").classList.remove("hidden"); btnElement.innerHTML = tO; return; }
       const profile = await carregarPerfilUsuario(data.user);
-      if (!profile) { document.getElementById("msgErroLogin").classList.remove("hidden"); btnElement.innerHTML = textoOriginal; return; }
+      if (!profile) { document.getElementById("msgErroLogin").classList.remove("hidden"); btnElement.innerHTML = tO; return; }
       currentUser = data.user; currentProfile = profile; ROLE = profile.role.toUpperCase(); iniciarApp();
     }
 
@@ -204,13 +318,14 @@
 
     function iniciarApp() {
       document.getElementById("loginScreen").classList.add("hidden"); document.getElementById("appMain").classList.remove("hidden");
-      document.getElementById("userAvatar").innerText = (currentProfile?.nome || ROLE).charAt(0).toUpperCase();
+      const userDisplayName = currentProfile?.nome || ROLE;
+      document.getElementById("userAvatar").innerText = userDisplayName.charAt(0).toUpperCase();
       if (ROLE === "ADMIN") {
         document.querySelectorAll("#tab-admin, #tab-feijoada, #tab-doacao, #dashAdmin, #blocoPDF").forEach(el => el.classList.remove("hidden"));
-        document.getElementById("headerTitle").innerText = "EJC BANK PILOTOS";
+        document.getElementById("headerTitle").innerText = "EJC BANK • PILOTOS";
         abaAtiva = "ADMIN";
       } else { 
-        document.getElementById("headerTitle").innerText = "EJC BANK COMPRAS";
+        document.getElementById("headerTitle").innerText = "EJC BANK • COMPRAS";
         abaAtiva = "EJC"; 
       }
       mudarAba(abaAtiva);
@@ -219,14 +334,14 @@
     async function mudarAba(a) {
       abaAtiva = a; document.querySelectorAll(".tab-btn").forEach(b => {
         const isSelected = b.id === "tab-" + a.toLowerCase();
-        b.classList.toggle("bg-white", isSelected); b.classList.toggle("text-slate-900", isSelected);
-        b.classList.toggle("bg-white/5", !isSelected); b.classList.toggle("text-slate-400", !isSelected);
+        b.classList.toggle("bg-white", isSelected); b.classList.toggle("text-purple-700", isSelected);
+        b.classList.toggle("bg-white/10", !isSelected); b.classList.toggle("text-white", !isSelected);
       });
-      const isAdminDoacao = (abaAtiva === "DOACAO" && ROLE === "ADMIN");
       const blocoDoacao = document.getElementById("blocoAdminDoacao");
-      if (blocoDoacao) blocoDoacao.classList.toggle("hidden", !isAdminDoacao);
-      if (isAdminDoacao) carregarMetasAdmin();
-
+      if (blocoDoacao) {
+        blocoDoacao.classList.toggle("hidden", !(abaAtiva === "DOACAO" && ROLE === "ADMIN"));
+        if (!blocoDoacao.classList.contains("hidden")) carregarMetasAdmin();
+      }
       const cardSaldo = document.getElementById("cardSaldoLiquido"), dashGrid = document.getElementById("dashGrid");
       if (cardSaldo && dashGrid) {
           if (abaAtiva === "ADMIN") { cardSaldo.classList.remove("hidden"); dashGrid.className = "grid grid-cols-1 sm:grid-cols-4 gap-8"; }
@@ -260,31 +375,54 @@
       const busca = document.getElementById("campoBusca").value.toLowerCase();
       dadosCache.filter(i => ((i.descricao || "") + (i.nome_pessoa || "")).toLowerCase().includes(busca)).forEach(i => {
         const val = parseFloat(i.valor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2});
-        const iconClass = i.modulo === "DOACAO" ? "bg-indigo-500" : i.natureza === "SAIDA" ? "bg-rose-500" : i.status === "PENDENTE" ? "bg-amber-500" : "bg-emerald-500";
-        tb.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0"><td class="p-6"><p class="text-sm font-bold text-slate-900">${esc(i.descricao)}</p><p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">${esc(i.nome_pessoa) || "---"} ${i.equipe ? ' • '+esc(i.equipe) : ""}</p></td><td class="p-6 text-right font-extrabold text-slate-900">R$ ${val}</td><td class="p-6 text-center"><span class="w-1.5 h-1.5 rounded-full ${iconClass} inline-block"></span></td><td class="p-6 text-right">${i.status === 'PENDENTE' ? `<button onclick="baixar('${i.id}', ${i.version})" class="w-9 h-9 rounded-lg bg-slate-900 text-white shadow-lg"><i class="fas fa-check text-[10px]"></i></button>` : ""}</td></tr>`;
+        const iconClass = i.modulo === "DOACAO" ? "bg-purple-400" : i.natureza === "SAIDA" ? "bg-rose-500" : i.status === "PENDENTE" ? "bg-amber-500" : "bg-emerald-500";
+        tb.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0"><td class="p-6"><p class="text-sm font-bold text-slate-900">${esc(i.descricao)}</p><p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">${esc(i.nome_pessoa) || "Sem Nome"} ${i.equipe ? ' • '+esc(i.equipe) : ""}</p></td><td class="p-6 text-right font-extrabold text-slate-900">R$ ${val}</td><td class="p-6 text-center"><span class="w-2 h-2 rounded-full ${iconClass} inline-block shadow-sm"></span></td><td class="p-6 text-right">${i.status === 'PENDENTE' ? `<button onclick="baixar('${i.id}', ${i.version})" class="w-10 h-10 rounded-xl bg-purple-700 text-white shadow-lg"><i class="fas fa-check text-xs"></i></button>` : ""}</td></tr>`;
       });
     }
 
     async function carregarMetasAdmin() {
         const container = document.getElementById("listaGerenciarMetas");
-        container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center">Syncing Targets...</p>';
+        container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center">Buscando metas...</p>';
         const { data } = await _supabase.from('metas_doacao').select('*').eq('ativo', true).order('criado_em', { ascending: false });
-        if (!data || data.length === 0) { container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center">No active targets.</p>'; return; }
-        container.innerHTML = '<p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4">Target Management</p>';
+        if (!data || data.length === 0) { container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center">Nenhuma meta ativa.</p>'; return; }
         data.forEach(m => {
-            container.innerHTML += `<div class="flex justify-between items-center bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                <div><p class="text-sm font-extrabold text-slate-900">${esc(m.item)}</p><p class="text-[10px] text-slate-500">Volume: ${m.qtd_necessaria} ${esc(m.unidade)}</p></div>
-                <button onclick="excluirMeta('${m.id}')" class="w-10 h-10 bg-white text-slate-400 rounded-xl flex items-center justify-center hover:bg-rose-50 hover:text-rose-500 transition"><i class="fas fa-trash-can text-xs"></i></button></div>`;
+            container.innerHTML += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div><p class="text-sm font-bold text-slate-900">${esc(m.item)}</p><p class="text-[10px] text-slate-500">Alvo: ${m.qtd_necessaria} ${esc(m.unidade)}</p></div>
+                <button onclick="excluirMeta('${m.id}')" class="text-rose-400 hover:text-rose-600 transition p-2"><i class="fas fa-trash-alt"></i></button></div>`;
         });
     }
 
-    async function excluirMeta(id) { if (confirm("Terminate target?")) { await _supabase.from('metas_doacao').delete().eq('id', id); carregarMetasAdmin(); } }
-    async function baixar(id, ver) { if (confirm("Settle Transaction?")) { await _supabase.from('transacoes').update({ status: 'PAGO' }).eq('id', id).eq('version', ver); carregarDados(); } }
+    async function excluirMeta(id) { if (confirm("Deseja apagar esta meta?")) { await _supabase.from('metas_doacao').delete().eq('id', id); carregarMetasAdmin(); } }
+    async function salvarMeta() {
+        const item = document.getElementById("m_item").value, qtd = parseInt(document.getElementById("m_qtd").value), un = document.getElementById("m_un").value;
+        const { error } = await _supabase.from('metas_doacao').insert([{ item, qtd_necessaria: qtd, unidade: un }]);
+        if (!error) { showToast("Meta Registrada!"); document.getElementById("modalMeta").classList.add("hidden"); document.getElementById("formMeta").reset(); carregarMetasAdmin(); }
+    }
+
+    document.getElementById("formFin").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const type = document.getElementById("f_type").value, val = parseFloat(document.getElementById("f_val").value), mod = abaAtiva === "ADMIN" ? document.getElementById("f_modulo").value : abaAtiva;
+      let eqp = ""; if (mod === "MERCADINHO") { eqp = document.getElementById("f_tipo_pessoa").value === "SERVO" ? document.getElementById("f_equipe_merc").value : "PAROQUIANO"; }
+      const { error } = await _supabase.from('transacoes').insert([{ modulo: mod, descricao: document.getElementById("f_desc").value, valor: val, quantidade: 1, natureza: type === "SAIDA" ? "SAIDA" : "ENTRADA", status: type === "PENDENTE" ? "PENDENTE" : "PAGO", forma_pagamento: document.getElementById("f_forma").value, nome_pessoa: document.getElementById("f_nome").value, equipe: eqp, telefone: document.getElementById("f_tel").value.replace(/\D/g,""), recebido_por: document.getElementById("f_recebido").value, user_id: currentUser.id }]);
+      if (!error) { showToast("Lançamento Realizado!"); fecharModal(); carregarDados(); }
+    });
+
+    async function baixar(id, ver) { if (confirm("Confirmar recebimento?")) { await _supabase.from('transacoes').update({ status: 'PAGO' }).eq('id', id).eq('version', ver); carregarDados(); } }
     async function sair() { await _supabase.auth.signOut(); location.reload(); }
     function fecharModal() { document.getElementById("modal").classList.add("hidden"); document.getElementById("formFin").reset(); }
 
+    function controlarTipoPessoa() {
+        const tipo = document.getElementById("f_tipo_pessoa").value, eqp = document.getElementById("f_equipe_merc"), stat = document.getElementById("f_type"), optF = stat.querySelector('option[value="PENDENTE"]');
+        if (tipo === "PAROQUIANO") { eqp.classList.add("hidden"); stat.value = "ENTRADA"; optF.disabled = true; } else { eqp.classList.remove("hidden"); optF.disabled = false; }
+    }
+
+    function abrirModal() {
+      document.getElementById("modal").classList.remove("hidden");
+      const isM = (abaAtiva === "MERCADINHO"); document.getElementById("camposMercado").classList.toggle("hidden", !isM);
+      if (isM) controlarTipoPessoa(); document.getElementById("blocoModulo").classList.toggle("hidden", abaAtiva !== "ADMIN");
+    }
+
     window.onload = async () => {
-      mudarAbaLogin('compras');
       const { data: { session } } = await _supabase.auth.getSession();
       if (session) { const p = await carregarPerfilUsuario(session.user); if (p) { currentUser = session.user; currentProfile = p; ROLE = p.role.toUpperCase(); iniciarApp(); } }
     };
