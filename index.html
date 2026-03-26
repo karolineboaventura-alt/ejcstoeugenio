@@ -149,6 +149,13 @@
     </header>
 
     <main class="px-4 py-6 -mt-4 z-30 space-y-6">
+      
+      <div id="blocoAdminDoacao" class="hidden mb-2 animate-fade-in-up">
+        <button onclick="document.getElementById('modalMeta').classList.remove('hidden')" class="w-full bg-purple-100 text-purple-700 border border-purple-200 py-4 rounded-2xl font-black shadow-sm flex items-center justify-center gap-3 active:scale-95 transition">
+          <i class="fas fa-bullseye"></i> CADASTRAR NOVA META DE DOAÇÃO
+        </button>
+      </div>
+
       <div id="dashAdmin" class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 animate-fade-in-up hidden">
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
           <div>
@@ -199,6 +206,21 @@
     </button>
   </div>
 
+  <div id="modalMeta" class="hidden fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl">
+      <h2 class="text-xl font-black text-slate-800 mb-4">Nova Meta de Doação</h2>
+      <form id="formMeta" onsubmit="event.preventDefault(); salvarMeta();" class="space-y-4">
+          <input id="m_item" placeholder="Item (ex: Óleo)" required class="w-full bg-slate-50 p-4 rounded-xl font-bold outline-none text-slate-700">
+          <div class="flex gap-2">
+            <input id="m_qtd" type="number" placeholder="Qtd" required class="w-full bg-slate-50 p-4 rounded-xl font-bold outline-none text-slate-700">
+            <input id="m_un" placeholder="Unid (kg, L)" required class="w-full bg-slate-50 p-4 rounded-xl font-bold outline-none text-slate-700">
+          </div>
+          <button type="submit" class="w-full bg-purple-600 text-white py-4 rounded-xl font-black active:scale-95 transition">SALVAR META</button>
+          <button type="button" onclick="document.getElementById('modalMeta').classList.add('hidden')" class="w-full py-2 font-bold text-slate-400">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
   <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="fecharModal()"></div>
 
@@ -233,6 +255,18 @@
           </div>
         </div>
 
+        <div id="camposMercado" class="hidden bg-pink-50 p-4 rounded-2xl border border-pink-100 space-y-3 mb-3">
+            <p class="text-[10px] font-black text-pink-500 uppercase text-center">Controle do Mercadinho</p>
+            <select id="f_tipo_pessoa" onchange="controlarTipoPessoa()" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm text-slate-700 outline-none">
+                <option value="SERVO">🙋‍♂️ Servo do EJC (Pode Fiado)</option>
+                <option value="PAROQUIANO">👤 Paroquiano / Visitante (Sem Fiado)</option>
+            </select>
+            <select id="f_equipe_merc" class="w-full bg-white border-0 p-3 rounded-xl font-bold text-center text-sm shadow-sm text-slate-700 outline-none">
+                <option value="">Selecione a Equipe do Servo...</option>
+                <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
+            </select>
+        </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
             <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Status</label>
@@ -254,8 +288,13 @@
         </div>
 
         <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
-          <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Nome / Doador</label>
-          <input id="f_nome" placeholder="Quem doou/comprou?" class="w-full bg-transparent font-bold text-slate-800 outline-none" />
+          <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Nome</label>
+          <input id="f_nome" placeholder="Quem comprou / doou?" class="w-full bg-transparent font-bold text-slate-800 outline-none" />
+        </div>
+
+        <div class="bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
+          <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">WhatsApp (Cobrança de Fiado)</label>
+          <input id="f_tel" type="tel" placeholder="Ex: 11999999999" class="w-full bg-transparent font-bold text-slate-800 outline-none" />
         </div>
 
         <div class="bg-purple-50 rounded-2xl px-4 py-3 border border-purple-100">
@@ -317,7 +356,7 @@
 
       if (error || !profile || !profile.active) {
         await _supabase.auth.signOut();
-        showToast("Usuário sem acesso liberado no sistema.", "error");
+        showToast("Usuário sem acesso liberado.", "error");
         return null;
       }
       return profile;
@@ -384,12 +423,12 @@
         .order('item', { ascending: true });
 
       if (error) {
-        lista.innerHTML = `<p class="text-sm text-rose-500 font-bold">Erro ao carregar as metas.</p>`;
+        lista.innerHTML = `<p class="text-sm text-rose-500 font-bold">Erro ao carregar.</p>`;
         return;
       }
 
       if (!data || data.length === 0) {
-        lista.innerHTML = `<p class="text-sm text-slate-400 font-bold">Nenhuma meta cadastrada no momento.</p>`;
+        lista.innerHTML = `<p class="text-sm text-slate-400 font-bold">Nenhuma meta ativa no momento.</p>`;
         return;
       }
 
@@ -422,33 +461,54 @@
       });
     }
 
+    function controlarTipoPessoa() {
+        const tipo = document.getElementById("f_tipo_pessoa").value;
+        const equipe = document.getElementById("f_equipe_merc");
+        const status = document.getElementById("f_type");
+        const optFiado = status.querySelector('option[value="PENDENTE"]');
+
+        if (tipo === "PAROQUIANO") {
+            equipe.classList.add("hidden");
+            equipe.value = "";
+            status.value = "ENTRADA";
+            optFiado.disabled = true;
+            optFiado.innerText = "🟠 Fiado (Só para Servos)";
+        } else {
+            equipe.classList.remove("hidden");
+            optFiado.disabled = false;
+            optFiado.innerText = "🟠 Fiado (Pendente)";
+        }
+    }
+
     function iniciarApp() { 
-        document.getElementById("loginScreen").classList.add("hidden"); 
-        document.getElementById("appMain").classList.remove("hidden"); 
-        document.getElementById("userRoleDisplay").innerText = currentUser?.email ? currentUser.email.split("@")[0] : ROLE; 
-        document.getElementById("userAvatar").innerText = currentUser?.email ? currentUser.email.charAt(0).toUpperCase() : ROLE.charAt(0).toUpperCase(); 
-        
-        if (ROLE === "ADMIN") { 
-            const tabAdmin = document.getElementById("tab-admin"); 
-            const tabFeijoada = document.getElementById("tab-feijoada"); 
-            const tabDoacao = document.getElementById("tab-doacao"); 
-            const dashAdmin = document.getElementById("dashAdmin"); 
-            const blocoPDF = document.getElementById("blocoPDF"); 
-            
-            if (tabAdmin) { tabAdmin.classList.remove("hidden"); tabAdmin.style.display = "inline-flex"; } 
-            if (tabFeijoada) { tabFeijoada.classList.remove("hidden"); tabFeijoada.style.display = "inline-flex"; } 
-            if (tabDoacao) { tabDoacao.classList.remove("hidden"); tabDoacao.style.display = "inline-flex"; } 
-            if (dashAdmin) { dashAdmin.classList.remove("hidden"); dashAdmin.style.display = "grid"; } 
-            if (blocoPDF) { blocoPDF.classList.remove("hidden"); blocoPDF.style.display = "block"; } 
-            
-            document.getElementById("headerTitle").innerText = "EJC BANK PILOTOS"; 
-            abaAtiva = "ADMIN"; 
-        } else { 
-            document.getElementById("headerTitle").innerText = "EJC BANK COMPRAS"; 
-            abaAtiva = "EJC"; 
-        } 
-        
-        mudarAba(abaAtiva); 
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("doacaoPublicaScreen").classList.add("hidden");
+      document.getElementById("appMain").classList.remove("hidden");
+
+      document.getElementById("userRoleDisplay").innerText = currentProfile?.nome || ROLE;
+      document.getElementById("userAvatar").innerText = (currentProfile?.nome || ROLE).charAt(0).toUpperCase();
+
+      if (ROLE === "ADMIN") {
+        const tabAdmin = document.getElementById("tab-admin");
+        const tabFeijoada = document.getElementById("tab-feijoada");
+        const tabDoacao = document.getElementById("tab-doacao");
+        const dashAdmin = document.getElementById("dashAdmin");
+        const blocoPDF = document.getElementById("blocoPDF");
+
+        if (tabAdmin) { tabAdmin.classList.remove("hidden"); tabAdmin.style.display = "inline-flex"; }
+        if (tabFeijoada) { tabFeijoada.classList.remove("hidden"); tabFeijoada.style.display = "inline-flex"; }
+        if (tabDoacao) { tabDoacao.classList.remove("hidden"); tabDoacao.style.display = "inline-flex"; }
+        if (dashAdmin) { dashAdmin.classList.remove("hidden"); dashAdmin.style.display = "grid"; }
+        if (blocoPDF) { blocoPDF.classList.remove("hidden"); blocoPDF.style.display = "block"; }
+
+        document.getElementById("headerTitle").innerText = "EJC BANK PILOTOS";
+        abaAtiva = "ADMIN";
+      } else {
+        document.getElementById("headerTitle").innerText = "EJC BANK COMPRAS";
+        abaAtiva = "EJC";
+      }
+
+      mudarAba(abaAtiva);
     } 
 
     async function mudarAba(a) {
@@ -460,6 +520,7 @@
         b.classList.toggle("bg-white/10", !isSelected);
         b.classList.toggle("text-white", !isSelected);
       });
+      document.getElementById("blocoAdminDoacao").classList.toggle("hidden", abaAtiva !== "DOACAO" || ROLE !== "ADMIN");
       await carregarDados();
     }
 
@@ -504,6 +565,13 @@
       if (totalLiquido) totalLiquido.innerText = "R$ " + (rec - sai).toFixed(2);
     }
 
+    function abrirZap(telefone, nome, valor) {
+        const num = String(telefone).replace(/\D/g,"");
+        if(!/^\d{10,11}$/.test(num)) return showToast("WhatsApp inválido no cadastro", "error");
+        const msg = encodeURIComponent(`Olá *${nome.split(' ')[0]}*! Aqui é do financeiro do EJC.\nConsta um valor pendente de *R$ ${valor.toFixed(2)}* no mercadinho.\nQuando puder, passa no caixa pra gente dar baixa? Deus abençoe! ✝️🤍`);
+        window.open(`https://wa.me/55${num}?text=${msg}`, '_blank');
+    }
+
     function renderizar() {
       const tb = document.getElementById("corpoTabela");
       tb.innerHTML = "";
@@ -512,25 +580,67 @@
       dadosCache
         .filter(i => ((i.descricao || "") + (i.nome_pessoa || "")).toLowerCase().includes(busca))
         .forEach(i => {
-          const val = parseFloat(i.valor || 0).toFixed(2);
-          const iconColor = i.modulo === "DOACAO" ? "purple" : i.natureza === "SAIDA" ? "rose" : i.status === "PENDENTE" ? "orange" : "emerald";
+          const valorNumero = parseFloat(i.valor || 0);
+          const val = valorNumero.toFixed(2);
+
+          const iconClass = i.modulo === "DOACAO" 
+            ? "bg-purple-500" 
+            : i.natureza === "SAIDA" 
+            ? "bg-rose-500" 
+            : i.status === "PENDENTE" 
+            ? "bg-orange-500" 
+            : "bg-emerald-500";
+          
+          const equipeDisplay = i.equipe && i.equipe !== "Paroquiano" ? ` • ${esc(i.equipe)}` : "";
+          const zapBtn = (i.status === 'PENDENTE' && i.telefone) 
+            ? `<button onclick="abrirZap('${i.telefone}', '${esc(i.nome_pessoa)}', ${valorNumero})" class="w-8 h-8 rounded-full bg-[#25D366] text-white shadow-md active:scale-90 transition flex items-center justify-center ml-2"><i class="fab fa-whatsapp text-[10px]"></i></button>` 
+            : "";
 
           tb.innerHTML += `
-            <tr class="hover:bg-slate-50 transition-colors">
+            <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
               <td class="p-4">
                 <p class="text-xs font-bold text-slate-800">${esc(i.descricao)}</p>
-                <p class="text-[10px] text-slate-400 font-medium uppercase">${esc(i.nome_pessoa) || "-"} • ${esc(i.modulo)}</p>
+                <p class="text-[10px] text-slate-400 font-medium uppercase">${esc(i.nome_pessoa) || "-"} ${equipeDisplay}</p>
               </td>
               <td class="p-4 text-right font-black">R$ ${val}</td>
               <td class="p-4 text-center">
-                <span class="w-2 h-2 rounded-full bg-${iconColor}-500 inline-block shadow-sm"></span>
+                <span class="w-2 h-2 rounded-full ${iconClass} inline-block shadow-sm"></span>
               </td>
-              <td class="p-4 text-right">
+              <td class="p-4 flex justify-end items-center gap-1">
                 ${i.status === 'PENDENTE' ? `<button onclick="baixar('${i.id}', ${i.version})" class="w-8 h-8 rounded-full bg-emerald-500 text-white shadow-md active:scale-90 transition flex items-center justify-center ml-auto"><i class="fas fa-check text-[10px]"></i></button>` : ""}
+                ${zapBtn}
               </td>
             </tr>
           `;
         });
+    }
+
+    async function salvarMeta() {
+        const item = document.getElementById("m_item").value.trim();
+        const qtd = parseInt(document.getElementById("m_qtd").value, 10);
+        const un = document.getElementById("m_un").value.trim();
+
+        if (!item || !qtd || qtd <= 0 || !un) {
+            showToast("Preencha todos os campos da meta.", "error");
+            return;
+        }
+
+        const { error } = await _supabase.from('metas_doacao').insert([{
+            item: item,
+            qtd_necessaria: qtd,
+            unidade: un
+        }]);
+
+        if (error) {
+            if (error.code === '23505') { showToast("Essa meta já existe!", "error"); } 
+            else { showToast("Erro ao salvar meta.", "error"); }
+            return;
+        }
+
+        showToast("Meta criada com sucesso!");
+        document.getElementById("modalMeta").classList.add("hidden");
+        document.getElementById("formMeta").reset();
+        if(abaAtiva === "DOACAO") carregarMetasDoacao(); 
     }
 
     document.getElementById("formFin").addEventListener("submit", async function(e) {
@@ -543,10 +653,20 @@
         showToast("Informe um valor válido.", "error");
         return;
       }
-
       if (valorDigitado < 0) {
         showToast("O valor não pode ser negativo.", "error");
         return;
+      }
+
+      let equipeFinal = "";
+      if (abaAtiva === "MERCADINHO" || moduloDestino === "MERCADINHO") {
+          const tipoPessoa = document.getElementById("f_tipo_pessoa").value;
+          if (tipoPessoa === "SERVO") {
+              equipeFinal = document.getElementById("f_equipe_merc").value;
+              if (!equipeFinal) return showToast("Informe a equipe do servo!", "error");
+          } else {
+              equipeFinal = "Paroquiano";
+          }
       }
 
       const { error } = await _supabase.from('transacoes').insert([{
@@ -558,6 +678,8 @@
         status: type === "PENDENTE" ? "PENDENTE" : "PAGO",
         forma_pagamento: document.getElementById("f_forma").value,
         nome_pessoa: document.getElementById("f_nome").value.trim(),
+        equipe: equipeFinal,
+        telefone: document.getElementById("f_tel").value.replace(/\D/g, ""),
         recebido_por: document.getElementById("f_recebido").value.trim(),
         user_id: currentUser.id
       }]);
@@ -578,13 +700,8 @@
       const item = document.getElementById("d_item").value;
       const quantidade = parseInt(document.getElementById("d_qtd").value, 10);
 
-      if (!item) {
-        showToast("Selecione um item para doar.", "error");
-        return;
-      }
-
-      if (!quantidade || quantidade <= 0) {
-        showToast("Informe uma quantidade válida.", "error");
+      if (!item || !quantidade || quantidade <= 0) {
+        showToast("Selecione um item e a quantidade.", "error");
         return;
       }
 
@@ -615,25 +732,9 @@
 
     async function baixar(id, currentVersion) {
       if (!confirm("Recebeu este valor em mãos/PIX?")) return;
-
-      const { data, error } = await _supabase
-        .from('transacoes')
-        .update({ status: 'PAGO' })
-        .eq('id', id)
-        .eq('version', currentVersion)
-        .select();
-
-      if (error) {
-        showToast("Erro técnico na atualização", "error");
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        showToast("Conflito: este registro já foi alterado.", "error");
-        carregarDados();
-        return;
-      }
-
+      const { data, error } = await _supabase.from('transacoes').update({ status: 'PAGO' }).eq('id', id).eq('version', currentVersion).select();
+      if (error) return showToast("Erro técnico na atualização", "error");
+      if (!data || data.length === 0) return showToast("Conflito: este registro já foi alterado.", "error");
       showToast("Baixa realizada!");
       carregarDados();
     }
@@ -643,13 +744,8 @@
       const doc = new jsPDF();
       const dataRef = new Date().toLocaleDateString();
 
-      doc.setFontSize(22);
-      doc.setTextColor(130, 10, 209);
-      doc.text("EJC BANK • RELATÓRIO", 14, 20);
-
-      doc.setFontSize(10);
-      doc.setTextColor(100);
-      doc.text(`21º EJC - Paróquia Santo Eugênio | Data: ${dataRef}`, 14, 28);
+      doc.setFontSize(22); doc.setTextColor(130, 10, 209); doc.text("EJC BANK • RELATÓRIO", 14, 20);
+      doc.setFontSize(10); doc.setTextColor(100); doc.text(`21º EJC - Paróquia Santo Eugênio | Data: ${dataRef}`, 14, 28);
 
       const resumo = [
         ["Total Entradas", document.getElementById("totalRecebido").innerText],
@@ -657,17 +753,12 @@
         ["Total Saídas", document.getElementById("totalSaidas").innerText],
         ["Saldo Líquido", document.getElementById("totalLiquido").innerText]
       ];
-
       doc.autoTable({ head: [['Resumo Financeiro', 'Valor']], body: resumo, startY: 35, theme: 'striped', headStyles: { fillColor: [130, 10, 209] } });
 
       const trans = dadosCache.map(i => [
         new Date(i.criado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        i.modulo,
-        i.descricao,
-        i.status,
-        `R$ ${parseFloat(i.valor || 0).toFixed(2)}`
+        i.modulo, i.descricao, i.status, `R$ ${parseFloat(i.valor || 0).toFixed(2)}`
       ]);
-
       doc.autoTable({ head: [['Hora', 'Módulo', 'Item', 'Status', 'Valor']], body: trans, startY: doc.lastAutoTable.finalY + 10, theme: 'grid' });
 
       doc.save(`Fechamento_EJC_${dataRef.replace(/\//g, '-')}.pdf`);
@@ -676,6 +767,9 @@
 
     function abrirModal() {
       document.getElementById("modal").classList.remove("hidden");
+      const isMercado = (abaAtiva === "MERCADINHO");
+      document.getElementById("camposMercado").classList.toggle("hidden", !isMercado);
+      if (isMercado) controlarTipoPessoa();
       document.getElementById("blocoModulo").classList.toggle("hidden", abaAtiva !== "ADMIN");
     }
 
@@ -691,9 +785,7 @@
 
     window.onload = async () => {
       mudarAbaLogin('compras');
-
       const { data: { session } } = await _supabase.auth.getSession();
-
       if (session) {
         const profile = await carregarPerfilUsuario(session.user);
         if (profile) {
@@ -706,11 +798,7 @@
     };
 
     setInterval(() => {
-      if (
-        document.visibilityState === "visible" &&
-        document.getElementById("modal").classList.contains("hidden") &&
-        !document.getElementById("appMain").classList.contains("hidden")
-      ) {
+      if (document.visibilityState === "visible" && document.getElementById("modal").classList.contains("hidden") && !document.getElementById("appMain").classList.contains("hidden")) {
         carregarDados();
       }
     }, 30000);
