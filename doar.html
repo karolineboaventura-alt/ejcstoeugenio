@@ -37,57 +37,57 @@
     </div>
 
     <div id="listaProgresso" class="mb-10 space-y-4">
-        <p class="text-center text-xs text-slate-300 animate-pulse">Sincronizando necessidades...</p>
+      <p class="text-center text-xs text-slate-300 animate-pulse">Sincronizando necessidades...</p>
     </div>
 
     <div id="areaForm">
-        <form id="formDoacao" class="space-y-5">
+      <form id="formDoacao" class="space-y-5">
+        <div class="space-y-1">
+          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome Completo</label>
+          <input id="d_nome" placeholder="Seu nome" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome Completo</label>
-            <input id="d_nome" placeholder="Seu nome" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">WhatsApp (com DDD)</label>
+            <input id="d_tel" type="tel" placeholder="11999998888" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
           </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div class="space-y-1">
-                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">WhatsApp (com DDD)</label>
-                <input id="d_tel" type="tel" placeholder="11999998888" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
-            </div>
-            <div class="space-y-1">
-                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Equipe</label>
-                <select id="d_equipe" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
-                    <option value="">Selecione...</option>
-                    <option value="Externo">Paroquiano / Visitante</option>
-                    <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
-                </select>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div class="space-y-1">
-                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">O que vai doar?</label>
-                <select id="d_item" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
-                  <option value="">Carregando...</option>
-                </select>
-            </div>
-            <div class="space-y-1">
-                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
-                <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-center text-slate-800" />
-            </div>
-          </div>
-
           <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de Entrega</label>
-            <input id="d_data" type="date" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Equipe</label>
+            <select id="d_equipe" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
+              <option value="">Selecione...</option>
+              <option value="Externo">Paroquiano / Visitante</option>
+              <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
+            </select>
           </div>
+        </div>
 
-          <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
-            Confirmar Doação
-          </button>
-        </form>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">O que vai doar?</label>
+            <select id="d_item" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
+              <option value="">Carregando...</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
+            <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-center text-slate-800" />
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de Entrega</label>
+          <input id="d_data" type="date" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+        </div>
+
+        <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
+          Confirmar Doação
+        </button>
+      </form>
     </div>
     
     <div class="mt-12 text-center border-t border-slate-50 pt-8">
-        <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] italic">"Tudo por Jesus, nada sem Maria"</p>
+      <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] italic">"Tudo por Jesus, nada sem Maria"</p>
     </div>
   </div>
 
@@ -110,12 +110,16 @@
       const select = document.getElementById("d_item");
       const list = document.getElementById("listaProgresso");
       
-      const { data, error } = await _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item');
+      const { data, error } = await _supabase
+        .from('metas_doacao')
+        .select('*')
+        .eq('ativo', true)
+        .order('item');
       
       if (error) {
-          console.error("Erro ao buscar metas:", error);
-          list.innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar necessidades.</p>';
-          return;
+        console.error("Erro ao buscar metas:", error);
+        list.innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar necessidades.</p>';
+        return;
       }
 
       const lista = data || [];
@@ -124,30 +128,42 @@
       let pendentes = 0;
 
       lista.forEach(m => {
-        const arr = m.qtd_arrecadada || 0, nec = m.qtd_necessaria || 1;
-        const faltam = Math.max(0, nec - arr), perc = Math.min(100, Math.round((arr/nec)*100));
+        const arr = m.qtd_arrecadada || 0;
+        const nec = m.qtd_necessaria || 1;
+        const faltam = Math.max(0, nec - arr);
+        const perc = Math.min(100, Math.round((arr / nec) * 100));
         
         if (faltam > 0) {
-            pendentes++;
-            const opt = document.createElement("option");
-            opt.value = m.item; opt.textContent = `${m.item} (Faltam ${faltam} ${m.unidade || ''})`;
-            select.appendChild(opt);
+          pendentes++;
+          const opt = document.createElement("option");
+          opt.value = m.item;
+          opt.textContent = `${m.item} (Faltam ${faltam} ${m.unidade || ''})`;
+          select.appendChild(opt);
         }
 
         list.innerHTML += `
-            <div class="space-y-1.5">
-                <div class="flex justify-between items-end"><span class="text-xs font-bold text-slate-700">${esc(m.item)}</span><span class="text-[10px] font-black text-purple-600">${perc}%</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width: ${perc}%"></div></div>
-            </div>`;
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-end">
+              <span class="text-xs font-bold text-slate-700">${esc(m.item)}</span>
+              <span class="text-[10px] font-black text-purple-600">${perc}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${perc}%"></div>
+            </div>
+          </div>`;
       });
 
       if (pendentes === 0 && lista.length > 0) {
-          document.getElementById("areaForm").innerHTML = `<div class="text-center p-8 bg-purple-50 rounded-[32px] border border-purple-100"><p class="text-purple-700 font-bold italic">Graças a Deus, todas as providências já foram alcançadas! 💜</p></div>`;
+        document.getElementById("areaForm").innerHTML = `
+          <div class="text-center p-8 bg-purple-50 rounded-[32px] border border-purple-100">
+            <p class="text-purple-700 font-bold italic">Graças a Deus, todas as providências já foram alcançadas! 💜</p>
+          </div>`;
       }
     }
 
     document.getElementById("formDoacao").addEventListener("submit", async function(e) {
       e.preventDefault();
+
       const btn = document.getElementById("btnEnviar");
       const textoOriginal = btn.innerHTML;
       
@@ -158,9 +174,17 @@
       const equipe = document.getElementById("d_equipe").value;
       const dataEntrega = document.getElementById("d_data").value;
 
-      if (!Number.isInteger(qtd) || qtd <= 0) return showToast("Informe uma quantidade válida.", "error");
-      if (!item || !nome || !equipe || !dataEntrega) return showToast("Preencha todos os campos corretamente.", "error");
-      if (!/^\d{10,11}$/.test(telefone)) return showToast("WhatsApp inválido (use DDD e número).", "error");
+      if (!Number.isInteger(qtd) || qtd <= 0) {
+        return showToast("Informe uma quantidade válida.", "error");
+      }
+
+      if (!item || !nome || !equipe || !dataEntrega) {
+        return showToast("Preencha todos os campos corretamente.", "error");
+      }
+
+      if (!/^\d{10,11}$/.test(telefone)) {
+        return showToast("WhatsApp inválido (use DDD e número).", "error");
+      }
 
       btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> PROCESSANDO...';
       btn.disabled = true;
