@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#820ad1" />
-  <title>21º EJC • Parte da Providência</title>
+  <title>21º EJC • Doação 💜</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -17,50 +17,70 @@
     .premium-card { background: #ffffff; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
     .vault-input { background: #f8fafc; border: 2px solid #f1f5f9; transition: all 0.3s ease; }
     .vault-input:focus { background: white; border-color: var(--nu-roxo); box-shadow: 0 0 0 4px rgba(130, 10, 209, 0.1); outline: none; }
-    .progress-bar { height: 6px; border-radius: 10px; background: #f1f5f9; overflow: hidden; position: relative; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, #820ad1, #a855f7); border-radius: 10px; transition: width 1s ease-in-out; }
+    
+    .progress-bar { height: 6px; border-radius: 10px; background: #f1f5f9; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #820ad1, #a855f7); transition: width 1s ease; }
+    
     .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4 py-10 bg-slate-50">
+<body class="min-h-screen flex flex-col items-center p-4 py-10 bg-slate-50 text-slate-900">
 
   <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-sm"></div>
 
   <div class="w-full max-w-md premium-card p-8 sm:p-10 animate-fade-in border border-slate-100">
-    <div class="text-center mb-10">
+    <div class="text-center mb-8">
       <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-2xl mb-6 text-purple-700 text-3xl shadow-inner"> ✝️ </div>
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-purple-600 mb-2">21º EJC • Santo Eugênio</p>
-      <h2 class="text-2xl font-black text-slate-800 leading-tight">Seja parte deste encontro que transforma vidas</h2>
-      <p class="text-sm text-slate-500 mt-3 font-medium">Sua generosidade é a resposta das nossas orações.</p>
+      <h2 class="text-2xl font-black text-slate-800 leading-tight">Lista de Providência</h2>
+      <p class="text-sm text-slate-500 mt-2 font-medium">Assuma um compromisso com o encontro!</p>
     </div>
 
-    <div id="sectionProgresso" class="mb-10 space-y-5">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">Necessidades em Tempo Real</p>
-        <div id="listaProgresso" class="space-y-4">
-            </div>
-    </div>
+    <div id="listaProgresso" class="mb-10 space-y-4">
+        </div>
 
     <div id="areaForm">
-        <form id="formDoacao" class="space-y-6">
+        <form id="formDoacao" class="space-y-5">
           <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Seu Nome Completo</label>
-            <input id="d_nome" placeholder="Como deseja ser identificado?" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome Completo</label>
+            <input id="d_nome" placeholder="Seu nome" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1">
+                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">WhatsApp</label>
+                <input id="d_tel" type="tel" placeholder="(00) 00000-0000" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+            </div>
+            <div class="space-y-1">
+                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Sua Equipe</label>
+                <select id="d_equipe" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white">
+                    <option value="">Selecione...</option>
+                    <option value="Externo">Paroquiano / Visitante</option>
+                    <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
+                </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1">
+                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Item</label>
+                <select id="d_item" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white">
+                  <option value="">Carregando...</option>
+                </select>
+            </div>
+            <div class="space-y-1">
+                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
+                <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-center text-slate-800" />
+            </div>
           </div>
 
           <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Escolha o Item</label>
-            <select id="d_item" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700 appearance-none bg-white">
-              <option value="">Carregando...</option>
-            </select>
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quando você vai entregar?</label>
+            <input id="d_data" type="date" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
           </div>
 
-          <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
-            <input id="d_qtd" type="number" min="1" value="1" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-center text-xl text-slate-800" />
-          </div>
-
-          <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
+          <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
             Confirmar Doação
           </button>
         </form>
@@ -76,111 +96,84 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmeGxma2ZqcWFlbWpvdHNlZGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDU1MDQsImV4cCI6MjA4OTk4MTUwNH0.2JWeglgFALa88C9nWMrTmsIlogxcNg3rD2SrE1DJWyM';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t])) : "";
-
     function showToast(msg, type = "success") {
       const t = document.createElement("div");
-      t.className = `toast mb-2 animate-fade-in ${type === 'error' ? 'border-l-4 border-rose-500' : 'border-l-4 border-emerald-500'}`;
-      t.innerHTML = `<i class="fas ${type === "error" ? "fa-circle-xmark text-rose-500" : "fa-circle-check text-emerald-500"}"></i> <span>${msg}</span>`;
+      t.className = `p-4 rounded-2xl shadow-2xl mb-2 text-white font-bold text-center text-sm animate-fade-in ${type === 'error' ? 'bg-rose-500' : 'bg-slate-900'}`;
+      t.innerText = msg;
       document.getElementById("toast-container").appendChild(t);
       setTimeout(() => t.remove(), 4000);
     }
 
     async function carregarDados() {
       const select = document.getElementById("d_item");
-      const listaProgresso = document.getElementById("listaProgresso");
-      
+      const list = document.getElementById("listaProgresso");
       const { data, error } = await _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item');
+      
+      if (error) return;
 
-      if (error || !data || data.length === 0) {
-        select.innerHTML = `<option value="">Nenhuma meta disponível</option>`;
-        return;
-      }
+      select.innerHTML = '<option value="">Escolha...</option>';
+      list.innerHTML = '';
+      let itensPendentes = 0;
 
-      select.innerHTML = `<option value="">Selecione um item...</option>`;
-      listaProgresso.innerHTML = "";
-      let totalDisponivel = 0;
-
-      data.forEach(meta => {
-        const arrecadado = meta.qtd_arrecadada || 0;
-        const total = meta.qtd_necessaria || 0;
-        const faltante = Math.max(0, total - arrecadado);
-        const percent = Math.min(100, Math.round((arrecadado / total) * 100));
-
-        // Adiciona ao Select se ainda faltar
-        if (faltante > 0) {
-          totalDisponivel++;
-          const opt = document.createElement("option");
-          opt.value = meta.item;
-          opt.textContent = `${meta.item} (Faltam ${faltante} ${meta.unidade})`;
-          select.appendChild(opt);
+      data.forEach(m => {
+        const arr = m.qtd_arrecadada || 0, nec = m.qtd_necessaria || 1;
+        const faltam = Math.max(0, nec - arr), perc = Math.min(100, Math.round((arr/nec)*100));
+        
+        if (faltam > 0) {
+            itensPendentes++;
+            const opt = document.createElement("option");
+            opt.value = m.item; opt.textContent = `${m.item} (Faltam ${faltam})`;
+            select.appendChild(opt);
         }
 
-        // Adiciona à lista visual de progresso
-        listaProgresso.innerHTML += `
+        list.innerHTML += `
             <div class="space-y-1.5">
-                <div class="flex justify-between items-end">
-                    <span class="text-xs font-bold text-slate-700">${esc(meta.item)}</span>
-                    <span class="text-[10px] font-black text-purple-600 uppercase">${percent}%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${percent}%"></div>
-                </div>
-                <p class="text-[9px] text-slate-400 font-medium">${arrecadado} de ${total} ${esc(meta.unidade)} arrecadados</p>
-            </div>
-        `;
+                <div class="flex justify-between items-end"><span class="text-xs font-bold text-slate-700">${m.item}</span><span class="text-[10px] font-black text-purple-600">${perc}%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${perc}%"></div></div>
+            </div>`;
       });
 
-      if (totalDisponivel === 0) {
-          document.getElementById("areaForm").innerHTML = `<div class="text-center p-6 bg-purple-50 rounded-3xl border border-purple-100"><p class="text-purple-700 font-bold italic">Graças a Deus, todas as providências foram alcançadas! 💜</p></div>`;
+      if (itensPendentes === 0) {
+          document.getElementById("areaForm").innerHTML = `<div class="text-center p-8 bg-purple-50 rounded-[32px] border border-purple-100"><p class="text-purple-700 font-bold italic">Glória a Deus! Todas as necessidades foram supridas. 💜</p></div>`;
       }
     }
 
     document.getElementById("formDoacao").addEventListener("submit", async function(e) {
       e.preventDefault();
       const btn = document.getElementById("btnEnviar");
-      const nome = document.getElementById("d_nome").value.trim();
-      const item = document.getElementById("d_item").value;
-      const quantidade = parseInt(document.getElementById("d_qtd").value, 10);
+      const qtd = parseInt(document.getElementById("d_qtd").value, 10);
 
-      if (quantidade <= 0) return showToast("A quantidade deve ser maior que zero.", "error");
-      if (!item) return showToast("Por favor, selecione um item.", "error");
+      if (!Number.isInteger(qtd) || qtd <= 0) return showToast("Informe uma quantidade válida.", "error");
       
-      const originalText = btn.innerHTML;
       btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> REGISTRANDO...';
       btn.disabled = true;
 
       const { error } = await _supabase.rpc('registrar_doacao_publica', {
-        p_item: item,
-        p_quantidade: quantidade,
-        p_nome: nome,
-        p_forma_pagamento: null
+        p_item: document.getElementById("d_item").value,
+        p_quantidade: qtd,
+        p_nome: document.getElementById("d_nome").value.trim(),
+        p_telefone: document.getElementById("d_tel").value.replace(/\D/g, ""),
+        p_equipe: document.getElementById("d_equipe").value,
+        p_data_entrega: document.getElementById("d_data").value
       });
 
       if (error) {
-        btn.innerHTML = originalText;
+        showToast("Houve um erro. Tente novamente.", "error");
         btn.disabled = false;
-        return showToast("Houve um erro. Tente novamente.", "error");
+        btn.innerHTML = "Confirmar Doação";
+        return;
       }
 
-      // Feedback Emocional de Sucesso
+      // Sucesso
       document.body.innerHTML = `
-        <div class="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50 animate-fade-in text-center">
-            <div class="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-5xl mb-8 shadow-inner">
-                <i class="fas fa-heart"></i>
-            </div>
+        <div class="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-fade-in bg-slate-50">
+            <div class="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-5xl mb-8 shadow-inner"><i class="fas fa-check"></i></div>
             <h3 class="text-3xl font-black text-slate-800 mb-4">Deus lhe pague!</h3>
-            <div class="max-w-xs mx-auto">
-                <p class="text-slate-600 font-medium leading-relaxed mb-8">
-                    Sua oferta de <b class="text-purple-700">${quantidade}x ${esc(item)}</b> foi recebida com gratidão.<br><br>
-                    Você agora faz parte da providência deste encontro. ✝️💜
-                </p>
-            </div>
-            <button onclick="location.reload()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold shadow-xl active:scale-95 transition-all">
-                VOLTAR À LISTA
-            </button>
-        </div>
-      `;
+            <p class="text-slate-600 font-medium max-w-xs mx-auto mb-10 leading-relaxed">
+                Sua oferta foi registrada. Agora você faz parte da providência deste encontro. ✝️💜
+            </p>
+            <button onclick="location.reload()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold shadow-xl active:scale-95 transition-all uppercase tracking-widest text-xs">Voltar</button>
+        </div>`;
     });
 
     window.onload = carregarDados;
