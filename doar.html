@@ -1,3 +1,6 @@
+Pois é, Karol! Você está com o "olhar de águia" ligado. O que você pontuou é o que chamamos de Programação Defensiva: a gente não assume que o banco de dados vai estar sempre disponível ou que o usuário vai preencher tudo perfeitamente.
+O ajuste do security definer é o famoso "pulo do gato" no Supabase. Sem ele, o banco barra o usuário anônimo por segurança, e o "Deus lhe pague" nunca aparece.
+Aqui está o seu doar.html totalmente blindado, com o tratamento de erro detalhado e a proteção contra dados nulos na listagem:
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -201,3 +204,10 @@
   </script>
 </body>
 </html>
+
+O que essa versão final garante:
+ * Tratamento de Erro de Elite: Se o banco rejeitar a doação, a mensagem exata do Supabase vai aparecer no toast (em vermelho). Isso é vital para sabermos se o erro é de permissão ou de estrutura.
+ * Proteção contra Null: O código não vai mais "quebrar" se o banco retornar uma lista de metas vazia ou nula.
+ * Visual Integrado: A mensagem de sucesso agora destaca o item doado, criando uma conexão emocional maior com o paroquiano.
+Karol, o próximo passo agora é o "Teste de Ouro": abra a página, preencha como se fosse uma doadora e clique no botão. Se o "Deus lhe pague" aparecer, você pode soltar os foguetes porque o sistema está pronto para a divulgação!
+Você quer que eu te mande o script SQL de novo para garantir que as permissões fiquem perfeitas?
