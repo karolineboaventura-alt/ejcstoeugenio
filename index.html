@@ -512,9 +512,7 @@
           <input id="f_recebido" required class="w-full bg-transparent font-bold text-purple-900 outline-none" />
         </div>
 
-        <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">
-          CONCLUIR REGISTRO
-        </button>
+        <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">CONCLUIR REGISTRO</button>
       </form>
     </div>
   </div>
@@ -676,7 +674,7 @@
       "<": "&lt;",
       ">": "&gt;",
       "'": "&#39;",
-      '"": "&quot;"
+      '"': "&quot;"
     }[t])) : "";
 
     function normalizarTelefone(tel) {
@@ -1449,18 +1447,27 @@
 
       if (abaAtiva === "ADMIN") document.getElementById("f_modulo").value = data.modulo || "DOACAO";
       
+      if (data.modulo === "FEIJOADA") {
+        if (isVoucherFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "VOUCHER";
+        else if (isMercadoFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "COMPRA_MERCADO";
+        else if (isOutraEntradaFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "OUTRA_ENTRADA";
+        else if (isOutraSaidaFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "OUTRA_SAIDA";
+      }
+
       atualizarModalDinamico();
 
       document.getElementById("f_desc").value = limparPrefixoDescricao(data.descricao || "");
-      document.getElementById("f_val").value = (data.modulo === "DOACAO") ? Number(data.quantidade || 0) : Number(data.valor || 0);
+      document.getElementById("f_val").value = (data.modulo === "DOACAO" || isVoucherFeijoada(data.descricao)) ? Number(data.quantidade || 0) : Number(data.valor || 0);
       document.getElementById("f_type").value = data.natureza === "SAIDA" ? "SAIDA" : data.status === "PENDENTE" ? "PENDENTE" : "ENTRADA";
       document.getElementById("f_forma").value = data.forma_pagamento || "FISICO";
       document.getElementById("f_nome").value = data.nome_pessoa || "";
       document.getElementById("f_tel").value = data.telefone || "";
       document.getElementById("f_recebido").value = currentProfile?.nome || "";
 
-      if (data.modulo === "DOACAO") {
+      if (data.modulo === "DOACAO" || data.modulo === "FEIJOADA") {
         document.getElementById("f_equipe_merc").value = data.equipe || "";
+      }
+      if (data.modulo === "DOACAO") {
         document.getElementById("f_data_entrega").value = data.data_entrega || "";
       }
     }
@@ -2010,6 +2017,7 @@
 
       fecharModalQuitarTudo();
       await carregarDados();
+      if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
       abrirExtrato(extratoAtual.telefone, extratoAtual.nome, extratoAtual.equipe);
     }
 
@@ -2052,3 +2060,4 @@
   </script>
 </body>
 </html>
+
