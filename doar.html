@@ -84,21 +84,10 @@
       position: relative;
       border: 1px solid var(--nu-line);
       background: linear-gradient(180deg, #ffffff 0%, #fbf8ff 100%);
-      border-radius: 24px;
-      padding: 16px;
+      border-radius: 20px;
+      padding: 14px;
       transition: all 0.25s ease;
       overflow: hidden;
-    }
-
-    .need-card::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 72px;
-      height: 72px;
-      background: radial-gradient(circle, rgba(130,10,209,0.10), transparent 68%);
-      pointer-events: none;
     }
 
     .need-card:hover {
@@ -178,6 +167,40 @@
       border: 1px solid #eee5fb;
       border-radius: 24px;
     }
+
+    .section-card {
+      background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
+      border: 1px solid #efe7fb;
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .compact-item {
+      border: 1px solid #efe7fb;
+      border-radius: 18px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .accordion-btn {
+      width: 100%;
+      text-align: left;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 800;
+      color: #334155;
+    }
+
+    .accordion-content {
+      padding: 0 16px 16px 16px;
+    }
+
+    .hidden-soft {
+      display: none;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4 py-8">
@@ -230,23 +253,34 @@
         <div>
           <p class="text-sm font-extrabold text-slate-800">Como funciona para doar?</p>
           <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Escolha um item da lista, informe a quantidade, preencha seus dados e registre a sua doação. Assim, a equipe consegue organizar a Providência e acompanhar cada entrega sem confusão.
+            Escolha um item da lista, informe a quantidade, preencha seus dados e registre a sua doação.
           </p>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Você também pode deixar uma mensagem no mural para demonstrar carinho, fé e apoio ao EJC. 💜
+            A equipe acompanha tudo com organização, e você ainda pode deixar uma mensagem no mural. 💜
           </p>
         </div>
       </div>
     </div>
 
-    <div class="mb-8">
+    <div class="mb-6">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-black uppercase tracking-widest text-slate-700">Necessidades atuais</h2>
+        <h2 class="text-sm font-black uppercase tracking-widest text-slate-700">Mais urgentes agora</h2>
         <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Providência</span>
       </div>
 
-      <div id="listaProgresso" class="space-y-3">
-        <p class="text-center text-xs text-slate-300 animate-pulse">Sincronizando necessidades...</p>
+      <div id="listaUrgentes" class="space-y-3">
+        <p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens...</p>
+      </div>
+    </div>
+
+    <div class="mb-8 section-card">
+      <button type="button" id="btnToggleTodas" class="accordion-btn" onclick="toggleTodasNecessidades()">
+        <span class="text-sm uppercase tracking-widest">Ver todas as necessidades</span>
+        <i id="iconToggleTodas" class="fas fa-chevron-down text-slate-400"></i>
+      </button>
+
+      <div id="todasNecessidadesWrap" class="accordion-content hidden-soft space-y-3">
+        <div id="categoriasNecessidades" class="space-y-3"></div>
       </div>
     </div>
 
@@ -351,6 +385,30 @@
     }[t])) : "";
 
     let disponibilidadeItens = {};
+    let itensRenderizados = [];
+
+    const categorias = {
+      "Alimentos": [
+        "Arroz", "Feijão", "Carne bovina", "Frango (churrasco + domingo)", "Linguiça", "Bacon",
+        "Farinha de mandioca", "Batata", "Cenoura", "Tomate", "Repolho", "Cebola", "Alho",
+        "Cheiro-verde", "Café", "Açúcar", "Óleo", "Sal", "Leite", "Ketchup",
+        "Maionese (sachê)", "Mostarda"
+      ],
+      "Bebidas": [
+        "Água", "Refrigerante"
+      ],
+      "Descartáveis": [
+        "Pratinhos descartáveis", "Copos descartáveis (água/refri/café)", "Talheres (garfo/faca)",
+        "Guardanapos", "Papel alumínio", "Plástico filme"
+      ],
+      "Limpeza": [
+        "Detergente", "Esponjas", "Desinfetante", "Água sanitária", "Papel higiênico",
+        "Papel toalha", "Sacos de lixo (100L e 50L)", "Rodo", "Vassoura", "Balde", "Pano de chão"
+      ],
+      "Organização": [
+        "Sulfite A4", "Fita adesiva (durex)"
+      ]
+    };
 
     function showToast(msg, type = "success") {
       const t = document.createElement("div");
@@ -397,9 +455,86 @@
       setInterval(atualizar, 1000);
     }
 
+    function toggleTodasNecessidades() {
+      const wrap = document.getElementById("todasNecessidadesWrap");
+      const icon = document.getElementById("iconToggleTodas");
+      const aberto = !wrap.classList.contains("hidden-soft");
+      wrap.classList.toggle("hidden-soft", aberto);
+      icon.className = aberto ? "fas fa-chevron-down text-slate-400" : "fas fa-chevron-up text-slate-400";
+    }
+
+    function toggleCategoria(id) {
+      const wrap = document.getElementById(id);
+      const icon = document.querySelector(`[data-icon="${id}"]`);
+      const aberto = !wrap.classList.contains("hidden-soft");
+      wrap.classList.toggle("hidden-soft", aberto);
+      if (icon) icon.className = aberto ? "fas fa-chevron-down text-slate-400" : "fas fa-chevron-up text-slate-400";
+    }
+
+    function gerarCardCompacto(itemData) {
+      return `
+        <div class="compact-item">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <div>
+              <p class="text-sm font-extrabold text-slate-800">${esc(itemData.item)}</p>
+              <p class="text-[11px] text-slate-500 mt-1">Disponível: ${itemData.disponivelPrometer} ${esc(itemData.unidade)}</p>
+            </div>
+            <span class="mini-badge bg-purple-50 text-purple-700 border border-purple-100">${itemData.percReal}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${itemData.percReal}%"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderizarUrgentes() {
+      const wrap = document.getElementById("listaUrgentes");
+      const urgentes = [...itensRenderizados]
+        .filter(i => i.disponivelPrometer > 0)
+        .sort((a, b) => a.disponivelPrometer - b.disponivelPrometer || a.percReal - b.percReal)
+        .slice(0, 6);
+
+      if (!urgentes.length) {
+        wrap.innerHTML = `<div class="need-card text-center text-sm font-bold text-purple-700">Graças a Deus, tudo já foi preenchido! 💜</div>`;
+        return;
+      }
+
+      wrap.innerHTML = urgentes.map(gerarCardCompacto).join("");
+    }
+
+    function renderizarCategorias() {
+      const container = document.getElementById("categoriasNecessidades");
+
+      const htmlCategorias = Object.entries(categorias).map(([nomeCategoria, itensCategoria], idx) => {
+        const itensDaCategoria = itensRenderizados.filter(item => itensCategoria.includes(item.item));
+        if (!itensDaCategoria.length) return "";
+
+        const conteudo = itensDaCategoria
+          .sort((a, b) => a.item.localeCompare(b.item, 'pt-BR'))
+          .map(gerarCardCompacto)
+          .join("");
+
+        const id = `cat_${idx}`;
+
+        return `
+          <div class="section-card">
+            <button type="button" class="accordion-btn" onclick="toggleCategoria('${id}')">
+              <span class="text-sm">${esc(nomeCategoria)}</span>
+              <i data-icon="${id}" class="fas fa-chevron-down text-slate-400"></i>
+            </button>
+            <div id="${id}" class="accordion-content hidden-soft space-y-3">
+              ${conteudo}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      container.innerHTML = htmlCategorias || `<p class="text-xs text-slate-400">Nenhuma necessidade encontrada.</p>`;
+    }
+
     async function carregarDados() {
       const select = document.getElementById("d_item");
-      const list = document.getElementById("listaProgresso");
 
       const [{ data: metas, error: metasError }, { data: registros, error: regError }] = await Promise.all([
         _supabase
@@ -415,13 +550,13 @@
 
       if (metasError) {
         console.error("Erro ao buscar metas:", metasError);
-        list.innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar necessidades.</p>';
+        document.getElementById("listaUrgentes").innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar necessidades.</p>';
         return;
       }
 
       if (regError) {
         console.error("Erro ao buscar registros:", regError);
-        list.innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao calcular disponibilidade.</p>';
+        document.getElementById("listaUrgentes").innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao calcular disponibilidade.</p>';
         return;
       }
 
@@ -441,8 +576,8 @@
 
       const lista = metas || [];
       disponibilidadeItens = {};
+      itensRenderizados = [];
       select.innerHTML = '<option value="">Escolha um item...</option>';
-      list.innerHTML = '';
 
       let itensDisponiveis = 0;
 
@@ -465,6 +600,17 @@
           unidade: m.unidade || ""
         };
 
+        itensRenderizados.push({
+          item,
+          meta,
+          prometido,
+          entregue,
+          faltandoReal,
+          disponivelPrometer,
+          percReal,
+          unidade: m.unidade || ""
+        });
+
         if (disponivelPrometer > 0) {
           itensDisponiveis++;
           const opt = document.createElement("option");
@@ -472,44 +618,10 @@
           opt.textContent = `${item} (disponível: ${disponivelPrometer} ${m.unidade || ''})`;
           select.appendChild(opt);
         }
-
-        list.innerHTML += `
-          <div class="need-card">
-            <div class="flex items-start justify-between gap-3 mb-3">
-              <div>
-                <p class="text-sm font-extrabold text-slate-800">${esc(item)}</p>
-                <p class="text-[11px] text-slate-500 mt-1">Meta: ${meta} ${esc(m.unidade || '')}</p>
-              </div>
-              <div class="text-right">
-                <span class="mini-badge bg-purple-50 text-purple-700 border border-purple-100">${percReal}%</span>
-              </div>
-            </div>
-
-            <div class="progress-bar mb-3">
-              <div class="progress-fill" style="width:${percReal}%"></div>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2 text-[11px]">
-              <div class="bg-white rounded-xl px-3 py-2 border border-slate-100">
-                <p class="text-slate-400 font-black uppercase text-[9px]">Prometido</p>
-                <p class="font-extrabold text-amber-500">${prometido}</p>
-              </div>
-              <div class="bg-white rounded-xl px-3 py-2 border border-slate-100">
-                <p class="text-slate-400 font-black uppercase text-[9px]">Entregue</p>
-                <p class="font-extrabold text-emerald-600">${entregue}</p>
-              </div>
-              <div class="bg-white rounded-xl px-3 py-2 border border-purple-100 bg-purple-50">
-                <p class="text-purple-400 font-black uppercase text-[9px]">Disponível</p>
-                <p class="font-extrabold text-purple-700">${disponivelPrometer}</p>
-              </div>
-            </div>
-
-            <div class="mt-3 text-[11px] font-bold ${faltandoReal > 0 ? 'text-slate-500' : 'text-emerald-600'}">
-              ${faltandoReal > 0 ? `Faltando real: ${faltandoReal}` : 'Meta já atendida'}
-            </div>
-          </div>
-        `;
       });
+
+      renderizarUrgentes();
+      renderizarCategorias();
 
       if (itensDisponiveis === 0 && lista.length > 0) {
         document.getElementById("areaForm").innerHTML = `
