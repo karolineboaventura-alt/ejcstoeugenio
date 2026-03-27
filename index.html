@@ -512,7 +512,9 @@
           <input id="f_recebido" required class="w-full bg-transparent font-bold text-purple-900 outline-none" />
         </div>
 
-        <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">CONCLUIR REGISTRO</button>
+        <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">
+          CONCLUIR REGISTRO
+        </button>
       </form>
     </div>
   </div>
@@ -1009,7 +1011,7 @@
         `💸 A receber: ${valorPendente}\n` +
         `🛒 Custos: ${custos}\n` +
         `📈 ${statusLucro}: ${lucro}\n\n` +
-        `_EJC BANK_ ✝️💜`;
+        `_EJC BANK_`;
 
       try {
         navigator.clipboard.writeText(texto);
@@ -1071,7 +1073,7 @@
           const nome = s[1].nome;
           const qtd = s[1].qtd;
           const valorPendente = qtd * PRECO_VOUCHER_FEIJOADA;
-          const msg = encodeURIComponent(`Olá, *${nome.split(" ")[0]}*! Tudo bem? ✝️💜\n\nPassando para lembrar da pendência de *${qtd} voucher(s)* da nossa Feijoada (Total: *${formatarMoeda(valorPendente)}*).\n\nQuando puder, nos dê um retorno para organizarmos as baixas da semana.\n\nDeus abençoe!`);
+          const msg = encodeURIComponent(`Olá, *${nome.split(" ")[0]}*! Tudo bem?\n\nPassando para lembrar da pendência de *${qtd} voucher(s)* da nossa Feijoada (Total: *${formatarMoeda(valorPendente)}*).\n\nQuando puder, nos dê um retorno para organizarmos as baixas da semana.\n\nObrigado!`);
           return `
             <div class="flex justify-between items-center bg-rose-50 p-3 rounded-xl border border-rose-100">
               <div>
@@ -1201,7 +1203,6 @@
         ).toLowerCase().includes(busca)
       );
 
-      // O Filtro Universal
       if (filtroUniversal === "PAGO") {
         filtrados = filtrados.filter(i => i.status === "PAGO");
       } else if (filtroUniversal === "ATRASADO") {
@@ -1451,7 +1452,7 @@
       atualizarModalDinamico();
 
       document.getElementById("f_desc").value = limparPrefixoDescricao(data.descricao || "");
-      document.getElementById("f_val").value = (data.modulo === "DOACAO" || isVoucherFeijoada(data.descricao)) ? Number(data.quantidade || 0) : Number(data.valor || 0);
+      document.getElementById("f_val").value = (data.modulo === "DOACAO") ? Number(data.quantidade || 0) : Number(data.valor || 0);
       document.getElementById("f_type").value = data.natureza === "SAIDA" ? "SAIDA" : data.status === "PENDENTE" ? "PENDENTE" : "ENTRADA";
       document.getElementById("f_forma").value = data.forma_pagamento || "FISICO";
       document.getElementById("f_nome").value = data.nome_pessoa || "";
@@ -1741,7 +1742,7 @@
       if (!/^\d{12,13}$/.test(num)) return showToast("Número inválido.", "error");
 
       const primeiroNome = (nome || "Irmão").trim().split(" ")[0];
-      const msg = `Olá, *${primeiroNome}*! ✝️💜\n\nEstamos organizando a Providência do 21º EJC.\n\nConsta para você:\n• Item: *${item}*\n• Quantidade: *${quantidade}*\n\nVocê consegue nos confirmar se ainda fará a entrega?`;
+      const msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nEstamos organizando a Providência do 21º EJC.\n\nConsta para você:\n• Item: *${item}*\n• Quantidade: *${quantidade}*\n\nVocê consegue nos confirmar se ainda fará a entrega?`;
 
       window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
     }
@@ -1759,9 +1760,9 @@
 
       let msg = "";
       if (isDiaDeCobrancaDetalhada()) {
-        msg = `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\nEstamos conferindo os lançamentos do encontro.\n\nConsta para você um valor em aberto de:\n*${formatarMoeda(total)}*\n\nQuando puder, você consegue nos confirmar, por gentileza?\n\nSe precisar, podemos te enviar o detalhamento.\n\nDeus abençoe!`;
+        msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nEstamos conferindo os lançamentos do encontro.\n\nNo momento, consta para você um valor em aberto de:\n*${formatarMoeda(total)}*\n\nQuando puder, você consegue nos confirmar, por gentileza?\n\nSe precisar, podemos te enviar o detalhamento.`;
       } else {
-        msg = `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\nPassando com carinho para confirmar um valor em aberto no EJC:\n*${formatarMoeda(total)}*\n\nQuando puder, você consegue nos dar um retorno?\n\nSe precisar, podemos te enviar o detalhamento.\n\nDeus abençoe!`;
+        msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nPassando para confirmar um valor em aberto no EJC:\n*${formatarMoeda(total)}*\n\nQuando puder, você consegue nos dar um retorno?\n\nSe precisar, podemos te enviar o detalhamento.`;
       }
 
       window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
@@ -1911,7 +1912,7 @@
 
       const totalAberto = registros.filter(r => r.status === "PENDENTE").reduce((a, r) => a + Number(r.valor || 0), 0);
 
-      const msg = `Olá, *${primeiroNome}*! ✝️💜\n\nSegue o detalhamento conforme solicitado:\n\n${linhas.join("\n")}\n\n*Total em aberto: ${formatarMoeda(totalAberto)}*\n\nQualquer dúvida, estamos à disposição.`;
+      const msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nSegue o detalhamento dos seus lançamentos:\n\n${linhas.join("\n")}\n\n*Total em aberto: ${formatarMoeda(totalAberto)}*\n\nQualquer dúvida, estamos à disposição.`;
 
       window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
     }
@@ -1929,9 +1930,9 @@
 
       let msg = "";
       if (isDiaDeCobrancaDetalhada()) {
-        msg = `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\nEstamos conferindo os lançamentos do encontro.\n\nNo momento, consta para você um valor em aberto de:\n*${formatarMoeda(totalAberto)}*\n\nQuando puder, você consegue nos confirmar, por gentileza?\n\nSe precisar, podemos te enviar o detalhamento.`;
+        msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nEstamos conferindo os lançamentos do encontro.\n\nNo momento, consta para você um valor em aberto de:\n*${formatarMoeda(totalAberto)}*\n\nQuando puder, você consegue nos confirmar, por gentileza?\n\nSe precisar, podemos te enviar o detalhamento.`;
       } else {
-        msg = `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\nPassando com carinho para confirmar um valor em aberto no EJC:\n*${formatarMoeda(totalAberto)}*\n\nQuando puder, você consegue nos dar um retorno?\n\nSe precisar, podemos te enviar o detalhamento.`;
+        msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nPassando para confirmar um valor em aberto no EJC:\n*${formatarMoeda(totalAberto)}*\n\nQuando puder, você consegue nos dar um retorno?\n\nSe precisar, podemos te enviar o detalhamento.`;
       }
 
       window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
@@ -2009,6 +2010,7 @@
 
       fecharModalQuitarTudo();
       await carregarDados();
+      if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
       abrirExtrato(extratoAtual.telefone, extratoAtual.nome, extratoAtual.equipe);
     }
 
@@ -2051,3 +2053,4 @@
   </script>
 </body>
 </html>
+
