@@ -417,7 +417,7 @@
             <option value="MERCADINHO">Mercadinho</option>
             <option value="FEIJOADA">Feijoada</option>
             <option value="DOACAO">Providência</option>
-            <option value="ADMIN">Outros</option>
+            <option value="GERAL">Outros</option>
           </select>
         </div>
 
@@ -438,7 +438,7 @@
           </div>
           <div class="vault-input rounded-2xl px-4 py-3">
             <label id="labelVal" class="text-[9px] font-black text-slate-400 uppercase block mb-1">Valor R$</label>
-            <input id="f_val" type="number" step="0.01" required class="w-full bg-transparent font-bold text-slate-900 outline-none text-right" />
+            <input id="f_val" type="text" inputmode="decimal" required class="w-full bg-transparent font-bold text-slate-900 outline-none text-right" placeholder="0,00" />
           </div>
         </div>
 
@@ -705,6 +705,174 @@
       return d.toLocaleDateString("pt-BR");
     }
 
+    // --- FUNÇÕES DE NORMALIZAÇÃO ---
+    function parseMoedaBR(valor) {
+      if (valor === null || valor === undefined) return 0;
+      const texto = String(valor).trim();
+      if (!texto) return 0;
+
+      const limpo = texto
+        .replace(/\s/g, "")
+        .replace(/R\$/gi, "")
+        .replace(/\./g, "")
+        .replace(/,/g, ".");
+
+      const numero = Number(limpo);
+      return Number.isFinite(numero) ? numero : 0;
+    }
+
+    function parseNumeroFlex(valor) {
+      if (valor === null || valor === undefined) return 0;
+      const texto = String(valor).trim();
+      if (!texto) return 0;
+
+      if (texto.includes(",") || texto.includes("R$")) {
+        return parseMoedaBR(texto);
+      }
+
+      const numero = Number(texto);
+      return Number.isFinite(numero) ? numero : 0;
+    }
+
+    function parseInteiroSeguro(valor) {
+      const texto = String(valor || "").trim();
+      const numero = parseInt(texto.replace(/[^\d-]/g, ""), 10);
+      return Number.isInteger(numero) ? numero : 0;
+    }
+
+    function limparTexto(valor) {
+      return String(valor || "").trim();
+    }
+
+    function agoraISO() {
+      return new Date().toISOString();
+    }
+
+    function dataLocalMeioDiaISO(dataStr) {
+      return dataStr ? `${dataStr}T12:00:00` : null;
+    }
+
+    function calcularStatusENatureza(modulo, tipoSelecionado, tipoFeijoada) {
+      let natureza = tipoSelecionado === "SAIDA" ? "SAIDA" : "ENTRADA";
+      let status = tipoSelecionado === "PENDENTE" ? "PENDENTE" : "PAGO";
+
+      if (modulo === "FEIJOADA") {
+        if (tipoFeijoada === "VOUCHER") {
+          natureza = "ENTRADA";
+          status = tipoSelecionado === "PENDENTE" ? "PENDENTE" : "PAGO";
+        } else if (tipoFeijoada === "COMPRA_MERCADO" || tipoFeijoada === "OUTRA_SAIDA") {
+          natureza = "SAIDA";
+          status = "PAGO";
+        } else if (tipoFeijoada === "OUTRA_ENTRADA") {
+          natureza = "ENTRADA";
+          status = tipoSelecionado === "PENDENTE" ? "PENDENTE" : "PAGO";
+        }
+      }
+
+      return { natureza, status };
+    }
+
+    function montarDescricaoFinal(modulo, descricaoBase, tipoFeijoada) {
+      const desc = limparTexto(descricaoBase).replace(/\s+/g, ' ');
+
+      if (modulo === "FEIJOADA") {
+        if (tipoFeijoada === "VOUCHER") return `[VOUCHER] ${desc}`;
+        if (tipoFeijoada === "COMPRA_MERCADO") return `[MERCADO] ${desc}`;
+        if (tipoFeijoada === "OUTRA_ENTRADA") return `[FEIJOADA-ENTRADA] ${desc}`;
+        if (tipoFeijoada === "OUTRA_SAIDA") return `[FEIJOADA-SAIDA] ${desc}`;
+      }
+
+      return desc;
+    }
+
+    function obterEquipeDoFormulario(modulo) {
+      if (modulo === "MERCADINHO") {
+        const tipoPessoa = document.getElementById("f_tipo_pessoa").value;
+        return tipoPessoa === "SERVO"
+          ? limparTexto(document.getElementById("f_equipe_merc").value)
+          : "PAROQUIANO";
+      }
+
+      if (modulo === "DOACAO" || modulo === "FEIJOADA") {
+        return limparTexto(document.getElementById("f_equipe_merc").value);
+      }
+
+      return "";
+    }
+
+    function montarPayloadTransacao() {
+      const modulo = abaAtiva === "ADMIN"
+        ? document.getElementById("f_modulo").value
+        : abaAtiva;
+
+      const tipoSelecionado = document.getElementById("f_type").value;
+      const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
+      const descricaoBase = limparTexto(document.getElementById("f_desc").value);
+      const valorCampo = document.getElementById("f_val").value;
+      const nomePessoa = limparTexto(document.getElementById("f_nome").value);
+      const telefone = normalizarTelefone(document.getElementById("f_tel").value);
+      const recebidoPor = limparTexto(document.getElementById("f_recebido").value);
+      const formaPagamento = document.getElementById("f_forma").value;
+      const equipe = obterEquipeDoFormulario(modulo);
+
+      if (!descricaoBase) throw new Error("Informe a descrição.");
+      if (!recebidoPor) throw new Error("Informe quem está lançando.");
+
+      let quantidade = 1;
+      let valor = 0;
+
+      if (modulo === "DOACAO") {
+        quantidade = parseInteiroSeguro(valorCampo);
+        valor = 0;
+
+        if (quantidade <= 0) throw new Error("Informe uma quantidade válida.");
+        if (!equipe) throw new Error("Selecione a equipe do responsável.");
+
+        const dataEntrega = document.getElementById("f_data_entrega").value;
+        if (!dataEntrega) throw new Error("Informe a data prevista de entrega.");
+      } else if (modulo === "FEIJOADA" && tipoFeijoada === "VOUCHER") {
+        quantidade = parseInteiroSeguro(valorCampo);
+        valor = quantidade * PRECO_VOUCHER_FEIJOADA;
+
+        if (quantidade <= 0) throw new Error("Informe uma quantidade válida de vouchers.");
+        if (!equipe) throw new Error("Selecione a equipe responsável.");
+      } else {
+        valor = parseNumeroFlex(valorCampo);
+        quantidade = 1;
+
+        if (valor <= 0) throw new Error("Informe um valor válido.");
+
+        if ((modulo === "FEIJOADA" || modulo === "DOACAO") && !equipe) {
+          throw new Error("Selecione a equipe responsável.");
+        }
+      }
+
+      const { natureza, status } = calcularStatusENatureza(modulo, tipoSelecionado, tipoFeijoada);
+
+      const payload = {
+        modulo,
+        descricao: montarDescricaoFinal(modulo, descricaoBase, tipoFeijoada),
+        quantidade,
+        valor,
+        natureza,
+        status,
+        forma_pagamento: formaPagamento,
+        nome_pessoa: nomePessoa,
+        equipe,
+        telefone,
+        recebido_por: recebidoPor,
+        user_id: currentUser.id,
+        recebido_em: status === "PAGO" ? agoraISO() : null
+      };
+
+      if (modulo === "DOACAO") {
+        payload.data_entrega = document.getElementById("f_data_entrega").value;
+      }
+
+      return payload;
+    }
+    // --- FIM FUNÇÕES DE NORMALIZAÇÃO ---
+
     function isVoucherFeijoada(desc = "") { return String(desc || "").startsWith("[VOUCHER]"); }
     function isMercadoFeijoada(desc = "") { return String(desc || "").startsWith("[MERCADO]"); }
     function isOutraEntradaFeijoada(desc = "") { return String(desc || "").startsWith("[FEIJOADA-ENTRADA]"); }
@@ -810,7 +978,7 @@
       document.getElementById("userAvatar").innerText = nomeExibicao.charAt(0).toUpperCase();
 
       if (ROLE === "ADMIN") {
-        document.querySelectorAll("#tab-admin, #tab-feijoada, #tab-doacao, #dashAdmin").forEach(el => el.classList.remove("hidden"));
+        document.querySelectorAll("#tab-admin, #tab-ejc, #tab-mercadinho, #tab-feijoada, #tab-doacao, #dashAdmin").forEach(el => el.classList.remove("hidden"));
         document.getElementById("headerTitle").innerText = "EJC BANK • PILOTOS";
         abaAtiva = "ADMIN";
       } else if (ROLE === "COMPRAS") {
@@ -836,7 +1004,6 @@
         b.classList.toggle("text-white", !isSelected);
       });
 
-      const isDoacao = abaAtiva === "DOACAO" && podeVerProvidencia();
       const adminGerenciaDoacao = abaAtiva === "DOACAO" && ROLE === "ADMIN";
 
       document.getElementById("blocoAdminDoacao").classList.toggle("hidden", !adminGerenciaDoacao);
@@ -927,7 +1094,7 @@
       let rec = 0, pen = 0, sai = 0;
 
       dadosCache.forEach(i => {
-        const v = parseFloat(i.valor || 0);
+        const v = Number(i.valor || 0);
         if (i.natureza === "SAIDA") sai += v;
         else if (i.status === "PENDENTE") pen += v;
         else if (i.status === "PAGO") rec += v;
@@ -1252,11 +1419,11 @@
           : "";
 
         const botaoCancelar = (["DOACAO", "FEIJOADA"].includes(abaAtiva) && podeOperarProvidencia() && i.status === "PENDENTE")
-          ? `<button onclick="cancelarDoacao('${i.id}', ${i.version || 0})" class="action-btn bg-rose-50 text-rose-600 shadow-sm hover:bg-rose-100" title="Cancelar"><i class="fas fa-ban text-xs"></i></button>`
+          ? `<button onclick="cancelarRegistro('${i.id}', ${i.version || 0})" class="action-btn bg-rose-50 text-rose-600 shadow-sm hover:bg-rose-100" title="Cancelar"><i class="fas fa-ban text-xs"></i></button>`
           : "";
 
-        const botaoEditar = (abaAtiva === "DOACAO" && podeEditarProvidencia())
-          ? `<button onclick="editarDoacao('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Editar"><i class="fas fa-pen text-xs"></i></button>`
+        const botaoEditar = (ROLE === "ADMIN")
+          ? `<button onclick="editarRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Editar"><i class="fas fa-pen text-xs"></i></button>`
           : "";
 
         const botaoZap = (i.status === "PENDENTE" && telefone)
@@ -1347,14 +1514,15 @@
       const labelDesc = document.getElementById("labelDesc");
       const statusSelect = document.getElementById("f_type");
 
+      inputVal.type = "text";
+
       if (isDoacao) {
         tipoPessoa.classList.add("hidden");
         equipeMerc.classList.remove("hidden");
         labelEquipeTexto.textContent = "Equipe do doador / responsável";
         labelVal.textContent = "Quantidade";
         labelDesc.textContent = "Descrição / Item";
-        inputVal.step = "1";
-        inputVal.min = "1";
+        inputVal.setAttribute("inputmode", "numeric");
         inputVal.placeholder = "Qtd";
         document.getElementById("f_forma").value = "FISICO";
       } else if (isFeijoada) {
@@ -1366,17 +1534,15 @@
         if (tipoFeijoada === "VOUCHER") {
           labelDesc.textContent = "Nome / referência";
           labelVal.textContent = "Quantidade de vouchers";
-          inputVal.step = "1";
-          inputVal.min = "1";
+          inputVal.setAttribute("inputmode", "numeric");
           inputVal.placeholder = "Qtd";
           statusSelect.value = "PENDENTE";
         } else {
           labelDesc.textContent = "Descrição / Item";
           labelVal.textContent = "Valor R$";
-          inputVal.step = "0.01";
-          inputVal.min = "0";
-          inputVal.placeholder = "";
-          
+          inputVal.setAttribute("inputmode", "decimal");
+          inputVal.placeholder = "0,00";
+
           if (tipoFeijoada === "COMPRA_MERCADO" || tipoFeijoada === "OUTRA_SAIDA") {
             statusSelect.value = "SAIDA";
           } else if (tipoFeijoada === "OUTRA_ENTRADA") {
@@ -1388,15 +1554,13 @@
         labelEquipeTexto.textContent = "Equipe do Responsável";
         labelVal.textContent = "Valor R$";
         labelDesc.textContent = "Descrição / Item";
-        inputVal.step = "0.01";
-        inputVal.min = "0";
-        inputVal.placeholder = "";
+        inputVal.setAttribute("inputmode", "decimal");
+        inputVal.placeholder = "0,00";
       } else {
         labelVal.textContent = "Valor R$";
         labelDesc.textContent = "Descrição / Item";
-        inputVal.step = "0.01";
-        inputVal.min = "0";
-        inputVal.placeholder = "";
+        inputVal.setAttribute("inputmode", "decimal");
+        inputVal.placeholder = "0,00";
       }
 
       if (isMercado) controlarTipoPessoa();
@@ -1405,16 +1569,20 @@
     function abrirModal() {
       if (abaAtiva === "DOACAO" && !podeOperarProvidencia()) return;
 
+      document.getElementById("formFin").reset();
+      editandoRegistroId = null;
+      editandoRegistroVersion = null;
+      document.getElementById("tituloModalRegistro").innerText = "Novo Registro";
+      document.getElementById("f_val").placeholder = "0,00";
+      document.getElementById("f_val").setAttribute("inputmode", "decimal");
+      document.getElementById("btnSubmitRegistro").innerHTML = "CONCLUIR REGISTRO";
+      document.getElementById("btnSubmitRegistro").disabled = false;
+
       document.getElementById("modal").classList.remove("hidden");
-      document.getElementById("tituloModalRegistro").innerText = editandoRegistroId ? "Editar Registro" : "Novo Registro";
       document.getElementById("f_recebido").value = currentProfile?.nome || "";
 
-      if (abaAtiva === "DOACAO" && ROLE === "COMPRAS") {
-        document.getElementById("f_modulo").value = "DOACAO";
-      }
-
-      if (abaAtiva === "FEIJOADA") {
-        document.getElementById("f_modulo").value = "FEIJOADA";
+      if (abaAtiva !== "ADMIN") {
+        document.getElementById("f_modulo").value = abaAtiva;
       }
 
       atualizarModalDinamico();
@@ -1428,14 +1596,15 @@
       document.getElementById("blocoTipoFeijoada").classList.add("hidden");
       document.getElementById("btnSubmitRegistro").innerHTML = "CONCLUIR REGISTRO";
       document.getElementById("btnSubmitRegistro").disabled = false;
+      document.getElementById("f_val").placeholder = "0,00";
+      document.getElementById("f_val").setAttribute("inputmode", "decimal");
       editandoRegistroId = null;
       editandoRegistroVersion = null;
       document.getElementById("tituloModalRegistro").innerText = "Novo Registro";
     }
 
-    async function editarDoacao(id) {
-      if (abaAtiva !== "DOACAO") return showToast("A edição é restrita à Providência.", "error");
-      if (!podeEditarProvidencia()) return showToast("Somente pilotos podem editar.", "error");
+    async function editarRegistro(id) {
+      if (ROLE !== "ADMIN") return showToast("Somente pilotos podem editar registros.", "error");
 
       const { data, error } = await _supabase.from("transacoes").select("*").eq("id", id).single();
       if (error || !data) return showToast("Não foi possível carregar o registro.", "error");
@@ -1446,27 +1615,39 @@
       document.getElementById("modal").classList.remove("hidden");
       document.getElementById("tituloModalRegistro").innerText = "Editar Registro";
 
-      if (abaAtiva === "ADMIN") document.getElementById("f_modulo").value = data.modulo || "DOACAO";
+      document.getElementById("f_modulo").value = data.modulo || "DOACAO";
       
       if (data.modulo === "FEIJOADA") {
         if (isVoucherFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "VOUCHER";
         else if (isMercadoFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "COMPRA_MERCADO";
         else if (isOutraEntradaFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "OUTRA_ENTRADA";
         else if (isOutraSaidaFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "OUTRA_SAIDA";
+      } else if (data.modulo === "MERCADINHO") {
+        document.getElementById("f_tipo_pessoa").value = (data.equipe === "PAROQUIANO") ? "PAROQUIANO" : "SERVO";
       }
 
       atualizarModalDinamico();
+      if (data.modulo === "MERCADINHO") controlarTipoPessoa();
 
       document.getElementById("f_desc").value = limparPrefixoDescricao(data.descricao || "");
-      document.getElementById("f_val").value = (data.modulo === "DOACAO" || isVoucherFeijoada(data.descricao)) ? Number(data.quantidade || 0) : Number(data.valor || 0);
+      
+      document.getElementById("f_val").value =
+        (data.modulo === "DOACAO" || isVoucherFeijoada(data.descricao))
+          ? String(Number(data.quantidade || 0))
+          : String(Number(data.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
       document.getElementById("f_type").value = data.natureza === "SAIDA" ? "SAIDA" : data.status === "PENDENTE" ? "PENDENTE" : "ENTRADA";
       document.getElementById("f_forma").value = data.forma_pagamento || "FISICO";
       document.getElementById("f_nome").value = data.nome_pessoa || "";
       document.getElementById("f_tel").value = data.telefone || "";
       document.getElementById("f_recebido").value = currentProfile?.nome || "";
 
-      if (data.modulo === "DOACAO" || data.modulo === "FEIJOADA") {
-        document.getElementById("f_equipe_merc").value = data.equipe || "";
+      if (data.modulo === "DOACAO" || data.modulo === "FEIJOADA" || data.modulo === "MERCADINHO") {
+        if (data.modulo === "MERCADINHO" && data.equipe === "PAROQUIANO") {
+           document.getElementById("f_equipe_merc").value = "";
+        } else {
+           document.getElementById("f_equipe_merc").value = data.equipe || "";
+        }
       }
       if (data.modulo === "DOACAO") {
         document.getElementById("f_data_entrega").value = data.data_entrega || "";
@@ -1479,117 +1660,48 @@
       const btn = document.getElementById("btnSubmitRegistro");
       const txtOriginal = btn.innerHTML;
 
-      const type = document.getElementById("f_type").value;
-      const mod = abaAtiva === "ADMIN" ? document.getElementById("f_modulo").value : abaAtiva;
-      const valorBruto = document.getElementById("f_val").value;
-      const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
+      try {
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> SALVANDO...';
+        btn.disabled = true;
 
-      let valor = 0;
-      let quantidade = 1;
-      let descricaoFinal = document.getElementById("f_desc").value.trim();
+        const payload = montarPayloadTransacao();
 
-      if (mod === "DOACAO") {
-        quantidade = parseInt(valorBruto, 10);
-        if (!Number.isInteger(quantidade) || quantidade <= 0) return showToast("Informe uma quantidade válida.", "error");
-        valor = 0;
-      } else if (mod === "FEIJOADA" && tipoFeijoada === "VOUCHER") {
-        quantidade = parseInt(valorBruto, 10);
-        if (!Number.isInteger(quantidade) || quantidade <= 0) return showToast("Informe uma quantidade válida de vouchers.", "error");
-        valor = quantidade * PRECO_VOUCHER_FEIJOADA;
-        descricaoFinal = `[VOUCHER] ${descricaoFinal}`;
-      } else if (mod === "FEIJOADA" && tipoFeijoada === "COMPRA_MERCADO") {
-        valor = parseFloat(valorBruto);
-        if (isNaN(valor) || valor < 0) return showToast("Informe um valor válido.", "error");
-        descricaoFinal = `[MERCADO] ${descricaoFinal}`;
-      } else if (mod === "FEIJOADA" && tipoFeijoada === "OUTRA_ENTRADA") {
-        valor = parseFloat(valorBruto);
-        if (isNaN(valor) || valor < 0) return showToast("Informe um valor válido.", "error");
-        descricaoFinal = `[FEIJOADA-ENTRADA] ${descricaoFinal}`;
-      } else if (mod === "FEIJOADA" && tipoFeijoada === "OUTRA_SAIDA") {
-        valor = parseFloat(valorBruto);
-        if (isNaN(valor) || valor < 0) return showToast("Informe um valor válido.", "error");
-        descricaoFinal = `[FEIJOADA-SAIDA] ${descricaoFinal}`;
-      } else {
-        valor = parseFloat(valorBruto);
-        if (isNaN(valor) || valor < 0) return showToast("Informe um valor válido.", "error");
-      }
+        let error = null;
 
-      let eqp = "";
-      if (mod === "MERCADINHO") {
-        eqp = document.getElementById("f_tipo_pessoa").value === "SERVO"
-          ? document.getElementById("f_equipe_merc").value
-          : "PAROQUIANO";
-      } else if (mod === "DOACAO" || mod === "FEIJOADA") {
-        eqp = document.getElementById("f_equipe_merc").value;
-      }
+        if (editandoRegistroId) {
+          const res = await _supabase
+            .from("transacoes")
+            .update(payload)
+            .eq("id", editandoRegistroId)
+            .eq("version", editandoRegistroVersion);
 
-      if (mod === "DOACAO" && !eqp) return showToast("Selecione a equipe do responsável.", "error");
-      if (mod === "DOACAO" && !document.getElementById("f_data_entrega").value) return showToast("Informe a data prevista de entrega.", "error");
+          error = res.error;
+        } else {
+          const res = await _supabase
+            .from("transacoes")
+            .insert([payload]);
 
-      let natureza = type === "SAIDA" ? "SAIDA" : "ENTRADA";
-      let status = type === "PENDENTE" ? "PENDENTE" : "PAGO";
-
-      if (mod === "FEIJOADA") {
-        if (tipoFeijoada === "VOUCHER") {
-          natureza = "ENTRADA";
-          status = document.getElementById("f_type").value === "PENDENTE" ? "PENDENTE" : "PAGO";
-        } else if (tipoFeijoada === "COMPRA_MERCADO" || tipoFeijoada === "OUTRA_SAIDA") {
-          natureza = "SAIDA";
-          status = "PAGO";
-        } else if (tipoFeijoada === "OUTRA_ENTRADA") {
-          natureza = "ENTRADA";
-          status = document.getElementById("f_type").value === "PENDENTE" ? "PENDENTE" : "PAGO";
+          error = res.error;
         }
-      }
 
-      const payload = {
-        modulo: mod,
-        descricao: descricaoFinal,
-        valor,
-        quantidade,
-        natureza,
-        status,
-        forma_pagamento: document.getElementById("f_forma").value,
-        nome_pessoa: document.getElementById("f_nome").value,
-        equipe: eqp,
-        telefone: normalizarTelefone(document.getElementById("f_tel").value),
-        recebido_por: document.getElementById("f_recebido").value,
-        user_id: currentUser.id
-      };
+        if (error) {
+          console.error(error);
+          throw new Error(error.message || "Não foi possível salvar o registro.");
+        }
 
-      if (mod === "DOACAO") {
-        payload.data_entrega = document.getElementById("f_data_entrega").value;
-        payload.recebido_em = payload.status === "PAGO" ? new Date().toISOString() : null;
-      } else {
-        payload.recebido_em = payload.status === "PAGO" ? new Date().toISOString() : null;
-      }
+        showToast(editandoRegistroId ? "Registro atualizado!" : "Registro concluído!");
+        fecharModal();
+        await carregarDados();
 
-      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> SALVANDO...';
-      btn.disabled = true;
-
-      let error = null;
-      if (editandoRegistroId) {
-        const res = await _supabase
-          .from("transacoes")
-          .update(payload)
-          .eq("id", editandoRegistroId)
-          .eq("version", editandoRegistroVersion);
-        error = res.error;
-      } else {
-        const res = await _supabase.from("transacoes").insert([payload]);
-        error = res.error;
-      }
-
-      if (error) {
+        if (abaAtiva === "DOACAO" && ROLE === "ADMIN") {
+          await carregarMetasAdmin();
+        }
+      } catch (err) {
+        showToast(err.message || "Erro ao salvar registro.", "error");
+      } finally {
         btn.innerHTML = txtOriginal;
         btn.disabled = false;
-        return showToast("Não foi possível salvar o registro.", "error");
       }
-
-      showToast(editandoRegistroId ? "Registro atualizado!" : "Registro concluído!");
-      fecharModal();
-      await carregarDados();
-      if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
     });
 
     function abrirModalRecebimento(id, ver) {
@@ -1625,12 +1737,12 @@
         .update({
           status: "PAGO",
           recebido_por: recebidoPor,
-          recebido_em: dataRecebimento
+          recebido_em: dataLocalMeioDiaISO(dataRecebimento)
         })
         .eq("id", idRecebimentoAtual)
         .eq("version", versionRecebimentoAtual);
 
-      if (error) return showToast("Não foi possível confirmar.", "error");
+      if (error) return showToast(error.message || "Não foi possível confirmar.", "error");
 
       showToast("Baixa realizada com sucesso!");
       fecharModalRecebimento();
@@ -1642,8 +1754,8 @@
       }
     }
 
-    async function cancelarDoacao(id, ver) {
-      if (!confirm("Cancelar esta doação/venda? Ela voltará automaticamente para disponível.")) return;
+    async function cancelarRegistro(id, ver) {
+      if (!confirm("Cancelar este registro? Ele voltará automaticamente para o status de cancelado.")) return;
 
       const { error } = await _supabase
         .from("transacoes")
@@ -1651,7 +1763,7 @@
         .eq("id", id)
         .eq("version", ver);
 
-      if (error) return showToast("Não foi possível cancelar.", "error");
+      if (error) return showToast(error.message || "Não foi possível cancelar.", "error");
 
       showToast("Registro cancelado com sucesso.");
       await carregarDados();
@@ -1680,7 +1792,7 @@
 
       const mapa = {};
       (registros || []).forEach(r => {
-        const item = r.descricao || "";
+        const item = limparPrefixoDescricao(r.descricao || "").trim().replace(/\s+/g, ' ').toUpperCase();
         const qtd = Number(r.quantidade || 0);
         if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
         if (r.status === "PENDENTE") mapa[item].prometido += qtd;
@@ -1688,9 +1800,10 @@
       });
 
       container.innerHTML = metas.map(m => {
+        const metaItemNormalizado = (m.item || "").trim().replace(/\s+/g, ' ').toUpperCase();
         const meta = Number(m.qtd_necessaria || 0);
-        const prometido = mapa[m.item]?.prometido || 0;
-        const entregue = mapa[m.item]?.entregue || 0;
+        const prometido = mapa[metaItemNormalizado]?.prometido || 0;
+        const entregue = mapa[metaItemNormalizado]?.entregue || 0;
         const faltam = Math.max(0, meta - entregue);
         const perc = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
 
@@ -1726,12 +1839,20 @@
     }
 
     async function salvarMeta() {
-      const item = document.getElementById("m_item").value.trim();
+      const itemOriginal = document.getElementById("m_item").value.trim();
+      const itemNormalizado = itemOriginal.replace(/\s+/g, ' ').toUpperCase();
       const qtd = parseInt(document.getElementById("m_qtd").value, 10);
-      const un = document.getElementById("m_un").value.trim();
+      const un = document.getElementById("m_un").value.trim().toUpperCase();
 
-      const { error } = await _supabase.from("metas_doacao").insert([{ item, qtd_necessaria: qtd, unidade: un }]);
-      if (error) return showToast("Não foi possível salvar a meta.", "error");
+      const { data: existentes } = await _supabase.from("metas_doacao").select("item").eq("ativo", true);
+      const duplicado = (existentes || []).some(m => (m.item || "").trim().replace(/\s+/g, ' ').toUpperCase() === itemNormalizado);
+
+      if (duplicado) {
+        return showToast("Esta necessidade já está cadastrada.", "error");
+      }
+
+      const { error } = await _supabase.from("metas_doacao").insert([{ item: itemOriginal, qtd_necessaria: qtd, unidade: un }]);
+      if (error) return showToast(error.message || "Não foi possível salvar a meta.", "error");
 
       showToast("Meta cadastrada com sucesso!");
       document.getElementById("modalMeta").classList.add("hidden");
@@ -1996,7 +2117,7 @@
           .update({
             status: "PAGO",
             recebido_por: recebidoPor,
-            recebido_em: dataRecebimento
+            recebido_em: dataLocalMeioDiaISO(dataRecebimento)
           })
           .eq("id", r.id)
           .eq("version", r.version || 0);
@@ -2061,4 +2182,3 @@
   </script>
 </body>
 </html>
-
