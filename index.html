@@ -273,19 +273,19 @@
       <div id="dashAdmin" class="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 hidden">
         <div id="dashGrid" class="grid grid-cols-1 sm:grid-cols-4 gap-8">
           <div>
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Recebido</p>
-            <h2 id="totalRecebido" class="text-3xl font-extrabold text-slate-900">R$ 0,00</h2>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Entradas (Pagas)</p>
+            <h2 id="totalRecebido" class="text-3xl font-extrabold text-emerald-600">R$ 0,00</h2>
           </div>
           <div>
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Pendências</p>
-            <h2 id="totalPendente" class="text-3xl font-extrabold text-amber-600">R$ 0,00</h2>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">A Receber (Fiado)</p>
+            <h2 id="totalPendente" class="text-3xl font-extrabold text-amber-500">R$ 0,00</h2>
           </div>
           <div>
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Custos</p>
-            <h2 id="totalSaidas" class="text-3xl font-black text-rose-500">R$ 0,00</h2>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Saídas (Gastos)</p>
+            <h2 id="totalSaidas" class="text-3xl font-black text-rose-600">R$ 0,00</h2>
           </div>
           <div id="cardSaldoLiquido">
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Saldo Líquido</p>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Em Caixa (Saldo)</p>
             <h2 id="totalLiquido" class="text-3xl font-extrabold text-purple-700">R$ 0,00</h2>
           </div>
         </div>
@@ -338,7 +338,7 @@
       <div id="graficoWrap" class="bg-white rounded-[32px] p-6 shadow-sm border border-slate-100 hidden">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Painel visual</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Consumo Interno</p>
             <h3 class="text-lg font-black text-slate-800">Gastos por equipe</h3>
           </div>
         </div>
@@ -512,7 +512,9 @@
           <input id="f_recebido" required class="w-full bg-transparent font-bold text-purple-900 outline-none" />
         </div>
 
-        <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">CONCLUIR REGISTRO</button>
+        <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">
+          CONCLUIR REGISTRO
+        </button>
       </form>
     </div>
   </div>
@@ -844,7 +846,7 @@
       const mostrarFiltros = ["DOACAO", "FEIJOADA", "MERCADINHO", "EJC", "ADMIN"].includes(abaAtiva);
       document.getElementById("filtrosUniversalWrap").classList.toggle("hidden", !mostrarFiltros);
 
-      const mostrarGrafico = ROLE === "ADMIN" || ["EJC", "MERCADINHO", "FEIJOADA"].includes(abaAtiva);
+      const mostrarGrafico = abaAtiva === "MERCADINHO";
       document.getElementById("graficoWrap").classList.toggle("hidden", !mostrarGrafico);
       document.getElementById("painelFeijoada").classList.toggle("hidden", abaAtiva !== "FEIJOADA");
 
@@ -1099,7 +1101,7 @@
       if (!wrap) return;
 
       const mapa = {};
-      const saidas = dadosCache.filter(i => i.natureza === "SAIDA");
+      const saidas = dadosCache.filter(i => i.natureza === "SAIDA" && i.modulo === "MERCADINHO");
 
       saidas.forEach(i => {
         const equipe = i.equipe || "Sem equipe";
@@ -2060,4 +2062,3 @@
   </script>
 </body>
 </html>
-
