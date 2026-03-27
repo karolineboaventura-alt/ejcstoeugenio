@@ -650,7 +650,7 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const PRECO_VOUCHER_FEIJOADA = 55;
-    const TOTAL_VOUCHERS_FEIJOADA = 300;
+    const TOTAL_VOUCHERS_FEIJOADA = 150;
 
     let currentUser = null;
     let currentProfile = null;
@@ -676,7 +676,7 @@
       "<": "&lt;",
       ">": "&gt;",
       "'": "&#39;",
-      '"': "&quot;"
+      '"": "&quot;"
     }[t])) : "";
 
     function normalizarTelefone(tel) {
@@ -2010,7 +2010,6 @@
 
       fecharModalQuitarTudo();
       await carregarDados();
-      if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
       abrirExtrato(extratoAtual.telefone, extratoAtual.nome, extratoAtual.equipe);
     }
 
@@ -2053,4 +2052,3 @@
   </script>
 </body>
 </html>
-
