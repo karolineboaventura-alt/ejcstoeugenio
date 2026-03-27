@@ -201,6 +201,13 @@
     .hidden-soft {
       display: none;
     }
+
+    .helper-box {
+      background: linear-gradient(180deg, #fffdf7 0%, #fff8e8 100%);
+      border: 1px solid #f8e7b8;
+      border-radius: 18px;
+      padding: 12px 14px;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4 py-8">
@@ -265,7 +272,7 @@
     <div class="mb-6">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-sm font-black uppercase tracking-widest text-slate-700">Mais urgentes agora</h2>
-        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Providência</span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Proteínas</span>
       </div>
 
       <div id="listaUrgentes" class="space-y-3">
@@ -322,6 +329,10 @@
         <div id="itemEscolhidoBox" class="hidden bg-amber-50 border border-amber-100 rounded-2xl px-4 py-3">
           <p class="text-[10px] font-black uppercase tracking-widest text-amber-700">Você escolheu</p>
           <p id="itemEscolhidoTexto" class="text-sm font-bold text-slate-800 mt-1"></p>
+        </div>
+
+        <div id="infoFrango" class="hidden helper-box">
+          <p id="infoFrangoTexto" class="text-[11px] text-slate-600 leading-relaxed font-bold"></p>
         </div>
 
         <div class="space-y-1">
@@ -389,24 +400,58 @@
 
     const categorias = {
       "Alimentos": [
-        "Arroz", "Feijão", "Carne bovina", "Frango (churrasco + domingo)", "Linguiça", "Bacon",
-        "Farinha de mandioca", "Batata", "Cenoura", "Tomate", "Repolho", "Cebola", "Alho",
-        "Cheiro-verde", "Café", "Açúcar", "Óleo", "Sal", "Leite", "Ketchup",
-        "Maionese (sachê)", "Mostarda"
+        "Arroz",
+        "Feijão",
+        "Carne bovina",
+        "Frango para churrasco (asa, coxinha da asa ou coxa/sobrecoxa)",
+        "Frango para domingo (coxa e sobrecoxa)",
+        "Linguiça",
+        "Bacon",
+        "Farinha de mandioca",
+        "Batata",
+        "Cenoura",
+        "Tomate",
+        "Repolho",
+        "Cebola",
+        "Alho",
+        "Cheiro-verde",
+        "Café",
+        "Açúcar",
+        "Óleo",
+        "Sal",
+        "Leite",
+        "Ketchup",
+        "Maionese (sachê)",
+        "Mostarda"
       ],
       "Bebidas": [
-        "Água", "Refrigerante"
+        "Água",
+        "Refrigerante"
       ],
       "Descartáveis": [
-        "Pratinhos descartáveis", "Copos descartáveis (água/refri/café)", "Talheres (garfo/faca)",
-        "Guardanapos", "Papel alumínio", "Plástico filme"
+        "Pratinhos descartáveis",
+        "Copos descartáveis (água/refri/café)",
+        "Talheres (garfo/faca)",
+        "Guardanapos",
+        "Papel alumínio",
+        "Plástico filme"
       ],
       "Limpeza": [
-        "Detergente", "Esponjas", "Desinfetante", "Água sanitária", "Papel higiênico",
-        "Papel toalha", "Sacos de lixo (100L e 50L)", "Rodo", "Vassoura", "Balde", "Pano de chão"
+        "Detergente",
+        "Esponjas",
+        "Desinfetante",
+        "Água sanitária",
+        "Papel higiênico",
+        "Papel toalha",
+        "Sacos de lixo (100L e 50L)",
+        "Rodo",
+        "Vassoura",
+        "Balde",
+        "Pano de chão"
       ],
       "Organização": [
-        "Sulfite A4", "Fita adesiva (durex)"
+        "Sulfite A4",
+        "Fita adesiva (durex)"
       ]
     };
 
@@ -490,10 +535,26 @@
 
     function renderizarUrgentes() {
       const wrap = document.getElementById("listaUrgentes");
-      const urgentes = [...itensRenderizados]
-        .filter(i => i.disponivelPrometer > 0)
-        .sort((a, b) => a.disponivelPrometer - b.disponivelPrometer || a.percReal - b.percReal)
-        .slice(0, 6);
+
+      const prioridadesFixas = [
+        "Carne bovina",
+        "Frango para churrasco (asa, coxinha da asa ou coxa/sobrecoxa)",
+        "Frango para domingo (coxa e sobrecoxa)",
+        "Linguiça",
+        "Bacon"
+      ];
+
+      const itensDisponiveis = [...itensRenderizados].filter(i => i.disponivelPrometer > 0);
+
+      const urgentesProteinas = prioridadesFixas
+        .map(nome => itensDisponiveis.find(i => i.item === nome))
+        .filter(Boolean);
+
+      const restantes = itensDisponiveis
+        .filter(i => !prioridadesFixas.includes(i.item))
+        .sort((a, b) => a.disponivelPrometer - b.disponivelPrometer || a.percReal - b.percReal);
+
+      const urgentes = [...urgentesProteinas, ...restantes].slice(0, 6);
 
       if (!urgentes.length) {
         wrap.innerHTML = `<div class="need-card text-center text-sm font-bold text-purple-700">Graças a Deus, tudo já foi preenchido! 💜</div>`;
@@ -700,6 +761,8 @@
       document.getElementById("formDoacao").reset();
       document.getElementById("itemEscolhidoBox").classList.add("hidden");
       document.getElementById("itemEscolhidoTexto").innerText = "";
+      document.getElementById("infoFrango").classList.add("hidden");
+      document.getElementById("infoFrangoTexto").innerText = "";
       document.getElementById("areaForm").classList.remove("hidden");
       document.getElementById("agradecimentoDoacao").classList.add("hidden");
     }
@@ -709,11 +772,15 @@
 
       const box = document.getElementById("itemEscolhidoBox");
       const texto = document.getElementById("itemEscolhidoTexto");
+      const infoFrango = document.getElementById("infoFrango");
+      const infoFrangoTexto = document.getElementById("infoFrangoTexto");
       const valor = this.value;
 
       if (!valor) {
         box.classList.add("hidden");
         texto.innerText = "";
+        infoFrango.classList.add("hidden");
+        infoFrangoTexto.innerText = "";
         return;
       }
 
@@ -723,6 +790,17 @@
 
       texto.innerText = `${valor} • disponível para prometer: ${disponivel} ${unidade}`;
       box.classList.remove("hidden");
+
+      if (valor === "Frango para churrasco (asa, coxinha da asa ou coxa/sobrecoxa)") {
+        infoFrangoTexto.innerHTML = "Para churrasco: doar <b>asa, coxinha da asa ou coxa/sobrecoxa</b>.";
+        infoFrango.classList.remove("hidden");
+      } else if (valor === "Frango para domingo (coxa e sobrecoxa)") {
+        infoFrangoTexto.innerHTML = "Para domingo: doar <b>coxa e sobrecoxa</b>.";
+        infoFrango.classList.remove("hidden");
+      } else {
+        infoFrango.classList.add("hidden");
+        infoFrangoTexto.innerText = "";
+      }
     });
 
     document.getElementById("d_tel").addEventListener("input", function() {
