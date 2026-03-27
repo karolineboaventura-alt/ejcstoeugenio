@@ -1,719 +1,175 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#820ad1" />
-  <title>21º EJC • Lista de Providência</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lista de Providência • EJC</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    :root {
-      --nu-roxo: #820ad1;
-      --nu-roxo-dark: #4b0082;
-      --nu-soft: #f6effd;
-      --nu-line: #eee7f8;
-      --nu-text: #1f2937;
-    }
-
-    body {
-      font-family: "Plus Jakarta Sans", sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(130, 10, 209, 0.10), transparent 28%),
-        radial-gradient(circle at top left, rgba(168, 85, 247, 0.06), transparent 24%),
-        #f8fafc;
-      -webkit-tap-highlight-color: transparent;
-      color: var(--nu-text);
-    }
-
-    .premium-card {
-      background: rgba(255,255,255,0.96);
-      border-radius: 40px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
-      backdrop-filter: blur(10px);
-    }
-
-    .hero-top {
-      background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
-      border-radius: 32px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 20px 40px -25px rgba(75, 0, 130, 0.55);
-    }
-
-    .hero-top::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
-      opacity: 0.08;
-    }
-
-    .hero-logo-wrap {
-      width: 72px;
-      height: 72px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.14);
-      border: 1px solid rgba(255,255,255,0.20);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-      overflow: hidden;
-      margin: 0 auto 20px;
-    }
-
-    .hero-logo {
-      width: 56px;
-      height: 56px;
-      object-fit: contain;
-      display: block;
-    }
-
-    .vault-input {
-      background: #f8fafc;
-      border: 2px solid #f1f5f9;
-      transition: all 0.25s ease;
-    }
-
-    .vault-input:focus {
-      background: white;
-      border-color: var(--nu-roxo);
-      box-shadow: 0 0 0 4px rgba(130, 10, 209, 0.10);
-      outline: none;
-    }
-
-    .progress-bar {
-      height: 8px;
-      border-radius: 999px;
-      background: #eceff3;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #820ad1, #a855f7);
-      border-radius: 999px;
-      transition: width 1s ease;
-    }
-
-    .need-card {
-      position: relative;
-      border: 1px solid var(--nu-line);
-      background: linear-gradient(180deg, #ffffff 0%, #fbf8ff 100%);
-      border-radius: 24px;
-      padding: 16px;
-      transition: all 0.25s ease;
-      overflow: hidden;
-    }
-
-    .need-card::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 72px;
-      height: 72px;
-      background: radial-gradient(circle, rgba(130,10,209,0.10), transparent 68%);
-      pointer-events: none;
-    }
-
-    .need-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 18px 30px -24px rgba(0,0,0,0.30);
-    }
-
-    .mini-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .selected-glow {
-      animation: glowPulse 0.8s ease;
-    }
-
-    @keyframes glowPulse {
-      0% { box-shadow: 0 0 0 rgba(130,10,209,0); }
-      50% { box-shadow: 0 0 0 8px rgba(130,10,209,0.10); }
-      100% { box-shadow: 0 0 0 rgba(130,10,209,0); }
-    }
-
-    .animate-fade-in {
-      animation: fadeIn 0.55s ease-out forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    #toast-container {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      width: 90%;
-      max-width: 390px;
-    }
-
-    .toast {
-      border-radius: 18px;
-      padding: 14px 16px;
-      color: white;
-      font-weight: 700;
-      margin-bottom: 8px;
-      box-shadow: 0 18px 30px -18px rgba(0,0,0,0.45);
-    }
-
-    .msg-card {
-      background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
-      border: 1px solid #efe7fb;
-      border-radius: 20px;
-      padding: 14px;
-    }
-
-    .count-card {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 20px;
-      padding: 10px 8px;
-      text-align: center;
-      min-width: 66px;
-      backdrop-filter: blur(8px);
-    }
-
-    .soft-panel {
-      background: linear-gradient(180deg, #fcfaff 0%, #f7f1ff 100%);
-      border: 1px solid #eee5fb;
-      border-radius: 24px;
-    }
-  </style>
+<style>
+body { font-family: sans-serif; background:#f8fafc; }
+.card { background:white; border-radius:20px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.05);}
+.toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#111; color:white; padding:12px 16px; border-radius:12px;}
+</style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4 py-8">
-
-  <div id="toast-container"></div>
-
-  <div class="w-full max-w-md premium-card p-5 sm:p-6 border border-slate-100 animate-fade-in">
-    
-    <div class="hero-top p-6 text-white mb-6">
-      <div class="relative z-10 text-center">
-        <div class="hero-logo-wrap">
-          <img src="https://i.imgur.com/6XyFz9V.png" alt="Logo EJC" class="hero-logo" />
-        </div>
-
-        <p class="text-[10px] font-black uppercase tracking-[0.28em] text-white/80 mb-2">21º EJC • Santo Eugênio</p>
-        <h1 class="text-2xl font-black leading-tight">Lista de Providência</h1>
-        <p class="text-sm text-white/80 mt-2 font-medium">
-          Sua doação ajuda a construir este encontro.
-        </p>
-
-        <div class="mt-5 px-4 py-3 rounded-2xl bg-white/10 border border-white/15">
-          <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/75 mb-3">Contagem regressiva</p>
-          <div id="contadorWrap" class="grid grid-cols-4 gap-2">
-            <div class="count-card">
-              <div id="cdDias" class="text-xl font-black">--</div>
-              <div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Dias</div>
-            </div>
-            <div class="count-card">
-              <div id="cdHoras" class="text-xl font-black">--</div>
-              <div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Horas</div>
-            </div>
-            <div class="count-card">
-              <div id="cdMin" class="text-xl font-black">--</div>
-              <div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Min</div>
-            </div>
-            <div class="count-card">
-              <div id="cdSeg" class="text-xl font-black">--</div>
-              <div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Seg</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="soft-panel p-4 mb-6">
-      <div class="flex items-start gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-white text-purple-700 flex items-center justify-center shadow-sm">
-          <i class="fas fa-hands-helping"></i>
-        </div>
-        <div>
-          <p class="text-sm font-extrabold text-slate-800">Como funciona para doar?</p>
-          <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Escolha um item da lista, informe a quantidade, preencha seus dados e registre a sua doação. Assim, a equipe consegue organizar a Providência e acompanhar cada entrega sem confusão.
-          </p>
-          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Você também pode deixar uma mensagem no mural para demonstrar carinho, fé e apoio ao EJC. 💜
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="mb-8">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-black uppercase tracking-widest text-slate-700">Necessidades atuais</h2>
-        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Providência</span>
-      </div>
-
-      <div id="listaProgresso" class="space-y-3">
-        <p class="text-center text-xs text-slate-300 animate-pulse">Sincronizando necessidades...</p>
-      </div>
-    </div>
-
-    <div id="areaForm">
-      <form id="formDoacao" class="space-y-5">
-        <div class="space-y-1">
-          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome Completo</label>
-          <input id="d_nome" placeholder="Seu nome" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">WhatsApp (com DDD)</label>
-            <input id="d_tel" type="tel" placeholder="(11) 99999-8888" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
-          </div>
-          <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Equipe</label>
-            <select id="d_equipe" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
-              <option value="">Selecione...</option>
-              <option value="Externo">Paroquiano / Visitante</option>
-              <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">O que vai doar?</label>
-            <select id="d_item" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
-              <option value="">Carregando...</option>
-            </select>
-          </div>
-          <div class="space-y-1">
-            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
-            <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-center text-slate-800" />
-          </div>
-        </div>
-
-        <div id="itemEscolhidoBox" class="hidden bg-amber-50 border border-amber-100 rounded-2xl px-4 py-3">
-          <p class="text-[10px] font-black uppercase tracking-widest text-amber-700">Você escolheu</p>
-          <p id="itemEscolhidoTexto" class="text-sm font-bold text-slate-800 mt-1"></p>
-        </div>
-
-        <div class="space-y-1">
-          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de Entrega</label>
-          <input id="d_data" type="date" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
-        </div>
-
-        <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
-          Confirmar Doação
-        </button>
-      </form>
-    </div>
-
-    <div id="agradecimentoDoacao" class="hidden mt-6">
-      <div class="text-center p-8 bg-emerald-50 rounded-[32px] border border-emerald-100">
-        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl mb-6 shadow-inner mx-auto">
-          <i class="fas fa-check"></i>
-        </div>
-        <h3 id="agradecimentoTitulo" class="text-2xl font-black text-slate-800 mb-3">Deus lhe pague!</h3>
-        <p id="agradecimentoTexto" class="text-slate-600 font-medium max-w-xs mx-auto leading-relaxed">
-          Sua doação foi registrada com sucesso.
-        </p>
-
-        <div class="mt-6">
-          <button onclick="novaDoacao()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold shadow-xl active:scale-95 transition-all uppercase tracking-widest text-xs">
-            Fazer outra doação
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-8">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-black uppercase tracking-widest text-slate-700">Mural de mensagens</h3>
-      </div>
-
-      <div class="space-y-3 mb-4">
-        <textarea id="m_msg" rows="3" maxlength="220" placeholder="Escreva uma mensagem de carinho para o EJC..." class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700 resize-none"></textarea>
-        <button id="btnMsg" type="button" onclick="enviarMensagem()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-black active:scale-95 transition-all uppercase tracking-widest text-xs">
-          Enviar mensagem
-        </button>
-      </div>
-
-      <div id="listaMensagens" class="space-y-3">
-        <p class="text-xs text-slate-300">Carregando mural...</p>
-      </div>
-    </div>
-    
-    <div class="mt-10 text-center border-t border-slate-50 pt-7">
-      <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] italic">"Tudo por Jesus, nada sem Maria"</p>
-    </div>
-  </div>
-
-  <script>
-    const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_cMEBXmudaJN7pALr1aV9-g_EPwoTfiB';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-    const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-    }[t])) : "";
-
-    let disponibilidadeItens = {};
-
-    function showToast(msg, type = "success") {
-      const t = document.createElement("div");
-      t.className = `toast animate-fade-in ${type === 'error' ? 'bg-rose-600' : 'bg-slate-900'}`;
-      t.innerText = msg;
-      document.getElementById("toast-container").appendChild(t);
-      setTimeout(() => t.remove(), 4500);
-    }
-
-    function aplicarAnimacaoSelecao() {
-      const campo = document.getElementById("d_item");
-      campo.classList.remove("selected-glow");
-      void campo.offsetWidth;
-      campo.classList.add("selected-glow");
-    }
-
-    function mascararWhatsapp(valor) {
-      const nums = valor.replace(/\D/g, "").slice(0, 11);
-      if (nums.length <= 2) return nums;
-      if (nums.length <= 7) return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
-      return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
-    }
-
-    function iniciarContador() {
-      const destino = new Date('2026-07-11T06:00:00');
-
-      function atualizar() {
-        const agora = new Date();
-        let diff = destino.getTime() - agora.getTime();
-        if (diff < 0) diff = 0;
-
-        const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const min = Math.floor((diff / (1000 * 60)) % 60);
-        const seg = Math.floor((diff / 1000) % 60);
-
-        document.getElementById('cdDias').innerText = String(dias).padStart(2, '0');
-        document.getElementById('cdHoras').innerText = String(horas).padStart(2, '0');
-        document.getElementById('cdMin').innerText = String(min).padStart(2, '0');
-        document.getElementById('cdSeg').innerText = String(seg).padStart(2, '0');
-      }
-
-      atualizar();
-      setInterval(atualizar, 1000);
-    }
-
-    async function carregarDados() {
-      const select = document.getElementById("d_item");
-      const list = document.getElementById("listaProgresso");
-
-      const [{ data: metas, error: metasError }, { data: registros, error: regError }] = await Promise.all([
-        _supabase
-          .from('metas_doacao')
-          .select('*')
-          .eq('ativo', true)
-          .order('item'),
-        _supabase
-          .from('transacoes')
-          .select('descricao, quantidade, status')
-          .eq('modulo', 'DOACAO')
-      ]);
-
-      if (metasError) {
-        console.error("Erro ao buscar metas:", metasError);
-        list.innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar necessidades.</p>';
-        return;
-      }
-
-      if (regError) {
-        console.error("Erro ao buscar registros:", regError);
-        list.innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao calcular disponibilidade.</p>';
-        return;
-      }
-
-      const mapa = {};
-
-      (registros || []).forEach(r => {
-        const item = r.descricao || "";
-        const qtd = Number(r.quantidade || 0);
-
-        if (!mapa[item]) {
-          mapa[item] = { prometido: 0, entregue: 0 };
-        }
-
-        if (r.status === "PENDENTE") mapa[item].prometido += qtd;
-        if (r.status === "PAGO") mapa[item].entregue += qtd;
-      });
-
-      const lista = metas || [];
-      disponibilidadeItens = {};
-      select.innerHTML = '<option value="">Escolha um item...</option>';
-      list.innerHTML = '';
-
-      let itensDisponiveis = 0;
-
-      lista.forEach(m => {
-        const item = m.item;
-        const meta = Number(m.qtd_necessaria || 0);
-        const prometido = mapa[item]?.prometido || 0;
-        const entregue = mapa[item]?.entregue || 0;
-
-        const faltandoReal = Math.max(0, meta - entregue);
-        const disponivelPrometer = Math.max(0, meta - prometido - entregue);
-        const percReal = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
-
-        disponibilidadeItens[item] = {
-          meta,
-          prometido,
-          entregue,
-          faltandoReal,
-          disponivelPrometer,
-          unidade: m.unidade || ""
-        };
-
-        if (disponivelPrometer > 0) {
-          itensDisponiveis++;
-          const opt = document.createElement("option");
-          opt.value = item;
-          opt.textContent = `${item} (disponível: ${disponivelPrometer} ${m.unidade || ''})`;
-          select.appendChild(opt);
-        }
-
-        list.innerHTML += `
-          <div class="need-card">
-            <div class="flex items-start justify-between gap-3 mb-3">
-              <div>
-                <p class="text-sm font-extrabold text-slate-800">${esc(item)}</p>
-                <p class="text-[11px] text-slate-500 mt-1">Meta: ${meta} ${esc(m.unidade || '')}</p>
-              </div>
-              <div class="text-right">
-                <span class="mini-badge bg-purple-50 text-purple-700 border border-purple-100">${percReal}%</span>
-              </div>
-            </div>
-
-            <div class="progress-bar mb-3">
-              <div class="progress-fill" style="width:${percReal}%"></div>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2 text-[11px]">
-              <div class="bg-white rounded-xl px-3 py-2 border border-slate-100">
-                <p class="text-slate-400 font-black uppercase text-[9px]">Prometido</p>
-                <p class="font-extrabold text-amber-500">${prometido}</p>
-              </div>
-              <div class="bg-white rounded-xl px-3 py-2 border border-slate-100">
-                <p class="text-slate-400 font-black uppercase text-[9px]">Entregue</p>
-                <p class="font-extrabold text-emerald-600">${entregue}</p>
-              </div>
-              <div class="bg-white rounded-xl px-3 py-2 border border-purple-100 bg-purple-50">
-                <p class="text-purple-400 font-black uppercase text-[9px]">Disponível</p>
-                <p class="font-extrabold text-purple-700">${disponivelPrometer}</p>
-              </div>
-            </div>
-
-            <div class="mt-3 text-[11px] font-bold ${faltandoReal > 0 ? 'text-slate-500' : 'text-emerald-600'}">
-              ${faltandoReal > 0 ? `Faltando real: ${faltandoReal}` : 'Meta já atendida'}
-            </div>
-          </div>
-        `;
-      });
-
-      if (itensDisponiveis === 0 && lista.length > 0) {
-        document.getElementById("areaForm").innerHTML = `
-          <div class="text-center p-8 bg-purple-50 rounded-[32px] border border-purple-100">
-            <p class="text-purple-700 font-bold italic">Graças a Deus, todas as providências disponíveis para promessa já foram preenchidas! 💜</p>
-          </div>`;
-      }
-    }
-
-    async function carregarMensagens() {
-      const wrap = document.getElementById("listaMensagens");
-
-      const { data, error } = await _supabase
-        .from('mural_mensagens')
-        .select('nome, mensagem, criado_em')
-        .eq('aprovada', true)
-        .order('criado_em', { ascending: false })
-        .limit(8);
-
-      if (error) {
-        wrap.innerHTML = `<p class="text-xs text-slate-400">Mural indisponível no momento.</p>`;
-        return;
-      }
-
-      const msgs = data || [];
-      if (!msgs.length) {
-        wrap.innerHTML = `<p class="text-xs text-slate-400">Ainda não há mensagens no mural.</p>`;
-        return;
-      }
-
-      wrap.innerHTML = msgs.map(m => `
-        <div class="msg-card">
-          <p class="text-sm font-bold text-slate-800">${esc(m.nome || "Participante")}</p>
-          <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(m.mensagem || "")}</p>
-        </div>
-      `).join("");
-    }
-
-    async function enviarMensagem() {
-      const nome = document.getElementById("d_nome").value.trim();
-      const mensagem = document.getElementById("m_msg").value.trim();
-      const btn = document.getElementById("btnMsg");
-      const original = btn.innerHTML;
-
-      if (!nome) return showToast("Preencha seu nome para enviar a mensagem.", "error");
-      if (!mensagem) return showToast("Escreva uma mensagem para o mural.", "error");
-      if (mensagem.length < 3) return showToast("Mensagem muito curta.", "error");
-
-      btn.disabled = true;
-      btn.innerHTML = 'ENVIANDO...';
-
-      const { error } = await _supabase
-        .from('mural_mensagens')
-        .insert([{
-          nome,
-          mensagem,
-          aprovada: true
-        }]);
-
-      if (error) {
-        console.error(error);
-        showToast("Não foi possível enviar a mensagem.", "error");
-        btn.disabled = false;
-        btn.innerHTML = original;
-        return;
-      }
-
-      document.getElementById("m_msg").value = "";
-      btn.disabled = false;
-      btn.innerHTML = original;
-      showToast("Mensagem enviada com sucesso!");
-      carregarMensagens();
-    }
-
-    function novaDoacao() {
-      document.getElementById("formDoacao").reset();
-      document.getElementById("itemEscolhidoBox").classList.add("hidden");
-      document.getElementById("itemEscolhidoTexto").innerText = "";
-      document.getElementById("areaForm").classList.remove("hidden");
-      document.getElementById("agradecimentoDoacao").classList.add("hidden");
-    }
-
-    document.getElementById("d_item").addEventListener("change", function() {
-      aplicarAnimacaoSelecao();
-
-      const box = document.getElementById("itemEscolhidoBox");
-      const texto = document.getElementById("itemEscolhidoTexto");
-      const valor = this.value;
-
-      if (!valor) {
-        box.classList.add("hidden");
-        texto.innerText = "";
-        return;
-      }
-
-      const info = disponibilidadeItens[valor];
-      const disponivel = info?.disponivelPrometer ?? 0;
-      const unidade = info?.unidade || "";
-
-      texto.innerText = `${valor} • disponível para prometer: ${disponivel} ${unidade}`;
-      box.classList.remove("hidden");
-    });
-
-    document.getElementById("d_tel").addEventListener("input", function() {
-      this.value = mascararWhatsapp(this.value);
-    });
-
-    document.getElementById("formDoacao").addEventListener("submit", async function(e) {
-      e.preventDefault();
-
-      const btn = document.getElementById("btnEnviar");
-      const textoOriginal = btn.innerHTML;
-
-      const qtd = parseInt(document.getElementById("d_qtd").value, 10);
-      const item = document.getElementById("d_item").value;
-      const nome = document.getElementById("d_nome").value.trim();
-      const telefoneBruto = document.getElementById("d_tel").value;
-      const telefone = telefoneBruto.replace(/\D/g, "");
-      const equipe = document.getElementById("d_equipe").value;
-      const dataEntrega = document.getElementById("d_data").value;
-
-      if (!Number.isInteger(qtd) || qtd <= 0) {
-        return showToast("Informe uma quantidade válida.", "error");
-      }
-
-      if (!item || !nome || !equipe || !dataEntrega) {
-        return showToast("Preencha todos os campos corretamente.", "error");
-      }
-
-      if (!/^\d{10,11}$/.test(telefone)) {
-        return showToast("WhatsApp inválido (use DDD e número).", "error");
-      }
-
-      const infoItem = disponibilidadeItens[item];
-      const maxDisponivel = infoItem?.disponivelPrometer ?? 0;
-
-      if (maxDisponivel <= 0) {
-        return showToast("Este item não está mais disponível para promessa.", "error");
-      }
-
-      if (qtd > maxDisponivel) {
-        return showToast(`Para este item, o máximo disponível agora é ${maxDisponivel}.`, "error");
-      }
-
-      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> PROCESSANDO...';
-      btn.disabled = true;
-
-      const { error } = await _supabase.rpc('registrar_doacao_publica', {
-        p_item: item,
-        p_quantidade: qtd,
-        p_nome: nome,
-        p_telefone: telefone,
-        p_equipe: equipe,
-        p_data_entrega: dataEntrega || null
-      });
-
-      if (error) {
-        console.error("Erro detalhado do RPC:", error);
-        showToast(error.message || error.details || error.hint || "Erro no banco. Tente novamente.", "error");
-        btn.disabled = false;
-        btn.innerHTML = textoOriginal;
-        return;
-      }
-
-      document.getElementById("areaForm").classList.add("hidden");
-      document.getElementById("agradecimentoDoacao").classList.remove("hidden");
-
-      document.getElementById("agradecimentoTitulo").innerText = `Deus lhe pague, ${nome}!`;
-      document.getElementById("agradecimentoTexto").innerHTML =
-        `Sua doação de <b class="text-purple-700">${qtd}x ${esc(item)}</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜`;
-
-      btn.disabled = false;
-      btn.innerHTML = textoOriginal;
-
-      showToast("Doação registrada com sucesso!");
-      await carregarDados();
-    });
-
-    window.onload = async function() {
-      iniciarContador();
-      await carregarDados();
-      await carregarMensagens();
-    };
-  </script>
+
+<body class="p-4 flex justify-center">
+
+<div class="card w-full max-w-md">
+
+<h1 class="text-xl font-bold mb-4">✝️ Lista de Providência</h1>
+
+<form id="formDoacao" class="space-y-3">
+
+<input id="d_nome" placeholder="Seu nome" class="w-full border p-3 rounded-xl" required>
+
+<input id="d_tel" placeholder="WhatsApp" class="w-full border p-3 rounded-xl" required>
+
+<select id="d_equipe" class="w-full border p-3 rounded-xl" required>
+<option value="">Equipe</option>
+<option>Animação</option>
+<option>Cozinha</option>
+<option>Compras</option>
+</select>
+
+<select id="d_item" class="w-full border p-3 rounded-xl" required></select>
+
+<input id="d_qtd" type="number" value="1" min="1" class="w-full border p-3 rounded-xl">
+
+<input id="d_data" type="date" class="w-full border p-3 rounded-xl" required>
+
+<button id="btnEnviar" class="w-full bg-purple-600 text-white p-4 rounded-xl font-bold">
+Confirmar Doação
+</button>
+
+</form>
+
+<h2 id="agradecimentoTitulo" class="text-center mt-6 font-bold"></h2>
+
+<div id="listaProgresso" class="mt-6 text-sm"></div>
+
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_cMEBXmudaJN7pALr1aV9-g_EPwoTfiB';
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let disponibilidadeItens = {};
+
+function showToast(msg, type="success"){
+  const t = document.createElement("div");
+  t.className="toast";
+  t.innerText = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+
+async function carregarDados(){
+
+const { data: metas } = await _supabase.from('metas_doacao').select('*');
+const { data: regs } = await _supabase.from('transacoes').select('*').eq('modulo','DOACAO');
+
+const mapa = {};
+
+(regs||[]).forEach(r=>{
+if(!mapa[r.descricao]) mapa[r.descricao]={p:0,e:0};
+if(r.status==="PENDENTE") mapa[r.descricao].p+=r.quantidade;
+if(r.status==="PAGO") mapa[r.descricao].e+=r.quantidade;
+});
+
+const select = document.getElementById("d_item");
+select.innerHTML="<option value=''>Escolha...</option>";
+
+(metas||[]).forEach(m=>{
+const p = mapa[m.item]?.p||0;
+const e = mapa[m.item]?.e||0;
+const disp = m.qtd_necessaria - p - e;
+
+disponibilidadeItens[m.item]={disponivelPrometer:disp};
+
+if(disp>0){
+const opt=document.createElement("option");
+opt.value=m.item;
+opt.textContent=`${m.item} (disponível: ${disp})`;
+select.appendChild(opt);
+}
+});
+
+}
+</script>
+
+<!-- TRECHO PRINCIPAL ALTERADO (toast com nome) -->
+<script>
+document.getElementById("formDoacao").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById("btnEnviar");
+  const textoOriginal = btn.innerHTML;
+
+  const qtd = parseInt(document.getElementById("d_qtd").value, 10);
+  const item = document.getElementById("d_item").value;
+  const nome = document.getElementById("d_nome").value.trim();
+  const telefone = document.getElementById("d_tel").value.replace(/\D/g, "");
+  const equipe = document.getElementById("d_equipe").value;
+  const dataEntrega = document.getElementById("d_data").value;
+
+  if (!Number.isInteger(qtd) || qtd <= 0) {
+    return showToast("Informe uma quantidade válida.", "error");
+  }
+
+  if (!item || !nome || !equipe || !dataEntrega) {
+    return showToast("Preencha todos os campos corretamente.", "error");
+  }
+
+  if (!/^\d{10,11}$/.test(telefone)) {
+    return showToast("WhatsApp inválido.", "error");
+  }
+
+  const infoItem = disponibilidadeItens[item];
+  const maxDisponivel = infoItem?.disponivelPrometer ?? 0;
+
+  if (qtd > maxDisponivel) {
+    return showToast(`Para este item, o máximo disponível agora é ${maxDisponivel}.`, "error");
+  }
+
+  btn.innerHTML = "Processando...";
+  btn.disabled = true;
+
+  const { error } = await _supabase.rpc('registrar_doacao_publica', {
+    p_item: item,
+    p_quantidade: qtd,
+    p_nome: nome,
+    p_telefone: telefone,
+    p_equipe: equipe,
+    p_data_entrega: dataEntrega
+  });
+
+  if (error) {
+    showToast("Erro ao registrar doação.", "error");
+    btn.disabled = false;
+    btn.innerHTML = textoOriginal;
+    return;
+  }
+
+  document.getElementById("agradecimentoTitulo").innerText = `Deus lhe pague, ${nome}!`;
+
+  showToast(`Doação registrada com sucesso, ${nome}!`);
+
+  btn.disabled = false;
+  btn.innerHTML = textoOriginal;
+
+  await carregarDados();
+});
+</script>
+
+<script>
+window.onload = carregarDados;
+</script>
+
 </body>
 </html>
