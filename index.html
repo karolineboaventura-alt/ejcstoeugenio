@@ -383,8 +383,12 @@
         document.querySelectorAll("#tab-admin, #tab-feijoada, #tab-doacao, #dashAdmin").forEach(el => el.classList.remove("hidden"));
         document.getElementById("headerTitle").innerText = "EJC BANK • PILOTOS";
         abaAtiva = "ADMIN";
-      } else {
+      } else if (ROLE === "COMPRAS") {
+        document.getElementById("tab-doacao").classList.remove("hidden");
         document.getElementById("headerTitle").innerText = "EJC BANK • COMPRAS";
+        abaAtiva = "DOACAO";
+      } else {
+        document.getElementById("headerTitle").innerText = "EJC BANK";
         abaAtiva = "EJC";
       }
 
@@ -402,16 +406,18 @@
         b.classList.toggle("text-white", !isSelected);
       });
 
-      const isDoacao = abaAtiva === "DOACAO" && ROLE === "ADMIN";
+      const isDoacao = abaAtiva === "DOACAO";
+      const podeGerenciarDoacao = isDoacao && (ROLE === "ADMIN" || ROLE === "COMPRAS");
+      const adminGerenciaDoacao = isDoacao && ROLE === "ADMIN";
 
-      document.getElementById("blocoAdminDoacao").classList.toggle("hidden", !isDoacao);
+      document.getElementById("blocoAdminDoacao").classList.toggle("hidden", !adminGerenciaDoacao);
       document.getElementById("dashAdmin").classList.toggle("hidden", isDoacao || ROLE !== "ADMIN");
 
       filtroProvidencia = "TODOS";
       atualizarBotoesFiltro();
-      document.getElementById("filtrosProvidenciaWrap").classList.toggle("hidden", !isDoacao);
+      document.getElementById("filtrosProvidenciaWrap").classList.toggle("hidden", !podeGerenciarDoacao);
 
-      if (isDoacao) await carregarMetasAdmin();
+      if (adminGerenciaDoacao) await carregarMetasAdmin();
 
       const cardSaldo = document.getElementById("cardSaldoLiquido");
       const dashGrid = document.getElementById("dashGrid");
@@ -423,6 +429,12 @@
           cardSaldo.classList.add("hidden");
           dashGrid.className = "grid grid-cols-1 sm:grid-cols-3 gap-8";
         }
+      }
+
+      const botaoFlutuante = document.querySelector('button[onclick="abrirModal()"]');
+      if (botaoFlutuante) {
+        const esconder = (isDoacao && !(ROLE === "ADMIN" || ROLE === "COMPRAS"));
+        botaoFlutuante.classList.toggle("hidden", esconder);
       }
 
       await carregarDados();
@@ -449,9 +461,17 @@
       let query = _supabase.from("transacoes").select("*").order("criado_em", { ascending: false });
       if (abaAtiva !== "ADMIN") query = query.eq("modulo", abaAtiva);
 
-      const { data } = await query;
-      dadosCache = data || [];
+      const { data, error } = await query;
 
+      if (error) {
+        console.error("Erro ao carregar dados:", error);
+        dadosCache = [];
+        renderizar();
+        document.getElementById("loading").classList.add("hidden");
+        return;
+      }
+
+      dadosCache = data || [];
       atualizarStats();
       renderizar();
       document.getElementById("loading").classList.add("hidden");
@@ -521,7 +541,9 @@
           if (i.data_entrega) {
             const dataPrev = new Date(i.data_entrega + "T00:00:00");
             entregaPrevista = dataPrev.toLocaleDateString("pt-BR");
-            if (i.status === "PENDENTE" && dataPrev.getTime() < hojeTempo) isAtrasado = true;
+            if (i.status === "PENDENTE" && dataPrev.getTime() < hojeTempo) {
+              isAtrasado = true;
+            }
           }
 
           if (i.recebido_em) {
@@ -575,7 +597,11 @@
       } else {
         filtrados.forEach(i => {
           const val = parseFloat(i.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
-          const iconClass = i.natureza === "SAIDA" ? "bg-rose-500" : i.status === "PENDENTE" ? "bg-amber-500" : "bg-emerald-500";
+          const iconClass = i.natureza === "SAIDA"
+            ? "bg-rose-500"
+            : i.status === "PENDENTE"
+            ? "bg-amber-500"
+            : "bg-emerald-500";
 
           const zapBtn = (i.status === "PENDENTE" && i.telefone)
             ? `<button onclick="cobrarZapTotal('${esc(i.telefone)}', ${JSON.stringify(i.nome_pessoa || "")})" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 ml-2 hover:bg-emerald-100 transition"><i class="fab fa-whatsapp"></i></button>`
@@ -794,6 +820,11 @@
     function abrirModal() {
       document.getElementById("modal").classList.remove("hidden");
       atualizarModalDinamico();
+
+      if (abaAtiva === "DOACAO" && ROLE === "COMPRAS") {
+        document.getElementById("f_modulo").value = "DOACAO";
+        atualizarModalDinamico();
+      }
     }
 
     function fecharModal() {
@@ -883,7 +914,7 @@
       showToast("Registro concluído!");
       fecharModal();
       await carregarDados();
-      if (abaAtiva === "DOACAO") await carregarMetasAdmin();
+      if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
     });
 
     async function baixar(id, ver) {
@@ -904,7 +935,7 @@
 
         showToast("Baixa realizada com sucesso!");
         await carregarDados();
-        if (abaAtiva === "DOACAO") await carregarMetasAdmin();
+        if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
       }
     }
 
