@@ -55,6 +55,17 @@
     
     @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .animate-elite { animation: slideIn 0.5s ease-out forwards; }
+
+    .action-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s ease;
+    }
+    .action-btn:active { transform: scale(.95); }
   </style>
 </head>
 <body class="text-slate-900 min-h-screen flex flex-col">
@@ -153,6 +164,7 @@
             <button data-filtro="PENDENTE" onclick="setFiltroProv('PENDENTE')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">Prometidos</button>
             <button data-filtro="ATRASADO" onclick="setFiltroProv('ATRASADO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">Atrasados</button>
             <button data-filtro="PAGO" onclick="setFiltroProv('PAGO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Entregues</button>
+            <button data-filtro="CANCELADO" onclick="setFiltroProv('CANCELADO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">Cancelados</button>
           </div>
         </div>
 
@@ -173,7 +185,7 @@
       </div>
     </main>
 
-    <button onclick="abrirModal()" class="fixed bottom-8 right-8 w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition z-50">
+    <button id="fabNovoRegistro" onclick="abrirModal()" class="fixed bottom-8 right-8 w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition z-50">
       <i class="fas fa-plus"></i>
     </button>
   </div>
@@ -197,7 +209,7 @@
     <div class="absolute inset-0" onclick="fecharModal()"></div>
     <div class="relative bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-8">
-        <h2 class="text-xl font-black text-slate-900 uppercase">Novo Registro</h2>
+        <h2 id="tituloModalRegistro" class="text-xl font-black text-slate-900 uppercase">Novo Registro</h2>
         <button type="button" onclick="fecharModal()" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button>
       </div>
 
@@ -285,6 +297,29 @@
     </div>
   </div>
 
+  <div id="modalRecebimento" class="hidden fixed inset-0 z-[120] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
+      <h3 class="text-xl font-black text-slate-800 mb-6 text-center">Confirmar recebimento</h3>
+
+      <div class="space-y-4">
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Quem recebeu</label>
+          <input id="recebidoPorModal" class="w-full bg-transparent font-bold text-slate-900 outline-none" placeholder="Ex: Karol" />
+        </div>
+
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Data do recebimento</label>
+          <input id="dataRecebimentoModal" type="date" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button onclick="confirmarRecebimentoModal()" class="flex-1 bg-emerald-600 text-white py-4 rounded-xl font-black">Confirmar</button>
+        <button onclick="fecharModalRecebimento()" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-xl font-black">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmeGxma2ZqcWFlbWpvdHNlZGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDU1MDQsImV4cCI6MjA4OTk4MTUwNH0.2JWeglgFALa88C9nWMrTmsIlogxcNg3rD2SrE1DJWyM';
@@ -292,6 +327,10 @@
 
     let currentUser = null, currentProfile = null, ROLE = "", abaAtiva = "ADMIN", dadosCache = [];
     let filtroProvidencia = "TODOS";
+    let idRecebimentoAtual = null;
+    let versionRecebimentoAtual = null;
+    let editandoRegistroId = null;
+    let editandoRegistroVersion = null;
 
     const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t])) : "";
 
@@ -301,6 +340,25 @@
       t.innerHTML = `<i class="fas ${type === "error" ? "fa-circle-xmark text-rose-500" : "fa-circle-check text-emerald-500"}"></i> ${esc(msg)}`;
       document.getElementById("toast-container").appendChild(t);
       setTimeout(() => t.remove(), 3500);
+    }
+
+    function podeVerProvidencia() {
+      return ROLE === "ADMIN" || ROLE === "COMPRAS";
+    }
+
+    function podeOperarProvidencia() {
+      return ROLE === "ADMIN" || ROLE === "COMPRAS";
+    }
+
+    function podeEditarProvidencia() {
+      return ROLE === "ADMIN";
+    }
+
+    function formatarData(dataStr) {
+      if (!dataStr) return "Ainda não entregue";
+      const d = new Date(dataStr);
+      if (Number.isNaN(d.getTime())) return dataStr;
+      return d.toLocaleDateString("pt-BR");
     }
 
     function escolherPerfil(p) {
@@ -357,7 +415,7 @@
 
       currentUser = data.user;
       currentProfile = profile;
-      ROLE = profile.role.toUpperCase();
+      ROLE = (profile.role || "").toUpperCase();
       iniciarApp();
     }
 
@@ -406,16 +464,15 @@
         b.classList.toggle("text-white", !isSelected);
       });
 
-      const isDoacao = abaAtiva === "DOACAO";
-      const podeGerenciarDoacao = isDoacao && (ROLE === "ADMIN" || ROLE === "COMPRAS");
-      const adminGerenciaDoacao = isDoacao && ROLE === "ADMIN";
+      const isDoacao = abaAtiva === "DOACAO" && podeVerProvidencia();
+      const adminGerenciaDoacao = abaAtiva === "DOACAO" && ROLE === "ADMIN";
 
       document.getElementById("blocoAdminDoacao").classList.toggle("hidden", !adminGerenciaDoacao);
       document.getElementById("dashAdmin").classList.toggle("hidden", isDoacao || ROLE !== "ADMIN");
 
       filtroProvidencia = "TODOS";
       atualizarBotoesFiltro();
-      document.getElementById("filtrosProvidenciaWrap").classList.toggle("hidden", !podeGerenciarDoacao);
+      document.getElementById("filtrosProvidenciaWrap").classList.toggle("hidden", !isDoacao);
 
       if (adminGerenciaDoacao) await carregarMetasAdmin();
 
@@ -431,9 +488,9 @@
         }
       }
 
-      const botaoFlutuante = document.querySelector('button[onclick="abrirModal()"]');
+      const botaoFlutuante = document.getElementById("fabNovoRegistro");
       if (botaoFlutuante) {
-        const esconder = (isDoacao && !(ROLE === "ADMIN" || ROLE === "COMPRAS"));
+        const esconder = abaAtiva === "DOACAO" && !podeOperarProvidencia();
         botaoFlutuante.classList.toggle("hidden", esconder);
       }
 
@@ -484,7 +541,7 @@
         const v = parseFloat(i.valor || 0);
         if (i.natureza === "SAIDA") sai += v;
         else if (i.status === "PENDENTE") pen += v;
-        else rec += v;
+        else if (i.status === "PAGO") rec += v;
       });
 
       document.getElementById("totalRecebido").innerText = "R$ " + rec.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
@@ -508,7 +565,9 @@
           (i.equipe || "") + " " +
           (i.telefone || "") + " " +
           (i.data_entrega || "") + " " +
-          (i.recebido_em || "")
+          (i.recebido_em || "") + " " +
+          (i.recebido_por || "") + " " +
+          (i.status || "")
         ).toLowerCase().includes(busca)
       );
 
@@ -525,6 +584,8 @@
           });
         } else if (filtroProvidencia === "PENDENTE") {
           filtrados = filtrados.filter(i => i.status === "PENDENTE");
+        } else if (filtroProvidencia === "CANCELADO") {
+          filtrados = filtrados.filter(i => i.status === "CANCELADO");
         }
 
         filtrados.forEach(i => {
@@ -547,13 +608,14 @@
           }
 
           if (i.recebido_em) {
-            const dataRec = new Date(i.recebido_em);
-            entregaRecebida = dataRec.toLocaleDateString("pt-BR");
+            entregaRecebida = formatarData(i.recebido_em);
           }
 
           let statusBadge = "";
           if (i.status === "PAGO") {
             statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700">ENTREGUE</span>`;
+          } else if (i.status === "CANCELADO") {
+            statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-700">CANCELADO</span>`;
           } else if (isAtrasado) {
             statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-rose-100 text-rose-700"><i class="fas fa-exclamation-triangle mr-1"></i> ATRASADO</span>`;
           } else {
@@ -561,6 +623,18 @@
           }
 
           const zapParams = `cobrarZapPromessa(${JSON.stringify(telefone || "")}, ${JSON.stringify(i.nome_pessoa || "")}, ${JSON.stringify(i.descricao || "")}, ${JSON.stringify(qtd || 0)})`;
+
+          const botaoReceber = (podeOperarProvidencia() && i.status === "PENDENTE")
+            ? `<button onclick="abrirModalRecebimento('${i.id}', ${i.version || 0})" class="action-btn bg-purple-700 text-white shadow-lg" title="Dar baixa"><i class="fas fa-check text-xs"></i></button>`
+            : "";
+
+          const botaoCancelar = (podeOperarProvidencia() && i.status === "PENDENTE")
+            ? `<button onclick="cancelarDoacao('${i.id}', ${i.version || 0})" class="action-btn bg-rose-50 text-rose-600 shadow-sm hover:bg-rose-100" title="Cancelar"><i class="fas fa-ban text-xs"></i></button>`
+            : "";
+
+          const botaoEditar = (podeEditarProvidencia())
+            ? `<button onclick="editarDoacao('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Editar"><i class="fas fa-pen text-xs"></i></button>`
+            : "";
 
           linhasHTML.push(`
             <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-colors">
@@ -572,23 +646,23 @@
                   <p class="text-[10px] text-slate-400 uppercase tracking-widest">${nome} • ${equipe}</p>
                   <p class="text-[10px] text-slate-500">${telefone || "Sem WhatsApp"}</p>
                   <p class="text-[10px] ${isAtrasado ? 'text-rose-600 font-bold' : 'text-slate-500'}">Entrega prevista: ${entregaPrevista}</p>
-                  <p class="text-[10px] ${i.status === 'PAGO' ? 'text-emerald-600 font-bold' : 'text-slate-400'}">Recebido em: ${entregaRecebida}</p>
+                  <p class="text-[10px] ${i.status === 'PAGO' ? 'text-emerald-600 font-bold' : 'text-slate-400'}">
+                    Recebido em: ${entregaRecebida}${i.recebido_por ? ` • por ${esc(i.recebido_por)}` : ""}
+                  </p>
                 </div>
               </td>
 
               <td class="p-6 text-right">
-                <div class="flex justify-end items-center gap-2">
+                <div class="flex justify-end items-center gap-2 flex-wrap">
                   ${statusBadge}
-                  ${i.status === "PENDENTE" ? `
-                    <button onclick="baixar('${i.id}', ${i.version})" class="w-10 h-10 rounded-xl bg-purple-700 text-white shadow-lg active:scale-95 transition">
-                      <i class="fas fa-check text-xs"></i>
-                    </button>
-                  ` : ""}
-                  ${telefone ? `
-                    <button onclick='${zapParams}' class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100 active:scale-95 transition">
+                  ${botaoReceber}
+                  ${i.status === "PENDENTE" && telefone ? `
+                    <button onclick='${zapParams}' class="action-btn bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100" title="Cobrar no WhatsApp">
                       <i class="fab fa-whatsapp"></i>
                     </button>
                   ` : ""}
+                  ${botaoCancelar}
+                  ${botaoEditar}
                 </div>
               </td>
             </tr>
@@ -604,7 +678,7 @@
             : "bg-emerald-500";
 
           const zapBtn = (i.status === "PENDENTE" && i.telefone)
-            ? `<button onclick="cobrarZapTotal('${esc(i.telefone)}', ${JSON.stringify(i.nome_pessoa || "")})" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 ml-2 hover:bg-emerald-100 transition"><i class="fab fa-whatsapp"></i></button>`
+            ? `<button onclick="cobrarZapTotal('${esc(i.telefone)}', ${JSON.stringify(i.nome_pessoa || "")})" class="action-btn bg-emerald-50 text-emerald-600 ml-2 hover:bg-emerald-100"><i class="fab fa-whatsapp"></i></button>`
             : "";
 
           linhasHTML.push(`
@@ -616,7 +690,7 @@
               <td class="p-6 text-right font-extrabold text-slate-900">R$ ${val}</td>
               <td class="p-6 text-center"><span class="w-2 h-2 rounded-full ${iconClass} inline-block shadow-sm"></span></td>
               <td class="p-6 text-right flex justify-end items-center">
-                ${i.status === "PENDENTE" ? `<button onclick="baixar('${i.id}', ${i.version})" class="w-10 h-10 rounded-xl bg-purple-700 text-white shadow-lg active:scale-95 transition"><i class="fas fa-check text-xs"></i></button>` : ""}
+                ${i.status === "PENDENTE" ? `<button onclick="baixar('${i.id}', ${i.version || 0})" class="action-btn bg-purple-700 text-white shadow-lg"><i class="fas fa-check text-xs"></i></button>` : ""}
                 ${zapBtn}
               </td>
             </tr>
@@ -818,7 +892,10 @@
     }
 
     function abrirModal() {
+      if (abaAtiva === "DOACAO" && !podeOperarProvidencia()) return;
+
       document.getElementById("modal").classList.remove("hidden");
+      document.getElementById("tituloModalRegistro").innerText = editandoRegistroId ? "Editar Registro" : "Novo Registro";
       atualizarModalDinamico();
 
       if (abaAtiva === "DOACAO" && ROLE === "COMPRAS") {
@@ -836,6 +913,53 @@
       const btn = document.getElementById("btnSubmitRegistro");
       btn.innerHTML = "CONCLUIR REGISTRO";
       btn.disabled = false;
+
+      editandoRegistroId = null;
+      editandoRegistroVersion = null;
+      document.getElementById("tituloModalRegistro").innerText = "Novo Registro";
+    }
+
+    async function editarDoacao(id) {
+      if (!podeEditarProvidencia()) {
+        showToast("Somente pilotos podem editar.", "error");
+        return;
+      }
+
+      const { data, error } = await _supabase
+        .from("transacoes")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error || !data) {
+        showToast("Não foi possível carregar o registro.", "error");
+        return;
+      }
+
+      editandoRegistroId = data.id;
+      editandoRegistroVersion = data.version || 0;
+
+      document.getElementById("modal").classList.remove("hidden");
+      document.getElementById("tituloModalRegistro").innerText = "Editar Registro";
+
+      if (abaAtiva === "ADMIN") {
+        document.getElementById("f_modulo").value = data.modulo || "DOACAO";
+      }
+
+      atualizarModalDinamico();
+
+      document.getElementById("f_desc").value = data.descricao || "";
+      document.getElementById("f_val").value = data.modulo === "DOACAO" ? Number(data.quantidade || 0) : Number(data.valor || 0);
+      document.getElementById("f_type").value = data.natureza === "SAIDA" ? "SAIDA" : data.status === "PENDENTE" ? "PENDENTE" : "ENTRADA";
+      document.getElementById("f_forma").value = data.forma_pagamento || "FISICO";
+      document.getElementById("f_nome").value = data.nome_pessoa || "";
+      document.getElementById("f_tel").value = data.telefone || "";
+      document.getElementById("f_recebido").value = currentProfile?.nome || "";
+
+      if (data.modulo === "DOACAO") {
+        document.getElementById("f_data_entrega").value = data.data_entrega || "";
+        document.getElementById("f_equipe_merc").value = data.equipe || "";
+      }
     }
 
     document.getElementById("formFin").addEventListener("submit", async function(e) {
@@ -896,13 +1020,27 @@
         payload.data_entrega = document.getElementById("f_data_entrega").value;
         if (payload.status === "PAGO") {
           payload.recebido_em = new Date().toISOString();
+        } else {
+          payload.recebido_em = null;
         }
       }
 
       btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> SALVANDO...';
       btn.disabled = true;
 
-      const { error } = await _supabase.from("transacoes").insert([payload]);
+      let error = null;
+
+      if (editandoRegistroId) {
+        const resposta = await _supabase
+          .from("transacoes")
+          .update(payload)
+          .eq("id", editandoRegistroId)
+          .eq("version", editandoRegistroVersion);
+        error = resposta.error;
+      } else {
+        const resposta = await _supabase.from("transacoes").insert([payload]);
+        error = resposta.error;
+      }
 
       if (error) {
         showToast("Não foi possível salvar o registro.", "error");
@@ -911,11 +1049,79 @@
         return;
       }
 
-      showToast("Registro concluído!");
+      showToast(editandoRegistroId ? "Registro atualizado!" : "Registro concluído!");
       fecharModal();
       await carregarDados();
       if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
     });
+
+    function abrirModalRecebimento(id, ver) {
+      idRecebimentoAtual = id;
+      versionRecebimentoAtual = ver;
+      document.getElementById("recebidoPorModal").value = currentProfile?.nome || "";
+      document.getElementById("dataRecebimentoModal").value = new Date().toISOString().slice(0, 10);
+      const modal = document.getElementById("modalRecebimento");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function fecharModalRecebimento() {
+      const modal = document.getElementById("modalRecebimento");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      idRecebimentoAtual = null;
+      versionRecebimentoAtual = null;
+    }
+
+    async function confirmarRecebimentoModal() {
+      const recebidoPor = document.getElementById("recebidoPorModal").value.trim();
+      const dataRecebimento = document.getElementById("dataRecebimentoModal").value;
+
+      if (!recebidoPor) return showToast("Informe quem recebeu.", "error");
+      if (!dataRecebimento) return showToast("Informe a data do recebimento.", "error");
+      if (!idRecebimentoAtual) return showToast("Registro inválido.", "error");
+
+      const { error } = await _supabase
+        .from("transacoes")
+        .update({
+          status: "PAGO",
+          recebido_por: recebidoPor,
+          recebido_em: dataRecebimento
+        })
+        .eq("id", idRecebimentoAtual)
+        .eq("version", versionRecebimentoAtual);
+
+      if (error) {
+        showToast("Não foi possível confirmar.", "error");
+        return;
+      }
+
+      showToast("Baixa realizada com sucesso!");
+      fecharModalRecebimento();
+      await carregarDados();
+      if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
+    }
+
+    async function cancelarDoacao(id, ver) {
+      if (!confirm("Cancelar esta doação? Ela voltará automaticamente para disponível.")) return;
+
+      const { error } = await _supabase
+        .from("transacoes")
+        .update({
+          status: "CANCELADO"
+        })
+        .eq("id", id)
+        .eq("version", ver);
+
+      if (error) {
+        showToast("Não foi possível cancelar.", "error");
+        return;
+      }
+
+      showToast("Doação cancelada. Item liberado novamente.");
+      await carregarDados();
+      if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
+    }
 
     async function baixar(id, ver) {
       if (confirm("Você confirma que recebeu fisicamente este item?")) {
@@ -951,7 +1157,7 @@
         if (p) {
           currentUser = session.user;
           currentProfile = p;
-          ROLE = p.role.toUpperCase();
+          ROLE = (p.role || "").toUpperCase();
           iniciarApp();
         }
       }
