@@ -306,7 +306,6 @@
             <button id="btnCobranca" onclick="abrirFilaCobrancaFeijoada()" class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100 shadow-sm" title="Cobrar Pendentes"><i class="fas fa-hand-holding-dollar"></i></button>
             <button id="btnCompartilhar" onclick="compartilharFechamentoFeijoada()" class="action-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100 shadow-sm" title="Compartilhar Fechamento"><i class="fab fa-whatsapp"></i></button>
             
-            <button id="btnPix" onclick="abrirPixExperimental()" class="action-btn bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-sm hidden" title="Fazer Pix para o Caixa EJC"><i class="fas fa-qrcode"></i></button>
             <button id="btnTransferir" onclick="abrirModalTransferenciaEJC()" class="action-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 shadow-sm hidden" title="Registrar transferência p/ Caixa EJC"><i class="fas fa-arrow-right-arrow-left"></i></button>
           </div>
         </div>
@@ -548,28 +547,40 @@
 
   <div id="modalTransferenciaEJC" class="hidden fixed inset-0 z-[135] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
-      <h3 class="text-xl font-black text-slate-800 mb-2 text-center">Transferência para Caixa EJC</h3>
-      <p class="text-xs text-slate-500 text-center mb-6">Use este fluxo <b>depois</b> de fazer o Pix/transferência no app do banco.</p>
-
+      <h3 class="text-xl font-black text-slate-800 mb-2 text-center">
+        Transferência para Caixa EJC
+      </h3>
+  
+      <p class="text-xs text-slate-500 text-center mb-4">
+        1) Toque em <b>Copiar código Pix</b> e faça o Pix para o Caixa EJC no app do seu banco.<br>
+        2) Depois preencha os dados abaixo para registar a transferência no sistema.
+      </p>
+  
+      <div class="flex justify-center mb-6">
+        <button onclick="copiarPixCaixaEJC()" class="px-4 py-2 rounded-xl bg-purple-700 text-white text-xs font-black active:scale-95 transition">
+          Copiar código Pix do Caixa EJC
+        </button>
+      </div>
+  
       <div class="space-y-4">
         <div class="vault-input rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Valor transferido (R$)</label>
           <input id="tx_valor" type="text" inputmode="decimal" class="w-full bg-transparent font-bold text-slate-900 outline-none text-right" placeholder="0,00" />
         </div>
-
+  
         <div class="vault-input rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Data da transferência</label>
           <input id="tx_data" type="date" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
         </div>
-
+  
         <div class="vault-input rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Quem realizou / entregou</label>
           <input id="tx_responsavel" class="w-full bg-transparent font-bold text-slate-900 outline-none" placeholder="Ex: Karol / Mairla" />
         </div>
       </div>
-
+  
       <div class="flex gap-3 mt-6">
-        <button onclick="confirmarTransferenciaEJC()" class="flex-1 bg-emerald-600 text-white py-4 rounded-xl font-black">Registrar transferência</button>
+        <button onclick="confirmarTransferenciaEJC()" class="flex-1 bg-emerald-600 text-white py-4 rounded-xl font-black">Registar</button>
         <button onclick="fecharModalTransferenciaEJC()" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-xl font-black">Cancelar</button>
       </div>
     </div>
@@ -683,6 +694,8 @@
 
     const PRECO_VOUCHER_FEIJOADA = 55;
     const TOTAL_VOUCHERS_FEIJOADA = 150;
+    
+    const PIX_CAIXA_EJC_PAYLOAD = "00020101021126580014br.gov.bcb.pix01367f085741-20ab-4d72-9feb-4ab4916ade845204000053039865802BR5923Rafael Andrade Do Santo6009SAO PAULO61080131010062070503***63046F32";
 
     let currentUser = null;
     let currentProfile = null;
@@ -1117,7 +1130,6 @@
         }
         
         const isCompras = (ROLE === 'COMPRAS');
-        document.getElementById('btnPix').classList.toggle('hidden', !isCompras);
         document.getElementById('btnTransferir').classList.toggle('hidden', !isCompras);
       } else {
         pFeijoada.classList.add('hidden');
@@ -1434,12 +1446,14 @@
       document.getElementById("modalFilaCobranca").classList.remove("flex");
     }
 
-    function abrirPixExperimental() {
-      const payload = "00020101021126580014br.gov.bcb.pix01367f085741-20ab-4d72-9feb-4ab4916ade845204000053039865802BR5923Rafael Andrade Do Santo6009SAO PAULO61080131010062070503***63046F32";
-      window.location.href = "pix://" + encodeURIComponent(payload);
-      setTimeout(() => {
-        window.open("00020101021126580014br.gov.bcb.pix01367f085741-20ab-4d72-9feb-4ab4916ade845204000053039865802BR5923Rafael Andrade Do Santo6009SAO PAULO61080131010062070503***63046F32", "_blank");
-      }, 800);
+    function copiarPixCaixaEJC() {
+      navigator.clipboard.writeText(PIX_CAIXA_EJC_PAYLOAD)
+        .then(() => {
+          showToast('Código Pix copiado. Abra seu banco, faça o Pix e depois registre a transferência.', 'success');
+        })
+        .catch(() => {
+          showToast('Não foi possível copiar o código Pix neste dispositivo.', 'error');
+        });
     }
 
     function abrirModalTransferenciaEJC() {
@@ -2480,55 +2494,3 @@
 
       btn.innerHTML = txtOriginal;
       btn.disabled = false;
-
-      if (erros > 0) {
-        showToast(`Concluído com ressalvas. ${erros} lançamento(s) falharam.`, "error");
-      } else {
-        showToast("Todos os lançamentos quitados com sucesso!");
-      }
-
-      fecharModalQuitarTudo();
-      await carregarDados();
-      if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
-      abrirExtrato(extratoAtual.telefone, extratoAtual.nome, extratoAtual.equipe);
-    }
-
-    function fecharExtrato() {
-      const modal = document.getElementById("modalExtrato");
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-      extratoAtual = { nome: "", equipe: "", telefone: "", registros: [], registrosFiltrados: [] };
-      document.getElementById("filtroExtrato").value = "";
-    }
-
-    async function sair() {
-      await _supabase.auth.signOut();
-      location.reload();
-    }
-
-    window.onload = async () => {
-      const { data: { session } } = await _supabase.auth.getSession();
-      if (session) {
-        const p = await carregarPerfilUsuario(session.user);
-        if (p) {
-          currentUser = session.user;
-          currentProfile = p;
-          ROLE = (p.role || "").toUpperCase();
-          iniciarApp();
-        }
-      }
-    };
-
-    setInterval(() => {
-      if (
-        document.visibilityState === "visible" &&
-        !document.getElementById("appMain").classList.contains("hidden") &&
-        document.getElementById("modal").classList.contains("hidden") &&
-        document.getElementById("modalExtrato").classList.contains("hidden")
-      ) {
-        carregarDados();
-      }
-    }, 30000);
-  </script>
-</body>
-</html>
