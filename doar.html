@@ -403,7 +403,7 @@
     </div>
 
     <div class="section-card mb-8">
-      <button type="button" id="btnToggleTodas" class="accordion-btn" onclick="toggleTodasNecessidades()" aria-expanded="false" aria-controls="todasNecessidadesWrap">
+      <button type="button" id="btnToggleTodas" class="accordion-btn" onclick="toggleTodasNecessidades()">
         <span class="text-sm uppercase tracking-widest">Ver todas as necessidades</span>
         <i id="iconToggleTodas" class="fas fa-chevron-down text-slate-400"></i>
       </button>
@@ -418,17 +418,17 @@
         
         <div class="space-y-1">
           <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome completo</label>
-          <input id="d_nome" placeholder="Seu nome" required aria-required="true" class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+          <input id="d_nome" placeholder="Seu nome" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">WhatsApp (com DDD)</label>
-            <input id="d_tel" type="tel" placeholder="(11) 99999-8888" required aria-required="true" class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+            <input id="d_tel" type="tel" placeholder="(11) 99999-8888" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
           </div>
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Equipe</label>
-            <select id="d_equipe" required aria-required="true" class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
+            <select id="d_equipe" required class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
               <option value="">Selecione...</option>
               <option value="Externo">Paroquiano / Visitante</option>
               <option>Animação</option>
@@ -453,13 +453,13 @@
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">O que vai doar?</label>
-            <select id="d_item" required aria-required="true" class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
+            <select id="d_item" required class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
               <option value="">Carregando...</option>
             </select>
           </div>
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
-            <input id="d_qtd" type="number" min="1" step="1" value="1" required aria-required="true" class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
+            <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
           </div>
         </div>
 
@@ -474,7 +474,7 @@
 
         <div class="space-y-1">
           <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de entrega</label>
-          <input id="d_data" type="date" required aria-required="true" class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+          <input id="d_data" type="date" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
         </div>
 
         <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
@@ -533,7 +533,6 @@
     // --- VARIÁVEIS GLOBAIS E PERFORMANCE ---
     let disponibilidadeItens = {};
     let itensRenderizados = [];
-    let ultimoLoad = 0; // Prevenção de recarregamento excessivo do DOM
     let ultimaMensagemTime = 0; // Anti-spam do mural
 
     const prioridadesFixas = [
@@ -601,27 +600,31 @@
       setInterval(atualizar, 1000);
     }
 
-    // --- INTERFACE DE ACESSIBILIDADE E ACORDIONS ---
+    // --- INTERFACE DE ACORDIONS ---
     function toggleTodasNecessidades() {
-      const btn = document.getElementById("btnToggleTodas");
       const wrap = document.getElementById("todasNecessidadesWrap");
       const icon = document.getElementById("iconToggleTodas");
-      const aberto = !wrap.classList.contains("hidden-soft");
       
-      wrap.classList.toggle("hidden-soft", aberto);
-      btn.setAttribute("aria-expanded", !aberto);
-      icon.className = aberto ? "fas fa-chevron-down text-slate-400" : "fas fa-chevron-up text-slate-400";
+      if (wrap.classList.contains("hidden-soft")) {
+        wrap.classList.remove("hidden-soft");
+        icon.className = "fas fa-chevron-up text-slate-400";
+      } else {
+        wrap.classList.add("hidden-soft");
+        icon.className = "fas fa-chevron-down text-slate-400";
+      }
     }
 
     function toggleCategoria(id) {
-      const btn = document.querySelector(`[aria-controls="${id}"]`);
       const wrap = document.getElementById(id);
       const icon = document.querySelector(`[data-icon="${id}"]`);
-      const aberto = !wrap.classList.contains("hidden-soft");
       
-      wrap.classList.toggle("hidden-soft", aberto);
-      if (btn) btn.setAttribute("aria-expanded", !aberto);
-      if (icon) icon.className = aberto ? "fas fa-chevron-down text-slate-400" : "fas fa-chevron-up text-slate-400";
+      if (wrap.classList.contains("hidden-soft")) {
+        wrap.classList.remove("hidden-soft");
+        if (icon) icon.className = "fas fa-chevron-up text-slate-400";
+      } else {
+        wrap.classList.add("hidden-soft");
+        if (icon) icon.className = "fas fa-chevron-down text-slate-400";
+      }
     }
 
     function focarFormulario() {
@@ -776,7 +779,7 @@
         const id = `cat_${idx}`;
         return `
           <div class="section-card">
-            <button type="button" class="accordion-btn" onclick="toggleCategoria('${id}')" aria-expanded="false" aria-controls="${id}">
+            <button type="button" class="accordion-btn" onclick="toggleCategoria('${id}')">
               <span class="text-sm">${esc(nomeCategoria)}</span>
               <i data-icon="${id}" class="fas fa-chevron-down text-slate-400"></i>
             </button>
@@ -788,80 +791,81 @@
       container.innerHTML = htmlCategorias || `<p class="text-xs text-slate-400">Nenhuma necessidade encontrada.</p>`;
     }
 
-    // --- CARREGAMENTO DE DADOS (COM CACHE DE 30s) ---
-    async function carregarDados(force = false) {
-      const agora = Date.now();
-      if (!force && agora - ultimoLoad < 30000) return;
-      ultimoLoad = agora;
+    // --- CARREGAMENTO DE DADOS DO SUPABASE ---
+    async function carregarDados() {
+      try {
+        const select = document.getElementById("d_item");
 
-      const select = document.getElementById("d_item");
+        const [{ data: metas, error: metasError }, { data: registros, error: regError }] = await Promise.all([
+          _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item'),
+          _supabase.from('transacoes').select('descricao, quantidade, status').eq('modulo', 'DOACAO')
+        ]);
 
-      const [{ data: metas, error: metasError }, { data: registros, error: regError }] = await Promise.all([
-        _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item'),
-        _supabase.from('transacoes').select('descricao, quantidade, status').eq('modulo', 'DOACAO')
-      ]);
+        if (metasError || regError) {
+          console.error(metasError, regError);
+          document.getElementById("listaUrgentes").innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar banco de dados.</p>';
+          return;
+        }
 
-      if (metasError || regError) {
-        document.getElementById("listaUrgentes").innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar banco de dados.</p>';
-        return;
-      }
-
-      const mapa = {};
-      (registros || []).forEach(r => {
-        const item = (r.descricao || "").trim();
-        const qtd = Number(r.quantidade || 0);
-        if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
-        if (r.status === "PENDENTE") mapa[item].prometido += qtd;
-        if (r.status === "PAGO") mapa[item].entregue += qtd;
-      });
-
-      disponibilidadeItens = {};
-      itensRenderizados = [];
-      select.innerHTML = '<option value="">Escolha um item...</option>';
-      let itensDisponiveis = 0;
-
-      (metas || []).forEach(m => {
-        const item = (m.item || "").trim();
-        const meta = Number(m.qtd_necessaria || 0);
-        const prometido = mapa[item]?.prometido || 0;
-        const entregue = mapa[item]?.entregue || 0;
-
-        const faltandoReal = Math.max(0, meta - entregue);
-        const disponivelPrometer = Math.max(0, meta - prometido - entregue);
-        const percReal = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
-
-        disponibilidadeItens[item] = {
-          meta, prometido, entregue, faltandoReal, 
-          disponivelPrometer, 
-          unidade: m.unidade || ""
-        };
-
-        itensRenderizados.push({
-          item, meta, prometido, entregue, faltandoReal, 
-          disponivelPrometer, 
-          percReal, unidade: m.unidade || ""
+        const mapa = {};
+        (registros || []).forEach(r => {
+          const item = (r.descricao || "").trim();
+          const qtd = Number(r.quantidade || 0);
+          if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
+          if (r.status === "PENDENTE") mapa[item].prometido += qtd;
+          if (r.status === "PAGO") mapa[item].entregue += qtd;
         });
 
-        if (disponivelPrometer > 0) {
-          itensDisponiveis++;
-          const opt = document.createElement("option");
-          opt.value = item;
-          opt.textContent = `${item} (disponível: ${disponivelPrometer} ${m.unidade || ''})`;
-          select.appendChild(opt);
+        disponibilidadeItens = {};
+        itensRenderizados = [];
+        select.innerHTML = '<option value="">Escolha um item...</option>';
+        let itensDisponiveis = 0;
+
+        (metas || []).forEach(m => {
+          const item = (m.item || "").trim();
+          const meta = Number(m.qtd_necessaria || 0);
+          const prometido = mapa[item]?.prometido || 0;
+          const entregue = mapa[item]?.entregue || 0;
+
+          const faltandoReal = Math.max(0, meta - entregue);
+          const disponivelPrometer = Math.max(0, meta - prometido - entregue);
+          const percReal = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
+
+          disponibilidadeItens[item] = {
+            meta, prometido, entregue, faltandoReal, 
+            disponivelPrometer, 
+            unidade: m.unidade || ""
+          };
+
+          itensRenderizados.push({
+            item, meta, prometido, entregue, faltandoReal, 
+            disponivelPrometer, 
+            percReal, unidade: m.unidade || ""
+          });
+
+          if (disponivelPrometer > 0) {
+            itensDisponiveis++;
+            const opt = document.createElement("option");
+            opt.value = item;
+            opt.textContent = `${item} (disponível: ${disponivelPrometer} ${m.unidade || ''})`;
+            select.appendChild(opt);
+          }
+        });
+
+        renderizarUrgentes();
+        renderizarCategorias();
+        atualizarResumoItemSelecionado(document.getElementById("d_item").value);
+
+        if (itensDisponiveis === 0 && metas.length > 0) {
+          document.getElementById("d_item").disabled = true;
+          document.getElementById("d_qtd").disabled = true;
+          showToast("Você já preencheu todas as necessidades do momento!", "success");
+        } else {
+          document.getElementById("d_item").disabled = false;
+          document.getElementById("d_qtd").disabled = false;
         }
-      });
-
-      renderizarUrgentes();
-      renderizarCategorias();
-      atualizarResumoItemSelecionado(document.getElementById("d_item").value);
-
-      if (itensDisponiveis === 0 && metas.length > 0) {
-        document.getElementById("d_item").disabled = true;
-        document.getElementById("d_qtd").disabled = true;
-        showToast("Você já preencheu todas as necessidades do momento!", "success");
-      } else {
-        document.getElementById("d_item").disabled = false;
-        document.getElementById("d_qtd").disabled = false;
+      } catch (err) {
+        console.error("Erro interno:", err);
       }
     }
 
@@ -894,8 +898,8 @@
       } else {
         infoFrango.classList.add("hidden");
       }
-      
-      // Apenas forçando uma atualização nos destaques se necessário, sem recriar todo DOM
+
+      // Destaca o card do item selecionado na lista
       const listCards = document.querySelectorAll(".ifood-card");
       listCards.forEach(c => c.classList.remove("selected", "selected-glow"));
       const cardAtual = Array.from(listCards).find(c => c.querySelector('p.text-sm').innerText === valor);
@@ -934,51 +938,56 @@
       btn.innerHTML = "Processando...";
       btn.disabled = true;
 
-      const { error } = await _supabase.rpc('registrar_doacao_publica', {
-        p_item: item,
-        p_quantidade: qtd,
-        p_nome: nome,
-        p_telefone: telefone,
-        p_equipe: equipe,
-        p_data_entrega: dataEntrega
-      });
+      try {
+        const { error } = await _supabase.rpc('registrar_doacao_publica', {
+          p_item: item,
+          p_quantidade: qtd,
+          p_nome: nome,
+          p_telefone: telefone,
+          p_equipe: equipe,
+          p_data_entrega: dataEntrega
+        });
 
-      if (error) {
-        console.error(error);
-        // Fallback de erro de banco (se no back-end batermos no limite de qtd)
-        if (error.message.includes("Quantidade excede")) {
-           showToast("A quantidade pedida já foi ultrapassada por outra doação recente.", "error");
-        } else {
-           showToast("Erro ao registrar doação.", "error");
+        if (error) {
+          console.error(error);
+          if (error.message.includes("Quantidade excede")) {
+             showToast("A quantidade pedida já foi ultrapassada por outra doação recente.", "error");
+          } else {
+             showToast("Erro ao registrar doação. Tente novamente.", "error");
+          }
+          btn.disabled = false;
+          btn.innerHTML = textoOriginal;
+          await carregarDados(); 
+          return;
         }
+
+        document.getElementById("areaForm").classList.add("hidden");
+        document.getElementById("agradecimentoDoacao").classList.remove("hidden");
+        document.getElementById("agradecimentoTitulo").innerText = `Deus lhe pague, ${nome.split(' ')[0]}!`;
+        document.getElementById("agradecimentoTexto").innerHTML = `Sua doação de <b class="text-purple-700">${qtd}x ${esc(item)}</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜`;
+
+        showToast(`Doação registrada com sucesso!`);
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
-        // Força load de dados para buscar a atualização q negou
-        await carregarDados(true); 
-        return;
+
+        await carregarDados(); 
+      } catch(err) {
+        console.error(err);
+        showToast("Erro de conexão.", "error");
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
       }
-
-      document.getElementById("areaForm").classList.add("hidden");
-      document.getElementById("agradecimentoDoacao").classList.remove("hidden");
-      document.getElementById("agradecimentoTitulo").innerText = `Deus lhe pague, ${nome.split(' ')[0]}!`;
-      document.getElementById("agradecimentoTexto").innerHTML = `Sua doação de <b class="text-purple-700">${qtd}x ${esc(item)}</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜`;
-
-      showToast(`Doação registrada com sucesso!`);
-      btn.disabled = false;
-      btn.innerHTML = textoOriginal;
-
-      await carregarDados(true); // Atualiza forçado após doar
     });
 
     function novaDoacao() {
-      // Guarda os dados de quem já estava logado doando
+      // Guarda os dados de quem já estava logado doando para não ter de digitar de novo
       const nomeDoador = document.getElementById("d_nome").value;
       const telDoador = document.getElementById("d_tel").value;
       const eqDoador = document.getElementById("d_equipe").value;
 
       document.getElementById("formDoacao").reset();
       
-      // Restaura dados pra facilitar nova doação
+      // Restaura dados
       document.getElementById("d_nome").value = nomeDoador;
       document.getElementById("d_tel").value = telDoador;
       document.getElementById("d_equipe").value = eqDoador;
@@ -1005,7 +1014,7 @@
 
       if (error) {
         console.error("Erro Mural:", error);
-        wrap.innerHTML = `<p class="text-xs text-rose-400">Mural indisponível: ${error.message}</p>`;
+        wrap.innerHTML = `<p class="text-xs text-rose-400">Mural indisponível.</p>`;
         return;
       }
 
@@ -1029,15 +1038,11 @@
         return showToast("Aguarde alguns segundos antes de enviar outra mensagem.", "warn");
       }
 
-      // Preenche com o nome de doação se não preencher no mural
       let nomeMural = document.getElementById("m_nome").value.trim();
       const nomeDoacao = document.getElementById("d_nome").value.trim();
       const mensagem = document.getElementById("m_msg").value.trim();
       
       const nomeFinal = nomeMural || nomeDoacao || "Anônimo";
-      if (!nomeMural && nomeDoacao) {
-        document.getElementById("m_nome").value = nomeDoacao; 
-      }
 
       const btn = document.getElementById("btnMsg");
       const original = btn.innerHTML;
@@ -1054,7 +1059,7 @@
 
       if (error) {
         console.error(error);
-        showToast("Erro: " + error.message, "error");
+        showToast("Erro ao enviar a mensagem.", "error");
         btn.disabled = false;
         btn.innerHTML = original;
         return;
@@ -1062,7 +1067,6 @@
 
       ultimaMensagemTime = Date.now();
       document.getElementById("m_msg").value = "";
-      document.getElementById("m_nome").value = "";
       btn.disabled = false;
       btn.innerHTML = original;
       showToast("Mensagem enviada com sucesso!");
@@ -1072,10 +1076,11 @@
     window.onload = async function() {
       iniciarContador();
       
+      // Fixar a data mínima para hoje
       const hoje = new Date().toISOString().slice(0,10);
       document.getElementById("d_data").setAttribute("min", hoje);
       
-      await carregarDados(true);
+      await carregarDados();
       await carregarMensagens();
     };
   </script>
