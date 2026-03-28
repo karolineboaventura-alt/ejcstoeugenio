@@ -592,7 +592,7 @@
       <div class="flex justify-between items-center mb-4">
         <div>
           <h3 class="text-lg font-black text-slate-800">Extrato</h3>
-          <p class="text-[11px] text-slate-400">Histórico por data • estilo Nubank</p>
+          <p class="text-[11px] text-slate-400">Histórico por data</p>
         </div>
         <button onclick="fecharExtrato()" class="text-slate-400 hover:text-slate-700">
           <i class="fas fa-times"></i>
@@ -1410,11 +1410,11 @@
       const txtVoucher = qtd > 1 ? `${qtd} vouchers` : `um voucher`;
 
       return (
-        `Oi, *${nomeSafe}*! Tudo bem? 😊\n\n` +
-        `Aqui é *${RESPONSAVEL_COBRANCA}*, da equipe de *Compras* do EJC da *Paróquia Santo Eugênio de Mazenod* (EJC do Parque) 💛\n\n` +
+        `Olá, *${nomeSafe}*! Tudo bem?\n\n` +
+        `Aqui é *${RESPONSAVEL_COBRANCA}*, da equipe de *Compras* do EJC da *Paróquia Santo Eugênio de Mazenod* (EJC do Parque)\n\n` +
         `Passando para falar sobre ${txtVoucher} da nossa Feijoada que consta em aberto para você, no total de *${valorFormatado}*.\n\n` +
-        `A Feijoada será no dia *${DATA_FEIJOADA}*. Você consegue nos dar um retorno para combinarmos o pagamento? 🙏\n\n` +
-        `Qualquer coisa, estou por aqui ✨`
+        `A Feijoada será no dia *${DATA_FEIJOADA}*. Você consegue nos dar um retorno para combinarmos a melhor forma de pagamento?\n\n` +
+        `Qualquer coisa, estou por aqui. `
       );
     }
 
@@ -1447,7 +1447,7 @@
       if (!data || data.length === 0) {
         lista.innerHTML = `
           <div class="text-center text-slate-400 text-sm py-4">
-            Nenhum voucher pendente para cobrar. 🙌
+            Nenhum voucher pendente para cobrar.🎉
           </div>
         `;
       } else {
@@ -1653,7 +1653,7 @@
         const responsavel = (currentProfile?.nome || "Equipe do EJC").trim();
         const equipeContato = ROLE === "COMPRAS" ? "Compras" : "Pilotos";
 
-        const msg = `Oi, *${primeiroNome}*! Tudo bem? 😊\n\nAqui é *${responsavel}*, da equipe *${equipeContato}* do EJC da *Paróquia Santo Eugênio de Mazenod* (EJC do Parque) 💛\n\nPassando para falar sobre a doação que você combinou com a gente:\n• *${item}* (${qtd})\n\nVocê consegue nos dar um retorno sobre a entrega? Se já tiver uma previsão, isso nos ajuda muito também 🙏\n\nQualquer coisa, estou por aqui. Muito obrigada por fazer parte disso com a gente ✨`;
+        const msg = `Oi, *${primeiroNome}*! Tudo bem? \n\nAqui é *${responsavel}*, da equipe *${equipeContato}* do EJC da *Paróquia Santo Eugênio de Mazenod* (EJC do Parque)💛\n\nPassando para falar sobre a doação que você combinou com a gente:\n• *${item}* (${qtd})\n\nVocê consegue nos dar um retorno sobre a entrega? Se já tiver uma previsão, isso nos ajuda muito também \n\nQualquer coisa, estou por aqui. Muito obrigado por fazer parte disso com a gente✨`;
 
         window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
         return;
@@ -1676,7 +1676,7 @@
       const responsavel = (currentProfile?.nome || "Equipe do EJC").trim();
       const equipeContato = ROLE === "COMPRAS" ? "Compras" : "Pilotos";
 
-      const msg = `Oi, *${primeiroNome}*! Tudo bem? 😊\n\nAqui é *${responsavel}*, da equipe *${equipeContato}* do EJC da *Paróquia Santo Eugênio de Mazenod* (EJC do Parque) 💛\n\nPassando para confirmar que consta um valor em aberto para você no sistema:\n*${formatarMoeda(total)}*\n\nVocê consegue nos dar um retorno? Se precisar, também podemos enviar o detalhamento 🙏`;
+      const msg = `Oi, *${primeiroNome}*! Tudo bem?😊\n\nAqui é *${responsavel}*, da equipe *${equipeContato}* do EJC da *Paróquia Santo Eugênio de Mazenod* (EJC do Parque)💛\n\nPassando para confirmar que consta um valor em aberto para você no nosso mercadinho:\n*${formatarMoeda(total)}*\n\nVocê consegue nos dar um retorno?`;
 
       window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
     }
