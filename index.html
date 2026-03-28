@@ -1404,13 +1404,15 @@
     }
 
     function montarMensagemCobrancaFeijoada(nomeCliente, valorFormatado, qtd) {
-      const nomeSafe = nomeCliente || "irmão(ã)";
-      const txtVoucher = qtd > 1 ? `${qtd} vouchers` : `um voucher`;
-      return (
-        `Olá, *${nomeSafe}*! Aqui é ${RESPONSAVEL_COBRANCA} da equipa de compras do ${NOME_EVENTO} da ${NOME_PAROQUIA}.\n\n` +
-        `Tem ${txtVoucher} da nossa Feijoada em aberto, num total de *${valorFormatado}*.\n` +
-        `A Feijoada será no dia ${DATA_FEIJOADA}. Podemos combinar o pagamento? 🙏`
-      );
+  const nomeSafe = nomeCliente || "irmão(ã)";
+  const txtVoucher = qtd > 1 ? `${qtd} vouchers` : `um voucher`;
+
+  return (
+    `Oi, *${nomeSafe}*! Tudo bem? 😊\n\n` +
+    `Aqui é ${RESPONSAVEL_COBRANCA}, da equipe de compras do EJC da *Paróquia Santo Eugênio de Mazenod* (EJC do Parque) 💛\n\n` +
+    `Consta pra você ${txtVoucher} da nossa Feijoada em aberto, totalizando *${valorFormatado}*.\n\n` +
+    `A Feijoada será no dia ${DATA_FEIJOADA}. Você consegue nos dar um retorno para combinarmos o pagamento? 🙏`
+  );
     }
 
     async function abrirFilaCobrancaFeijoada() {
@@ -1641,25 +1643,16 @@
       if (!num) return showToast("Telemóvel inválido.", "error");
       
       const primeiroNome = (reg.nome_pessoa || "Irmão").trim().split(" ")[0];
-      
       if (abaAtiva === "DOACAO") {
-        const qtd = Number(reg.quantidade || 1);
-        const item = limparPrefixoDescricao(reg.descricao);
-        const msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nEstamos organizando a Providência do 21º EJC.\n\nConsta para você:\n• Item: *${item}*\n• Quantidade: *${qtd}*\n\nVocê consegue nos confirmar se ainda fará a entrega?`;
-        window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
-      } else if (abaAtiva === "FEIJOADA" && isVoucherFeijoada(reg.descricao)) {
-        const pendentes = dadosCache.filter(i => i.status === "PENDENTE" && i.modulo === 'FEIJOADA' && normalizarTelefone(i.telefone) === num);
-        const total = pendentes.reduce((acc, i) => acc + parseNumeroFlex(i.valor), 0);
-        const qtd = pendentes.reduce((acc, i) => acc + parseInteiroSeguro(i.quantidade || 1), 0);
-        const msg = montarMensagemCobrancaFeijoada(primeiroNome, formatarMoeda(total), qtd);
-        window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
-      } else {
-        const pendentes = dadosCache.filter(i => i.status === "PENDENTE" && normalizarTelefone(i.telefone) === num);
-        if (!pendentes.length) return showToast("Sem pendências.", "success");
-        const total = pendentes.reduce((acc, i) => acc + parseNumeroFlex(i.valor), 0);
-        const msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nPassando para confirmar um valor em aberto no EJC:\n*${formatarMoeda(total)}*\n\nQuando puder, consegue dar-nos um retorno?\n\nSe precisar, podemos enviar-lhe o detalhamento.`;
-        window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
-      }
+  const qtd = Number(reg.quantidade || 1);
+  const item = limparPrefixoDescricao(reg.descricao);
+  const responsavel = (currentProfile?.nome || "Equipe do EJC").trim();
+  const equipeContato = ROLE === "COMPRAS" ? "Compras" : "Pilotos";
+
+  const msg = `Oi, *${primeiroNome}*! Tudo bem? 😊\n\nAqui é a *${responsavel}*, da equipe *${equipeContato}* do EJC da *Paróquia Santo Eugênio de Mazenod* (EJC do Parque) 💛\n\nPassando para falar sobre a doação que você combinou com a gente:\n• *${item}* (${qtd})\n\nVocê consegue nos dar um retorno sobre a entrega? Se já tiver uma previsão, nos ajuda muito também 🙏\n\nQualquer coisa, estou por aqui! Muito obrigada por fazer parte disso com a gente ✨`;
+
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
+}
     }
 
     function abrirExtratoDoRegistro(id) {
