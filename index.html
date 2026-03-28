@@ -269,8 +269,6 @@
     </header>
 
     <main class="px-6 py-8 space-y-8">
-      <div id="lembreteCobranca" class="hidden"></div>
-
       <div id="dashAdmin" class="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 hidden">
         <div id="dashGrid" class="grid grid-cols-1 sm:grid-cols-4 gap-8">
           <div>
@@ -307,7 +305,7 @@
             <button id="btnCobranca" onclick="abrirFilaCobrancaFeijoada()" class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100 shadow-sm" title="Cobrar Pendentes"><i class="fas fa-hand-holding-dollar"></i></button>
             <button id="btnCompartilhar" onclick="compartilharFechamentoFeijoada()" class="action-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100 shadow-sm" title="Compartilhar Fechamento"><i class="fab fa-whatsapp"></i></button>
             
-            <button id="btnTransferir" onclick="abrirModalTransferenciaEJC()" class="action-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 shadow-sm hidden" title="Registrar transferência p/ Caixa EJC"><i class="fas fa-arrow-right-arrow-left"></i></button>
+            <button id="btnTransferir" onclick="abrirModalTransferenciaEJC()" class="action-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 shadow-sm hidden" title="Registar transferência p/ Caixa EJC"><i class="fas fa-arrow-right-arrow-left"></i></button>
           </div>
         </div>
 
@@ -343,7 +341,7 @@
         <div class="flex items-center justify-between mb-4">
           <div>
             <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Consumo Interno</p>
-            <h3 class="text-lg font-black text-slate-800">Gastos por equipe</h3>
+            <h3 class="text-lg font-black text-slate-800">Gastos por equipa</h3>
           </div>
         </div>
         <div id="graficoEquipes" class="space-y-4"></div>
@@ -351,7 +349,7 @@
 
       <div id="blocoAdminDoacao" class="hidden">
         <button onclick="document.getElementById('modalMeta').classList.remove('hidden')" class="w-full bg-white text-purple-700 border-2 border-purple-100 py-5 rounded-3xl font-extrabold shadow-sm flex items-center justify-center gap-3 active:scale-95 transition mb-6">
-          <i class="fas fa-bullseye"></i> REGISTRAR NOVA NECESSIDADE
+          <i class="fas fa-bullseye"></i> REGISTAR NOVA NECESSIDADE
         </button>
         <div id="listaGerenciarMetas" class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-2"></div>
       </div>
@@ -370,7 +368,7 @@
 
         <div class="p-6 border-b border-slate-50 flex gap-4 items-center">
           <i class="fas fa-search text-slate-300"></i>
-          <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar nos registros..." class="w-full text-sm font-semibold outline-none text-slate-700" />
+          <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar nos registos..." class="w-full text-sm font-semibold outline-none text-slate-700" />
         </div>
 
         <div id="loading" class="hidden p-12 text-center text-slate-300">
@@ -399,7 +397,7 @@
           <input id="m_qtd" type="number" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
           <input id="m_un" placeholder="Unid (kg, un)" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
         </div>
-        <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black active:scale-95 transition">CADASTRAR META</button>
+        <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black active:scale-95 transition">REGISTAR META</button>
         <button type="button" onclick="document.getElementById('modalMeta').classList.add('hidden')" class="w-full py-2 font-bold text-slate-400 mt-2">Cancelar</button>
       </form>
     </div>
@@ -409,7 +407,7 @@
     <div class="absolute inset-0" onclick="fecharModal()"></div>
     <div class="relative bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-8">
-        <h2 id="tituloModalRegistro" class="text-xl font-black text-slate-900 uppercase">Novo Registro</h2>
+        <h2 id="tituloModalRegistro" class="text-xl font-black text-slate-900 uppercase">Novo Registo</h2>
         <button type="button" onclick="fecharModal()" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button>
       </div>
 
@@ -458,9 +456,9 @@
           </select>
 
           <label class="block">
-            <span id="labelEquipeTexto" class="text-[9px] font-black text-slate-400 uppercase block mb-2">Equipe do Responsável</span>
+            <span id="labelEquipeTexto" class="text-[9px] font-black text-slate-400 uppercase block mb-2">Equipa do Responsável</span>
             <select id="f_equipe_merc" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
-              <option value="">Selecione a equipe...</option>
+              <option value="">Selecione a equipa...</option>
               <option value="Externo">Externo / Paroquiano</option>
               <option>Animação</option>
               <option>Patrimônio</option>
@@ -517,7 +515,7 @@
         </div>
 
         <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">
-          CONCLUIR REGISTRO
+          CONCLUIR REGISTO
         </button>
       </form>
     </div>
@@ -757,7 +755,6 @@
       return d.toLocaleDateString("pt-BR");
     }
 
-    // --- FUNÇÕES DE NORMALIZAÇÃO ---
     function parseMoedaBR(valor) {
       if (valor === null || valor === undefined) return 0;
       const texto = String(valor).trim();
@@ -930,7 +927,6 @@
 
       return payload;
     }
-    // --- FIM FUNÇÕES DE NORMALIZAÇÃO ---
 
     function isVoucherFeijoada(desc = "") { return String(desc || "").startsWith("[VOUCHER]"); }
     function isMercadoFeijoada(desc = "") { return String(desc || "").startsWith("[MERCADO]"); }
@@ -1204,7 +1200,6 @@
       }
       
       renderizarGraficoEquipes();
-      renderizarLembreteCobranca();
       if (abaAtiva === 'FEIJOADA') atualizarPainelFeijoada(dadosCache);
       renderizar();
       document.getElementById("loading").classList.add("hidden");
@@ -1266,9 +1261,9 @@
     function atualizarPainelFeijoada(todosRegistros) {
       const vouchers = todosRegistros.filter(r => r.modulo === 'FEIJOADA' && isVoucherFeijoada(r.descricao));
 
-      const vendidos = vouchers.length;
-      const pagos = vouchers.filter(r => r.status === 'PAGO').length;
-      const pendentes = vouchers.filter(r => r.status === 'PENDENTE').length;
+      const vendidos = vouchers.reduce((acc, r) => acc + parseInteiroSeguro(r.quantidade || 1), 0);
+      const pagos = vouchers.filter(r => r.status === 'PAGO').reduce((acc, r) => acc + parseInteiroSeguro(r.quantidade || 1), 0);
+      const pendentes = vouchers.filter(r => r.status === 'PENDENTE').reduce((acc, r) => acc + parseInteiroSeguro(r.quantidade || 1), 0);
 
       const restantes = TOTAL_VOUCHERS_FEIJOADA - vendidos;
 
@@ -1353,7 +1348,7 @@
       vouchers.forEach((r) => {
         const chave = (r.equipe || 'Sem equipe').trim();
         const atual = mapa.get(chave) || { equipe: chave, qtd: 0, valor: 0 };
-        atual.qtd += 1;
+        atual.qtd += parseInteiroSeguro(r.quantidade || 1);
         atual.valor += parseNumeroFlex(r.valor);
         mapa.set(chave, atual);
       });
@@ -1411,16 +1406,34 @@
     function montarMensagemCobrancaFeijoada(nomeCliente, valorFormatado) {
       const nomeSafe = nomeCliente || "irmão(ã)";
       return (
-        `Olá, ${nomeSafe}! Aqui é ${RESPONSAVEL_COBRANCA} da equipe de compras do ${NOME_EVENTO} da ${NOME_PAROQUIA}.\n\n` +
-        `Você tem um voucher da nossa Feijoada em aberto no valor de ${valorFormatado}.\n` +
+        `Olá, *${nomeSafe}*! Aqui é ${RESPONSAVEL_COBRANCA} da equipa de compras do ${NOME_EVENTO} da ${NOME_PAROQUIA}.\n\n` +
+        `Tem um voucher da nossa Feijoada em aberto no valor de *${valorFormatado}*.\n` +
         `A Feijoada será no dia ${DATA_FEIJOADA}. Podemos combinar o pagamento? 🙏`
       );
     }
 
     async function abrirFilaCobrancaFeijoada() {
-      const data = dadosCache.filter(r => r.modulo === 'FEIJOADA' && isVoucherFeijoada(r.descricao) && r.status === 'PENDENTE');
+      const pendentes = dadosCache.filter(r => r.modulo === 'FEIJOADA' && isVoucherFeijoada(r.descricao) && r.status === 'PENDENTE');
       
-      data.sort((a, b) => (a.nome_pessoa || '').localeCompare(b.nome_pessoa || ''));
+      const devedores = {};
+      pendentes.forEach(v => {
+        const tel = normalizarTelefone(v.telefone);
+        const key = tel || (v.nome_pessoa || "Sem nome").trim() + (v.equipe || "");
+        
+        if(!devedores[key]) {
+          devedores[key] = { 
+            nome: v.nome_pessoa || "Sem nome", 
+            equipe: v.equipe || "",
+            telefone: tel,
+            qtd: 0,
+            valorTotal: 0
+          };
+        }
+        devedores[key].qtd += parseInteiroSeguro(v.quantidade || 1);
+        devedores[key].valorTotal += parseNumeroFlex(v.valor);
+      });
+
+      const data = Object.values(devedores).sort((a, b) => a.nome.localeCompare(b.nome));
 
       const lista = document.getElementById('filaCobrancaLista');
       lista.innerHTML = '';
@@ -1433,28 +1446,27 @@
         `;
       } else {
         data.forEach((row) => {
-          const tel = normalizarTelefone(row.telefone);
-          const nome = row.nome_pessoa || 'Sem nome';
-          const equipe = row.equipe || '';
-          const valorFormatado = formatarMoeda(row.valor);
-
+          const valorFormatado = formatarMoeda(row.valorTotal);
           const msg = encodeURIComponent(
-            montarMensagemCobrancaFeijoada(nome.split(" ")[0], valorFormatado)
+            montarMensagemCobrancaFeijoada(row.nome.split(" ")[0], valorFormatado)
           );
 
-          const linkWhats = tel
-            ? `https://wa.me/${tel}?text=${msg}`
+          const linkWhats = row.telefone
+            ? `https://wa.me/${row.telefone}?text=${msg}`
             : '';
+
+          const safeNome = row.nome.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+          const safeEquipe = row.equipe.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
           const div = document.createElement('div');
           div.className = 'extrato-item flex items-center justify-between gap-3 mb-2';
 
           div.innerHTML = `
             <div>
-              <p class="font-bold text-sm text-slate-800">${esc(nome)}</p>
-              <p class="text-[11px] text-slate-400">${esc(equipe)}</p>
+              <p class="font-bold text-sm text-slate-800">${esc(row.nome)}</p>
+              <p class="text-[11px] text-slate-400">${esc(row.equipe)}</p>
               <p class="text-[11px] text-amber-600 font-black mt-1">
-                Pendente • ${valorFormatado}
+                ${row.qtd} vouchers • ${valorFormatado}
               </p>
             </div>
             <div class="flex flex-col items-end gap-2">
@@ -1468,7 +1480,7 @@
               }
               <button
                 class="action-btn bg-slate-100 text-slate-500 hover:bg-slate-200"
-                onclick="abrirExtratoPessoa('${nome.replace(/'/g, "\\'")}', '${equipe.replace(/'/g, "\\'")}')">
+                onclick="abrirExtratoPessoa('${safeNome}', '${safeEquipe}')">
                 <i class="fas fa-list"></i>
               </button>
             </div>
@@ -1491,7 +1503,7 @@
     function copiarPixCaixaEJC() {
       navigator.clipboard.writeText(PIX_CAIXA_EJC_PAYLOAD)
         .then(() => {
-          showToast('Código Pix copiado. Abra seu banco, faça o Pix e depois registre a transferência.', 'success');
+          showToast('Código Pix copiado. Abra o seu banco, faça o Pix e depois registe a transferência.', 'success');
         })
         .catch(() => {
           showToast('Não foi possível copiar o código Pix neste dispositivo.', 'error');
@@ -1500,7 +1512,7 @@
 
     function abrirModalTransferenciaEJC() {
       if (abaAtiva !== 'MERCADINHO' && abaAtiva !== 'FEIJOADA') {
-        showToast('Abra o Mercadinho ou Feijoada para registrar a transferência.', 'error');
+        showToast('Abra o Mercadinho ou Feijoada para registar a transferência.', 'error');
         return;
       }
       document.getElementById('tx_responsavel').value = currentProfile?.nome || "";
@@ -1575,7 +1587,7 @@
 
       if (error) {
         console.error(error);
-        showToast('Erro ao registrar transferência.', 'error');
+        showToast('Erro ao registar transferência.', 'error');
       } else {
         showToast('Transferência registada no Caixa EJC.', 'success');
         fecharModalTransferenciaEJC();
@@ -1620,129 +1632,31 @@
       }).join("");
     }
 
-    function renderizarLembreteCobranca() {
-      const wrap = document.getElementById("lembreteCobranca");
-      if (!wrap) return;
-
-      let pendencias = [];
-
-      if (abaAtiva === "MERCADINHO") {
-        pendencias = dadosCache.filter(i => i.status === "PENDENTE" && i.telefone);
-      } else if (abaAtiva === "EJC") {
-        if (!isDuranteOEJC()) {
-          wrap.classList.add("hidden");
-          wrap.innerHTML = "";
-          return;
-        }
-        pendencias = dadosCache.filter(i => i.status === "PENDENTE" && i.telefone);
-      } else if (abaAtiva === "ADMIN") {
-        if (isAntesDoEJC()) {
-          pendencias = dadosCache.filter(i =>
-            i.status === "PENDENTE" &&
-            i.telefone &&
-            i.modulo === "MERCADINHO"
-          );
-        } else {
-          pendencias = dadosCache.filter(i =>
-            i.status === "PENDENTE" &&
-            i.telefone &&
-            ["MERCADINHO", "EJC"].includes(i.modulo)
-          );
-        }
-      } else {
-        wrap.classList.add("hidden");
-        wrap.innerHTML = "";
-        return;
-      }
-
-      const total = pendencias.reduce((acc, i) => acc + Number(i.valor || 0), 0);
-
-      if (!pendencias.length) {
-        wrap.classList.add("hidden");
-        wrap.innerHTML = "";
-        return;
-      }
-
-      const titulo = isDomingoDoEJC()
-        ? `Hoje é dia de fechamento: existem ${pendencias.length} pendências`
-        : `Existem ${pendencias.length} pendências em aberto`;
-
-      const subtitulo = isDomingoDoEJC()
-        ? `Total para cobrar hoje: ${formatarMoeda(total)}`
-        : `Total atual: ${formatarMoeda(total)}`;
-
-      wrap.classList.remove("hidden");
-      wrap.innerHTML = `
-      <div class="bg-amber-50 border border-amber-200 rounded-[26px] p-5 shadow-sm">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-1">
-              ${isDomingoDoEJC() ? "Alerta de fechamento" : "Lembrete automático"}
-            </p>
-            <h3 class="text-lg font-black text-slate-800">${titulo}</h3>
-            <p class="text-sm text-slate-600 mt-1">
-              <span class="font-extrabold text-amber-700">${subtitulo}</span>
-            </p>
-          </div>
-          <button onclick="abrirPainelCobrancaRapida()" class="bg-slate-900 text-white px-4 py-3 rounded-xl font-bold text-sm">
-            Cobrar agora
-          </button>
-        </div>
-      </div>`;
-    }
-
-    function abrirPainelCobrancaRapida() {
-      let base = [];
-
-      if (abaAtiva === "MERCADINHO") {
-        base = dadosCache.filter(i => i.status === "PENDENTE" && i.telefone);
-      } else if (abaAtiva === "EJC") {
-        if (!isDuranteOEJC()) {
-          return showToast("As cobranças do EJC só ficam ativas durante o encontro.", "error");
-        }
-        base = dadosCache.filter(i => i.status === "PENDENTE" && i.telefone);
-      } else if (abaAtiva === "ADMIN") {
-        if (isAntesDoEJC()) {
-          base = dadosCache.filter(i =>
-            i.status === "PENDENTE" &&
-            i.telefone &&
-            i.modulo === "MERCADINHO"
-          );
-        } else {
-          base = dadosCache.filter(i =>
-            i.status === "PENDENTE" &&
-            i.telefone &&
-            ["MERCADINHO", "EJC"].includes(i.modulo)
-          );
-        }
-      } else {
-        return showToast("Sem cobrança rápida nesta aba.", "error");
-      }
-
-      const pendencias = {};
-      base.forEach(i => {
-        const tel = normalizarTelefone(i.telefone);
-        if (!pendencias[tel]) {
-          pendencias[tel] = { nome: i.nome_pessoa || "Irmão(ã)", telefone: tel, total: 0 };
-        }
-        pendencias[tel].total += Number(i.valor || 0);
-      });
-
-      const lista = Object.values(pendencias).sort((a, b) => b.total - a.total);
-      if (!lista.length) return showToast("Sem pendências para cobrar.");
-
-      const primeira = lista[0];
-      cobrarZapResumoInteligente(primeira.telefone, primeira.nome);
-    }
-
     function cobrarZapDoRegistro(id) {
       const reg = dadosCache.find(r => r.id === id);
       if (!reg) return;
-      const qtd = Number(reg.quantidade || 1);
+      
+      const num = normalizarTelefone(reg.telefone);
+      if (!num) return showToast("Número inválido.", "error");
+      
+      const primeiroNome = (reg.nome_pessoa || "Irmão").trim().split(" ")[0];
+      
       if (abaAtiva === "DOACAO") {
-        cobrarZapPromessa(reg.telefone, reg.nome_pessoa, limparPrefixoDescricao(reg.descricao), qtd);
+        const qtd = Number(reg.quantidade || 1);
+        const item = limparPrefixoDescricao(reg.descricao);
+        const msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nEstamos organizando a Providência do 21º EJC.\n\nConsta para você:\n• Item: *${item}*\n• Quantidade: *${qtd}*\n\nVocê consegue nos confirmar se ainda fará a entrega?`;
+        window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
+      } else if (abaAtiva === "FEIJOADA" && isVoucherFeijoada(reg.descricao)) {
+        const pendentes = dadosCache.filter(i => i.status === "PENDENTE" && i.modulo === 'FEIJOADA' && normalizarTelefone(i.telefone) === num);
+        const total = pendentes.reduce((acc, i) => acc + parseNumeroFlex(i.valor), 0);
+        const msg = montarMensagemCobrancaFeijoada(primeiroNome, formatarMoeda(total));
+        window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
       } else {
-        cobrarZapResumoInteligente(reg.telefone, reg.nome_pessoa);
+        const pendentes = dadosCache.filter(i => i.status === "PENDENTE" && normalizarTelefone(i.telefone) === num);
+        if (!pendencias.length) return showToast("Sem pendências.", "success");
+        const total = pendencias.reduce((acc, i) => acc + parseNumeroFlex(i.valor), 0);
+        const msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nPassando para confirmar um valor em aberto no EJC:\n*${formatarMoeda(total)}*\n\nQuando puder, você consegue nos dar um retorno?\n\nSe precisar, podemos te enviar o detalhamento.`;
+        window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
       }
     }
 
@@ -1763,6 +1677,10 @@
         (r.nome_pessoa || "").trim() === nomeTrim &&
         (equipeTrim ? (r.equipe || "").trim() === equipeTrim : true)
       );
+      
+      const regComTel = extratoAtual.registros.find(r => r.telefone && normalizarTelefone(r.telefone));
+      extratoAtual.telefone = regComTel ? normalizarTelefone(regComTel.telefone) : "";
+
       extratoAtual.registrosFiltrados = [...extratoAtual.registros];
 
       document.getElementById("extratoNome").innerText = nomeTrim || "Sem nome";
@@ -1896,7 +1814,7 @@
                 ${badgeModulo}
               </div>
               <p class="text-[10px] text-slate-400">
-                Registro: ${esc(r.id || "").slice(0, 8)}...
+                Registo: ${esc(r.id || "").slice(0, 8)}...
               </p>
             </div>
           </div>
@@ -1946,7 +1864,7 @@
       }
 
       if (!filtrados.length) {
-        tb.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">Nenhum registro encontrado.</td></tr>';
+        tb.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">Nenhum registo encontrado.</td></tr>';
         return;
       }
 
@@ -1994,8 +1912,11 @@
         const botaoZap = (podeAcao && i.status === "PENDENTE" && telefone)
           ? `<button onclick="cobrarZapDoRegistro('${i.id}')" class="action-btn bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100" title="Cobrar no WhatsApp"><i class="fab fa-whatsapp"></i></button>` : "";
 
-        const botaoExtrato = (podeAcao && (nome || equipe))
-          ? `<button onclick="abrirExtratoPessoa('${nome.replace(/'/g, "\\'")}', '${equipe.replace(/'/g, "\\'")}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Extrato"><i class="fas fa-file-invoice"></i></button>` : "";
+        const safeNome = (i.nome_pessoa || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const safeEquipe = (i.equipe || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+        const botaoExtrato = (podeAcao && (safeNome || safeEquipe))
+          ? `<button onclick="abrirExtratoPessoa('${safeNome}', '${safeEquipe}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Extrato"><i class="fas fa-file-invoice"></i></button>` : "";
 
         let subtitulo = `Qtd: <span class="font-bold">${qtd}</span>`;
         if (valor > 0) subtitulo += ` • Total: <span class="font-bold">${formatarMoeda(valor)}</span>`;
@@ -2132,10 +2053,10 @@
       document.getElementById("formFin").reset();
       editandoRegistroId = null;
       editandoRegistroVersion = null;
-      document.getElementById("tituloModalRegistro").innerText = "Novo Registro";
+      document.getElementById("tituloModalRegistro").innerText = "Novo Registo";
       document.getElementById("f_val").placeholder = "0,00";
       document.getElementById("f_val").setAttribute("inputmode", "decimal");
-      document.getElementById("btnSubmitRegistro").innerHTML = "CONCLUIR REGISTRO";
+      document.getElementById("btnSubmitRegistro").innerHTML = "CONCLUIR REGISTO";
       document.getElementById("btnSubmitRegistro").disabled = false;
 
       document.getElementById("modal").classList.remove("hidden");
@@ -2154,26 +2075,26 @@
       document.getElementById("camposMercado").classList.add("hidden");
       document.getElementById("campoDataEntregaWrap").classList.add("hidden");
       document.getElementById("blocoTipoFeijoada").classList.add("hidden");
-      document.getElementById("btnSubmitRegistro").innerHTML = "CONCLUIR REGISTRO";
+      document.getElementById("btnSubmitRegistro").innerHTML = "CONCLUIR REGISTO";
       document.getElementById("btnSubmitRegistro").disabled = false;
       document.getElementById("f_val").placeholder = "0,00";
       document.getElementById("f_val").setAttribute("inputmode", "decimal");
       editandoRegistroId = null;
       editandoRegistroVersion = null;
-      document.getElementById("tituloModalRegistro").innerText = "Novo Registro";
+      document.getElementById("tituloModalRegistro").innerText = "Novo Registo";
     }
 
     async function editarRegistro(id) {
-      if (ROLE !== "ADMIN") return showToast("Somente pilotos podem editar registros.", "error");
+      if (ROLE !== "ADMIN") return showToast("Somente pilotos podem editar registos.", "error");
 
       const { data, error } = await _supabase.from("transacoes").select("*").eq("id", id).single();
-      if (error || !data) return showToast("Não foi possível carregar o registro.", "error");
+      if (error || !data) return showToast("Não foi possível carregar o registo.", "error");
 
       editandoRegistroId = data.id;
       editandoRegistroVersion = data.version || 0;
 
       document.getElementById("modal").classList.remove("hidden");
-      document.getElementById("tituloModalRegistro").innerText = "Editar Registro";
+      document.getElementById("tituloModalRegistro").innerText = "Editar Registo";
 
       document.getElementById("f_modulo").value = data.modulo || "DOACAO";
       
@@ -2246,10 +2167,10 @@
 
         if (error) {
           console.error(error);
-          throw new Error(error.message || "Não foi possível salvar o registro.");
+          throw new Error(error.message || "Não foi possível salvar o registo.");
         }
 
-        showToast(editandoRegistroId ? "Registro atualizado!" : "Registro concluído!");
+        showToast(editandoRegistroId ? "Registo atualizado!" : "Registo concluído!");
         fecharModal();
         await carregarDados();
 
@@ -2257,7 +2178,7 @@
           await carregarMetasAdmin();
         }
       } catch (err) {
-        showToast(err.message || "Erro ao salvar registro.", "error");
+        showToast(err.message || "Erro ao salvar registo.", "error");
       } finally {
         btn.innerHTML = txtOriginal;
         btn.disabled = false;
@@ -2265,7 +2186,7 @@
     });
 
     function abrirModalRecebimento(id, ver) {
-      if (!podeUsarModalRecebimento()) return showToast("Você não tem permissão para esta ação.", "error");
+      if (!podeUsarModalRecebimento()) return showToast("Não tem permissão para esta ação.", "error");
 
       idRecebimentoAtual = id;
       versionRecebimentoAtual = ver;
@@ -2290,7 +2211,7 @@
 
       if (!recebidoPor) return showToast("Informe quem recebeu.", "error");
       if (!dataRecebimento) return showToast("Informe a data do recebimento.", "error");
-      if (!idRecebimentoAtual) return showToast("Registro inválido.", "error");
+      if (!idRecebimentoAtual) return showToast("Registo inválido.", "error");
 
       const { error } = await _supabase
         .from("transacoes")
@@ -2308,10 +2229,14 @@
       fecharModalRecebimento();
       await carregarDados();
       if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
+
+      if (!document.getElementById("modalExtrato").classList.contains("hidden") && extratoAtual.telefone) {
+        abrirExtratoPessoa(extratoAtual.nome, extratoAtual.equipe);
+      }
     }
 
     async function cancelarRegistro(id, ver) {
-      if (!confirm("Cancelar este registro? Ele voltará automaticamente para o status de cancelado.")) return;
+      if (!confirm("Cancelar este registo? Ele voltará automaticamente para o status de cancelado.")) return;
 
       const { error } = await _supabase
         .from("transacoes")
@@ -2321,7 +2246,7 @@
 
       if (error) return showToast(error.message || "Não foi possível cancelar.", "error");
 
-      showToast("Registro cancelado com sucesso.");
+      showToast("Registo cancelado com sucesso.");
       await carregarDados();
       if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
     }
@@ -2434,7 +2359,7 @@
         return `• ${data} — ${limparPrefixoDescricao(r.descricao)} — Qtd: ${qtd} — ${valor} — ${status}`;
       });
 
-      const totalAberto = registros.filter(r => r.status === "PENDENTE").reduce((a, r) => a + Number(r.valor || 0), 0);
+      const totalAberto = registros.filter(r => r.status === "PENDENTE").reduce((a, r) => a + parseNumeroFlex(r.valor), 0);
 
       const texto = `Extrato de ${extratoAtual.nome}\n${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}\n${linhas.join("\n")}\n\nTotal em aberto: ${formatarMoeda(totalAberto)}`;
 
@@ -2448,7 +2373,7 @@
 
     function enviarExtratoDiretoWhatsApp() {
       const num = normalizarTelefone(extratoAtual.telefone);
-      if (!/^\d{12,13}$/.test(num)) return showToast("Telefone inválido para WhatsApp.", "error");
+      if (!/^\d{12,13}$/.test(num)) return showToast("Telemóvel inválido para WhatsApp.", "error");
 
       const registros = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
       if (!registros.length) return showToast("Extrato vazio.", "error");
@@ -2462,7 +2387,7 @@
         return `• ${data} — ${limparPrefixoDescricao(r.descricao)} — Qtd: ${qtd} — ${valor} — ${status}`;
       });
 
-      const totalAberto = registros.filter(r => r.status === "PENDENTE").reduce((a, r) => a + Number(r.valor || 0), 0);
+      const totalAberto = registros.filter(r => r.status === "PENDENTE").reduce((a, r) => a + parseNumeroFlex(r.valor), 0);
 
       const msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nSegue o detalhamento dos seus lançamentos:\n\n${linhas.join("\n")}\n\n*Total em aberto: ${formatarMoeda(totalAberto)}*\n\nQualquer dúvida, estamos à disposição.`;
 
@@ -2471,20 +2396,20 @@
 
     function cobrarValorEmAbertoDoExtrato() {
       const num = normalizarTelefone(extratoAtual.telefone);
-      if (!/^\d{12,13}$/.test(num)) return showToast("Telefone inválido para WhatsApp.", "error");
+      if (!/^\d{12,13}$/.test(num)) return showToast("Telemóvel inválido para WhatsApp.", "error");
 
       const registros = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
       const pendentes = registros.filter(r => r.status === "PENDENTE");
       if (!pendentes.length) return showToast("Não há valor em aberto neste extrato.", "success");
 
-      const totalAberto = pendentes.reduce((a, r) => a + Number(r.valor || 0), 0);
+      const totalAberto = pendentes.reduce((a, r) => a + parseNumeroFlex(r.valor), 0);
       const primeiroNome = (extratoAtual.nome || "Irmão").split(" ")[0];
 
       let msg = "";
       if (isDiaDeCobrancaDetalhada()) {
-        msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nEstamos conferindo os lançamentos do encontro.\n\nNo momento, consta para você um valor em aberto de:\n*${formatarMoeda(totalAberto)}*\n\nQuando puder, você consegue nos confirmar, por gentileza?\n\nSe precisar, podemos te enviar o detalhamento.`;
+        msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nEstamos a conferir os lançamentos do encontro.\n\nNo momento, consta para si um valor em aberto de:\n*${formatarMoeda(totalAberto)}*\n\nQuando puder, consegue confirmar-nos, por gentileza?\n\nSe precisar, podemos enviar-lhe o detalhamento.`;
       } else {
-        msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nPassando para confirmar um valor em aberto no EJC:\n*${formatarMoeda(totalAberto)}*\n\nQuando puder, você consegue nos dar um retorno?\n\nSe precisar, podemos te enviar o detalhamento.`;
+        msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nPassando para confirmar um valor em aberto no EJC:\n*${formatarMoeda(totalAberto)}*\n\nQuando puder, consegue dar-nos um retorno?\n\nSe precisar, podemos enviar-lhe o detalhamento.`;
       }
 
       window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
@@ -2494,7 +2419,7 @@
       const pendentes = (extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros).filter(r => r.status === "PENDENTE");
       if (!pendentes.length) return showToast("Não há lançamentos em aberto para quitar.", "success");
 
-      const totalAberto = pendentes.reduce((a, r) => a + Number(r.valor || 0), 0);
+      const totalAberto = pendentes.reduce((a, r) => a + parseNumeroFlex(r.valor), 0);
       
       document.getElementById("quitarTudoRecebidoPor").value = currentProfile?.nome || "";
       document.getElementById("quitarTudoData").value = new Date().toISOString().slice(0, 10);
@@ -2522,15 +2447,15 @@
       const pendentes = (extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros).filter(r => r.status === "PENDENTE");
       if (!pendentes.length) return showToast("Não há lançamentos em aberto para quitar.", "success");
 
-      const totalAberto = pendentes.reduce((a, r) => a + Number(r.valor || 0), 0);
+      const totalAberto = pendentes.reduce((a, r) => a + parseNumeroFlex(r.valor), 0);
 
-      if (!confirm(`ATENÇÃO: Você está prestes a quitar ${pendentes.length} lançamento(s) em aberto no valor total de ${formatarMoeda(totalAberto)}. Confirma esta operação?`)) {
+      if (!confirm(`ATENÇÃO: Está prestes a quitar ${pendentes.length} lançamento(s) em aberto no valor total de ${formatarMoeda(totalAberto)}. Confirma esta operação?`)) {
         return;
       }
 
       const btn = document.getElementById("btnConfirmarQuitar");
       const txtOriginal = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Quitando...';
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A Quitar...';
       btn.disabled = true;
 
       let erros = 0;
