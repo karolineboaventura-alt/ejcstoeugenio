@@ -1403,11 +1403,12 @@
       document.getElementById("modalRanking").classList.remove("flex");
     }
 
-    function montarMensagemCobrancaFeijoada(nomeCliente, valorFormatado) {
+    function montarMensagemCobrancaFeijoada(nomeCliente, valorFormatado, qtd) {
       const nomeSafe = nomeCliente || "irmão(ã)";
+      const txtVoucher = qtd > 1 ? `${qtd} vouchers` : `um voucher`;
       return (
         `Olá, *${nomeSafe}*! Aqui é ${RESPONSAVEL_COBRANCA} da equipa de compras do ${NOME_EVENTO} da ${NOME_PAROQUIA}.\n\n` +
-        `Tem um voucher da nossa Feijoada em aberto no valor de *${valorFormatado}*.\n` +
+        `Tem ${txtVoucher} da nossa Feijoada em aberto, num total de *${valorFormatado}*.\n` +
         `A Feijoada será no dia ${DATA_FEIJOADA}. Podemos combinar o pagamento? 🙏`
       );
     }
@@ -1448,7 +1449,7 @@
         data.forEach((row) => {
           const valorFormatado = formatarMoeda(row.valorTotal);
           const msg = encodeURIComponent(
-            montarMensagemCobrancaFeijoada(row.nome.split(" ")[0], valorFormatado)
+            montarMensagemCobrancaFeijoada(row.nome.split(" ")[0], valorFormatado, row.qtd)
           );
 
           const linkWhats = row.telefone
@@ -1637,7 +1638,7 @@
       if (!reg) return;
       
       const num = normalizarTelefone(reg.telefone);
-      if (!num) return showToast("Número inválido.", "error");
+      if (!num) return showToast("Telemóvel inválido.", "error");
       
       const primeiroNome = (reg.nome_pessoa || "Irmão").trim().split(" ")[0];
       
@@ -1649,13 +1650,14 @@
       } else if (abaAtiva === "FEIJOADA" && isVoucherFeijoada(reg.descricao)) {
         const pendentes = dadosCache.filter(i => i.status === "PENDENTE" && i.modulo === 'FEIJOADA' && normalizarTelefone(i.telefone) === num);
         const total = pendentes.reduce((acc, i) => acc + parseNumeroFlex(i.valor), 0);
-        const msg = montarMensagemCobrancaFeijoada(primeiroNome, formatarMoeda(total));
+        const qtd = pendentes.reduce((acc, i) => acc + parseInteiroSeguro(i.quantidade || 1), 0);
+        const msg = montarMensagemCobrancaFeijoada(primeiroNome, formatarMoeda(total), qtd);
         window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
       } else {
         const pendentes = dadosCache.filter(i => i.status === "PENDENTE" && normalizarTelefone(i.telefone) === num);
-        if (!pendencias.length) return showToast("Sem pendências.", "success");
-        const total = pendencias.reduce((acc, i) => acc + parseNumeroFlex(i.valor), 0);
-        const msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nPassando para confirmar um valor em aberto no EJC:\n*${formatarMoeda(total)}*\n\nQuando puder, você consegue nos dar um retorno?\n\nSe precisar, podemos te enviar o detalhamento.`;
+        if (!pendentes.length) return showToast("Sem pendências.", "success");
+        const total = pendentes.reduce((acc, i) => acc + parseNumeroFlex(i.valor), 0);
+        const msg = `Olá, *${primeiroNome}*! Tudo bem?\n\nPassando para confirmar um valor em aberto no EJC:\n*${formatarMoeda(total)}*\n\nQuando puder, consegue dar-nos um retorno?\n\nSe precisar, podemos enviar-lhe o detalhamento.`;
         window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
       }
     }
@@ -2000,7 +2002,7 @@
       if (isDoacao) {
         tipoPessoa.classList.add("hidden");
         equipeMerc.classList.remove("hidden");
-        labelEquipeTexto.textContent = "Equipe do doador / responsável";
+        labelEquipeTexto.textContent = "Equipa do doador / responsável";
         labelVal.textContent = "Quantidade";
         labelDesc.textContent = "Descrição / Item";
         inputVal.setAttribute("inputmode", "numeric");
@@ -2010,7 +2012,7 @@
         const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
         tipoPessoa.classList.add("hidden");
         equipeMerc.classList.remove("hidden");
-        labelEquipeTexto.textContent = "Equipe de quem vendeu/comprou";
+        labelEquipeTexto.textContent = "Equipa de quem vendeu/comprou";
 
         if (tipoFeijoada === "VOUCHER") {
           labelDesc.textContent = "Nome / referência";
@@ -2032,7 +2034,7 @@
         }
       } else if (isMercado) {
         tipoPessoa.classList.remove("hidden");
-        labelEquipeTexto.textContent = "Equipe do Responsável";
+        labelEquipeTexto.textContent = "Equipa do Responsável";
         labelVal.textContent = "Valor R$";
         labelDesc.textContent = "Descrição / Item";
         inputVal.setAttribute("inputmode", "decimal");
@@ -2142,7 +2144,7 @@
       const txtOriginal = btn.innerHTML;
 
       try {
-        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> SALVANDO...';
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A GUARDAR...';
         btn.disabled = true;
 
         const payload = montarPayloadTransacao();
@@ -2361,7 +2363,7 @@
 
       const totalAberto = registros.filter(r => r.status === "PENDENTE").reduce((a, r) => a + parseNumeroFlex(r.valor), 0);
 
-      const texto = `Extrato de ${extratoAtual.nome}\n${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}\n${linhas.join("\n")}\n\nTotal em aberto: ${formatarMoeda(totalAberto)}`;
+      const texto = `Extrato de ${extratoAtual.nome}\n${extratoAtual.equipe ? `Equipa: ${extratoAtual.equipe}\n` : ""}\n${linhas.join("\n")}\n\nTotal em aberto: ${formatarMoeda(totalAberto)}`;
 
       try {
         await navigator.clipboard.writeText(texto);
