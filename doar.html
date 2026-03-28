@@ -531,7 +531,7 @@
             
             <div class="space-y-1 pt-3 border-t border-slate-100">
               <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data que pretende entregar todos os itens</label>
-              <input id="d_data" type="date" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+              <input id="d_data" type="date" class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
             </div>
 
             <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
@@ -695,7 +695,7 @@
 
       const info = disponibilidadeItens[item];
       nome.innerText = item;
-      meta.innerText = `Disponível para prometer: ${info.disponivelPrometer} ${info.unidade || ""} • Meta: ${info.meta}`;
+      meta.innerText = `Disponível para prometer: ${info.disponivelPrometer} ${info.unidade || ""} • Meta total: ${info.meta} ${info.unidade || ""}`;
       box.classList.remove("hidden");
     }
 
@@ -1078,28 +1078,27 @@
       btn.innerHTML = "REGISTRANDO DOAÇÕES...";
       btn.disabled = true;
 
-      // Monta o array com todas as transações para mandar de uma vez pro banco
-      const inserts = carrinhoDoacao.map(c => ({
-        modulo: 'DOACAO',
-        descricao: c.item,
-        quantidade: c.qtd,
-        valor: 0,
-        natureza: 'ENTRADA',
-        status: 'PENDENTE',
-        forma_pagamento: 'FISICO',
-        nome_pessoa: nome,
-        equipe: equipe,
-        telefone: telefone,
-        recebido_por: 'Doação Pública',
-        data_entrega: dataEntrega
-      }));
+      let deuErro = false;
 
-      // No Supabase, usar .insert([]) com array salva múltiplos de uma vez
-      const { error } = await _supabase.from('transacoes').insert(inserts);
+      // Executa a inserção item por item usando o RPC de segurança
+      for (const c of carrinhoDoacao) {
+        const { error } = await _supabase.rpc('registrar_doacao_publica', {
+          p_item: c.item,
+          p_quantidade: c.qtd,
+          p_nome: nome,
+          p_telefone: telefone,
+          p_equipe: equipe,
+          p_data_entrega: dataEntrega
+        });
 
-      if (error) {
-        console.error(error);
-        showToast("Erro de conexão ao registrar doações.", "error");
+        if (error) {
+          console.error(error);
+          deuErro = true;
+        }
+      }
+
+      if (deuErro) {
+        showToast("Houve um erro de conexão ao registrar alguma das doações.", "error");
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
         return;
@@ -1208,4 +1207,3 @@
   </script>
 </body>
 </html>
-
