@@ -273,19 +273,19 @@
       <div id="dashAdmin" class="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 hidden">
         <div id="dashGrid" class="grid grid-cols-1 sm:grid-cols-4 gap-8">
           <div>
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Entradas (Pagas)</p>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Entradas Globais (Pagas)</p>
             <h2 id="totalRecebido" class="text-3xl font-extrabold text-emerald-600">R$ 0,00</h2>
           </div>
           <div>
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">A Receber (Fiado)</p>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">A Receber (Fiado Total)</p>
             <h2 id="totalPendente" class="text-3xl font-extrabold text-amber-500">R$ 0,00</h2>
           </div>
           <div>
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Saídas (Gastos)</p>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Saídas Globais (Gastos)</p>
             <h2 id="totalSaidas" class="text-3xl font-black text-rose-600">R$ 0,00</h2>
           </div>
           <div id="cardSaldoLiquido">
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Em Caixa (Saldo)</p>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Em Caixa (Caixa EJC Real)</p>
             <h2 id="totalLiquido" class="text-3xl font-extrabold text-purple-700">R$ 0,00</h2>
           </div>
         </div>
@@ -294,20 +294,24 @@
       <div id="painelFeijoada" class="hidden bg-white rounded-[32px] p-6 shadow-sm border border-slate-100">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Feijoada 25/04</p>
+            <p id="tituloPainelModulo" class="text-[10px] font-black uppercase tracking-widest text-slate-400">Feijoada 25/04</p>
             <h3 class="text-xl font-black text-slate-800">Painel de Controle</h3>
           </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <div class="pill bg-purple-50 text-purple-700 border border-purple-100">
+          <div id="botoesPainelWrap" class="flex items-center gap-2 flex-wrap">
+            <div id="pillVoucher" class="pill bg-purple-50 text-purple-700 border border-purple-100">
               Voucher: R$ 55,00
             </div>
-            <button onclick="abrirRankingFeijoada()" class="action-btn bg-amber-50 text-amber-600 hover:bg-amber-100 shadow-sm" title="Ranking de Vendas"><i class="fas fa-trophy"></i></button>
-            <button onclick="abrirFilaCobrancaFeijoada()" class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100 shadow-sm" title="Cobrar Pendentes"><i class="fas fa-hand-holding-dollar"></i></button>
-            <button onclick="compartilharFechamentoFeijoada()" class="action-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100 shadow-sm" title="Compartilhar Fechamento"><i class="fab fa-whatsapp"></i></button>
+            
+            <button id="btnRanking" onclick="abrirRankingFeijoada()" class="action-btn bg-amber-50 text-amber-600 hover:bg-amber-100 shadow-sm" title="Ranking de Vendas"><i class="fas fa-trophy"></i></button>
+            <button id="btnCobranca" onclick="abrirFilaCobrancaFeijoada()" class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100 shadow-sm" title="Cobrar Pendentes"><i class="fas fa-hand-holding-dollar"></i></button>
+            <button id="btnCompartilhar" onclick="compartilharFechamentoFeijoada()" class="action-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100 shadow-sm" title="Compartilhar Fechamento"><i class="fab fa-whatsapp"></i></button>
+            
+            <button id="btnPix" onclick="abrirPixExperimental()" class="action-btn bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-sm hidden" title="Fazer Pix para o Caixa EJC"><i class="fas fa-qrcode"></i></button>
+            <button id="btnTransferir" onclick="abrirModalTransferenciaEJC()" class="action-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 shadow-sm hidden" title="Registrar transferência p/ Caixa EJC"><i class="fas fa-arrow-right-arrow-left"></i></button>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div id="gridMetricasFeijoada" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           <div class="soft-stat roxo">
             <p class="text-[10px] font-black uppercase tracking-wider text-purple-400">Vendidos</p>
             <p id="fjVendidos" class="text-xl font-extrabold text-slate-800 mt-1">0</p>
@@ -538,6 +542,35 @@
       <div class="flex gap-3 mt-6">
         <button onclick="confirmarRecebimentoModal()" class="flex-1 bg-emerald-600 text-white py-4 rounded-xl font-black">Confirmar</button>
         <button onclick="fecharModalRecebimento()" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-xl font-black">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalTransferenciaEJC" class="hidden fixed inset-0 z-[135] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
+      <h3 class="text-xl font-black text-slate-800 mb-2 text-center">Transferência para Caixa EJC</h3>
+      <p class="text-xs text-slate-500 text-center mb-6">Use este fluxo <b>depois</b> de fazer o Pix/transferência no app do banco.</p>
+
+      <div class="space-y-4">
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Valor transferido (R$)</label>
+          <input id="tx_valor" type="text" inputmode="decimal" class="w-full bg-transparent font-bold text-slate-900 outline-none text-right" placeholder="0,00" />
+        </div>
+
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Data da transferência</label>
+          <input id="tx_data" type="date" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
+        </div>
+
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Quem realizou / entregou</label>
+          <input id="tx_responsavel" class="w-full bg-transparent font-bold text-slate-900 outline-none" placeholder="Ex: Karol / Mairla" />
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button onclick="confirmarTransferenciaEJC()" class="flex-1 bg-emerald-600 text-white py-4 rounded-xl font-black">Registrar transferência</button>
+        <button onclick="fecharModalTransferenciaEJC()" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-xl font-black">Cancelar</button>
       </div>
     </div>
   </div>
@@ -801,9 +834,14 @@
     }
 
     function montarPayloadTransacao() {
-      const modulo = abaAtiva === "ADMIN"
-        ? document.getElementById("f_modulo").value
-        : abaAtiva;
+      let modulo;
+      if (ROLE === 'COMPRAS') {
+        modulo = abaAtiva; 
+      } else {
+        modulo = (abaAtiva === 'ADMIN')
+          ? document.getElementById('f_modulo').value
+          : abaAtiva;
+      }
 
       const tipoSelecionado = document.getElementById("f_type").value;
       const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
@@ -833,7 +871,7 @@
         
       } else if (modulo === "FEIJOADA" && tipoFeijoada === "VOUCHER") {
         quantidade = parseInteiroSeguro(valorCampo);
-        valor = quantidade * PRECO_VOUCHER_FEIJOADA; // Multiplica pela constante de R$ 55
+        valor = quantidade * PRECO_VOUCHER_FEIJOADA; 
 
         if (quantidade <= 0) throw new Error("Informe uma quantidade válida de vouchers.");
         if (!equipe) throw new Error("Selecione a equipe responsável.");
@@ -851,7 +889,6 @@
 
       const { natureza, status } = calcularStatusENatureza(modulo, tipoSelecionado, tipoFeijoada);
 
-      // Monta o objeto final que vai direto para o Supabase
       const payload = {
         modulo,
         descricao: montarDescricaoFinal(modulo, descricaoBase, tipoFeijoada),
@@ -868,7 +905,6 @@
         recebido_em: status === "PAGO" ? agoraISO() : null
       };
 
-      // Se for doação, anexa a data de entrega
       if (modulo === "DOACAO") {
         payload.data_entrega = document.getElementById("f_data_entrega").value;
       }
@@ -1011,55 +1047,104 @@
       document.getElementById("userAvatar").innerText = nomeExibicao.charAt(0).toUpperCase();
 
       if (ROLE === "ADMIN") {
-        document.querySelectorAll("#tab-admin, #tab-ejc, #tab-mercadinho, #tab-feijoada, #tab-doacao, #dashAdmin").forEach(el => el.classList.remove("hidden"));
         document.getElementById("headerTitle").innerText = "EJC BANK • PILOTOS";
-        abaAtiva = "ADMIN";
       } else if (ROLE === "COMPRAS") {
-        document.querySelectorAll("#tab-feijoada, #tab-doacao, #tab-mercadinho, #tab-ejc").forEach(el => el.classList.remove("hidden"));
         document.getElementById("headerTitle").innerText = "EJC BANK • COMPRAS";
-        abaAtiva = "DOACAO";
       } else {
         document.getElementById("headerTitle").innerText = "EJC BANK";
-        abaAtiva = "EJC";
       }
 
-      mudarAba(abaAtiva);
+      configurarAbasPorPerfil();
     }
 
-    async function mudarAba(a) {
-      abaAtiva = a;
+    function configurarAbasPorPerfil() {
+      const isCompras = (ROLE === 'COMPRAS');
 
-      document.querySelectorAll(".tab-btn").forEach(b => {
-        const isSelected = b.id === "tab-" + a.toLowerCase();
-        b.classList.toggle("bg-white", isSelected);
-        b.classList.toggle("text-purple-700", isSelected);
-        b.classList.toggle("bg-white/10", !isSelected);
-        b.classList.toggle("text-white", !isSelected);
+      document.getElementById('tab-admin').classList.toggle('hidden', isCompras);
+      document.getElementById('tab-ejc').classList.toggle('hidden', isCompras);
+
+      document.getElementById('tab-mercadinho').classList.remove('hidden');
+      document.getElementById('tab-feijoada').classList.remove('hidden');
+      document.getElementById('tab-doacao').classList.remove('hidden');
+
+      const blocoModulo = document.getElementById('blocoModulo');
+      if (isCompras) {
+        blocoModulo.classList.add('hidden');
+      } else {
+        blocoModulo.classList.remove('hidden');
+      }
+
+      if (isCompras) {
+        mudarAba('MERCADINHO');
+      } else {
+        mudarAba('ADMIN'); 
+      }
+    }
+
+    async function mudarAba(novaAba) {
+      abaAtiva = novaAba;
+
+      const tabs = ['ADMIN', 'EJC', 'MERCADINHO', 'FEIJOADA', 'DOACAO'];
+      tabs.forEach((t) => {
+        const btn = document.getElementById(`tab-${t.toLowerCase()}`);
+        if (btn) {
+          btn.classList.toggle('bg-white', t === novaAba);
+          btn.classList.toggle('text-purple-700', t === novaAba);
+          btn.classList.toggle('bg-white/10', t !== novaAba);
+          btn.classList.toggle('text-white', t !== novaAba);
+        }
       });
 
-      const adminGerenciaDoacao = abaAtiva === "DOACAO" && ROLE === "ADMIN";
-
-      document.getElementById("blocoAdminDoacao").classList.toggle("hidden", !adminGerenciaDoacao);
-      document.getElementById("dashAdmin").classList.toggle("hidden", abaAtiva === "DOACAO" || ROLE !== "ADMIN");
+      document.getElementById('dashAdmin').classList.toggle('hidden', !['ADMIN', 'EJC', 'MERCADINHO'].includes(novaAba));
       
-      const mostrarFiltros = ["DOACAO", "FEIJOADA", "MERCADINHO", "EJC", "ADMIN"].includes(abaAtiva);
-      document.getElementById("filtrosUniversalWrap").classList.toggle("hidden", !mostrarFiltros);
+      const pFeijoada = document.getElementById('painelFeijoada');
+      if (novaAba === 'FEIJOADA' || novaAba === 'MERCADINHO') {
+        pFeijoada.classList.remove('hidden');
+        document.getElementById('tituloPainelModulo').innerText = novaAba === 'FEIJOADA' ? 'Feijoada 25/04' : 'Painel Mercadinho';
+        
+        if (novaAba === 'MERCADINHO') {
+          document.getElementById('pillVoucher').classList.add('hidden');
+          document.getElementById('btnRanking').classList.add('hidden');
+          document.getElementById('btnCobranca').classList.add('hidden');
+          document.getElementById('btnCompartilhar').classList.add('hidden');
+          document.getElementById('gridMetricasFeijoada').classList.add('hidden');
+        } else {
+          document.getElementById('pillVoucher').classList.remove('hidden');
+          document.getElementById('btnRanking').classList.remove('hidden');
+          document.getElementById('btnCobranca').classList.remove('hidden');
+          document.getElementById('btnCompartilhar').classList.remove('hidden');
+          document.getElementById('gridMetricasFeijoada').classList.remove('hidden');
+        }
+        
+        const isCompras = (ROLE === 'COMPRAS');
+        document.getElementById('btnPix').classList.toggle('hidden', !isCompras);
+        document.getElementById('btnTransferir').classList.toggle('hidden', !isCompras);
+      } else {
+        pFeijoada.classList.add('hidden');
+      }
 
-      const mostrarGrafico = abaAtiva === "MERCADINHO";
-      document.getElementById("graficoWrap").classList.toggle("hidden", !mostrarGrafico);
-      document.getElementById("painelFeijoada").classList.toggle("hidden", abaAtiva !== "FEIJOADA");
+      document.getElementById('graficoWrap').classList.toggle('hidden', novaAba !== 'MERCADINHO');
+      document.getElementById('blocoAdminDoacao').classList.toggle('hidden', novaAba !== 'DOACAO' || ROLE !== 'ADMIN');
+
+      document.getElementById('filtrosUniversalWrap').classList.remove('hidden');
+
+      const blocoModulo = document.getElementById('blocoModulo');
+      if (ROLE === 'COMPRAS') {
+        blocoModulo.classList.add('hidden');
+      } else {
+        blocoModulo.classList.toggle('hidden', novaAba !== 'ADMIN');
+      }
+
+      const botaoFlutuante = document.getElementById("fabNovoRegistro");
+      const podeAbrir = ROLE === "ADMIN" || (ROLE === "COMPRAS" && ["DOACAO", "FEIJOADA", "MERCADINHO", "EJC"].includes(abaAtiva));
+      botaoFlutuante.classList.toggle("hidden", !podeAbrir);
 
       filtroUniversal = "TODOS";
       atualizarBotoesFiltro();
 
-      const botaoFlutuante = document.getElementById("fabNovoRegistro");
-      const podeAbrir =
-        ROLE === "ADMIN" ||
-        (ROLE === "COMPRAS" && ["DOACAO", "FEIJOADA", "MERCADINHO", "EJC"].includes(abaAtiva));
+      if (abaAtiva === 'DOACAO' && ROLE === 'ADMIN') await carregarMetasAdmin();
 
-      botaoFlutuante.classList.toggle("hidden", !podeAbrir);
-
-      if (adminGerenciaDoacao) await carregarMetasAdmin();
+      await carregarDashboard();
       await carregarDados();
     }
 
@@ -1081,13 +1166,10 @@
     async function carregarDados() {
       document.getElementById("loading").classList.remove("hidden");
 
-      let query = _supabase.from("transacoes").select("*").order("criado_em", { ascending: false });
-
-      if (abaAtiva !== "ADMIN") {
-        query = query.eq("modulo", abaAtiva);
-      }
-
-      const { data, error } = await query;
+      const { data, error } = await _supabase
+        .from("transacoes")
+        .select("*")
+        .order("criado_em", { ascending: false });
 
       if (error) {
         console.error(error);
@@ -1098,10 +1180,14 @@
       }
 
       dadosCache = data || [];
-      atualizarStats();
+      
+      if (['ADMIN', 'EJC', 'MERCADINHO'].includes(abaAtiva)) {
+        carregarDashboard();
+      }
+      
       renderizarGraficoEquipes();
       renderizarLembreteCobranca();
-      renderizarPainelFeijoada();
+      if (abaAtiva === 'FEIJOADA') renderizarPainelFeijoada();
       renderizar();
       document.getElementById("loading").classList.add("hidden");
     }
@@ -1123,29 +1209,43 @@
       requestAnimationFrame(passo);
     }
 
-    function atualizarStats() {
-      let rec = 0, pen = 0, sai = 0;
+    async function carregarDashboard() {
+      if (!['ADMIN', 'EJC', 'MERCADINHO'].includes(abaAtiva)) return;
 
-      dadosCache.forEach(i => {
-        if (i.status === "CANCELADO") return;
-        if (i.modulo === "DOACAO") return;
-        if (abaAtiva === "ADMIN" && i.modulo === "FEIJOADA") return;
+      let entradasPagas = 0;
+      let fiadoTotal = 0;
+      let saidasPagas = 0;
+      let entradasEJC = 0;
+      let saidasEJC = 0;
 
-        const v = Number(i.valor || 0);
-        if (i.natureza === "SAIDA") sai += v;
-        else if (i.status === "PENDENTE") pen += v;
-        else if (i.status === "PAGO") rec += v;
+      (dadosCache || []).forEach((t) => {
+        if (t.status === 'CANCELADO') return;
+        const v = Number(t.valor) || 0;
+
+        if (t.natureza === 'ENTRADA' && t.status === 'PAGO') {
+          entradasPagas += v;
+          if (t.modulo === 'EJC') entradasEJC += v;
+        }
+
+        if (t.status === 'PENDENTE' && (t.modulo === 'MERCADINHO' || t.modulo === 'FEIJOADA')) {
+          fiadoTotal += v;
+        }
+
+        if (t.natureza === 'SAIDA' && t.status === 'PAGO') {
+          saidasPagas += v;
+          if (t.modulo === 'EJC') saidasEJC += v;
+        }
       });
 
-      animarNumeroMoeda(document.getElementById("totalRecebido"), rec);
-      animarNumeroMoeda(document.getElementById("totalPendente"), pen);
-      animarNumeroMoeda(document.getElementById("totalSaidas"), sai);
-      animarNumeroMoeda(document.getElementById("totalLiquido"), rec - sai);
+      const saldoCaixaEJC = entradasEJC - saidasEJC;
+
+      animarNumeroMoeda(document.getElementById('totalRecebido'), entradasPagas);
+      animarNumeroMoeda(document.getElementById('totalPendente'), fiadoTotal);
+      animarNumeroMoeda(document.getElementById('totalSaidas'), saidasPagas);
+      animarNumeroMoeda(document.getElementById('totalLiquido'), saldoCaixaEJC);
     }
 
     function renderizarPainelFeijoada() {
-      if (abaAtiva !== "FEIJOADA") return;
-
       const registrosFeijoada = (dadosCache || []).filter(r => r.modulo === "FEIJOADA");
 
       let qtdVouchersPagos = 0;
@@ -1332,6 +1432,99 @@
     function fecharFilaCobranca() {
       document.getElementById("modalFilaCobranca").classList.add("hidden");
       document.getElementById("modalFilaCobranca").classList.remove("flex");
+    }
+
+    function abrirPixExperimental() {
+      const payload = "00020101021126580014br.gov.bcb.pix01367f085741-20ab-4d72-9feb-4ab4916ade845204000053039865802BR5923Rafael Andrade Do Santo6009SAO PAULO61080131010062070503***63046F32";
+      window.location.href = "pix://" + encodeURIComponent(payload);
+      setTimeout(() => {
+        window.open("https://www.bcb.gov.br/estabilidadefinanceira/pix", "_blank");
+      }, 800);
+    }
+
+    function abrirModalTransferenciaEJC() {
+      if (abaAtiva !== 'MERCADINHO' && abaAtiva !== 'FEIJOADA') {
+        showToast('Abra o Mercadinho ou Feijoada para registrar a transferência.', 'error');
+        return;
+      }
+      document.getElementById('tx_responsavel').value = currentProfile?.nome || "";
+      const el = document.getElementById('modalTransferenciaEJC');
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+    }
+
+    function fecharModalTransferenciaEJC() {
+      const el = document.getElementById('modalTransferenciaEJC');
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    }
+
+    async function confirmarTransferenciaEJC() {
+      const origemModulo = abaAtiva; 
+
+      const valorStr = document.getElementById('tx_valor').value;
+      const valor = parseNumeroFlex(valorStr); 
+
+      const dataStr = document.getElementById('tx_data').value;
+      const dataISO = dataStr ? `${dataStr}T12:00:00` : agoraISO();
+
+      const responsavel = limparTexto(document.getElementById('tx_responsavel').value);
+
+      if (!valor || valor <= 0) {
+        showToast('Informe um valor válido.', 'error');
+        return;
+      }
+      if (!responsavel) {
+        showToast('Informe quem realizou a transferência.', 'error');
+        return;
+      }
+
+      const ok = confirm(`Confirmar transferência de ${formatarMoeda(valor)} do ${origemModulo} para o Caixa EJC?`);
+      if (!ok) return;
+
+      const { error } = await _supabase
+        .from('transacoes')
+        .insert([
+          {
+            modulo: origemModulo,
+            descricao: 'Transferência para Caixa EJC',
+            quantidade: 1,
+            valor: valor,
+            natureza: 'SAIDA',
+            status: 'PAGO',
+            forma_pagamento: 'TRANSF_INTERNA',
+            nome_pessoa: '',
+            equipe: '',
+            telefone: '',
+            recebido_por: responsavel,
+            recebido_em: dataISO,
+            criado_em: agoraISO()
+          },
+          {
+            modulo: 'EJC',
+            descricao: `Transferência vinda de ${origemModulo}`,
+            quantidade: 1,
+            valor: valor,
+            natureza: 'ENTRADA',
+            status: 'PAGO',
+            forma_pagamento: 'TRANSF_INTERNA',
+            nome_pessoa: '',
+            equipe: '',
+            telefone: '',
+            recebido_por: responsavel,
+            recebido_em: dataISO,
+            criado_em: agoraISO()
+          }
+        ]);
+
+      if (error) {
+        console.error(error);
+        showToast('Erro ao registrar transferência.', 'error');
+      } else {
+        showToast('Transferência registada no Caixa EJC.', 'success');
+        fecharModalTransferenciaEJC();
+        await carregarDados();
+      }
     }
 
     function renderizarGraficoEquipes() {
@@ -1523,6 +1716,10 @@
           (i.status || "")
         ).toLowerCase().includes(busca)
       );
+
+      if (abaAtiva !== "ADMIN") {
+        filtrados = filtrados.filter(i => i.modulo === abaAtiva);
+      }
 
       if (filtroUniversal === "PAGO") {
         filtrados = filtrados.filter(i => i.status === "PAGO");
@@ -2335,4 +2532,3 @@
   </script>
 </body>
 </html>
-
