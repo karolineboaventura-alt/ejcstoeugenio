@@ -417,7 +417,7 @@
             <option value="MERCADINHO">Mercadinho</option>
             <option value="FEIJOADA">Feijoada</option>
             <option value="DOACAO">Providência</option>
-            <option value="GERAL">Outros</option>
+            <option value="ADMIN">Outros</option>
           </select>
         </div>
 
@@ -801,76 +801,80 @@
     }
 
     function montarPayloadTransacao() {
-      const modulo = abaAtiva === "ADMIN"
-        ? document.getElementById("f_modulo").value
-        : abaAtiva;
+  const modulo = abaAtiva === "ADMIN"
+    ? document.getElementById("f_modulo").value
+    : abaAtiva;
 
-      const tipoSelecionado = document.getElementById("f_type").value;
-      const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
-      const descricaoBase = limparTexto(document.getElementById("f_desc").value);
-      const valorCampo = document.getElementById("f_val").value;
-      const nomePessoa = limparTexto(document.getElementById("f_nome").value);
-      const telefone = normalizarTelefone(document.getElementById("f_tel").value);
-      const recebidoPor = limparTexto(document.getElementById("f_recebido").value);
-      const formaPagamento = document.getElementById("f_forma").value;
-      const equipe = obterEquipeDoFormulario(modulo);
+  const tipoSelecionado = document.getElementById("f_type").value;
+  const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
+  const descricaoBase = limparTexto(document.getElementById("f_desc").value);
+  const valorCampo = document.getElementById("f_val").value;
+  const nomePessoa = limparTexto(document.getElementById("f_nome").value);
+  const telefone = normalizarTelefone(document.getElementById("f_tel").value);
+  const recebidoPor = limparTexto(document.getElementById("f_recebido").value);
+  const formaPagamento = document.getElementById("f_forma").value;
+  const equipe = obterEquipeDoFormulario(modulo);
 
-      if (!descricaoBase) throw new Error("Informe a descrição.");
-      if (!recebidoPor) throw new Error("Informe quem está lançando.");
+  if (!descricaoBase) throw new Error("Informe a descrição.");
+  if (!recebidoPor) throw new Error("Informe quem está lançando.");
 
-      let quantidade = 1;
-      let valor = 0;
+  let quantidade = 1;
+  let valor = 0;
 
-      if (modulo === "DOACAO") {
-        quantidade = parseInteiroSeguro(valorCampo);
-        valor = 0;
+  if (modulo === "DOACAO") {
+    quantidade = parseInteiroSeguro(valorCampo);
+    valor = 0;
 
-        if (quantidade <= 0) throw new Error("Informe uma quantidade válida.");
-        if (!equipe) throw new Error("Selecione a equipe do responsável.");
+    if (quantidade <= 0) throw new Error("Informe uma quantidade válida.");
+    if (!equipe) throw new Error("Selecione a equipe do responsável.");
 
-        const dataEntrega = document.getElementById("f_data_entrega").value;
-        if (!dataEntrega) throw new Error("Informe a data prevista de entrega.");
-      } else if (modulo === "FEIJOADA" && tipoFeijoada === "VOUCHER") {
-        quantidade = parseInteiroSeguro(valorCampo);
-        valor = quantidade * PRECO_VOUCHER_FEIJOADA;
+    const dataEntrega = document.getElementById("f_data_entrega").value;
+    if (!dataEntrega) throw new Error("Informe a data prevista de entrega.");
+    
+  } else if (modulo === "FEIJOADA" && tipoFeijoada === "VOUCHER") {
+    quantidade = parseInteiroSeguro(valorCampo);
+    valor = quantidade * PRECO_VOUCHER_FEIJOADA; // Multiplica pela constante de R$ 55
 
-        if (quantidade <= 0) throw new Error("Informe uma quantidade válida de vouchers.");
-        if (!equipe) throw new Error("Selecione a equipe responsável.");
-      } else {
-        valor = parseNumeroFlex(valorCampo);
-        quantidade = 1;
+    if (quantidade <= 0) throw new Error("Informe uma quantidade válida de vouchers.");
+    if (!equipe) throw new Error("Selecione a equipe responsável.");
+    
+  } else {
+    valor = parseNumeroFlex(valorCampo);
+    quantidade = 1;
 
-        if (valor <= 0) throw new Error("Informe um valor válido.");
+    if (valor <= 0) throw new Error("Informe um valor válido.");
 
-        if ((modulo === "FEIJOADA" || modulo === "DOACAO") && !equipe) {
-          throw new Error("Selecione a equipe responsável.");
-        }
-      }
-
-      const { natureza, status } = calcularStatusENatureza(modulo, tipoSelecionado, tipoFeijoada);
-
-      const payload = {
-        modulo,
-        descricao: montarDescricaoFinal(modulo, descricaoBase, tipoFeijoada),
-        quantidade,
-        valor,
-        natureza,
-        status,
-        forma_pagamento: formaPagamento,
-        nome_pessoa: nomePessoa,
-        equipe,
-        telefone,
-        recebido_por: recebidoPor,
-        user_id: currentUser.id,
-        recebido_em: status === "PAGO" ? agoraISO() : null
-      };
-
-      if (modulo === "DOACAO") {
-        payload.data_entrega = document.getElementById("f_data_entrega").value;
-      }
-
-      return payload;
+    if ((modulo === "FEIJOADA" || modulo === "DOACAO") && !equipe) {
+      throw new Error("Selecione a equipe responsável.");
     }
+  }
+
+  const { natureza, status } = calcularStatusENatureza(modulo, tipoSelecionado, tipoFeijoada);
+
+  // Monta o objeto final que vai direto para o Supabase
+  const payload = {
+    modulo,
+    descricao: montarDescricaoFinal(modulo, descricaoBase, tipoFeijoada),
+    quantidade,
+    valor,
+    natureza,
+    status,
+    forma_pagamento: formaPagamento,
+    nome_pessoa: nomePessoa,
+    equipe,
+    telefone,
+    recebido_por: recebidoPor,
+    user_id: currentUser.id,
+    recebido_em: status === "PAGO" ? agoraISO() : null
+  };
+
+  // Se for doação, anexa a data de entrega
+  if (modulo === "DOACAO") {
+    payload.data_entrega = document.getElementById("f_data_entrega").value;
+  }
+
+  return payload;
+}
     // --- FIM FUNÇÕES DE NORMALIZAÇÃO ---
 
     function isVoucherFeijoada(desc = "") { return String(desc || "").startsWith("[VOUCHER]"); }
@@ -891,9 +895,38 @@
     function podeEditarProvidencia() { return ROLE === "ADMIN"; }
     function podeUsarModalRecebimento() { return (ROLE === "ADMIN" || ROLE === "COMPRAS") && ["DOACAO", "MERCADINHO", "EJC", "FEIJOADA"].includes(abaAtiva); }
     
-    function isDiaDeCobrancaDetalhada() {
+    function getDatasEJC() {
+      return {
+        inicio: new Date('2026-07-10T00:00:00'),
+        domingo: new Date('2026-07-12T00:00:00'),
+        fim: new Date('2026-07-12T23:59:59')
+      };
+    }
+
+    function isAntesDoEJC() {
       const hoje = new Date();
-      return hoje.getFullYear() === 2026 && (hoje.getMonth() + 1) === 7 && hoje.getDate() >= 12;
+      const { inicio } = getDatasEJC();
+      return hoje < inicio;
+    }
+
+    function isDuranteOEJC() {
+      const hoje = new Date();
+      const { inicio, fim } = getDatasEJC();
+      return hoje >= inicio && hoje <= fim;
+    }
+
+    function isDomingoDoEJC() {
+      const hoje = new Date();
+      const { domingo } = getDatasEJC();
+      return (
+        hoje.getFullYear() === domingo.getFullYear() &&
+        hoje.getMonth() === domingo.getMonth() &&
+        hoje.getDate() === domingo.getDate()
+      );
+    }
+
+    function isDiaDeCobrancaDetalhada() {
+      return isDomingoDoEJC();
     }
 
     function escolherPerfil(p) {
@@ -982,7 +1015,7 @@
         document.getElementById("headerTitle").innerText = "EJC BANK • PILOTOS";
         abaAtiva = "ADMIN";
       } else if (ROLE === "COMPRAS") {
-        document.querySelectorAll("#tab-feijoada, #tab-doacao").forEach(el => el.classList.remove("hidden"));
+        document.querySelectorAll("#tab-feijoada, #tab-doacao, #tab-mercadinho, #tab-ejc").forEach(el => el.classList.remove("hidden"));
         document.getElementById("headerTitle").innerText = "EJC BANK • COMPRAS";
         abaAtiva = "DOACAO";
       } else {
@@ -1022,7 +1055,7 @@
       const botaoFlutuante = document.getElementById("fabNovoRegistro");
       const podeAbrir =
         ROLE === "ADMIN" ||
-        (ROLE === "COMPRAS" && ["DOACAO", "FEIJOADA"].includes(abaAtiva));
+        (ROLE === "COMPRAS" && ["DOACAO", "FEIJOADA", "MERCADINHO", "EJC"].includes(abaAtiva));
 
       botaoFlutuante.classList.toggle("hidden", !podeAbrir);
 
@@ -1303,43 +1336,109 @@
       const wrap = document.getElementById("lembreteCobranca");
       if (!wrap) return;
 
-      const pendencias = dadosCache.filter(i => i.status === "PENDENTE" && i.telefone);
-      const total = pendencias.reduce((acc, i) => acc + Number(i.valor || 0), 0);
+      let pendencias = [];
 
-      if (!pendencias.length || !["EJC", "MERCADINHO", "ADMIN"].includes(abaAtiva)) {
+      if (abaAtiva === "MERCADINHO") {
+        pendencias = dadosCache.filter(i => i.status === "PENDENTE" && i.telefone);
+      } else if (abaAtiva === "EJC") {
+        if (!isDuranteOEJC()) {
+          wrap.classList.add("hidden");
+          wrap.innerHTML = "";
+          return;
+        }
+        pendencias = dadosCache.filter(i => i.status === "PENDENTE" && i.telefone);
+      } else if (abaAtiva === "ADMIN") {
+        if (isAntesDoEJC()) {
+          pendencias = dadosCache.filter(i =>
+            i.status === "PENDENTE" &&
+            i.telefone &&
+            i.modulo === "MERCADINHO"
+          );
+        } else {
+          pendencias = dadosCache.filter(i =>
+            i.status === "PENDENTE" &&
+            i.telefone &&
+            ["MERCADINHO", "EJC"].includes(i.modulo)
+          );
+        }
+      } else {
         wrap.classList.add("hidden");
         wrap.innerHTML = "";
         return;
       }
 
+      const total = pendencias.reduce((acc, i) => acc + Number(i.valor || 0), 0);
+
+      if (!pendencias.length) {
+        wrap.classList.add("hidden");
+        wrap.innerHTML = "";
+        return;
+      }
+
+      const titulo = isDomingoDoEJC()
+        ? `Hoje é dia de fechamento: existem ${pendencias.length} pendências`
+        : `Existem ${pendencias.length} pendências em aberto`;
+
+      const subtitulo = isDomingoDoEJC()
+        ? `Total para cobrar hoje: ${formatarMoeda(total)}`
+        : `Total atual: ${formatarMoeda(total)}`;
+
       wrap.classList.remove("hidden");
       wrap.innerHTML = `
-        <div class="bg-amber-50 border border-amber-200 rounded-[26px] p-5 shadow-sm">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <p class="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-1">Lembrete automático</p>
-              <h3 class="text-lg font-black text-slate-800">Existem ${pendencias.length} pendências em aberto</h3>
-              <p class="text-sm text-slate-600 mt-1">Total atual: <span class="font-extrabold text-amber-700">${formatarMoeda(total)}</span></p>
-            </div>
-            <button onclick="abrirPainelCobrancaRapida()" class="bg-slate-900 text-white px-4 py-3 rounded-xl font-bold text-sm">
-              Cobrar agora
-            </button>
+      <div class="bg-amber-50 border border-amber-200 rounded-[26px] p-5 shadow-sm">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-1">
+              ${isDomingoDoEJC() ? "Alerta de fechamento" : "Lembrete automático"}
+            </p>
+            <h3 class="text-lg font-black text-slate-800">${titulo}</h3>
+            <p class="text-sm text-slate-600 mt-1">
+              <span class="font-extrabold text-amber-700">${subtitulo}</span>
+            </p>
           </div>
+          <button onclick="abrirPainelCobrancaRapida()" class="bg-slate-900 text-white px-4 py-3 rounded-xl font-bold text-sm">
+            Cobrar agora
+          </button>
         </div>
-      `;
+      </div>`;
     }
 
     function abrirPainelCobrancaRapida() {
+      let base = [];
+
+      if (abaAtiva === "MERCADINHO") {
+        base = dadosCache.filter(i => i.status === "PENDENTE" && i.telefone);
+      } else if (abaAtiva === "EJC") {
+        if (!isDuranteOEJC()) {
+          return showToast("As cobranças do EJC só ficam ativas durante o encontro.", "error");
+        }
+        base = dadosCache.filter(i => i.status === "PENDENTE" && i.telefone);
+      } else if (abaAtiva === "ADMIN") {
+        if (isAntesDoEJC()) {
+          base = dadosCache.filter(i =>
+            i.status === "PENDENTE" &&
+            i.telefone &&
+            i.modulo === "MERCADINHO"
+          );
+        } else {
+          base = dadosCache.filter(i =>
+            i.status === "PENDENTE" &&
+            i.telefone &&
+            ["MERCADINHO", "EJC"].includes(i.modulo)
+          );
+        }
+      } else {
+        return showToast("Sem cobrança rápida nesta aba.", "error");
+      }
+
       const pendencias = {};
-      dadosCache
-        .filter(i => i.status === "PENDENTE" && i.telefone)
-        .forEach(i => {
-          const tel = normalizarTelefone(i.telefone);
-          if (!pendencias[tel]) {
-            pendencias[tel] = { nome: i.nome_pessoa || "Irmão(ã)", telefone: tel, total: 0 };
-          }
-          pendencias[tel].total += Number(i.valor || 0);
-        });
+      base.forEach(i => {
+        const tel = normalizarTelefone(i.telefone);
+        if (!pendencias[tel]) {
+          pendencias[tel] = { nome: i.nome_pessoa || "Irmão(ã)", telefone: tel, total: 0 };
+        }
+        pendencias[tel].total += Number(i.valor || 0);
+      });
 
       const lista = Object.values(pendencias).sort((a, b) => b.total - a.total);
       if (!lista.length) return showToast("Sem pendências para cobrar.");
@@ -1348,279 +1447,43 @@
       cobrarZapResumoInteligente(primeira.telefone, primeira.nome);
     }
 
-    function renderizar() {  
-  const tb = document.getElementById("corpoTabela");  
-  const busca = document.getElementById("campoBusca").value.toLowerCase();  
-
-  const hoje = new Date();  
-  hoje.setHours(0,0,0,0);  
-  const hojeTempo = hoje.getTime();  
-
-  let filtrados = dadosCache.filter(i =>  
-    (  
-      (i.descricao || "") + " " +  
-      (i.nome_pessoa || "") + " " +  
-      (i.equipe || "") + " " +  
-      (i.telefone || "") + " " +  
-      (i.data_entrega || "") + " " +  
-      (i.recebido_em || "") + " " +  
-      (i.recebido_por || "") + " " +  
-      (i.status || "")  
-    ).toLowerCase().includes(busca)  
-  );  
-
-  if (filtroUniversal === "PAGO") {  
-    filtrados = filtrados.filter(i => i.status === "PAGO");  
-  } else if (filtroUniversal === "ATRASADO") {  
-    filtrados = filtrados.filter(i => {  
-      if (i.status !== "PENDENTE" || !i.data_entrega) return false;  
-      const entrega = new Date(i.data_entrega + "T00:00:00").getTime();  
-      return entrega < hojeTempo;  
-    });  
-  } else if (filtroUniversal === "PENDENTE") {  
-    filtrados = filtrados.filter(i => i.status === "PENDENTE");  
-  } else if (filtroUniversal === "CANCELADO") {  
-    filtrados = filtrados.filter(i => i.status === "CANCELADO");  
-  }  
-
-  if (!filtrados.length) {  
-    tb.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">Nenhum registro encontrado.</td></tr>';  
-    return;  
-  }  
-
-  tb.innerHTML = filtrados.map(i => {  
-    const qtd = Number(i.quantidade || 1);  
-    const nome = esc(i.nome_pessoa || "Sem nome");  
-    const equipe = esc(i.equipe || "Sem equipe");  
-    const telefone = i.telefone || "";  
-    const item = esc(limparPrefixoDescricao(i.descricao || "-"));  
-    const valor = Number(i.valor || 0);  
-
-    const isAtrasado = i.status === "PENDENTE" && i.data_entrega  
-      ? new Date(i.data_entrega + "T00:00:00").getTime() < hojeTempo  
-      : false;  
-
-    let statusBadge = "";  
-    if (i.status === "PAGO") {  
-      statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700">PAGO</span>`;  
-    } else if (i.status === "CANCELADO") {  
-      statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-700">CANCELADO</span>`;  
-    } else if (isAtrasado) {  
-      statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-rose-100 text-rose-700">ATRASADO</span>`;  
-    } else {  
-      statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-amber-100 text-amber-700">PENDENTE</span>`;  
-    }  
-
-    const botaoReceber = (  
-      ((abaAtiva === "DOACAO" && podeOperarProvidencia()) || (["EJC","MERCADINHO","FEIJOADA"].includes(abaAtiva) && podeUsarModalRecebimento()))  
-      && i.status === "PENDENTE"  
-    )  
-      ? `<button onclick="abrirModalRecebimento('${i.id}', ${i.version || 0})" class="action-btn bg-purple-700 text-white shadow-lg" title="Dar baixa"><i class="fas fa-check text-xs"></i></button>`  
-      : "";  
-
-    const botaoCancelar = (["DOACAO", "FEIJOADA"].includes(abaAtiva) && podeOperarProvidencia() && i.status === "PENDENTE")  
-      ? `<button onclick="cancelarRegistro('${i.id}', ${i.version || 0})" class="action-btn bg-rose-50 text-rose-600 shadow-sm hover:bg-rose-100" title="Cancelar"><i class="fas fa-ban text-xs"></i></button>`  
-      : "";  
-
-    const botaoEditar = (ROLE === "ADMIN")  
-      ? `<button onclick="editarRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Editar"><i class="fas fa-pen text-xs"></i></button>`  
-      : "";  
-
-    // AQUI ESTÁ A CORREÇÃO PRINCIPAL
-    const botaoZap = (i.status === "PENDENTE" && telefone)  
-      ? `<button onclick="cobrarZapDoRegistro('${i.id}')" class="action-btn bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100" title="Cobrar no WhatsApp"><i class="fab fa-whatsapp"></i></button>`  
-      : "";  
-
-    // AQUI ESTÁ A SEGUNDA CORREÇÃO
-    const botaoExtrato = telefone  
-      ? `<button onclick="abrirExtratoDoRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Extrato"><i class="fas fa-file-invoice"></i></button>`  
-      : "";  
-
-    let subtitulo = `Qtd: <span class="font-bold">${qtd}</span>`;  
-    if (valor > 0) subtitulo += ` • Total: <span class="font-bold">${formatarMoeda(valor)}</span>`;  
-
-    if (abaAtiva === "FEIJOADA") {  
-      let tipoFeijoada = "";  
-      if (isVoucherFeijoada(i.descricao)) tipoFeijoada = "Voucher";  
-      else if (isMercadoFeijoada(i.descricao)) tipoFeijoada = "Mercado";  
-      else if (isOutraEntradaFeijoada(i.descricao)) tipoFeijoada = "Outra entrada";  
-      else if (isOutraSaidaFeijoada(i.descricao)) tipoFeijoada = "Outra saída";  
-      subtitulo += tipoFeijoada ? ` • ${tipoFeijoada}` : "";  
-    }  
-
-    return `  
-      <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-colors">  
-        <td class="p-6">  
-          <p class="text-sm font-bold text-slate-900">${item}</p>  
-          <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">${nome} • ${equipe}</p>  
-          <p class="text-[10px] text-slate-500 mt-1">${subtitulo}</p>  
-          <p class="text-[10px] text-slate-400 mt-1">  
-            ${i.data_entrega ? `Entrega: ${formatarData(i.data_entrega)} • ` : ""}  
-            ${i.recebido_em ? `Recebido: ${formatarData(i.recebido_em)}` : "Ainda não recebido"}  
-            ${i.recebido_por ? ` • por ${esc(i.recebido_por)}` : ""}  
-          </p>  
-        </td>  
-        <td class="p-6 text-right">  
-          <div class="flex justify-end items-center gap-2 flex-wrap">  
-            ${statusBadge}  
-            ${botaoReceber}  
-            ${botaoZap}  
-            ${botaoExtrato}  
-            ${botaoEditar}  
-            ${botaoCancelar}  
-          </div>  
-        </td>  
-      </tr>  
-    `;  
-  }).join("");  
-}
-function renderizar() {  
-  const tb = document.getElementById("corpoTabela");  
-  const busca = document.getElementById("campoBusca").value.toLowerCase();  
-
-  const hoje = new Date();  
-  hoje.setHours(0,0,0,0);  
-  const hojeTempo = hoje.getTime();  
-
-  let filtrados = dadosCache.filter(i =>  
-    (  
-      (i.descricao || "") + " " +  
-      (i.nome_pessoa || "") + " " +  
-      (i.equipe || "") + " " +  
-      (i.telefone || "") + " " +  
-      (i.data_entrega || "") + " " +  
-      (i.recebido_em || "") + " " +  
-      (i.recebido_por || "") + " " +  
-      (i.status || "")  
-    ).toLowerCase().includes(busca)  
-  );  
-
-  if (filtroUniversal === "PAGO") {  
-    filtrados = filtrados.filter(i => i.status === "PAGO");  
-  } else if (filtroUniversal === "ATRASADO") {  
-    filtrados = filtrados.filter(i => {  
-      if (i.status !== "PENDENTE" || !i.data_entrega) return false;  
-      const entrega = new Date(i.data_entrega + "T00:00:00").getTime();  
-      return entrega < hojeTempo;  
-    });  
-  } else if (filtroUniversal === "PENDENTE") {  
-    filtrados = filtrados.filter(i => i.status === "PENDENTE");  
-  } else if (filtroUniversal === "CANCELADO") {  
-    filtrados = filtrados.filter(i => i.status === "CANCELADO");  
-  }  
-
-  if (!filtrados.length) {  
-    tb.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">Nenhum registro encontrado.</td></tr>';  
-    return;  
-  }  
-
-  tb.innerHTML = filtrados.map(i => {  
-    const qtd = Number(i.quantidade || 1);  
-    const nome = esc(i.nome_pessoa || "Sem nome");  
-    const equipe = esc(i.equipe || "Sem equipe");  
-    const telefone = i.telefone || "";  
-    const item = esc(limparPrefixoDescricao(i.descricao || "-"));  
-    const valor = Number(i.valor || 0);  
-
-    const isAtrasado = i.status === "PENDENTE" && i.data_entrega  
-      ? new Date(i.data_entrega + "T00:00:00").getTime() < hojeTempo  
-      : false;  
-
-    let statusBadge = "";  
-    if (i.status === "PAGO") {  
-      statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700">PAGO</span>`;  
-    } else if (i.status === "CANCELADO") {  
-      statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-700">CANCELADO</span>`;  
-    } else if (isAtrasado) {  
-      statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-rose-100 text-rose-700">ATRASADO</span>`;  
-    } else {  
-      statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-amber-100 text-amber-700">PENDENTE</span>`;  
-    }  
-
-    const botaoReceber = (  
-      ((abaAtiva === "DOACAO" && podeOperarProvidencia()) || (["EJC","MERCADINHO","FEIJOADA"].includes(abaAtiva) && podeUsarModalRecebimento()))  
-      && i.status === "PENDENTE"  
-    )  
-      ? `<button onclick="abrirModalRecebimento('${i.id}', ${i.version || 0})" class="action-btn bg-purple-700 text-white shadow-lg" title="Dar baixa"><i class="fas fa-check text-xs"></i></button>`  
-      : "";  
-
-    const botaoCancelar = (["DOACAO", "FEIJOADA"].includes(abaAtiva) && podeOperarProvidencia() && i.status === "PENDENTE")  
-      ? `<button onclick="cancelarRegistro('${i.id}', ${i.version || 0})" class="action-btn bg-rose-50 text-rose-600 shadow-sm hover:bg-rose-100" title="Cancelar"><i class="fas fa-ban text-xs"></i></button>`  
-      : "";  
-
-    const botaoEditar = (ROLE === "ADMIN")  
-      ? `<button onclick="editarRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Editar"><i class="fas fa-pen text-xs"></i></button>`  
-      : "";  
-
-    // AQUI ESTÁ A CORREÇÃO PRINCIPAL
-    const botaoZap = (i.status === "PENDENTE" && telefone)  
-      ? `<button onclick="cobrarZapDoRegistro('${i.id}')" class="action-btn bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100" title="Cobrar no WhatsApp"><i class="fab fa-whatsapp"></i></button>`  
-      : "";  
-
-    // AQUI ESTÁ A SEGUNDA CORREÇÃO
-    const botaoExtrato = telefone  
-      ? `<button onclick="abrirExtratoDoRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Extrato"><i class="fas fa-file-invoice"></i></button>`  
-      : "";  
-
-    let subtitulo = `Qtd: <span class="font-bold">${qtd}</span>`;  
-    if (valor > 0) subtitulo += ` • Total: <span class="font-bold">${formatarMoeda(valor)}</span>`;  
-
-    if (abaAtiva === "FEIJOADA") {  
-      let tipoFeijoada = "";  
-      if (isVoucherFeijoada(i.descricao)) tipoFeijoada = "Voucher";  
-      else if (isMercadoFeijoada(i.descricao)) tipoFeijoada = "Mercado";  
-      else if (isOutraEntradaFeijoada(i.descricao)) tipoFeijoada = "Outra entrada";  
-      else if (isOutraSaidaFeijoada(i.descricao)) tipoFeijoada = "Outra saída";  
-      subtitulo += tipoFeijoada ? ` • ${tipoFeijoada}` : "";  
-    }  
-
-    return `  
-      <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-colors">  
-        <td class="p-6">  
-          <p class="text-sm font-bold text-slate-900">${item}</p>  
-          <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">${nome} • ${equipe}</p>  
-          <p class="text-[10px] text-slate-500 mt-1">${subtitulo}</p>  
-          <p class="text-[10px] text-slate-400 mt-1">  
-            ${i.data_entrega ? `Entrega: ${formatarData(i.data_entrega)} • ` : ""}  
-            ${i.recebido_em ? `Recebido: ${formatarData(i.recebido_em)}` : "Ainda não recebido"}  
-            ${i.recebido_por ? ` • por ${esc(i.recebido_por)}` : ""}  
-          </p>  
-        </td>  
-        <td class="p-6 text-right">  
-          <div class="flex justify-end items-center gap-2 flex-wrap">  
-            ${statusBadge}  
-            ${botaoReceber}  
-            ${botaoZap}  
-            ${botaoExtrato}  
-            ${botaoEditar}  
-            ${botaoCancelar}  
-          </div>  
-        </td>  
-      </tr>  
-    `;  
-  }).join("");  
-}
-
     function cobrarZapDoRegistro(id) {
-  const reg = dadosCache.find(r => r.id === id);
-  if (!reg) return;
-  
-  const qtd = Number(reg.quantidade || 1);
-  if (abaAtiva === "DOACAO") {
-    cobrarZapPromessa(reg.telefone, reg.nome_pessoa, limparPrefixoDescricao(reg.descricao), qtd);
-  } else {
-    cobrarZapResumoInteligente(reg.telefone, reg.nome_pessoa);
-  }
-}
+      const reg = dadosCache.find(r => r.id === id);
+      if (!reg) return;
+      const qtd = Number(reg.quantidade || 1);
+      if (abaAtiva === "DOACAO") {
+        cobrarZapPromessa(reg.telefone, reg.nome_pessoa, limparPrefixoDescricao(reg.descricao), qtd);
+      } else {
+        cobrarZapResumoInteligente(reg.telefone, reg.nome_pessoa);
+      }
+    }
 
-function abrirExtratoDoRegistro(id) {
-  const reg = dadosCache.find(r => r.id === id);
-  if (!reg) return;
-  abrirExtrato(reg.telefone, reg.nome_pessoa, reg.equipe);
-}
+    function abrirExtratoDoRegistro(id) {
+      const reg = dadosCache.find(r => r.id === id);
+      if (!reg) return;
+      abrirExtrato(reg.telefone, reg.nome_pessoa, reg.equipe);
+    }
 
+    function renderizar() {
+      const tb = document.getElementById("corpoTabela");
+      const busca = document.getElementById("campoBusca").value.toLowerCase();
 
-    
+      const hoje = new Date();
+      hoje.setHours(0,0,0,0);
+      const hojeTempo = hoje.getTime();
+
+      let filtrados = dadosCache.filter(i =>
+        (
+          (i.descricao || "") + " " +
+          (i.nome_pessoa || "") + " " +
+          (i.equipe || "") + " " +
+          (i.telefone || "") + " " +
+          (i.data_entrega || "") + " " +
+          (i.recebido_em || "") + " " +
+          (i.recebido_por || "") + " " +
+          (i.status || "")
+        ).toLowerCase().includes(busca)
+      );
 
       if (filtroUniversal === "PAGO") {
         filtrados = filtrados.filter(i => i.status === "PAGO");
@@ -1680,14 +1543,11 @@ function abrirExtratoDoRegistro(id) {
           : "";
 
         const botaoZap = (i.status === "PENDENTE" && telefone)
-          ? `<button onclick="${abaAtiva === "DOACAO"
-              ? `cobrarZapPromessa('${telefone}', ${JSON.stringify(i.nome_pessoa || "")}, ${JSON.stringify(limparPrefixoDescricao(i.descricao || ""))}, ${qtd})`
-              : `cobrarZapResumoInteligente('${telefone}', ${JSON.stringify(i.nome_pessoa || "")})`
-            }" class="action-btn bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100" title="Cobrar no WhatsApp"><i class="fab fa-whatsapp"></i></button>`
+          ? `<button onclick="cobrarZapDoRegistro('${i.id}')" class="action-btn bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100" title="Cobrar no WhatsApp"><i class="fab fa-whatsapp"></i></button>`
           : "";
 
         const botaoExtrato = telefone
-          ? `<button onclick="abrirExtrato('${telefone}', ${JSON.stringify(i.nome_pessoa || "")}, ${JSON.stringify(i.equipe || "")})" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Extrato"><i class="fas fa-file-invoice"></i></button>`
+          ? `<button onclick="abrirExtratoDoRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Extrato"><i class="fas fa-file-invoice"></i></button>`
           : "";
 
         let subtitulo = `Qtd: <span class="font-bold">${qtd}</span>`;
@@ -2435,3 +2295,4 @@ function abrirExtratoDoRegistro(id) {
   </script>
 </body>
 </html>
+
