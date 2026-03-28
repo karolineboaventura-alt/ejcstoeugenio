@@ -312,6 +312,33 @@
       100% { box-shadow: 0 0 0 rgba(234,29,44,0); }
     }
 
+    /* ESTILOS PARA O MURAL ANIMADO (MARQUEE) */
+    .marquee-container {
+      max-height: 380px;
+      overflow: hidden;
+      position: relative;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+    }
+
+    .marquee-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      /* 40 segundos para dar a volta completa */
+      animation: scroll-vertical 40s linear infinite;
+    }
+
+    /* Pausa a animação se a pessoa colocar o dedo/rato por cima */
+    .marquee-content:hover, .marquee-content:active {
+      animation-play-state: paused;
+    }
+
+    @keyframes scroll-vertical {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
     @media (min-width: 640px) {
       .ifood-grid { grid-template-columns: 1fr 1fr; }
     }
@@ -514,7 +541,7 @@
         </button>
       </div>
 
-      <div id="listaMensagens" class="space-y-3">
+      <div id="listaMensagens" class="space-y-3 min-h-[90px]">
         <p class="text-xs text-slate-300">Carregando mural...</p>
       </div>
     </div>
@@ -589,11 +616,11 @@
         const min = Math.floor((diff / (1000 * 60)) % 60);
         const seg = Math.floor((diff / 1000) % 60);
 
-        // Ajuste blindado para adicionar os zeros (sem usar padStart que não funciona em cel antigo)
-        document.getElementById('cdDias').innerText = ('0' + dias).slice(-2);
-        document.getElementById('cdHoras').innerText = ('0' + horas).slice(-2);
-        document.getElementById('cdMin').innerText = ('0' + min).slice(-2);
-        document.getElementById('cdSeg').innerText = ('0' + seg).slice(-2);
+        // Ajuste corrigido para a contagem regressiva não cortar números grandes
+        document.getElementById('cdDias').innerText = dias < 10 ? '0' + dias : dias;
+        document.getElementById('cdHoras').innerText = horas < 10 ? '0' + horas : horas;
+        document.getElementById('cdMin').innerText = min < 10 ? '0' + min : min;
+        document.getElementById('cdSeg').innerText = seg < 10 ? '0' + seg : seg;
       }
 
       atualizar();
@@ -681,199 +708,188 @@
     }
 
     function gerarCardCompacto(itemData, destaque) {
-      return '' +
-        '<div class="section-card p-3">' +
-          '<div class="flex items-start justify-between gap-3 mb-3">' +
-            '<div>' +
-              '<p class="text-sm font-extrabold text-slate-800">' + esc(itemData.item) + '</p>' +
-              '<p class="text-[11px] text-slate-500 mt-1">Meta: ' + itemData.meta + ' ' + esc(itemData.unidade || "") + '</p>' +
-            '</div>' +
-            obterStatusBadge(itemData) +
-          '</div>' +
-          '<div class="grid grid-cols-3 gap-2 mb-3">' +
-            '<div class="mini-stat"><span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Prometido</span><strong class="text-amber-500">' + itemData.prometido + '</strong></div>' +
-            '<div class="mini-stat"><span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Entregue</span><strong class="text-emerald-500">' + itemData.entregue + '</strong></div>' +
-            '<div class="mini-stat"><span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Livre</span><strong class="text-rose-500">' + itemData.disponivelPrometer + '</strong></div>' +
-          '</div>' +
-          '<div class="progress-bar mb-3"><div class="progress-fill" style="width:' + itemData.percReal + '%"></div></div>' +
-          '<div class="flex items-center justify-between gap-3">' +
-            '<p class="text-[11px] text-slate-500">Falta real: <strong class="text-slate-700">' + itemData.faltandoReal + '</strong> ' + esc(itemData.unidade || "") + '</p>' +
-            (itemData.disponivelPrometer > 0 ? '<button type="button" onclick="selecionarItem(\'' + escJS(itemData.item) + '\')" class="choose-btn ' + (destaque ? 'primary' : 'secondary') + '">Escolher</button>' : '') +
-          '</div>' +
-        '</div>';
+      return `
+        <div class="section-card p-3">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <p class="text-sm font-extrabold text-slate-800">${esc(itemData.item)}</p>
+              <p class="text-[11px] text-slate-500 mt-1">Meta: ${itemData.meta} ${esc(itemData.unidade || "")}</p>
+            </div>
+            ${obterStatusBadge(itemData)}
+          </div>
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="mini-stat">
+              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Prometido</span>
+              <strong class="text-amber-500">${itemData.prometido}</strong>
+            </div>
+            <div class="mini-stat">
+              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Entregue</span>
+              <strong class="text-emerald-500">${itemData.entregue}</strong>
+            </div>
+            <div class="mini-stat">
+              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Livre</span>
+              <strong class="text-rose-500">${itemData.disponivelPrometer}</strong>
+            </div>
+          </div>
+          <div class="progress-bar mb-3">
+            <div class="progress-fill" style="width:${itemData.percReal}%"></div>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-[11px] text-slate-500">
+              Falta real: <strong class="text-slate-700">${itemData.faltandoReal}</strong> ${esc(itemData.unidade || "")}
+            </p>
+            ${itemData.disponivelPrometer > 0 ? `<button type="button" onclick="selecionarItem('${escJS(itemData.item)}')" class="choose-btn ${destaque ? 'primary' : 'secondary'}">Escolher</button>` : ''}
+          </div>
+        </div>
+      `;
     }
 
     function gerarCardUrgente(itemData) {
       const selecionado = document.getElementById("d_item").value === itemData.item;
-      return '' +
-        '<div class="ifood-card ' + (selecionado ? 'selected selected-glow' : '') + '" onclick="selecionarItem(\'' + escJS(itemData.item) + '\')">' +
-          '<div class="flex items-start justify-between gap-3 mb-3">' +
-            '<div>' +
-              '<div class="flex items-center gap-2 flex-wrap">' +
-                '<span class="ifood-badge danger">' + (prioridadesFixas.indexOf(itemData.item) !== -1 ? 'Urgente' : 'Disponível') + '</span>' +
-                '<span class="pill bg-slate-50 text-slate-600 border border-slate-200">' + esc(itemData.unidade || '') + '</span>' +
-              '</div>' +
-              '<p class="text-sm font-extrabold text-slate-800 mt-3 leading-tight">' + esc(itemData.item) + '</p>' +
-            '</div>' +
-            '<div class="text-right"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Falta prometer</p><p class="text-xl font-black text-[var(--ifood)]">' + itemData.disponivelPrometer + '</p></div>' +
-          '</div>' +
-          '<div class="grid grid-cols-3 gap-2 mb-3">' +
-            '<div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Meta</span><strong>' + itemData.meta + '</strong></div>' +
-            '<div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Prom.</span><strong class="text-amber-500">' + itemData.prometido + '</strong></div>' +
-            '<div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Entr.</span><strong class="text-emerald-500">' + itemData.entregue + '</strong></div>' +
-          '</div>' +
-          '<div class="progress-bar mb-3"><div class="progress-fill" style="width:' + itemData.percReal + '%"></div></div>' +
-          '<div class="flex items-center justify-between gap-3"><p class="text-[11px] text-slate-500">Progresso real: <strong class="text-slate-800">' + itemData.percReal + '%</strong></p><button type="button" class="choose-btn primary">Escolher</button></div>' +
-        '</div>';
+      return `
+        <div class="ifood-card ${selecionado ? 'selected selected-glow' : ''}" onclick="selecionarItem('${escJS(itemData.item)}')">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="ifood-badge danger">${prioridadesFixas.includes(itemData.item) ? 'Urgente' : 'Disponível'}</span>
+                <span class="pill bg-slate-50 text-slate-600 border border-slate-200">${esc(itemData.unidade || '')}</span>
+              </div>
+              <p class="text-sm font-extrabold text-slate-800 mt-3 leading-tight">${esc(itemData.item)}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Falta prometer</p>
+              <p class="text-xl font-black text-[var(--ifood)]">${itemData.disponivelPrometer}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Meta</span><strong>${itemData.meta}</strong></div>
+            <div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Prom.</span><strong class="text-amber-500">${itemData.prometido}</strong></div>
+            <div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Entr.</span><strong class="text-emerald-500">${itemData.entregue}</strong></div>
+          </div>
+          <div class="progress-bar mb-3">
+            <div class="progress-fill" style="width:${itemData.percReal}%"></div>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-[11px] text-slate-500">Progresso real: <strong class="text-slate-800">${itemData.percReal}%</strong></p>
+            <button type="button" class="choose-btn primary">Escolher</button>
+          </div>
+        </div>
+      `;
     }
 
     function renderizarUrgentes() {
       const wrap = document.getElementById("listaUrgentes");
-      const ativos = itensRenderizados.filter(function(i) { return i.disponivelPrometer > 0; });
+      const ativos = itensRenderizados.filter(i => i.disponivelPrometer > 0);
 
-      const fixos = prioridadesFixas.map(function(nome) {
-        return ativos.filter(function(i) { return i.item === nome; })[0];
-      }).filter(Boolean);
-
-      const outros = ativos.filter(function(i) {
-        return prioridadesFixas.indexOf(i.item) === -1;
-      }).sort(function(a, b) {
+      const fixos = prioridadesFixas.map(nome => ativos.find(i => i.item === nome)).filter(Boolean);
+      const outros = ativos.filter(i => !prioridadesFixas.includes(i.item)).sort((a, b) => {
         if (a.disponivelPrometer !== b.disponivelPrometer) return a.disponivelPrometer - b.disponivelPrometer;
         return a.item.localeCompare(b.item, 'pt-BR');
       });
 
-      const urgentes = fixos.concat(outros).slice(0, 10);
+      const urgentes = [...fixos, ...outros].slice(0, 10);
 
-      if (urgentes.length === 0) {
-        wrap.innerHTML = '<div class="col-span-full section-card p-6 text-center text-sm font-bold text-purple-700">Graças a Deus, as prioridades já foram preenchidas! 💜</div>';
+      if (!urgentes.length) {
+        wrap.innerHTML = `<div class="col-span-full section-card p-6 text-center text-sm font-bold text-purple-700">Graças a Deus, as prioridades já foram preenchidas! 💜</div>`;
         return;
       }
-      wrap.innerHTML = urgentes.map(gerarCardUrgente).join("");
+      wrap.innerHTML = urgentes.map(item => gerarCardUrgente(item)).join("");
     }
 
     function renderizarCategorias() {
       const container = document.getElementById("categoriasNecessidades");
-      
-      const itensNaoClassificados = itensRenderizados.filter(function(i) {
-        let encontrado = false;
-        for (let chave in categorias) {
-          if (chave !== "Outros" && categorias[chave].indexOf(i.item) !== -1) {
-            encontrado = true;
-          }
-        }
-        return !encontrado;
-      }).map(function(i) { return i.item; });
-
+      const itensNaoClassificados = itensRenderizados.filter(i => !Object.entries(categorias).filter(([k]) => k !== "Outros").some(([, arr]) => arr.includes(i.item))).map(i => i.item);
       categorias["Outros"] = itensNaoClassificados;
 
-      let htmlCategorias = "";
-      let idx = 0;
+      const htmlCategorias = Object.entries(categorias).map(([nomeCategoria, itensCategoria], idx) => {
+        const itensDaCategoria = itensRenderizados.filter(item => itensCategoria.includes(item.item) && item.disponivelPrometer > 0);
+        if (!itensDaCategoria.length) return "";
 
-      for (let nomeCategoria in categorias) {
-        const itensCategoria = categorias[nomeCategoria];
-        const itensDaCategoria = itensRenderizados.filter(function(item) {
-          return itensCategoria.indexOf(item.item) !== -1 && item.disponivelPrometer > 0;
-        });
+        const conteudo = itensDaCategoria.sort((a, b) => {
+          if (prioridadesFixas.includes(a.item) && !prioridadesFixas.includes(b.item)) return -1;
+          if (!prioridadesFixas.includes(a.item) && prioridadesFixas.includes(b.item)) return 1;
+          return a.item.localeCompare(b.item, 'pt-BR');
+        }).map(item => gerarCardCompacto(item, prioridadesFixas.includes(item.item))).join("");
 
-        if (itensDaCategoria.length > 0) {
-          const conteudo = itensDaCategoria.sort(function(a, b) {
-            const aFixo = prioridadesFixas.indexOf(a.item) !== -1;
-            const bFixo = prioridadesFixas.indexOf(b.item) !== -1;
-            if (aFixo && !bFixo) return -1;
-            if (!aFixo && bFixo) return 1;
-            return a.item.localeCompare(b.item, 'pt-BR');
-          }).map(function(item) {
-            return gerarCardCompacto(item, prioridadesFixas.indexOf(item.item) !== -1);
-          }).join("");
+        const id = `cat_${idx}`;
+        return `
+          <div class="section-card">
+            <button type="button" class="accordion-btn" onclick="toggleCategoria('${id}')" aria-expanded="false" aria-controls="${id}">
+              <span class="text-sm">${esc(nomeCategoria)}</span>
+              <i data-icon="${id}" class="fas fa-chevron-down text-slate-400"></i>
+            </button>
+            <div id="${id}" class="accordion-content hidden-soft space-y-3">${conteudo}</div>
+          </div>
+        `;
+      }).join("");
 
-          const id = "cat_" + idx;
-          htmlCategorias += '' +
-            '<div class="section-card">' +
-              '<button type="button" class="accordion-btn" onclick="toggleCategoria(\'' + id + '\')" aria-expanded="false" aria-controls="' + id + '">' +
-                '<span class="text-sm">' + esc(nomeCategoria) + '</span>' +
-                '<i data-icon="' + id + '" class="fas fa-chevron-down text-slate-400"></i>' +
-              '</button>' +
-              '<div id="' + id + '" class="accordion-content hidden-soft space-y-3">' + conteudo + '</div>' +
-            '</div>';
-        }
-        idx++;
-      }
-
-      container.innerHTML = htmlCategorias || '<p class="text-xs text-slate-400">Nenhuma necessidade encontrada.</p>';
+      container.innerHTML = htmlCategorias || `<p class="text-xs text-slate-400">Nenhuma necessidade encontrada.</p>`;
     }
 
-    // --- CARREGAMENTO DE DADOS (BLINDADO PARA CELULARES ANTIGOS) ---
-    async function carregarDados(force) {
+    // --- CARREGAMENTO DE DADOS E BANCO DE DADOS ---
+    async function carregarDados(force = false) {
       try {
-        const agora = new Date().getTime();
+        const agora = Date.now();
         if (!force && (agora - ultimoLoad < 30000)) return;
         ultimoLoad = agora;
 
         const select = document.getElementById("d_item");
 
-        const promessaMetas = _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item');
-        const promessaTrans = _supabase.from('transacoes').select('descricao, quantidade, status').eq('modulo', 'DOACAO');
-        
-        const resultados = await Promise.all([promessaMetas, promessaTrans]);
-        const resMetas = resultados[0];
-        const resReg = resultados[1];
+        const [{ data: metas, error: metasError }, { data: registros, error: regError }] = await Promise.all([
+          _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item'),
+          _supabase.from('transacoes').select('descricao, quantidade, status').eq('modulo', 'DOACAO')
+        ]);
 
-        if (resMetas.error || resReg.error) {
-          console.error(resMetas.error, resReg.error);
+        if (metasError || regError) {
+          console.error(metasError, regError);
           document.getElementById("listaUrgentes").innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar banco de dados.</p>';
           return;
         }
 
-        const metas = resMetas.data || [];
-        const registros = resReg.data || [];
-
         const mapa = {};
-        for (let i = 0; i < registros.length; i++) {
-          const r = registros[i];
+        (registros || []).forEach(r => {
           const item = (r.descricao || "").trim();
           const qtd = Number(r.quantidade || 0);
           if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
           if (r.status === "PENDENTE") mapa[item].prometido += qtd;
           if (r.status === "PAGO") mapa[item].entregue += qtd;
-        }
+        });
 
         disponibilidadeItens = {};
         itensRenderizados = [];
         select.innerHTML = '<option value="">Escolha um item...</option>';
         let itensDisponiveis = 0;
 
-        for (let i = 0; i < metas.length; i++) {
-          const m = metas[i];
+        (metas || []).forEach(m => {
           const item = (m.item || "").trim();
           const meta = Number(m.qtd_necessaria || 0);
-          const prop = mapa[item];
-          const prometido = prop ? prop.prometido : 0;
-          const entregue = prop ? prop.entregue : 0;
+          const prometido = (mapa[item] && mapa[item].prometido) ? mapa[item].prometido : 0;
+          const entregue = (mapa[item] && mapa[item].entregue) ? mapa[item].entregue : 0;
 
           const faltandoReal = Math.max(0, meta - entregue);
           const disponivelPrometer = Math.max(0, meta - prometido - entregue);
           const percReal = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
 
           disponibilidadeItens[item] = {
-            meta: meta, prometido: prometido, entregue: entregue, faltandoReal: faltandoReal, 
-            disponivelPrometer: disponivelPrometer, 
+            meta, prometido, entregue, faltandoReal, 
+            disponivelPrometer, 
             unidade: m.unidade || ""
           };
 
           itensRenderizados.push({
-            item: item, meta: meta, prometido: prometido, entregue: entregue, faltandoReal: faltandoReal, 
-            disponivelPrometer: disponivelPrometer, 
-            percReal: percReal, unidade: m.unidade || ""
+            item, meta, prometido, entregue, faltandoReal, 
+            disponivelPrometer, 
+            percReal, unidade: m.unidade || ""
           });
 
           if (disponivelPrometer > 0) {
             itensDisponiveis++;
             const opt = document.createElement("option");
             opt.value = item;
-            opt.textContent = item + " (disponível: " + disponivelPrometer + " " + (m.unidade || "") + ")";
+            opt.textContent = `${item} (disponível: ${disponivelPrometer} ${m.unidade || ''})`;
             select.appendChild(opt);
           }
-        }
+        });
 
         renderizarUrgentes();
         renderizarCategorias();
@@ -912,7 +928,7 @@
       const disponivel = info ? info.disponivelPrometer : 0;
       const unidade = info ? info.unidade : "";
 
-      texto.innerText = valor + " • livre para você doar: " + disponivel + " " + unidade;
+      texto.innerText = `${valor} • livre para você doar: ${disponivel} ${unidade}`;
       box.classList.remove("hidden");
 
       if (valor === "Frango") {
@@ -923,13 +939,9 @@
       }
 
       const listCards = document.querySelectorAll(".ifood-card");
-      for (let i = 0; i < listCards.length; i++) {
-        listCards[i].classList.remove("selected", "selected-glow");
-        const pTexto = listCards[i].querySelector('p.text-sm');
-        if (pTexto && pTexto.innerText === valor) {
-          listCards[i].classList.add("selected", "selected-glow");
-        }
-      }
+      listCards.forEach(c => c.classList.remove("selected", "selected-glow"));
+      const cardAtual = Array.from(listCards).find(c => c.querySelector('p.text-sm').innerText === valor);
+      if (cardAtual) cardAtual.classList.add("selected", "selected-glow");
     });
 
     document.getElementById("d_tel").addEventListener("input", function() {
@@ -959,7 +971,7 @@
       const maxDisponivel = infoItem ? infoItem.disponivelPrometer : 0;
 
       if (qtd > maxDisponivel) {
-        return showToast("Para este item, o máximo disponível agora é " + maxDisponivel + ".", "error");
+        return showToast(`Para este item, o máximo disponível agora é ${maxDisponivel}.`, "error");
       }
 
       btn.innerHTML = "Processando...";
@@ -979,7 +991,7 @@
 
         if (res.error) {
           console.error(res.error);
-          if (res.error.message && res.error.message.indexOf("Quantidade excede") !== -1) {
+          if (res.error.message && res.error.message.includes("Quantidade excede")) {
              showToast("A quantidade pedida já foi ultrapassada por outra doação recente.", "error");
           } else {
              showToast("Erro ao registrar doação. Tente novamente.", "error");
@@ -992,8 +1004,8 @@
 
         document.getElementById("areaForm").classList.add("hidden");
         document.getElementById("agradecimentoDoacao").classList.remove("hidden");
-        document.getElementById("agradecimentoTitulo").innerText = "Deus lhe pague, " + nome.split(' ')[0] + "!";
-        document.getElementById("agradecimentoTexto").innerHTML = "Sua doação de <b class='text-purple-700'>" + qtd + "x " + esc(item) + "</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜";
+        document.getElementById("agradecimentoTitulo").innerText = `Deus lhe pague, ${nome.split(' ')[0]}!`;
+        document.getElementById("agradecimentoTexto").innerHTML = `Sua doação de <b class='text-purple-700'>${qtd}x ${esc(item)}</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜`;
 
         showToast("Doação registrada com sucesso!");
         btn.disabled = false;
@@ -1028,16 +1040,16 @@
       carregarDados(false);
     }
 
-    // --- MURAL DE MENSAGENS ---
+    // --- CARROSSEL DO MURAL DE MENSAGENS ---
     async function carregarMensagens() {
       const wrap = document.getElementById("listaMensagens");
 
       const res = await _supabase
         .from('mural_mensagens')
-        .select('nome, mensagem')
+        .select('nome, mensagem, criado_em')
         .eq('aprovada', true)
-        .order('id', { ascending: false })
-        .limit(8);
+        .order('criado_em', { ascending: false })
+        .limit(20);
 
       if (res.error) {
         console.error("Erro Mural:", res.error);
@@ -1051,16 +1063,31 @@
         return;
       }
 
-      wrap.innerHTML = msgs.map(function(m) {
-        return '<div class="msg-card">' +
-                 '<p class="text-sm font-bold text-slate-800">' + esc(m.nome || "Anônimo") + '</p>' +
-                 '<p class="text-xs text-slate-600 mt-2 leading-relaxed">' + esc(m.mensagem || "") + '</p>' +
-               '</div>';
-      }).join("");
+      const htmlMsgs = msgs.map(m => `
+        <div class="msg-card">
+          <p class="text-sm font-bold text-slate-800">${esc(m.nome || "Anônimo")}</p>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(m.mensagem || "")}</p>
+        </div>
+      `).join("");
+
+      // Se houverem poucas mensagens, exibe-as normalmente
+      if (msgs.length < 4) {
+        wrap.innerHTML = `<div class="space-y-3">${htmlMsgs}</div>`;
+      } else {
+        // Se houver muitas mensagens, ativa o carrossel (Marquee animado)
+        wrap.innerHTML = `
+          <div class="marquee-container">
+            <div class="marquee-content">
+              ${htmlMsgs}
+              ${htmlMsgs}
+            </div>
+          </div>
+        `;
+      }
     }
 
     async function enviarMensagem() {
-      const agora = new Date().getTime();
+      const agora = Date.now();
       if (agora - ultimaMensagemTime < 15000) {
         return showToast("Aguarde alguns segundos antes de enviar outra mensagem.", "warn");
       }
@@ -1092,7 +1119,7 @@
         return;
       }
 
-      ultimaMensagemTime = new Date().getTime();
+      ultimaMensagemTime = Date.now();
       document.getElementById("m_msg").value = "";
       document.getElementById("m_nome").value = "";
       btn.disabled = false;
