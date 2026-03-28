@@ -1146,49 +1146,84 @@
     function renderizarPainelFeijoada() {
       if (abaAtiva !== "FEIJOADA") return;
 
-      const registros = dadosCache.filter(r => r.modulo === "FEIJOADA" && r.status !== "CANCELADO");
-      
-      const vouchers = registros.filter(r => isVoucherFeijoada(r.descricao));
-      const mercado = registros.filter(r => isMercadoFeijoada(r.descricao));
-      const outrasEntradas = registros.filter(r => isOutraEntradaFeijoada(r.descricao));
-      const outrasSaidas = registros.filter(r => isOutraSaidaFeijoada(r.descricao));
+      const registrosFeijoada = (dadosCache || []).filter(r => r.modulo === "FEIJOADA");
 
-      const vendidos = vouchers.reduce((acc, r) => acc + Number(r.quantidade || 0), 0);
-      const pagos = vouchers.filter(r => r.status === "PAGO").reduce((acc, r) => acc + Number(r.quantidade || 0), 0);
-      const pendentes = vouchers.filter(r => r.status === "PENDENTE").reduce((acc, r) => acc + Number(r.quantidade || 0), 0);
-      const restantes = Math.max(0, TOTAL_VOUCHERS_FEIJOADA - vendidos);
-      
-      const gastoMercado = mercado.reduce((acc, r) => acc + Number(r.valor || 0), 0);
-      const gastoOutros = outrasSaidas.reduce((acc, r) => acc + Number(r.valor || 0), 0);
-      const custosTotais = gastoMercado + gastoOutros;
+      let qtdVouchersPagos = 0;
+      let qtdVouchersPendentes = 0;
+      let totalVouchersPagos = 0;
+      let totalCustos = 0;
+      let totalOutrasEntradas = 0;
 
-      const receitaPagos = pagos * PRECO_VOUCHER_FEIJOADA;
-      const receitaOutras = outrasEntradas.filter(r => r.status === "PAGO").reduce((acc, r) => acc + Number(r.valor || 0), 0);
-      const receitaTotal = receitaPagos + receitaOutras;
+      for (const r of registrosFeijoada) {
+        if (r.status === "CANCELADO") continue;
 
-      const lucroAtual = receitaTotal - custosTotais;
+        const desc = String(r.descricao || r.item || "").toUpperCase();
+        const tipoFeijoada = (r.tipo_feijoada || r.tipoFeijoada || "").toUpperCase();
+        const status = (r.status || r.situacao || "").toUpperCase();
+        const natureza = (r.natureza || "").toUpperCase();
 
-      document.getElementById("fjVendidos").innerText = vendidos;
-      document.getElementById("fjPagos").innerText = pagos;
-      document.getElementById("fjPendentes").innerText = pendentes;
-      document.getElementById("fjRestantes").innerText = restantes;
-      document.getElementById("fjMercado").innerText = formatarMoeda(custosTotais);
-      document.getElementById("fjLucro").innerText = formatarMoeda(lucroAtual);
+        const valor = parseNumeroFlex(r.valor || r.valor_total || r.total || 0);
+        const qtd = parseInteiroSeguro(r.quantidade || 1);
 
-      const lucroCard = document.getElementById("fjLucroCard");
-      const lucroTexto = document.getElementById("fjLucro");
-      const lucroLabel = lucroTexto.previousElementSibling;
+        const ehVoucher = tipoFeijoada === "VOUCHER" || desc.startsWith("[VOUCHER]");
+        const ehCompraMercado = tipoFeijoada === "COMPRA_MERCADO" || desc.startsWith("[MERCADO]");
+        const ehOutraSaida = desc.startsWith("[FEIJOADA-SAIDA]");
+        const ehOutraEntrada = desc.startsWith("[FEIJOADA-ENTRADA]");
 
-      if (lucroAtual < 0) {
-        lucroCard.className = "soft-stat rose";
-        lucroTexto.className = "text-xl font-extrabold text-rose-700 mt-1";
-        lucroLabel.className = "text-[10px] font-black uppercase tracking-wider text-rose-500";
-        lucroLabel.innerText = "Prejuízo Atual";
-      } else {
-        lucroCard.className = "soft-stat emerald";
-        lucroTexto.className = "text-xl font-extrabold text-emerald-700 mt-1";
-        lucroLabel.className = "text-[10px] font-black uppercase tracking-wider text-emerald-500";
-        lucroLabel.innerText = "Lucro Atual";
+        if (ehVoucher) {
+          if (status === "PAGO") {
+            qtdVouchersPagos += qtd;
+            totalVouchersPagos += valor;
+          } else if (status === "PENDENTE") {
+            qtdVouchersPendentes += qtd;
+          }
+        }
+
+        if (ehCompraMercado || ehOutraSaida || (natureza === "SAIDA" && !ehVoucher && !ehOutraEntrada)) {
+          totalCustos += valor;
+        }
+
+        if (ehOutraEntrada && status === "PAGO") {
+          totalOutrasEntradas += valor;
+        }
+      }
+
+      const vendidos = qtdVouchersPagos + qtdVouchersPendentes;
+      const restantes = Math.max(TOTAL_VOUCHERS_FEIJOADA - vendidos, 0);
+      const lucro = (totalVouchersPagos + totalOutrasEntradas) - totalCustos;
+
+      const elVendidos = document.getElementById("fjVendidos");
+      const elPagos = document.getElementById("fjPagos");
+      const elPendentes = document.getElementById("fjPendentes");
+      const elRestantes = document.getElementById("fjRestantes");
+      const elMercado = document.getElementById("fjMercado");
+      const elLucro = document.getElementById("fjLucro");
+      const elLucroCard = document.getElementById("fjLucroCard");
+
+      if (elVendidos) elVendidos.textContent = vendidos;
+      if (elPagos) elPagos.textContent = qtdVouchersPagos;
+      if (elPendentes) elPendentes.textContent = qtdVouchersPendentes;
+      if (elRestantes) elRestantes.textContent = restantes;
+      if (elMercado) elMercado.textContent = formatarMoeda(totalCustos);
+      if (elLucro) elLucro.textContent = formatarMoeda(lucro);
+
+      if (elLucroCard) {
+        const lucroLabel = elLucro.previousElementSibling;
+        if (lucro >= 0) {
+          elLucroCard.className = "soft-stat emerald";
+          if(elLucro) elLucro.className = "text-xl font-extrabold text-emerald-700 mt-1";
+          if(lucroLabel) {
+            lucroLabel.className = "text-[10px] font-black uppercase tracking-wider text-emerald-500";
+            lucroLabel.innerText = "Lucro Atual";
+          }
+        } else {
+          elLucroCard.className = "soft-stat rose";
+          if(elLucro) elLucro.className = "text-xl font-extrabold text-rose-700 mt-1";
+          if(lucroLabel) {
+            lucroLabel.className = "text-[10px] font-black uppercase tracking-wider text-rose-500";
+            lucroLabel.innerText = "Prejuízo Atual";
+          }
+        }
       }
     }
 
