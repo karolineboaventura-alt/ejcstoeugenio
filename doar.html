@@ -316,6 +316,7 @@
       border: 1px solid #efe7fb;
       border-radius: 18px;
       padding: 12px;
+      margin-bottom: 8px;
     }
 
     .cart-remove-btn {
@@ -326,11 +327,17 @@
       padding: 8px 10px;
       font-weight: 800;
       font-size: 12px;
+      cursor: pointer;
     }
 
     .cart-edit-qtd {
-      width: 84px;
+      width: 60px;
       text-align: center;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      font-weight: bold;
     }
 
     @media (min-width: 640px) {
@@ -391,7 +398,7 @@
             Escolha um ou mais itens, informe as quantidades, monte seu carrinho e registre sua doação.
           </p>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Os itens mais urgentes aparecem primeiro. 💜
+            Os itens mais urgentes aparecem primeiro. Quando uma meta é preenchida, ela sai da prioridade. 💜
           </p>
         </div>
       </div>
@@ -436,6 +443,7 @@
 
     <div id="areaForm">
       <form id="formDoacao" class="space-y-5">
+        
         <div class="space-y-1">
           <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome completo</label>
           <input id="d_nome" placeholder="Seu nome" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
@@ -497,9 +505,13 @@
               </div>
             </div>
 
-            <button
-              type="button"
-              onclick="adicionarAoCarrinho()"
+            <div id="infoFrango" class="hidden helper-box mt-3">
+              <p id="infoFrangoTexto" class="text-[11px] text-slate-600 leading-relaxed font-bold"></p>
+            </div>
+
+            <button 
+              type="button" 
+              onclick="adicionarAoCarrinho()" 
               class="w-full mt-4 bg-slate-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-black active:scale-95 transition-all uppercase tracking-widest text-xs"
             >
               Adicionar ao carrinho
@@ -509,5 +521,691 @@
           <div id="carrinhoBox" class="section-card p-4 hidden">
             <div class="flex items-center justify-between gap-3 mb-3">
               <div>
-                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Carrinho de doação</p>
-                <p id="cartResumo" class="text-sm font-extrabold text-slate-800 mt-1">0 itens adicionados
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Sua lista de doação</p>
+                <p id="cartResumo" class="text-sm font-extrabold text-slate-800 mt-1">0 itens adicionados</p>
+              </div>
+            </div>
+            
+            <div id="listaCarrinho" class="space-y-2 mb-4">
+              </div>
+            
+            <div class="space-y-1 pt-3 border-t border-slate-100">
+              <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data que pretende entregar todos os itens</label>
+              <input id="d_data" type="date" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+            </div>
+
+            <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
+              Confirmar doação inteira
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div id="agradecimentoDoacao" class="hidden mt-6">
+      <div class="text-center p-8 bg-emerald-50 rounded-[32px] border border-emerald-100">
+        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl mb-6 shadow-inner mx-auto">
+          <i class="fas fa-check"></i>
+        </div>
+        <h3 id="agradecimentoTitulo" class="text-2xl font-black text-slate-800 mb-3">Deus lhe pague!</h3>
+        <p id="agradecimentoTexto" class="text-slate-600 font-medium mx-auto leading-relaxed">
+          Sua doação foi registrada com sucesso.
+        </p>
+
+        <div class="mt-6">
+          <button onclick="novaDoacao()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold shadow-xl active:scale-95 transition-all uppercase tracking-widest text-xs">
+            Fazer outra doação
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-black uppercase tracking-widest text-slate-700">Mural de mensagens</h3>
+      </div>
+
+      <div class="space-y-3 mb-4">
+        <textarea id="m_msg" rows="3" maxlength="220" placeholder="Escreva uma mensagem de carinho para o EJC..." class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700 resize-none"></textarea>
+        <button id="btnMsg" type="button" onclick="enviarMensagem()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-black active:scale-95 transition-all uppercase tracking-widest text-xs">
+          Enviar mensagem
+        </button>
+      </div>
+
+      <div id="listaMensagens" class="space-y-3">
+        <p class="text-xs text-slate-300">Carregando mural...</p>
+      </div>
+    </div>
+
+    <div class="mt-10 text-center border-t border-slate-50 pt-7">
+      <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] italic">"Tudo por Jesus, nada sem Maria"</p>
+    </div>
+  </div>
+
+  <script>
+    // --- CONEXÃO SUPABASE ---
+    const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_cMEBXmudaJN7pALr1aV9-g_EPwoTfiB';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    // --- VARIÁVEIS GLOBAIS ---
+    let disponibilidadeItens = {};
+    let itensRenderizados = [];
+    let carrinhoDoacao = []; // Armazena os itens que a pessoa quer doar de uma vez
+
+    const prioridadesFixas = [
+      "Carne bovina",
+      "Frango",
+      "Linguiça",
+      "Arroz",
+      "Feijão",
+      "Óleo",
+      "Sal",
+      "Alho",
+      "Cebola",
+      "Detergente",
+      "Esponjas",
+      "Sacos de lixo (100L e 50L)"
+    ];
+
+    const categorias = {
+      "Proteínas": ["Carne bovina", "Frango", "Linguiça", "Mussarela", "Presunto", "Bacon"],
+      "Crítico": ["Arroz", "Feijão", "Óleo", "Sal", "Alho", "Cebola", "Detergente", "Esponjas", "Sacos de lixo (100L e 50L)"],
+      "Importante": ["Farinha de mandioca", "Batata", "Cenoura", "Tomate", "Repolho", "Cheiro-verde", "Água", "Refrigerante", "Café", "Açúcar", "Leite"],
+      "Complemento": ["Pratinhos descartáveis", "Talheres (garfo/faca)", "Copos descartáveis", "Ketchup (sachê)", "Mostarda (sachê)", "Maionese (sachê)", "Papel alumínio", "Plástico filme", "Desinfetante", "Água sanitária", "Papel higiênico", "Papel toalha", "Rodo", "Vassoura", "Balde", "Pano de chão", "Sulfite A4", "Fita adesiva (durex)"],
+      "Outros": []
+    };
+
+    // --- UTILITÁRIOS ---
+    const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t])) : "";
+    const escJS = (str) => String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '\\"');
+
+    function showToast(msg, type = "success") {
+      const t = document.createElement("div");
+      t.className = `toast ${type === "error" ? "error" : "success"}`;
+      t.innerText = msg;
+      document.getElementById("toast-container").appendChild(t);
+      setTimeout(() => t.remove(), 4000);
+    }
+
+    function mascararWhatsapp(valor) {
+      const nums = valor.replace(/\D/g, "").slice(0, 11);
+      if (nums.length <= 2) return nums;
+      if (nums.length <= 7) return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
+      return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
+    }
+
+    function iniciarContador() {
+      const destino = new Date('2026-07-11T06:00:00');
+
+      function atualizar() {
+        const agora = new Date();
+        let diff = destino.getTime() - agora.getTime();
+        if (diff < 0) diff = 0;
+
+        const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const min = Math.floor((diff / (1000 * 60)) % 60);
+        const seg = Math.floor((diff / 1000) % 60);
+
+        document.getElementById('cdDias').innerText = String(dias).padStart(2, '0');
+        document.getElementById('cdHoras').innerText = String(horas).padStart(2, '0');
+        document.getElementById('cdMin').innerText = String(min).padStart(2, '0');
+        document.getElementById('cdSeg').innerText = String(seg).padStart(2, '0');
+      }
+
+      atualizar();
+      setInterval(atualizar, 1000);
+    }
+
+    // --- INTERFACE ---
+    function toggleTodasNecessidades() {
+      const wrap = document.getElementById("todasNecessidadesWrap");
+      const icon = document.getElementById("iconToggleTodas");
+      const aberto = !wrap.classList.contains("hidden-soft");
+      wrap.classList.toggle("hidden-soft", aberto);
+      icon.className = aberto ? "fas fa-chevron-down text-slate-400" : "fas fa-chevron-up text-slate-400";
+    }
+
+    function toggleCategoria(id) {
+      const wrap = document.getElementById(id);
+      const icon = document.querySelector(`[data-icon="${id}"]`);
+      const aberto = !wrap.classList.contains("hidden-soft");
+      wrap.classList.toggle("hidden-soft", aberto);
+      if (icon) icon.className = aberto ? "fas fa-chevron-down text-slate-400" : "fas fa-chevron-up text-slate-400";
+    }
+
+    function focarFormulario() {
+      const form = document.getElementById("formDoacao");
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // --- SELEÇÃO DE ITEM ---
+    function atualizarResumoItemSelecionado(item) {
+      const box = document.getElementById("resumoSelecao");
+      const nome = document.getElementById("resumoItemNome");
+      const meta = document.getElementById("resumoItemMeta");
+
+      if (!item || !disponibilidadeItens[item]) {
+        box.classList.add("hidden");
+        nome.innerText = "";
+        meta.innerText = "";
+        return;
+      }
+
+      const info = disponibilidadeItens[item];
+      nome.innerText = item;
+      meta.innerText = `Disponível para prometer: ${info.disponivelPrometer} ${info.unidade || ""} • Meta: ${info.meta}`;
+      box.classList.remove("hidden");
+    }
+
+    function selecionarItem(item) {
+      const select = document.getElementById("d_item");
+      select.value = item;
+      select.dispatchEvent(new Event("change"));
+      
+      const campo = document.getElementById("d_item");
+      campo.classList.remove("selected-glow");
+      void campo.offsetWidth; 
+      campo.classList.add("selected-glow");
+      
+      focarFormulario();
+    }
+
+    // --- RENDERIZAÇÃO DOS CARDS ---
+    function obterStatusBadge(itemData) {
+      if (itemData.disponivelPrometer <= 0) return `<span class="ifood-badge ok">Completo</span>`;
+      if (prioridadesFixas.includes(itemData.item)) return `<span class="ifood-badge danger">Prioridade</span>`;
+      if (itemData.percReal >= 70) return `<span class="ifood-badge warn">Quase lá</span>`;
+      return `<span class="ifood-badge warn">Disponível</span>`;
+    }
+
+    function gerarCardCompacto(itemData, destaque = false) {
+      return `
+        <div class="section-card p-3">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <p class="text-sm font-extrabold text-slate-800">${esc(itemData.item)}</p>
+              <p class="text-[11px] text-slate-500 mt-1">Meta: ${itemData.meta} ${esc(itemData.unidade || "")}</p>
+            </div>
+            ${obterStatusBadge(itemData)}
+          </div>
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="mini-stat">
+              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Prometido</span>
+              <strong class="text-amber-500">${itemData.prometido}</strong>
+            </div>
+            <div class="mini-stat">
+              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Entregue</span>
+              <strong class="text-emerald-500">${itemData.entregue}</strong>
+            </div>
+            <div class="mini-stat">
+              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Livre</span>
+              <strong class="text-rose-500">${itemData.disponivelPrometer}</strong>
+            </div>
+          </div>
+          <div class="progress-bar mb-3">
+            <div class="progress-fill" style="width:${itemData.percReal}%"></div>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-[11px] text-slate-500">
+              Falta real: <strong class="text-slate-700">${itemData.faltandoReal}</strong> ${esc(itemData.unidade || "")}
+            </p>
+            ${itemData.disponivelPrometer > 0 ? `<button type="button" onclick="selecionarItem('${escJS(itemData.item)}')" class="choose-btn ${destaque ? 'primary' : 'secondary'}">Escolher</button>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function gerarCardUrgente(itemData) {
+      const selecionado = document.getElementById("d_item").value === itemData.item;
+      return `
+        <div class="ifood-card ${selecionado ? 'selected selected-glow' : ''}" onclick="selecionarItem('${escJS(itemData.item)}')">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="ifood-badge danger">${prioridadesFixas.includes(itemData.item) ? 'Urgente' : 'Disponível'}</span>
+                <span class="pill bg-slate-50 text-slate-600 border border-slate-200">${esc(itemData.unidade || '')}</span>
+              </div>
+              <p class="text-sm font-extrabold text-slate-800 mt-3 leading-tight">${esc(itemData.item)}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Falta prometer</p>
+              <p class="text-xl font-black text-[var(--ifood)]">${itemData.disponivelPrometer}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Meta</span><strong>${itemData.meta}</strong></div>
+            <div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Prom.</span><strong class="text-amber-500">${itemData.prometido}</strong></div>
+            <div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Entr.</span><strong class="text-emerald-500">${itemData.entregue}</strong></div>
+          </div>
+          <div class="progress-bar mb-3">
+            <div class="progress-fill" style="width:${itemData.percReal}%"></div>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-[11px] text-slate-500">Progresso real: <strong class="text-slate-800">${itemData.percReal}%</strong></p>
+            <button type="button" class="choose-btn primary">Escolher</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderizarUrgentes() {
+      const wrap = document.getElementById("listaUrgentes");
+      const ativos = itensRenderizados.filter(i => i.disponivelPrometer > 0);
+
+      const fixos = prioridadesFixas.map(nome => ativos.find(i => i.item === nome)).filter(Boolean);
+      const outros = ativos.filter(i => !prioridadesFixas.includes(i.item)).sort((a, b) => {
+        if (a.disponivelPrometer !== b.disponivelPrometer) return a.disponivelPrometer - b.disponivelPrometer;
+        return a.item.localeCompare(b.item, 'pt-BR');
+      });
+
+      const urgentes = [...fixos, ...outros].slice(0, 10);
+
+      if (!urgentes.length) {
+        wrap.innerHTML = `<div class="col-span-full section-card p-6 text-center text-sm font-bold text-purple-700">Graças a Deus, as prioridades já foram preenchidas! 💜</div>`;
+        return;
+      }
+      wrap.innerHTML = urgentes.map(gerarCardUrgente).join("");
+    }
+
+    function renderizarCategorias() {
+      const container = document.getElementById("categoriasNecessidades");
+      const itensNaoClassificados = itensRenderizados.filter(i => !Object.entries(categorias).filter(([k]) => k !== "Outros").some(([, arr]) => arr.includes(i.item))).map(i => i.item);
+      categorias["Outros"] = itensNaoClassificados;
+
+      const htmlCategorias = Object.entries(categorias).map(([nomeCategoria, itensCategoria], idx) => {
+        const itensDaCategoria = itensRenderizados.filter(item => itensCategoria.includes(item.item) && item.disponivelPrometer > 0);
+        if (!itensDaCategoria.length) return "";
+
+        const conteudo = itensDaCategoria.sort((a, b) => {
+          if (prioridadesFixas.includes(a.item) && !prioridadesFixas.includes(b.item)) return -1;
+          if (!prioridadesFixas.includes(a.item) && prioridadesFixas.includes(b.item)) return 1;
+          return a.item.localeCompare(b.item, 'pt-BR');
+        }).map(item => gerarCardCompacto(item, prioridadesFixas.includes(item.item))).join("");
+
+        const id = `cat_${idx}`;
+        return `
+          <div class="section-card">
+            <button type="button" class="accordion-btn" onclick="toggleCategoria('${id}')">
+              <span class="text-sm">${esc(nomeCategoria)}</span>
+              <i data-icon="${id}" class="fas fa-chevron-down text-slate-400"></i>
+            </button>
+            <div id="${id}" class="accordion-content hidden-soft space-y-3">${conteudo}</div>
+          </div>
+        `;
+      }).join("");
+
+      container.innerHTML = htmlCategorias || `<p class="text-xs text-slate-400">Nenhuma necessidade encontrada.</p>`;
+    }
+
+    // --- CARREGAMENTO DE DADOS ---
+    async function carregarDados() {
+      const select = document.getElementById("d_item");
+
+      const [{ data: metas, error: metasError }, { data: registros, error: regError }] = await Promise.all([
+        _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item'),
+        _supabase.from('transacoes').select('descricao, quantidade, status').eq('modulo', 'DOACAO')
+      ]);
+
+      if (metasError || regError) {
+        document.getElementById("listaUrgentes").innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar banco de dados.</p>';
+        return;
+      }
+
+      const mapa = {};
+      (registros || []).forEach(r => {
+        const item = (r.descricao || "").trim();
+        const qtd = Number(r.quantidade || 0);
+        if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
+        if (r.status === "PENDENTE") mapa[item].prometido += qtd;
+        if (r.status === "PAGO") mapa[item].entregue += qtd;
+      });
+
+      disponibilidadeItens = {};
+      itensRenderizados = [];
+      select.innerHTML = '<option value="">Escolha um item...</option>';
+      let itensDisponiveis = 0;
+
+      (metas || []).forEach(m => {
+        const item = (m.item || "").trim();
+        const meta = Number(m.qtd_necessaria || 0);
+        const prometido = mapa[item]?.prometido || 0;
+        const entregue = mapa[item]?.entregue || 0;
+
+        // Subtrai do carrinho atual pra pessoa não prometer o que já colocou no carrinho localmente
+        const noCarrinho = carrinhoDoacao.filter(c => c.item === item).reduce((s, c) => s + c.qtd, 0);
+
+        const faltandoReal = Math.max(0, meta - entregue);
+        const disponivelReal = Math.max(0, meta - prometido - entregue);
+        const disponivelAposCarrinho = Math.max(0, disponivelReal - noCarrinho);
+        const percReal = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
+
+        disponibilidadeItens[item] = {
+          meta, prometido, entregue, faltandoReal, 
+          disponivelPrometer: disponivelAposCarrinho, 
+          unidade: m.unidade || ""
+        };
+
+        itensRenderizados.push({
+          item, meta, prometido, entregue, faltandoReal, 
+          disponivelPrometer: disponivelAposCarrinho, 
+          percReal, unidade: m.unidade || ""
+        });
+
+        if (disponivelAposCarrinho > 0) {
+          itensDisponiveis++;
+          const opt = document.createElement("option");
+          opt.value = item;
+          opt.textContent = `${item} (disponível: ${disponivelAposCarrinho} ${m.unidade || ''})`;
+          select.appendChild(opt);
+        }
+      });
+
+      renderizarUrgentes();
+      renderizarCategorias();
+      atualizarResumoItemSelecionado(document.getElementById("d_item").value);
+
+      if (itensDisponiveis === 0 && metas.length > 0) {
+        document.getElementById("d_item").disabled = true;
+        document.getElementById("d_qtd").disabled = true;
+        showToast("Você já preencheu todas as necessidades do momento!", "success");
+      } else {
+        document.getElementById("d_item").disabled = false;
+        document.getElementById("d_qtd").disabled = false;
+      }
+    }
+
+    // --- LÓGICA DO CARRINHO DE DOAÇÃO ---
+    function atualizarInterfaceCarrinho() {
+      const box = document.getElementById("carrinhoBox");
+      const lista = document.getElementById("listaCarrinho");
+      const badge = document.getElementById("cartCountBadge");
+      const resumo = document.getElementById("cartResumo");
+      
+      const totalItens = carrinhoDoacao.reduce((acc, obj) => acc + obj.qtd, 0);
+      badge.innerText = `${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`;
+
+      if (carrinhoDoacao.length === 0) {
+        box.classList.add("hidden");
+        document.getElementById("d_data").removeAttribute("required");
+        return;
+      }
+
+      box.classList.remove("hidden");
+      document.getElementById("d_data").setAttribute("required", "true");
+      resumo.innerText = `${carrinhoDoacao.length} ${carrinhoDoacao.length === 1 ? 'produto adicionado' : 'produtos diferentes'}`;
+
+      lista.innerHTML = carrinhoDoacao.map((c, index) => {
+        const info = disponibilidadeItens[c.item];
+        const un = info ? info.unidade : '';
+        return `
+          <div class="cart-item flex items-center justify-between">
+            <div class="flex-1">
+              <p class="font-bold text-sm text-slate-800">${esc(c.item)}</p>
+              <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest">${c.qtd} ${un}</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <input type="number" min="1" value="${c.qtd}" onchange="editarQtdCarrinho(${index}, this.value)" class="cart-edit-qtd text-slate-800">
+              <button type="button" onclick="removerDoCarrinho(${index})" class="cart-remove-btn"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function adicionarAoCarrinho() {
+      const selectItem = document.getElementById("d_item");
+      const item = selectItem.value;
+      const inputQtd = document.getElementById("d_qtd");
+      const qtd = parseInt(inputQtd.value, 10);
+
+      if (!item) return showToast("Selecione o que você quer doar primeiro.", "error");
+      if (isNaN(qtd) || qtd <= 0) return showToast("A quantidade deve ser maior que zero.", "error");
+
+      const info = disponibilidadeItens[item];
+      if (!info) return showToast("Item não encontrado.", "error");
+
+      if (qtd > info.disponivelPrometer) {
+        return showToast(`Ops, só temos ${info.disponivelPrometer} ${info.unidade} de ${item} disponíveis para prometer.`, "error");
+      }
+
+      const indexExistente = carrinhoDoacao.findIndex(c => c.item === item);
+      if (indexExistente >= 0) {
+        carrinhoDoacao[indexExistente].qtd += qtd;
+      } else {
+        carrinhoDoacao.push({ item, qtd });
+      }
+
+      selectItem.value = "";
+      inputQtd.value = "1";
+      document.getElementById("itemEscolhidoBox").classList.add("hidden");
+      document.getElementById("infoFrango").classList.add("hidden");
+
+      showToast(`${item} adicionado ao carrinho!`);
+      
+      carregarDados().then(() => {
+        atualizarInterfaceCarrinho();
+      });
+    }
+
+    function removerDoCarrinho(index) {
+      carrinhoDoacao.splice(index, 1);
+      carregarDados().then(() => {
+        atualizarInterfaceCarrinho();
+      });
+    }
+
+    function editarQtdCarrinho(index, novaQtdStr) {
+      const novaQtd = parseInt(novaQtdStr, 10);
+      if (isNaN(novaQtd) || novaQtd <= 0) {
+        return removerDoCarrinho(index);
+      }
+
+      const c = carrinhoDoacao[index];
+      const info = disponibilidadeItens[c.item];
+      
+      const limiteMaximo = (info?.disponivelPrometer || 0) + c.qtd;
+
+      if (novaQtd > limiteMaximo) {
+        showToast(`Máximo disponível de ${c.item} é ${limiteMaximo}.`, "error");
+        carrinhoDoacao[index].qtd = limiteMaximo; 
+      } else {
+        carrinhoDoacao[index].qtd = novaQtd;
+      }
+
+      carregarDados().then(() => {
+        atualizarInterfaceCarrinho();
+      });
+    }
+
+    // --- EVENTOS DOS CAMPOS ---
+    document.getElementById("d_item").addEventListener("change", function() {
+      const box = document.getElementById("itemEscolhidoBox");
+      const texto = document.getElementById("itemEscolhidoTexto");
+      const infoFrango = document.getElementById("infoFrango");
+      const infoFrangoTexto = document.getElementById("infoFrangoTexto");
+      const valor = this.value;
+
+      atualizarResumoItemSelecionado(valor);
+
+      if (!valor) {
+        box.classList.add("hidden");
+        infoFrango.classList.add("hidden");
+        return;
+      }
+
+      const info = disponibilidadeItens[valor];
+      const disponivel = info?.disponivelPrometer ?? 0;
+      const unidade = info?.unidade || "";
+
+      texto.innerText = `${valor} • livre para você doar: ${disponivel} ${unidade}`;
+      box.classList.remove("hidden");
+
+      if (valor === "Frango") {
+        infoFrangoTexto.innerHTML = "Se desejar doar o <b>frango</b>, combine previamente com a equipe de compras a melhor forma de entrega e conservação (geladeira/freezer).";
+        infoFrango.classList.remove("hidden");
+      } else {
+        infoFrango.classList.add("hidden");
+      }
+
+      renderizarUrgentes();
+    });
+
+    document.getElementById("d_tel").addEventListener("input", function() {
+      this.value = mascararWhatsapp(this.value);
+    });
+
+    // --- ENVIO DO FORMULÁRIO (MULTIPLOS ITENS) ---
+    document.getElementById("formDoacao").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      if (carrinhoDoacao.length === 0) {
+        return showToast("Adicione pelo menos um item ao carrinho antes de confirmar.", "error");
+      }
+
+      const btn = document.getElementById("btnEnviar");
+      const textoOriginal = btn.innerHTML;
+
+      const nome = document.getElementById("d_nome").value.trim();
+      const telefone = document.getElementById("d_tel").value.replace(/\D/g, "");
+      const equipe = document.getElementById("d_equipe").value;
+      const dataEntrega = document.getElementById("d_data").value;
+
+      if (!nome || !equipe || !dataEntrega) return showToast("Preencha todos os seus dados.", "error");
+      if (!/^\d{10,11}$/.test(telefone)) return showToast("WhatsApp inválido.", "error");
+
+      btn.innerHTML = "REGISTRANDO DOAÇÕES...";
+      btn.disabled = true;
+
+      // Monta o array com todas as transações para mandar de uma vez pro banco
+      const inserts = carrinhoDoacao.map(c => ({
+        modulo: 'DOACAO',
+        descricao: c.item,
+        quantidade: c.qtd,
+        valor: 0,
+        natureza: 'ENTRADA',
+        status: 'PENDENTE',
+        forma_pagamento: 'FISICO',
+        nome_pessoa: nome,
+        equipe: equipe,
+        telefone: telefone,
+        recebido_por: 'Doação Pública',
+        data_entrega: dataEntrega
+      }));
+
+      // No Supabase, usar .insert([]) com array salva múltiplos de uma vez
+      const { error } = await _supabase.from('transacoes').insert(inserts);
+
+      if (error) {
+        console.error(error);
+        showToast("Erro de conexão ao registrar doações.", "error");
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
+        return;
+      }
+
+      // Tudo deu certo
+      document.getElementById("areaForm").classList.add("hidden");
+      document.getElementById("agradecimentoDoacao").classList.remove("hidden");
+      document.getElementById("agradecimentoTitulo").innerText = `Deus lhe pague, ${nome.split(' ')[0]}!`;
+      
+      const resumoHTML = carrinhoDoacao.map(c => `<span class="font-bold text-purple-700">${c.qtd}x ${esc(c.item)}</span>`).join("<br>");
+      document.getElementById("agradecimentoTexto").innerHTML = `Sua doação foi registrada:<br><br>${resumoHTML}<br><br>Agora você faz parte da providência deste EJC. ✝️💜`;
+
+      showToast(`Doações registradas com sucesso!`);
+      
+      // Limpa carrinho
+      carrinhoDoacao = [];
+      atualizarInterfaceCarrinho();
+      await carregarDados();
+
+      btn.disabled = false;
+      btn.innerHTML = textoOriginal;
+    });
+
+    function novaDoacao() {
+      document.getElementById("formDoacao").reset();
+      carrinhoDoacao = [];
+      atualizarInterfaceCarrinho();
+      
+      document.getElementById("itemEscolhidoBox").classList.add("hidden");
+      document.getElementById("infoFrango").classList.add("hidden");
+      document.getElementById("areaForm").classList.remove("hidden");
+      document.getElementById("agradecimentoDoacao").classList.add("hidden");
+      
+      atualizarResumoItemSelecionado("");
+      carregarDados();
+    }
+
+    // --- MURAL DE MENSAGENS ---
+    async function carregarMensagens() {
+      const wrap = document.getElementById("listaMensagens");
+
+      const { data, error } = await _supabase
+        .from('mural_mensagens')
+        .select('nome, mensagem, criado_em')
+        .eq('aprovada', true)
+        .order('criado_em', { ascending: false })
+        .limit(8);
+
+      if (error) {
+        wrap.innerHTML = `<p class="text-xs text-slate-400">Mural indisponível no momento.</p>`;
+        return;
+      }
+
+      const msgs = data || [];
+      if (!msgs.length) {
+        wrap.innerHTML = `<p class="text-xs text-slate-400">Ainda não há mensagens no mural.</p>`;
+        return;
+      }
+
+      wrap.innerHTML = msgs.map(m => `
+        <div class="msg-card">
+          <p class="text-sm font-bold text-slate-800">${esc(m.nome || "Participante")}</p>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(m.mensagem || "")}</p>
+        </div>
+      `).join("");
+    }
+
+    async function enviarMensagem() {
+      const nome = document.getElementById("d_nome").value.trim();
+      const mensagem = document.getElementById("m_msg").value.trim();
+      const btn = document.getElementById("btnMsg");
+      const original = btn.innerHTML;
+
+      if (!nome) return showToast("Preencha seu nome para enviar a mensagem.", "error");
+      if (!mensagem) return showToast("Escreva uma mensagem para o mural.", "error");
+      if (mensagem.length < 3) return showToast("Mensagem muito curta.", "error");
+
+      btn.disabled = true;
+      btn.innerHTML = 'ENVIANDO...';
+
+      const { error } = await _supabase
+        .from('mural_mensagens')
+        .insert([{ nome, mensagem, aprovada: true }]);
+
+      if (error) {
+        console.error(error);
+        showToast("Não foi possível enviar a mensagem.", "error");
+        btn.disabled = false;
+        btn.innerHTML = original;
+        return;
+      }
+
+      document.getElementById("m_msg").value = "";
+      btn.disabled = false;
+      btn.innerHTML = original;
+      showToast("Mensagem enviada com sucesso!");
+      carregarMensagens();
+    }
+
+    window.onload = async function() {
+      iniciarContador();
+      await carregarDados();
+      await carregarMensagens();
+    };
+  </script>
+</body>
+</html>
+
