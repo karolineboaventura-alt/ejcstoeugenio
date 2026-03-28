@@ -514,7 +514,7 @@
         </button>
       </div>
 
-      <div id="listaMensagens" class="space-y-3 min-h-[90px]">
+      <div id="listaMensagens" class="space-y-3">
         <p class="text-xs text-slate-300">Carregando mural...</p>
       </div>
     </div>
@@ -535,11 +535,6 @@
     let itensRenderizados = [];
     let ultimoLoad = 0; 
     let ultimaMensagemTime = 0; 
-
-    // Variáveis para o carrossel do mural
-    let mensagensMural = [];
-    let indiceMural = 0;
-    let muralInterval = null;
 
     const prioridadesFixas = [
       "Carne bovina", "Frango", "Linguiça", "Arroz", "Feijão", "Óleo", 
@@ -594,6 +589,7 @@
         const min = Math.floor((diff / (1000 * 60)) % 60);
         const seg = Math.floor((diff / 1000) % 60);
 
+        // Ajuste blindado para adicionar os zeros (sem usar padStart que não funciona em cel antigo)
         document.getElementById('cdDias').innerText = ('0' + dias).slice(-2);
         document.getElementById('cdHoras').innerText = ('0' + horas).slice(-2);
         document.getElementById('cdMin').innerText = ('0' + min).slice(-2);
@@ -806,7 +802,7 @@
       container.innerHTML = htmlCategorias || '<p class="text-xs text-slate-400">Nenhuma necessidade encontrada.</p>';
     }
 
-    // --- CARREGAMENTO DE DADOS (ULTRA SEGURO) ---
+    // --- CARREGAMENTO DE DADOS (BLINDADO PARA CELULARES ANTIGOS) ---
     async function carregarDados(force) {
       try {
         const agora = new Date().getTime();
@@ -1032,7 +1028,7 @@
       carregarDados(false);
     }
 
-    // --- CARROSSEL DO MURAL DE MENSAGENS ---
+    // --- MURAL DE MENSAGENS ---
     async function carregarMensagens() {
       const wrap = document.getElementById("listaMensagens");
 
@@ -1041,7 +1037,7 @@
         .select('nome, mensagem')
         .eq('aprovada', true)
         .order('id', { ascending: false })
-        .limit(10); // Pegando 10 mensagens para rotacionar
+        .limit(8);
 
       if (res.error) {
         console.error("Erro Mural:", res.error);
@@ -1049,40 +1045,18 @@
         return;
       }
 
-      mensagensMural = res.data || [];
-      
-      if (mensagensMural.length === 0) {
+      const msgs = res.data || [];
+      if (msgs.length === 0) {
         wrap.innerHTML = '<p class="text-xs text-slate-400">Ainda não há mensagens no mural.</p>';
         return;
       }
 
-      if (muralInterval) clearInterval(muralInterval);
-      indiceMural = 0;
-      
-      rotacionarMural(); // Mostra a primeira
-
-      // Só ativa o carrossel se houver mais de uma mensagem
-      if (mensagensMural.length > 1) {
-        muralInterval = setInterval(rotacionarMural, 4500); // Troca a cada 4.5 segundos
-      }
-    }
-
-    function rotacionarMural() {
-      const wrap = document.getElementById("listaMensagens");
-      if (mensagensMural.length === 0) return;
-
-      const m = mensagensMural[indiceMural];
-
-      wrap.innerHTML = 
-        '<div class="msg-card animate-fade-in">' +
-          '<p class="text-sm font-bold text-slate-800">' + esc(m.nome || "Anônimo") + '</p>' +
-          '<p class="text-xs text-slate-600 mt-2 leading-relaxed">' + esc(m.mensagem || "") + '</p>' +
-        '</div>';
-
-      indiceMural++;
-      if (indiceMural >= mensagensMural.length) {
-        indiceMural = 0;
-      }
+      wrap.innerHTML = msgs.map(function(m) {
+        return '<div class="msg-card">' +
+                 '<p class="text-sm font-bold text-slate-800">' + esc(m.nome || "Anônimo") + '</p>' +
+                 '<p class="text-xs text-slate-600 mt-2 leading-relaxed">' + esc(m.mensagem || "") + '</p>' +
+               '</div>';
+      }).join("");
     }
 
     async function enviarMensagem() {
