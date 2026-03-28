@@ -13,36 +13,46 @@
 
   <style>
     :root {
-      --nu-roxo: #820ad1;
-      --nu-roxo-dark: #4b0082;
-      --nu-soft: #f6effd;
-      --nu-line: #eee7f8;
-      --nu-text: #1f2937;
+      --brand: #820ad1;
+      --brand-dark: #4b0082;
+      --bg: #f8fafc;
+      --line: #ece7f6;
+      --text: #1f2937;
+      --muted: #64748b;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+      --ok: #10b981;
+      --ifood: #ea1d2c;
+      --ifood-soft: #fff1f2;
     }
+
+    * { box-sizing: border-box; }
 
     body {
       font-family: "Plus Jakarta Sans", sans-serif;
       background:
-        radial-gradient(circle at top right, rgba(130, 10, 209, 0.10), transparent 28%),
-        radial-gradient(circle at top left, rgba(168, 85, 247, 0.06), transparent 24%),
-        #f8fafc;
+        radial-gradient(circle at top right, rgba(130, 10, 209, 0.09), transparent 30%),
+        radial-gradient(circle at top left, rgba(234, 29, 44, 0.05), transparent 24%),
+        var(--bg);
+      color: var(--text);
       -webkit-tap-highlight-color: transparent;
-      color: var(--nu-text);
     }
 
-    .premium-card {
-      background: rgba(255,255,255,0.96);
-      border-radius: 40px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
-      backdrop-filter: blur(10px);
+    .page-shell {
+      background: rgba(255,255,255,0.97);
+      border-radius: 36px;
+      box-shadow: 0 24px 60px -24px rgba(15, 23, 42, 0.18);
+      backdrop-filter: blur(8px);
+      border: 1px solid #f1f5f9;
     }
 
     .hero-top {
-      background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
-      border-radius: 32px;
+      background:
+        linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
+      border-radius: 30px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 20px 40px -25px rgba(75, 0, 130, 0.55);
+      box-shadow: 0 20px 40px -24px rgba(75, 0, 130, 0.45);
     }
 
     .hero-top::before {
@@ -54,16 +64,30 @@
     }
 
     .vault-input {
+      width: 100%;
       background: #f8fafc;
-      border: 2px solid #f1f5f9;
-      transition: all 0.25s ease;
+      border: 2px solid #eef2f7;
+      transition: all .25s ease;
     }
 
     .vault-input:focus {
-      background: white;
-      border-color: var(--nu-roxo);
-      box-shadow: 0 0 0 4px rgba(130, 10, 209, 0.10);
       outline: none;
+      background: white;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px rgba(130, 10, 209, 0.10);
+    }
+
+    .soft-panel {
+      background: linear-gradient(180deg, #fcfaff 0%, #f8f2ff 100%);
+      border: 1px solid #efe6fb;
+      border-radius: 24px;
+    }
+
+    .section-card {
+      background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
+      border: 1px solid #efe7fb;
+      border-radius: 24px;
+      overflow: hidden;
     }
 
     .progress-bar {
@@ -75,81 +99,9 @@
 
     .progress-fill {
       height: 100%;
+      border-radius: 999px;
       background: linear-gradient(90deg, #820ad1, #a855f7);
-      border-radius: 999px;
-      transition: width 1s ease;
-    }
-
-    .need-card {
-      position: relative;
-      border: 1px solid var(--nu-line);
-      background: linear-gradient(180deg, #ffffff 0%, #fbf8ff 100%);
-      border-radius: 20px;
-      padding: 14px;
-      transition: all 0.25s ease;
-      overflow: hidden;
-    }
-
-    .need-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 18px 30px -24px rgba(0,0,0,0.30);
-    }
-
-    .mini-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .selected-glow {
-      animation: glowPulse 0.8s ease;
-    }
-
-    @keyframes glowPulse {
-      0% { box-shadow: 0 0 0 rgba(130,10,209,0); }
-      50% { box-shadow: 0 0 0 8px rgba(130,10,209,0.10); }
-      100% { box-shadow: 0 0 0 rgba(130,10,209,0); }
-    }
-
-    .animate-fade-in {
-      animation: fadeIn 0.55s ease-out forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    #toast-container {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      width: 90%;
-      max-width: 390px;
-    }
-
-    .toast {
-      border-radius: 18px;
-      padding: 14px 16px;
-      color: white;
-      font-weight: 700;
-      margin-bottom: 8px;
-      box-shadow: 0 18px 30px -18px rgba(0,0,0,0.45);
-    }
-
-    .msg-card {
-      background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
-      border: 1px solid #efe7fb;
-      border-radius: 20px;
-      padding: 14px;
+      transition: width .5s ease;
     }
 
     .count-card {
@@ -160,26 +112,6 @@
       text-align: center;
       min-width: 66px;
       backdrop-filter: blur(8px);
-    }
-
-    .soft-panel {
-      background: linear-gradient(180deg, #fcfaff 0%, #f7f1ff 100%);
-      border: 1px solid #eee5fb;
-      border-radius: 24px;
-    }
-
-    .section-card {
-      background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
-      border: 1px solid #efe7fb;
-      border-radius: 24px;
-      overflow: hidden;
-    }
-
-    .compact-item {
-      border: 1px solid #efe7fb;
-      border-radius: 18px;
-      padding: 12px;
-      background: #fff;
     }
 
     .accordion-btn {
@@ -198,8 +130,38 @@
       padding: 0 16px 16px 16px;
     }
 
-    .hidden-soft {
-      display: none;
+    .hidden-soft { display: none; }
+
+    .toast-wrap {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      width: 92%;
+      max-width: 400px;
+    }
+
+    .toast {
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: white;
+      font-weight: 800;
+      margin-bottom: 8px;
+      box-shadow: 0 18px 30px -18px rgba(0,0,0,0.45);
+      animation: fadeInUp .35s ease;
+    }
+
+    .toast.success { background: #0f172a; }
+    .toast.error { background: #e11d48; }
+
+    .animate-fade-in {
+      animation: fadeInUp .5s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .helper-box {
@@ -208,14 +170,158 @@
       border-radius: 18px;
       padding: 12px 14px;
     }
+
+    .msg-card {
+      background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
+      border: 1px solid #efe7fb;
+      border-radius: 20px;
+      padding: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .priority-shell {
+      background: linear-gradient(180deg, #fff6f7 0%, #ffffff 100%);
+      border: 1px solid #ffe0e4;
+      border-radius: 24px;
+      padding: 14px;
+    }
+
+    .ifood-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .ifood-card {
+      position: relative;
+      border-radius: 22px;
+      padding: 14px;
+      background: white;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 10px 24px -22px rgba(0,0,0,0.28);
+      transition: .22s ease;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .ifood-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 30px -24px rgba(0,0,0,0.30);
+    }
+
+    .ifood-card.selected {
+      border-color: var(--ifood);
+      box-shadow: 0 0 0 4px rgba(234,29,44,.10);
+    }
+
+    .ifood-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    .ifood-badge.danger {
+      background: #fff1f2;
+      color: #be123c;
+      border: 1px solid #fecdd3;
+    }
+
+    .ifood-badge.warn {
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+
+    .ifood-badge.ok {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .mini-stat {
+      border-radius: 16px;
+      padding: 10px;
+      border: 1px solid #edf2f7;
+      background: #fafafa;
+      text-align: center;
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 15px;
+      margin-top: 3px;
+    }
+
+    .choose-btn {
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-weight: 800;
+      font-size: 12px;
+      transition: .2s ease;
+    }
+
+    .choose-btn.primary {
+      background: var(--ifood);
+      color: white;
+      border: none;
+    }
+
+    .choose-btn.secondary {
+      background: #fff;
+      color: var(--ifood);
+      border: 1px solid #fecdd3;
+    }
+
+    .sticky-summary {
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid #f1f5f9;
+      border-radius: 20px;
+      padding: 12px;
+      box-shadow: 0 12px 30px -24px rgba(0,0,0,0.25);
+    }
+
+    .selected-glow {
+      animation: pulseGlow .8s ease;
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 rgba(234,29,44,0); }
+      50% { box-shadow: 0 0 0 10px rgba(234,29,44,.08); }
+      100% { box-shadow: 0 0 0 rgba(234,29,44,0); }
+    }
+
+    @media (min-width: 640px) {
+      .ifood-grid { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4 py-8">
 
-  <div id="toast-container"></div>
+  <div id="toast-container" class="toast-wrap"></div>
 
-  <div class="w-full max-w-md premium-card p-5 sm:p-6 border border-slate-100 animate-fade-in">
-    
+  <div class="w-full max-w-md page-shell p-5 sm:p-6 animate-fade-in">
+
     <div class="hero-top p-6 text-white mb-6">
       <div class="relative z-10 text-center">
         <div class="inline-flex items-center justify-center w-16 h-16 bg-white/15 border border-white/20 rounded-2xl mb-5 text-3xl shadow-inner">
@@ -230,7 +336,7 @@
 
         <div class="mt-5 px-4 py-3 rounded-2xl bg-white/10 border border-white/15">
           <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/75 mb-3">Contagem regressiva</p>
-          <div id="contadorWrap" class="grid grid-cols-4 gap-2">
+          <div class="grid grid-cols-4 gap-2">
             <div class="count-card">
               <div id="cdDias" class="text-xl font-black">--</div>
               <div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Dias</div>
@@ -252,35 +358,53 @@
       </div>
     </div>
 
-    <div class="soft-panel p-4 mb-6">
+    <div class="soft-panel p-4 mb-5">
       <div class="flex items-start gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-white text-purple-700 flex items-center justify-center shadow-sm">
+        <div class="w-10 h-10 rounded-2xl bg-white text-[var(--brand)] flex items-center justify-center shadow-sm">
           <i class="fas fa-hands-helping"></i>
         </div>
         <div>
           <p class="text-sm font-extrabold text-slate-800">Como funciona para doar?</p>
           <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Escolha um item da lista, informe a quantidade, preencha seus dados e registre a sua doação.
+            Escolha um item, informe a quantidade, preencha seus dados e registre sua doação.
           </p>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            A equipe acompanha tudo com organização, e você ainda pode deixar uma mensagem no mural. 💜
+            Os itens mais urgentes aparecem primeiro. Quando uma meta é preenchida, ela sai automaticamente da prioridade. 💜
           </p>
         </div>
       </div>
     </div>
 
-    <div class="mb-6">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-black uppercase tracking-widest text-slate-700">Mais urgentes agora</h2>
-        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Proteínas</span>
-      </div>
-
-      <div id="listaUrgentes" class="space-y-3">
-        <p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens...</p>
+    <div id="resumoSelecao" class="sticky-summary mb-5 hidden">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-[10px] uppercase tracking-widest font-black text-slate-400">Item selecionado</p>
+          <p id="resumoItemNome" class="text-sm font-extrabold text-slate-800 mt-1"></p>
+          <p id="resumoItemMeta" class="text-[11px] text-slate-500 mt-1"></p>
+        </div>
+        <button type="button" onclick="focarFormulario()" class="choose-btn primary">
+          Continuar
+        </button>
       </div>
     </div>
 
-    <div class="mb-8 section-card">
+    <div class="priority-shell mb-6">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <p class="text-[10px] font-black uppercase tracking-widest text-[var(--ifood)]">Prioridade máxima</p>
+          <h2 class="text-sm font-black uppercase tracking-widest text-slate-800 mt-1">Proteínas e itens críticos</h2>
+        </div>
+        <span class="pill bg-[var(--ifood-soft)] text-[var(--ifood)] border border-rose-100">
+          Fixos até completar
+        </span>
+      </div>
+
+      <div id="listaUrgentes" class="ifood-grid">
+        <p class="text-center text-xs text-slate-300 animate-pulse col-span-full">Carregando itens...</p>
+      </div>
+    </div>
+
+    <div class="section-card mb-8">
       <button type="button" id="btnToggleTodas" class="accordion-btn" onclick="toggleTodasNecessidades()">
         <span class="text-sm uppercase tracking-widest">Ver todas as necessidades</span>
         <i id="iconToggleTodas" class="fas fa-chevron-down text-slate-400"></i>
@@ -294,21 +418,35 @@
     <div id="areaForm">
       <form id="formDoacao" class="space-y-5">
         <div class="space-y-1">
-          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome Completo</label>
-          <input id="d_nome" placeholder="Seu nome" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome completo</label>
+          <input id="d_nome" placeholder="Seu nome" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">WhatsApp (com DDD)</label>
-            <input id="d_tel" type="tel" placeholder="(11) 99999-8888" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+            <input id="d_tel" type="tel" placeholder="(11) 99999-8888" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
           </div>
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Equipe</label>
-            <select id="d_equipe" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
+            <select id="d_equipe" required class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
               <option value="">Selecione...</option>
               <option value="Externo">Paroquiano / Visitante</option>
-              <option>Animação</option><option>Patrimônio</option><option>Café</option><option>Círculo</option><option>Compras</option><option>Cozinha</option><option>Intercessão</option><option>Liturgia</option><option>Ordem</option><option>Piloto</option><option>Sala</option><option>Secretaria</option><option>Som/Luz</option><option>Trânsito</option><option>Visitação</option>
+              <option>Animação</option>
+              <option>Patrimônio</option>
+              <option>Café</option>
+              <option>Círculo</option>
+              <option>Compras</option>
+              <option>Cozinha</option>
+              <option>Intercessão</option>
+              <option>Liturgia</option>
+              <option>Ordem</option>
+              <option>Piloto</option>
+              <option>Sala</option>
+              <option>Secretaria</option>
+              <option>Som/Luz</option>
+              <option>Trânsito</option>
+              <option>Visitação</option>
             </select>
           </div>
         </div>
@@ -316,13 +454,13 @@
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">O que vai doar?</label>
-            <select id="d_item" required class="vault-input w-full rounded-2xl py-4 px-4 font-bold outline-none text-slate-700 bg-white appearance-none">
+            <select id="d_item" required class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
               <option value="">Carregando...</option>
             </select>
           </div>
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
-            <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-center text-slate-800" />
+            <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
           </div>
         </div>
 
@@ -336,12 +474,12 @@
         </div>
 
         <div class="space-y-1">
-          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de Entrega</label>
-          <input id="d_data" type="date" required class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700" />
+          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de entrega</label>
+          <input id="d_data" type="date" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
         </div>
 
         <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
-          Confirmar Doação
+          Confirmar doação
         </button>
       </form>
     </div>
@@ -370,7 +508,7 @@
       </div>
 
       <div class="space-y-3 mb-4">
-        <textarea id="m_msg" rows="3" maxlength="220" placeholder="Escreva uma mensagem de carinho para o EJC..." class="vault-input w-full rounded-2xl py-4 px-5 font-bold outline-none text-slate-700 resize-none"></textarea>
+        <textarea id="m_msg" rows="3" maxlength="220" placeholder="Escreva uma mensagem de carinho para o EJC..." class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700 resize-none"></textarea>
         <button id="btnMsg" type="button" onclick="enviarMensagem()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-black active:scale-95 transition-all uppercase tracking-widest text-xs">
           Enviar mensagem
         </button>
@@ -380,7 +518,7 @@
         <p class="text-xs text-slate-300">Carregando mural...</p>
       </div>
     </div>
-    
+
     <div class="mt-10 text-center border-t border-slate-50 pt-7">
       <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] italic">"Tudo por Jesus, nada sem Maria"</p>
     </div>
@@ -398,76 +536,83 @@
     let disponibilidadeItens = {};
     let itensRenderizados = [];
 
+    const prioridadesFixas = [
+      "Carne bovina",
+      "Frango",
+      "Linguiça",
+      "Arroz",
+      "Feijão",
+      "Óleo",
+      "Sal",
+      "Alho",
+      "Cebola",
+      "Detergente",
+      "Esponjas",
+      "Sacos de lixo (100L e 50L)"
+    ];
+
     const categorias = {
-      "Alimentos": [
+      "Proteínas": [
+        "Carne bovina",
+        "Frango",
+        "Linguiça",
+        "Mussarela",
+        "Presunto",
+        "Bacon"
+      ],
+      "Crítico": [
         "Arroz",
         "Feijão",
-        "Carne bovina",
-        "Frango para churrasco (asa, coxinha da asa ou coxa/sobrecoxa)",
-        "Frango para domingo (coxa e sobrecoxa)",
-        "Linguiça",
-        "Bacon",
+        "Óleo",
+        "Sal",
+        "Alho",
+        "Cebola",
+        "Detergente",
+        "Esponjas",
+        "Sacos de lixo (100L e 50L)"
+      ],
+      "Importante": [
         "Farinha de mandioca",
         "Batata",
         "Cenoura",
         "Tomate",
         "Repolho",
-        "Cebola",
-        "Alho",
         "Cheiro-verde",
+        "Água",
+        "Refrigerante",
         "Café",
         "Açúcar",
-        "Óleo",
-        "Sal",
-        "Leite",
-        "Ketchup",
-        "Maionese (sachê)",
-        "Mostarda"
+        "Leite"
       ],
-      "Bebidas": [
-        "Água",
-        "Refrigerante"
-      ],
-      "Descartáveis": [
+      "Complemento": [
         "Pratinhos descartáveis",
-        "Copos descartáveis (água/refri/café)",
         "Talheres (garfo/faca)",
-        "Guardanapos",
+        "Copos descartáveis",
+        "Ketchup (sachê)",
+        "Mostarda (sachê)",
+        "Maionese (sachê)",
         "Papel alumínio",
-        "Plástico filme"
-      ],
-      "Limpeza": [
-        "Detergente",
-        "Esponjas",
+        "Plástico filme",
         "Desinfetante",
         "Água sanitária",
         "Papel higiênico",
         "Papel toalha",
-        "Sacos de lixo (100L e 50L)",
         "Rodo",
         "Vassoura",
         "Balde",
-        "Pano de chão"
-      ],
-      "Organização": [
+        "Pano de chão",
         "Sulfite A4",
         "Fita adesiva (durex)"
-      ]
+      ],
+      "Outros": []
     };
 
     function showToast(msg, type = "success") {
       const t = document.createElement("div");
-      t.className = `toast animate-fade-in ${type === 'error' ? 'bg-rose-600' : 'bg-slate-900'}`;
+      t.className = `toast ${type === "error" ? "error" : "success"}`;
       t.innerText = msg;
       document.getElementById("toast-container").appendChild(t);
-      setTimeout(() => t.remove(), 4500);
-    }
-
-    function aplicarAnimacaoSelecao() {
-      const campo = document.getElementById("d_item");
-      campo.classList.remove("selected-glow");
-      void campo.offsetWidth;
-      campo.classList.add("selected-glow");
+      setTimeout(() => t.remove(), 4000);
     }
 
     function mascararWhatsapp(valor) {
@@ -516,64 +661,202 @@
       if (icon) icon.className = aberto ? "fas fa-chevron-down text-slate-400" : "fas fa-chevron-up text-slate-400";
     }
 
-    function gerarCardCompacto(itemData) {
+    function obterStatusBadge(itemData) {
+      if (itemData.disponivelPrometer <= 0) {
+        return `<span class="ifood-badge ok">Completo</span>`;
+      }
+      if (prioridadesFixas.includes(itemData.item)) {
+        return `<span class="ifood-badge danger">Prioridade</span>`;
+      }
+      if (itemData.percReal >= 70) {
+        return `<span class="ifood-badge warn">Quase lá</span>`;
+      }
+      return `<span class="ifood-badge warn">Disponível</span>`;
+    }
+
+    function gerarCardCompacto(itemData, destaque = false) {
       return `
-        <div class="compact-item">
-          <div class="flex items-start justify-between gap-3 mb-2">
+        <div class="section-card p-3">
+          <div class="flex items-start justify-between gap-3 mb-3">
             <div>
               <p class="text-sm font-extrabold text-slate-800">${esc(itemData.item)}</p>
-              <p class="text-[11px] text-slate-500 mt-1">Disponível: ${itemData.disponivelPrometer} ${esc(itemData.unidade)}</p>
+              <p class="text-[11px] text-slate-500 mt-1">Meta: ${itemData.meta} ${esc(itemData.unidade || "")}</p>
             </div>
-            <span class="mini-badge bg-purple-50 text-purple-700 border border-purple-100">${itemData.percReal}%</span>
+            ${obterStatusBadge(itemData)}
           </div>
-          <div class="progress-bar">
+
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="mini-stat">
+              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Prometido</span>
+              <strong class="text-amber-500">${itemData.prometido}</strong>
+            </div>
+            <div class="mini-stat">
+              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Entregue</span>
+              <strong class="text-emerald-500">${itemData.entregue}</strong>
+            </div>
+            <div class="mini-stat">
+              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Livre</span>
+              <strong class="text-rose-500">${itemData.disponivelPrometer}</strong>
+            </div>
+          </div>
+
+          <div class="progress-bar mb-3">
             <div class="progress-fill" style="width:${itemData.percReal}%"></div>
+          </div>
+
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-[11px] text-slate-500">
+              Falta real: <strong class="text-slate-700">${itemData.faltandoReal}</strong> ${esc(itemData.unidade || "")}
+            </p>
+            ${
+              itemData.disponivelPrometer > 0
+                ? `<button type="button" onclick="selecionarItem('${escJS(itemData.item)}')" class="choose-btn ${destaque ? 'primary' : 'secondary'}">Escolher</button>`
+                : ''
+            }
           </div>
         </div>
       `;
     }
 
-    function renderizarUrgentes() {
-      const wrap = document.getElementById("listaUrgentes");
+    function gerarCardUrgente(itemData) {
+      const selecionado = document.getElementById("d_item").value === itemData.item;
+      return `
+        <div class="ifood-card ${selecionado ? 'selected selected-glow' : ''}" onclick="selecionarItem('${escJS(itemData.item)}')">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="ifood-badge danger">${prioridadesFixas.includes(itemData.item) ? 'Urgente' : 'Disponível'}</span>
+                <span class="pill bg-slate-50 text-slate-600 border border-slate-200">${esc(itemData.unidade || '')}</span>
+              </div>
+              <p class="text-sm font-extrabold text-slate-800 mt-3 leading-tight">${esc(itemData.item)}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Falta prometer</p>
+              <p class="text-xl font-black text-[var(--ifood)]">${itemData.disponivelPrometer}</p>
+            </div>
+          </div>
 
-      const prioridadesFixas = [
-        "Carne bovina",
-        "Frango para churrasco (asa, coxinha da asa ou coxa/sobrecoxa)",
-        "Frango para domingo (coxa e sobrecoxa)",
-        "Linguiça",
-        "Bacon"
-      ];
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="mini-stat">
+              <span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Meta</span>
+              <strong>${itemData.meta}</strong>
+            </div>
+            <div class="mini-stat">
+              <span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Prom.</span>
+              <strong class="text-amber-500">${itemData.prometido}</strong>
+            </div>
+            <div class="mini-stat">
+              <span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Entr.</span>
+              <strong class="text-emerald-500">${itemData.entregue}</strong>
+            </div>
+          </div>
 
-      const itensDisponiveis = [...itensRenderizados].filter(i => i.disponivelPrometer > 0);
+          <div class="progress-bar mb-3">
+            <div class="progress-fill" style="width:${itemData.percReal}%"></div>
+          </div>
 
-      const urgentesProteinas = prioridadesFixas
-        .map(nome => itensDisponiveis.find(i => i.item === nome))
-        .filter(Boolean);
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-[11px] text-slate-500">Progresso real: <strong class="text-slate-800">${itemData.percReal}%</strong></p>
+            <button type="button" class="choose-btn primary">Escolher</button>
+          </div>
+        </div>
+      `;
+    }
 
-      const restantes = itensDisponiveis
-        .filter(i => !prioridadesFixas.includes(i.item))
-        .sort((a, b) => a.disponivelPrometer - b.disponivelPrometer || a.percReal - b.percReal);
+    function escJS(str) {
+      return String(str || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"');
+    }
 
-      const urgentes = [...urgentesProteinas, ...restantes].slice(0, 6);
+    function focarFormulario() {
+      const form = document.getElementById("formDoacao");
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
 
-      if (!urgentes.length) {
-        wrap.innerHTML = `<div class="need-card text-center text-sm font-bold text-purple-700">Graças a Deus, tudo já foi preenchido! 💜</div>`;
+    function atualizarResumoItemSelecionado(item) {
+      const box = document.getElementById("resumoSelecao");
+      const nome = document.getElementById("resumoItemNome");
+      const meta = document.getElementById("resumoItemMeta");
+
+      if (!item || !disponibilidadeItens[item]) {
+        box.classList.add("hidden");
+        nome.innerText = "";
+        meta.innerText = "";
         return;
       }
 
-      wrap.innerHTML = urgentes.map(gerarCardCompacto).join("");
+      const info = disponibilidadeItens[item];
+      nome.innerText = item;
+      meta.innerText = `Disponível para prometer: ${info.disponivelPrometer} ${info.unidade || ""} • Meta total: ${info.meta} ${info.unidade || ""}`;
+      box.classList.remove("hidden");
+    }
+
+    function selecionarItem(item) {
+      const select = document.getElementById("d_item");
+      select.value = item;
+      select.dispatchEvent(new Event("change"));
+      atualizarResumoItemSelecionado(item);
+
+      const campo = document.getElementById("d_item");
+      campo.classList.remove("selected-glow");
+      void campo.offsetWidth;
+      campo.classList.add("selected-glow");
+
+      focarFormulario();
+    }
+
+    function renderizarUrgentes() {
+      const wrap = document.getElementById("listaUrgentes");
+
+      const ativos = itensRenderizados.filter(i => i.disponivelPrometer > 0);
+
+      const fixos = prioridadesFixas
+        .map(nome => ativos.find(i => i.item === nome))
+        .filter(Boolean);
+
+      const outros = ativos
+        .filter(i => !prioridadesFixas.includes(i.item))
+        .sort((a, b) => {
+          if (a.disponivelPrometer !== b.disponivelPrometer) return a.disponivelPrometer - b.disponivelPrometer;
+          return a.item.localeCompare(b.item, 'pt-BR');
+        });
+
+      const urgentes = [...fixos, ...outros].slice(0, 10);
+
+      if (!urgentes.length) {
+        wrap.innerHTML = `<div class="col-span-full section-card p-6 text-center text-sm font-bold text-purple-700">Graças a Deus, as prioridades já foram preenchidas! 💜</div>`;
+        return;
+      }
+
+      wrap.innerHTML = urgentes.map(gerarCardUrgente).join("");
     }
 
     function renderizarCategorias() {
       const container = document.getElementById("categoriasNecessidades");
 
+      const itensNaoClassificados = itensRenderizados
+        .filter(i => {
+          return !Object.entries(categorias)
+            .filter(([k]) => k !== "Outros")
+            .some(([, arr]) => arr.includes(i.item));
+        })
+        .map(i => i.item);
+
+      categorias["Outros"] = itensNaoClassificados;
+
       const htmlCategorias = Object.entries(categorias).map(([nomeCategoria, itensCategoria], idx) => {
-        const itensDaCategoria = itensRenderizados.filter(item => itensCategoria.includes(item.item));
+        const itensDaCategoria = itensRenderizados.filter(item => itensCategoria.includes(item.item) && item.disponivelPrometer > 0);
         if (!itensDaCategoria.length) return "";
 
         const conteudo = itensDaCategoria
-          .sort((a, b) => a.item.localeCompare(b.item, 'pt-BR'))
-          .map(gerarCardCompacto)
+          .sort((a, b) => {
+            if (prioridadesFixas.includes(a.item) && !prioridadesFixas.includes(b.item)) return -1;
+            if (!prioridadesFixas.includes(a.item) && prioridadesFixas.includes(b.item)) return 1;
+            return a.item.localeCompare(b.item, 'pt-BR');
+          })
+          .map(item => gerarCardCompacto(item, prioridadesFixas.includes(item.item)))
           .join("");
 
         const id = `cat_${idx}`;
@@ -624,12 +907,10 @@
       const mapa = {};
 
       (registros || []).forEach(r => {
-        const item = r.descricao || "";
+        const item = (r.descricao || "").trim();
         const qtd = Number(r.quantidade || 0);
 
-        if (!mapa[item]) {
-          mapa[item] = { prometido: 0, entregue: 0 };
-        }
+        if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
 
         if (r.status === "PENDENTE") mapa[item].prometido += qtd;
         if (r.status === "PAGO") mapa[item].entregue += qtd;
@@ -643,7 +924,7 @@
       let itensDisponiveis = 0;
 
       lista.forEach(m => {
-        const item = m.item;
+        const item = (m.item || "").trim();
         const meta = Number(m.qtd_necessaria || 0);
         const prometido = mapa[item]?.prometido || 0;
         const entregue = mapa[item]?.entregue || 0;
@@ -683,6 +964,16 @@
 
       renderizarUrgentes();
       renderizarCategorias();
+
+      const itemAtual = document.getElementById("d_item").value;
+      if (itemAtual && !disponibilidadeItens[itemAtual]?.disponivelPrometer) {
+        document.getElementById("d_item").value = "";
+        document.getElementById("itemEscolhidoBox").classList.add("hidden");
+        document.getElementById("infoFrango").classList.add("hidden");
+        atualizarResumoItemSelecionado("");
+      } else {
+        atualizarResumoItemSelecionado(itemAtual);
+      }
 
       if (itensDisponiveis === 0 && lista.length > 0) {
         document.getElementById("areaForm").innerHTML = `
@@ -765,16 +1056,18 @@
       document.getElementById("infoFrangoTexto").innerText = "";
       document.getElementById("areaForm").classList.remove("hidden");
       document.getElementById("agradecimentoDoacao").classList.add("hidden");
+      atualizarResumoItemSelecionado("");
+      carregarDados();
     }
 
     document.getElementById("d_item").addEventListener("change", function() {
-      aplicarAnimacaoSelecao();
-
       const box = document.getElementById("itemEscolhidoBox");
       const texto = document.getElementById("itemEscolhidoTexto");
       const infoFrango = document.getElementById("infoFrango");
       const infoFrangoTexto = document.getElementById("infoFrangoTexto");
       const valor = this.value;
+
+      atualizarResumoItemSelecionado(valor);
 
       if (!valor) {
         box.classList.add("hidden");
@@ -791,16 +1084,15 @@
       texto.innerText = `${valor} • disponível para prometer: ${disponivel} ${unidade}`;
       box.classList.remove("hidden");
 
-      if (valor === "Frango para churrasco (asa, coxinha da asa ou coxa/sobrecoxa)") {
-        infoFrangoTexto.innerHTML = "Para churrasco: doar <b>asa, coxinha da asa ou coxa/sobrecoxa</b>.";
-        infoFrango.classList.remove("hidden");
-      } else if (valor === "Frango para domingo (coxa e sobrecoxa)") {
-        infoFrangoTexto.innerHTML = "Para domingo: doar <b>coxa e sobrecoxa</b>.";
+      if (valor === "Frango") {
+        infoFrangoTexto.innerHTML = "Se desejar, combine previamente com a equipe a melhor forma de entrega e conservação do <b>frango</b>.";
         infoFrango.classList.remove("hidden");
       } else {
         infoFrango.classList.add("hidden");
         infoFrangoTexto.innerText = "";
       }
+
+      renderizarUrgentes();
     });
 
     document.getElementById("d_tel").addEventListener("input", function() {
@@ -852,6 +1144,7 @@
       });
 
       if (error) {
+        console.error(error);
         showToast("Erro ao registrar doação.", "error");
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
