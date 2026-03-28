@@ -801,80 +801,80 @@
     }
 
     function montarPayloadTransacao() {
-  const modulo = abaAtiva === "ADMIN"
-    ? document.getElementById("f_modulo").value
-    : abaAtiva;
+      const modulo = abaAtiva === "ADMIN"
+        ? document.getElementById("f_modulo").value
+        : abaAtiva;
 
-  const tipoSelecionado = document.getElementById("f_type").value;
-  const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
-  const descricaoBase = limparTexto(document.getElementById("f_desc").value);
-  const valorCampo = document.getElementById("f_val").value;
-  const nomePessoa = limparTexto(document.getElementById("f_nome").value);
-  const telefone = normalizarTelefone(document.getElementById("f_tel").value);
-  const recebidoPor = limparTexto(document.getElementById("f_recebido").value);
-  const formaPagamento = document.getElementById("f_forma").value;
-  const equipe = obterEquipeDoFormulario(modulo);
+      const tipoSelecionado = document.getElementById("f_type").value;
+      const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
+      const descricaoBase = limparTexto(document.getElementById("f_desc").value);
+      const valorCampo = document.getElementById("f_val").value;
+      const nomePessoa = limparTexto(document.getElementById("f_nome").value);
+      const telefone = normalizarTelefone(document.getElementById("f_tel").value);
+      const recebidoPor = limparTexto(document.getElementById("f_recebido").value);
+      const formaPagamento = document.getElementById("f_forma").value;
+      const equipe = obterEquipeDoFormulario(modulo);
 
-  if (!descricaoBase) throw new Error("Informe a descrição.");
-  if (!recebidoPor) throw new Error("Informe quem está lançando.");
+      if (!descricaoBase) throw new Error("Informe a descrição.");
+      if (!recebidoPor) throw new Error("Informe quem está lançando.");
 
-  let quantidade = 1;
-  let valor = 0;
+      let quantidade = 1;
+      let valor = 0;
 
-  if (modulo === "DOACAO") {
-    quantidade = parseInteiroSeguro(valorCampo);
-    valor = 0;
+      if (modulo === "DOACAO") {
+        quantidade = parseInteiroSeguro(valorCampo);
+        valor = 0;
 
-    if (quantidade <= 0) throw new Error("Informe uma quantidade válida.");
-    if (!equipe) throw new Error("Selecione a equipe do responsável.");
+        if (quantidade <= 0) throw new Error("Informe uma quantidade válida.");
+        if (!equipe) throw new Error("Selecione a equipe do responsável.");
 
-    const dataEntrega = document.getElementById("f_data_entrega").value;
-    if (!dataEntrega) throw new Error("Informe a data prevista de entrega.");
-    
-  } else if (modulo === "FEIJOADA" && tipoFeijoada === "VOUCHER") {
-    quantidade = parseInteiroSeguro(valorCampo);
-    valor = quantidade * PRECO_VOUCHER_FEIJOADA; // Multiplica pela constante de R$ 55
+        const dataEntrega = document.getElementById("f_data_entrega").value;
+        if (!dataEntrega) throw new Error("Informe a data prevista de entrega.");
+        
+      } else if (modulo === "FEIJOADA" && tipoFeijoada === "VOUCHER") {
+        quantidade = parseInteiroSeguro(valorCampo);
+        valor = quantidade * PRECO_VOUCHER_FEIJOADA; // Multiplica pela constante de R$ 55
 
-    if (quantidade <= 0) throw new Error("Informe uma quantidade válida de vouchers.");
-    if (!equipe) throw new Error("Selecione a equipe responsável.");
-    
-  } else {
-    valor = parseNumeroFlex(valorCampo);
-    quantidade = 1;
+        if (quantidade <= 0) throw new Error("Informe uma quantidade válida de vouchers.");
+        if (!equipe) throw new Error("Selecione a equipe responsável.");
+        
+      } else {
+        valor = parseNumeroFlex(valorCampo);
+        quantidade = 1;
 
-    if (valor <= 0) throw new Error("Informe um valor válido.");
+        if (valor <= 0) throw new Error("Informe um valor válido.");
 
-    if ((modulo === "FEIJOADA" || modulo === "DOACAO") && !equipe) {
-      throw new Error("Selecione a equipe responsável.");
+        if ((modulo === "FEIJOADA" || modulo === "DOACAO") && !equipe) {
+          throw new Error("Selecione a equipe responsável.");
+        }
+      }
+
+      const { natureza, status } = calcularStatusENatureza(modulo, tipoSelecionado, tipoFeijoada);
+
+      // Monta o objeto final que vai direto para o Supabase
+      const payload = {
+        modulo,
+        descricao: montarDescricaoFinal(modulo, descricaoBase, tipoFeijoada),
+        quantidade,
+        valor,
+        natureza,
+        status,
+        forma_pagamento: formaPagamento,
+        nome_pessoa: nomePessoa,
+        equipe,
+        telefone,
+        recebido_por: recebidoPor,
+        user_id: currentUser.id,
+        recebido_em: status === "PAGO" ? agoraISO() : null
+      };
+
+      // Se for doação, anexa a data de entrega
+      if (modulo === "DOACAO") {
+        payload.data_entrega = document.getElementById("f_data_entrega").value;
+      }
+
+      return payload;
     }
-  }
-
-  const { natureza, status } = calcularStatusENatureza(modulo, tipoSelecionado, tipoFeijoada);
-
-  // Monta o objeto final que vai direto para o Supabase
-  const payload = {
-    modulo,
-    descricao: montarDescricaoFinal(modulo, descricaoBase, tipoFeijoada),
-    quantidade,
-    valor,
-    natureza,
-    status,
-    forma_pagamento: formaPagamento,
-    nome_pessoa: nomePessoa,
-    equipe,
-    telefone,
-    recebido_por: recebidoPor,
-    user_id: currentUser.id,
-    recebido_em: status === "PAGO" ? agoraISO() : null
-  };
-
-  // Se for doação, anexa a data de entrega
-  if (modulo === "DOACAO") {
-    payload.data_entrega = document.getElementById("f_data_entrega").value;
-  }
-
-  return payload;
-}
     // --- FIM FUNÇÕES DE NORMALIZAÇÃO ---
 
     function isVoucherFeijoada(desc = "") { return String(desc || "").startsWith("[VOUCHER]"); }
@@ -1127,6 +1127,10 @@
       let rec = 0, pen = 0, sai = 0;
 
       dadosCache.forEach(i => {
+        if (i.status === "CANCELADO") return;
+        if (i.modulo === "DOACAO") return;
+        if (abaAtiva === "ADMIN" && i.modulo === "FEIJOADA") return;
+
         const v = Number(i.valor || 0);
         if (i.natureza === "SAIDA") sai += v;
         else if (i.status === "PENDENTE") pen += v;
@@ -1527,28 +1531,29 @@
           statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-amber-100 text-amber-700">PENDENTE</span>`;
         }
 
+        const podeAcao = abaAtiva !== "ADMIN";
+
         const botaoReceber = (
+          podeAcao &&
           ((abaAtiva === "DOACAO" && podeOperarProvidencia()) || (["EJC","MERCADINHO","FEIJOADA"].includes(abaAtiva) && podeUsarModalRecebimento()))
           && i.status === "PENDENTE"
-        )
-          ? `<button onclick="abrirModalRecebimento('${i.id}', ${i.version || 0})" class="action-btn bg-purple-700 text-white shadow-lg" title="Dar baixa"><i class="fas fa-check text-xs"></i></button>`
-          : "";
+        ) ? `<button onclick="abrirModalRecebimento('${i.id}', ${i.version || 0})" class="action-btn bg-purple-700 text-white shadow-lg" title="Dar baixa"><i class="fas fa-check text-xs"></i></button>` : "";
 
-        const botaoCancelar = (["DOACAO", "FEIJOADA"].includes(abaAtiva) && podeOperarProvidencia() && i.status === "PENDENTE")
-          ? `<button onclick="cancelarRegistro('${i.id}', ${i.version || 0})" class="action-btn bg-rose-50 text-rose-600 shadow-sm hover:bg-rose-100" title="Cancelar"><i class="fas fa-ban text-xs"></i></button>`
-          : "";
+        const botaoCancelar = (
+          podeAcao && 
+          ["DOACAO", "FEIJOADA", "MERCADINHO", "EJC"].includes(abaAtiva) && 
+          (ROLE === "ADMIN" || ROLE === "COMPRAS") && 
+          i.status === "PENDENTE"
+        ) ? `<button onclick="cancelarRegistro('${i.id}', ${i.version || 0})" class="action-btn bg-rose-50 text-rose-600 shadow-sm hover:bg-rose-100" title="Cancelar"><i class="fas fa-ban text-xs"></i></button>` : "";
 
-        const botaoEditar = (ROLE === "ADMIN")
-          ? `<button onclick="editarRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Editar"><i class="fas fa-pen text-xs"></i></button>`
-          : "";
+        const botaoEditar = (podeAcao && ROLE === "ADMIN")
+          ? `<button onclick="editarRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Editar"><i class="fas fa-pen text-xs"></i></button>` : "";
 
-        const botaoZap = (i.status === "PENDENTE" && telefone)
-          ? `<button onclick="cobrarZapDoRegistro('${i.id}')" class="action-btn bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100" title="Cobrar no WhatsApp"><i class="fab fa-whatsapp"></i></button>`
-          : "";
+        const botaoZap = (podeAcao && i.status === "PENDENTE" && telefone)
+          ? `<button onclick="cobrarZapDoRegistro('${i.id}')" class="action-btn bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100" title="Cobrar no WhatsApp"><i class="fab fa-whatsapp"></i></button>` : "";
 
-        const botaoExtrato = telefone
-          ? `<button onclick="abrirExtratoDoRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Extrato"><i class="fas fa-file-invoice"></i></button>`
-          : "";
+        const botaoExtrato = (podeAcao && telefone)
+          ? `<button onclick="abrirExtratoDoRegistro('${i.id}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Extrato"><i class="fas fa-file-invoice"></i></button>` : "";
 
         let subtitulo = `Qtd: <span class="font-bold">${qtd}</span>`;
         if (valor > 0) subtitulo += ` • Total: <span class="font-bold">${formatarMoeda(valor)}</span>`;
