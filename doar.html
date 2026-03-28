@@ -403,7 +403,7 @@
     </div>
 
     <div class="section-card mb-8">
-      <button type="button" id="btnToggleTodas" class="accordion-btn" onclick="toggleTodasNecessidades()">
+      <button type="button" id="btnToggleTodas" class="accordion-btn" onclick="toggleTodasNecessidades()" aria-expanded="false" aria-controls="todasNecessidadesWrap">
         <span class="text-sm uppercase tracking-widest">Ver todas as necessidades</span>
         <i id="iconToggleTodas" class="fas fa-chevron-down text-slate-400"></i>
       </button>
@@ -418,17 +418,17 @@
         
         <div class="space-y-1">
           <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nome completo</label>
-          <input id="d_nome" placeholder="Seu nome" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+          <input id="d_nome" placeholder="Seu nome" required aria-required="true" class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">WhatsApp (com DDD)</label>
-            <input id="d_tel" type="tel" placeholder="(11) 99999-8888" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+            <input id="d_tel" type="tel" placeholder="(11) 99999-8888" required aria-required="true" class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
           </div>
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Equipe</label>
-            <select id="d_equipe" required class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
+            <select id="d_equipe" required aria-required="true" class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
               <option value="">Selecione...</option>
               <option value="Externo">Paroquiano / Visitante</option>
               <option>Animação</option>
@@ -453,13 +453,13 @@
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">O que vai doar?</label>
-            <select id="d_item" required class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
+            <select id="d_item" required aria-required="true" class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
               <option value="">Carregando...</option>
             </select>
           </div>
           <div class="space-y-1">
             <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
-            <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
+            <input id="d_qtd" type="number" min="1" step="1" value="1" required aria-required="true" class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
           </div>
         </div>
 
@@ -474,7 +474,7 @@
 
         <div class="space-y-1">
           <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de entrega</label>
-          <input id="d_data" type="date" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+          <input id="d_data" type="date" required aria-required="true" class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
         </div>
 
         <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
@@ -514,7 +514,7 @@
         </button>
       </div>
 
-      <div id="listaMensagens" class="space-y-3">
+      <div id="listaMensagens" class="space-y-3 min-h-[90px]">
         <p class="text-xs text-slate-300">Carregando mural...</p>
       </div>
     </div>
@@ -533,21 +533,17 @@
     // --- VARIÁVEIS GLOBAIS E PERFORMANCE ---
     let disponibilidadeItens = {};
     let itensRenderizados = [];
-    let ultimaMensagemTime = 0; // Anti-spam do mural
+    let ultimoLoad = 0; 
+    let ultimaMensagemTime = 0; 
+
+    // Variáveis para o carrossel do mural
+    let mensagensMural = [];
+    let indiceMural = 0;
+    let muralInterval = null;
 
     const prioridadesFixas = [
-      "Carne bovina",
-      "Frango",
-      "Linguiça",
-      "Arroz",
-      "Feijão",
-      "Óleo",
-      "Sal",
-      "Alho",
-      "Cebola",
-      "Detergente",
-      "Esponjas",
-      "Sacos de lixo (100L e 50L)"
+      "Carne bovina", "Frango", "Linguiça", "Arroz", "Feijão", "Óleo", 
+      "Sal", "Alho", "Cebola", "Detergente", "Esponjas", "Sacos de lixo (100L e 50L)"
     ];
 
     const categorias = {
@@ -559,30 +555,38 @@
     };
 
     // --- UTILITÁRIOS ---
-    const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t])) : "";
-    const escJS = (str) => String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '\\"');
+    const esc = function(str) { 
+      return str ? String(str).replace(/[&<>'"]/g, function(t) { 
+        return {'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[t]; 
+      }) : ""; 
+    };
+    
+    const escJS = function(str) { 
+      return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '\\"'); 
+    };
 
-    function showToast(msg, type = "success") {
+    function showToast(msg, type) {
+      if (!type) type = "success";
       const t = document.createElement("div");
-      t.className = `toast ${type === "error" ? "error" : type === "warn" ? "warn" : "success"}`;
+      t.className = "toast " + (type === "error" ? "error" : type === "warn" ? "warn" : "success");
       t.innerText = msg;
       document.getElementById("toast-container").appendChild(t);
-      setTimeout(() => t.remove(), 4000);
+      setTimeout(function() { t.remove(); }, 4000);
     }
 
     function mascararWhatsapp(valor) {
       const nums = valor.replace(/\D/g, "").slice(0, 11);
       if (nums.length <= 2) return nums;
-      if (nums.length <= 7) return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
-      return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
+      if (nums.length <= 7) return "(" + nums.slice(0,2) + ") " + nums.slice(2);
+      return "(" + nums.slice(0,2) + ") " + nums.slice(2,7) + "-" + nums.slice(7);
     }
 
     function iniciarContador() {
-      const destino = new Date('2026-07-11T06:00:00');
+      const destino = new Date('2026-07-11T06:00:00').getTime();
 
       function atualizar() {
-        const agora = new Date();
-        let diff = destino.getTime() - agora.getTime();
+        const agora = new Date().getTime();
+        let diff = destino - agora;
         if (diff < 0) diff = 0;
 
         const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -590,10 +594,10 @@
         const min = Math.floor((diff / (1000 * 60)) % 60);
         const seg = Math.floor((diff / 1000) % 60);
 
-        document.getElementById('cdDias').innerText = String(dias).padStart(2, '0');
-        document.getElementById('cdHoras').innerText = String(horas).padStart(2, '0');
-        document.getElementById('cdMin').innerText = String(min).padStart(2, '0');
-        document.getElementById('cdSeg').innerText = String(seg).padStart(2, '0');
+        document.getElementById('cdDias').innerText = ('0' + dias).slice(-2);
+        document.getElementById('cdHoras').innerText = ('0' + horas).slice(-2);
+        document.getElementById('cdMin').innerText = ('0' + min).slice(-2);
+        document.getElementById('cdSeg').innerText = ('0' + seg).slice(-2);
       }
 
       atualizar();
@@ -602,27 +606,35 @@
 
     // --- INTERFACE DE ACORDIONS ---
     function toggleTodasNecessidades() {
+      const btn = document.getElementById("btnToggleTodas");
       const wrap = document.getElementById("todasNecessidadesWrap");
       const icon = document.getElementById("iconToggleTodas");
+      const aberto = !wrap.classList.contains("hidden-soft");
       
-      if (wrap.classList.contains("hidden-soft")) {
+      if (aberto) {
         wrap.classList.remove("hidden-soft");
+        btn.setAttribute("aria-expanded", "true");
         icon.className = "fas fa-chevron-up text-slate-400";
       } else {
         wrap.classList.add("hidden-soft");
+        btn.setAttribute("aria-expanded", "false");
         icon.className = "fas fa-chevron-down text-slate-400";
       }
     }
 
     function toggleCategoria(id) {
+      const btn = document.querySelector('[aria-controls="' + id + '"]');
       const wrap = document.getElementById(id);
-      const icon = document.querySelector(`[data-icon="${id}"]`);
+      const icon = document.querySelector('[data-icon="' + id + '"]');
+      const aberto = !wrap.classList.contains("hidden-soft");
       
-      if (wrap.classList.contains("hidden-soft")) {
+      if (aberto) {
         wrap.classList.remove("hidden-soft");
+        if (btn) btn.setAttribute("aria-expanded", "true");
         if (icon) icon.className = "fas fa-chevron-up text-slate-400";
       } else {
         wrap.classList.add("hidden-soft");
+        if (btn) btn.setAttribute("aria-expanded", "false");
         if (icon) icon.className = "fas fa-chevron-down text-slate-400";
       }
     }
@@ -647,7 +659,7 @@
 
       const info = disponibilidadeItens[item];
       nome.innerText = item;
-      meta.innerText = `Disponível para prometer: ${info.disponivelPrometer} ${info.unidade || ""} • Meta: ${info.meta}`;
+      meta.innerText = "Disponível para prometer: " + info.disponivelPrometer + " " + (info.unidade || "") + " • Meta: " + info.meta;
       box.classList.remove("hidden");
     }
 
@@ -666,96 +678,78 @@
 
     // --- RENDERIZAÇÃO DOS CARDS ---
     function obterStatusBadge(itemData) {
-      if (itemData.disponivelPrometer <= 0) return `<span class="ifood-badge ok">Completo</span>`;
-      if (prioridadesFixas.includes(itemData.item)) return `<span class="ifood-badge danger">Prioridade</span>`;
-      if (itemData.percReal >= 70) return `<span class="ifood-badge warn">Quase lá</span>`;
-      return `<span class="ifood-badge warn">Disponível</span>`;
+      if (itemData.disponivelPrometer <= 0) return '<span class="ifood-badge ok">Completo</span>';
+      if (prioridadesFixas.indexOf(itemData.item) !== -1) return '<span class="ifood-badge danger">Prioridade</span>';
+      if (itemData.percReal >= 70) return '<span class="ifood-badge warn">Quase lá</span>';
+      return '<span class="ifood-badge warn">Disponível</span>';
     }
 
-    function gerarCardCompacto(itemData, destaque = false) {
-      return `
-        <div class="section-card p-3">
-          <div class="flex items-start justify-between gap-3 mb-3">
-            <div>
-              <p class="text-sm font-extrabold text-slate-800">${esc(itemData.item)}</p>
-              <p class="text-[11px] text-slate-500 mt-1">Meta: ${itemData.meta} ${esc(itemData.unidade || "")}</p>
-            </div>
-            ${obterStatusBadge(itemData)}
-          </div>
-          <div class="grid grid-cols-3 gap-2 mb-3">
-            <div class="mini-stat">
-              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Prometido</span>
-              <strong class="text-amber-500">${itemData.prometido}</strong>
-            </div>
-            <div class="mini-stat">
-              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Entregue</span>
-              <strong class="text-emerald-500">${itemData.entregue}</strong>
-            </div>
-            <div class="mini-stat">
-              <span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Livre</span>
-              <strong class="text-rose-500">${itemData.disponivelPrometer}</strong>
-            </div>
-          </div>
-          <div class="progress-bar mb-3">
-            <div class="progress-fill" style="width:${itemData.percReal}%"></div>
-          </div>
-          <div class="flex items-center justify-between gap-3">
-            <p class="text-[11px] text-slate-500">
-              Falta real: <strong class="text-slate-700">${itemData.faltandoReal}</strong> ${esc(itemData.unidade || "")}
-            </p>
-            ${itemData.disponivelPrometer > 0 ? `<button type="button" onclick="selecionarItem('${escJS(itemData.item)}')" class="choose-btn ${destaque ? 'primary' : 'secondary'}">Escolher</button>` : ''}
-          </div>
-        </div>
-      `;
+    function gerarCardCompacto(itemData, destaque) {
+      return '' +
+        '<div class="section-card p-3">' +
+          '<div class="flex items-start justify-between gap-3 mb-3">' +
+            '<div>' +
+              '<p class="text-sm font-extrabold text-slate-800">' + esc(itemData.item) + '</p>' +
+              '<p class="text-[11px] text-slate-500 mt-1">Meta: ' + itemData.meta + ' ' + esc(itemData.unidade || "") + '</p>' +
+            '</div>' +
+            obterStatusBadge(itemData) +
+          '</div>' +
+          '<div class="grid grid-cols-3 gap-2 mb-3">' +
+            '<div class="mini-stat"><span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Prometido</span><strong class="text-amber-500">' + itemData.prometido + '</strong></div>' +
+            '<div class="mini-stat"><span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Entregue</span><strong class="text-emerald-500">' + itemData.entregue + '</strong></div>' +
+            '<div class="mini-stat"><span class="text-[10px] uppercase tracking-widest font-black text-slate-400">Livre</span><strong class="text-rose-500">' + itemData.disponivelPrometer + '</strong></div>' +
+          '</div>' +
+          '<div class="progress-bar mb-3"><div class="progress-fill" style="width:' + itemData.percReal + '%"></div></div>' +
+          '<div class="flex items-center justify-between gap-3">' +
+            '<p class="text-[11px] text-slate-500">Falta real: <strong class="text-slate-700">' + itemData.faltandoReal + '</strong> ' + esc(itemData.unidade || "") + '</p>' +
+            (itemData.disponivelPrometer > 0 ? '<button type="button" onclick="selecionarItem(\'' + escJS(itemData.item) + '\')" class="choose-btn ' + (destaque ? 'primary' : 'secondary') + '">Escolher</button>' : '') +
+          '</div>' +
+        '</div>';
     }
 
     function gerarCardUrgente(itemData) {
       const selecionado = document.getElementById("d_item").value === itemData.item;
-      return `
-        <div class="ifood-card ${selecionado ? 'selected selected-glow' : ''}" onclick="selecionarItem('${escJS(itemData.item)}')">
-          <div class="flex items-start justify-between gap-3 mb-3">
-            <div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="ifood-badge danger">${prioridadesFixas.includes(itemData.item) ? 'Urgente' : 'Disponível'}</span>
-                <span class="pill bg-slate-50 text-slate-600 border border-slate-200">${esc(itemData.unidade || '')}</span>
-              </div>
-              <p class="text-sm font-extrabold text-slate-800 mt-3 leading-tight">${esc(itemData.item)}</p>
-            </div>
-            <div class="text-right">
-              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Falta prometer</p>
-              <p class="text-xl font-black text-[var(--ifood)]">${itemData.disponivelPrometer}</p>
-            </div>
-          </div>
-          <div class="grid grid-cols-3 gap-2 mb-3">
-            <div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Meta</span><strong>${itemData.meta}</strong></div>
-            <div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Prom.</span><strong class="text-amber-500">${itemData.prometido}</strong></div>
-            <div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Entr.</span><strong class="text-emerald-500">${itemData.entregue}</strong></div>
-          </div>
-          <div class="progress-bar mb-3">
-            <div class="progress-fill" style="width:${itemData.percReal}%"></div>
-          </div>
-          <div class="flex items-center justify-between gap-3">
-            <p class="text-[11px] text-slate-500">Progresso real: <strong class="text-slate-800">${itemData.percReal}%</strong></p>
-            <button type="button" class="choose-btn primary">Escolher</button>
-          </div>
-        </div>
-      `;
+      return '' +
+        '<div class="ifood-card ' + (selecionado ? 'selected selected-glow' : '') + '" onclick="selecionarItem(\'' + escJS(itemData.item) + '\')">' +
+          '<div class="flex items-start justify-between gap-3 mb-3">' +
+            '<div>' +
+              '<div class="flex items-center gap-2 flex-wrap">' +
+                '<span class="ifood-badge danger">' + (prioridadesFixas.indexOf(itemData.item) !== -1 ? 'Urgente' : 'Disponível') + '</span>' +
+                '<span class="pill bg-slate-50 text-slate-600 border border-slate-200">' + esc(itemData.unidade || '') + '</span>' +
+              '</div>' +
+              '<p class="text-sm font-extrabold text-slate-800 mt-3 leading-tight">' + esc(itemData.item) + '</p>' +
+            '</div>' +
+            '<div class="text-right"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Falta prometer</p><p class="text-xl font-black text-[var(--ifood)]">' + itemData.disponivelPrometer + '</p></div>' +
+          '</div>' +
+          '<div class="grid grid-cols-3 gap-2 mb-3">' +
+            '<div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Meta</span><strong>' + itemData.meta + '</strong></div>' +
+            '<div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Prom.</span><strong class="text-amber-500">' + itemData.prometido + '</strong></div>' +
+            '<div class="mini-stat"><span class="text-[9px] uppercase tracking-widest font-black text-slate-400">Entr.</span><strong class="text-emerald-500">' + itemData.entregue + '</strong></div>' +
+          '</div>' +
+          '<div class="progress-bar mb-3"><div class="progress-fill" style="width:' + itemData.percReal + '%"></div></div>' +
+          '<div class="flex items-center justify-between gap-3"><p class="text-[11px] text-slate-500">Progresso real: <strong class="text-slate-800">' + itemData.percReal + '%</strong></p><button type="button" class="choose-btn primary">Escolher</button></div>' +
+        '</div>';
     }
 
     function renderizarUrgentes() {
       const wrap = document.getElementById("listaUrgentes");
-      const ativos = itensRenderizados.filter(i => i.disponivelPrometer > 0);
+      const ativos = itensRenderizados.filter(function(i) { return i.disponivelPrometer > 0; });
 
-      const fixos = prioridadesFixas.map(nome => ativos.find(i => i.item === nome)).filter(Boolean);
-      const outros = ativos.filter(i => !prioridadesFixas.includes(i.item)).sort((a, b) => {
+      const fixos = prioridadesFixas.map(function(nome) {
+        return ativos.filter(function(i) { return i.item === nome; })[0];
+      }).filter(Boolean);
+
+      const outros = ativos.filter(function(i) {
+        return prioridadesFixas.indexOf(i.item) === -1;
+      }).sort(function(a, b) {
         if (a.disponivelPrometer !== b.disponivelPrometer) return a.disponivelPrometer - b.disponivelPrometer;
         return a.item.localeCompare(b.item, 'pt-BR');
       });
 
-      const urgentes = [...fixos, ...outros].slice(0, 10);
+      const urgentes = fixos.concat(outros).slice(0, 10);
 
-      if (!urgentes.length) {
-        wrap.innerHTML = `<div class="col-span-full section-card p-6 text-center text-sm font-bold text-purple-700">Graças a Deus, as prioridades já foram preenchidas! 💜</div>`;
+      if (urgentes.length === 0) {
+        wrap.innerHTML = '<div class="col-span-full section-card p-6 text-center text-sm font-bold text-purple-700">Graças a Deus, as prioridades já foram preenchidas! 💜</div>';
         return;
       }
       wrap.innerHTML = urgentes.map(gerarCardUrgente).join("");
@@ -763,94 +757,127 @@
 
     function renderizarCategorias() {
       const container = document.getElementById("categoriasNecessidades");
-      const itensNaoClassificados = itensRenderizados.filter(i => !Object.entries(categorias).filter(([k]) => k !== "Outros").some(([, arr]) => arr.includes(i.item))).map(i => i.item);
+      
+      const itensNaoClassificados = itensRenderizados.filter(function(i) {
+        let encontrado = false;
+        for (let chave in categorias) {
+          if (chave !== "Outros" && categorias[chave].indexOf(i.item) !== -1) {
+            encontrado = true;
+          }
+        }
+        return !encontrado;
+      }).map(function(i) { return i.item; });
+
       categorias["Outros"] = itensNaoClassificados;
 
-      const htmlCategorias = Object.entries(categorias).map(([nomeCategoria, itensCategoria], idx) => {
-        const itensDaCategoria = itensRenderizados.filter(item => itensCategoria.includes(item.item) && item.disponivelPrometer > 0);
-        if (!itensDaCategoria.length) return "";
+      let htmlCategorias = "";
+      let idx = 0;
 
-        const conteudo = itensDaCategoria.sort((a, b) => {
-          if (prioridadesFixas.includes(a.item) && !prioridadesFixas.includes(b.item)) return -1;
-          if (!prioridadesFixas.includes(a.item) && prioridadesFixas.includes(b.item)) return 1;
-          return a.item.localeCompare(b.item, 'pt-BR');
-        }).map(item => gerarCardCompacto(item, prioridadesFixas.includes(item.item))).join("");
+      for (let nomeCategoria in categorias) {
+        const itensCategoria = categorias[nomeCategoria];
+        const itensDaCategoria = itensRenderizados.filter(function(item) {
+          return itensCategoria.indexOf(item.item) !== -1 && item.disponivelPrometer > 0;
+        });
 
-        const id = `cat_${idx}`;
-        return `
-          <div class="section-card">
-            <button type="button" class="accordion-btn" onclick="toggleCategoria('${id}')">
-              <span class="text-sm">${esc(nomeCategoria)}</span>
-              <i data-icon="${id}" class="fas fa-chevron-down text-slate-400"></i>
-            </button>
-            <div id="${id}" class="accordion-content hidden-soft space-y-3">${conteudo}</div>
-          </div>
-        `;
-      }).join("");
+        if (itensDaCategoria.length > 0) {
+          const conteudo = itensDaCategoria.sort(function(a, b) {
+            const aFixo = prioridadesFixas.indexOf(a.item) !== -1;
+            const bFixo = prioridadesFixas.indexOf(b.item) !== -1;
+            if (aFixo && !bFixo) return -1;
+            if (!aFixo && bFixo) return 1;
+            return a.item.localeCompare(b.item, 'pt-BR');
+          }).map(function(item) {
+            return gerarCardCompacto(item, prioridadesFixas.indexOf(item.item) !== -1);
+          }).join("");
 
-      container.innerHTML = htmlCategorias || `<p class="text-xs text-slate-400">Nenhuma necessidade encontrada.</p>`;
+          const id = "cat_" + idx;
+          htmlCategorias += '' +
+            '<div class="section-card">' +
+              '<button type="button" class="accordion-btn" onclick="toggleCategoria(\'' + id + '\')" aria-expanded="false" aria-controls="' + id + '">' +
+                '<span class="text-sm">' + esc(nomeCategoria) + '</span>' +
+                '<i data-icon="' + id + '" class="fas fa-chevron-down text-slate-400"></i>' +
+              '</button>' +
+              '<div id="' + id + '" class="accordion-content hidden-soft space-y-3">' + conteudo + '</div>' +
+            '</div>';
+        }
+        idx++;
+      }
+
+      container.innerHTML = htmlCategorias || '<p class="text-xs text-slate-400">Nenhuma necessidade encontrada.</p>';
     }
 
-    // --- CARREGAMENTO DE DADOS DO SUPABASE ---
-    async function carregarDados() {
+    // --- CARREGAMENTO DE DADOS (ULTRA SEGURO) ---
+    async function carregarDados(force) {
       try {
+        const agora = new Date().getTime();
+        if (!force && (agora - ultimoLoad < 30000)) return;
+        ultimoLoad = agora;
+
         const select = document.getElementById("d_item");
 
-        const [{ data: metas, error: metasError }, { data: registros, error: regError }] = await Promise.all([
-          _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item'),
-          _supabase.from('transacoes').select('descricao, quantidade, status').eq('modulo', 'DOACAO')
-        ]);
+        const promessaMetas = _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item');
+        const promessaTrans = _supabase.from('transacoes').select('descricao, quantidade, status').eq('modulo', 'DOACAO');
+        
+        const resultados = await Promise.all([promessaMetas, promessaTrans]);
+        const resMetas = resultados[0];
+        const resReg = resultados[1];
 
-        if (metasError || regError) {
-          console.error(metasError, regError);
+        if (resMetas.error || resReg.error) {
+          console.error(resMetas.error, resReg.error);
           document.getElementById("listaUrgentes").innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar banco de dados.</p>';
           return;
         }
 
+        const metas = resMetas.data || [];
+        const registros = resReg.data || [];
+
         const mapa = {};
-        (registros || []).forEach(r => {
+        for (let i = 0; i < registros.length; i++) {
+          const r = registros[i];
           const item = (r.descricao || "").trim();
           const qtd = Number(r.quantidade || 0);
           if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
           if (r.status === "PENDENTE") mapa[item].prometido += qtd;
           if (r.status === "PAGO") mapa[item].entregue += qtd;
-        });
+        }
 
         disponibilidadeItens = {};
         itensRenderizados = [];
         select.innerHTML = '<option value="">Escolha um item...</option>';
         let itensDisponiveis = 0;
 
-        (metas || []).forEach(m => {
+        for (let i = 0; i < metas.length; i++) {
+          const m = metas[i];
           const item = (m.item || "").trim();
           const meta = Number(m.qtd_necessaria || 0);
-          const prometido = mapa[item]?.prometido || 0;
-          const entregue = mapa[item]?.entregue || 0;
+          const prop = mapa[item];
+          const prometido = prop ? prop.prometido : 0;
+          const entregue = prop ? prop.entregue : 0;
 
           const faltandoReal = Math.max(0, meta - entregue);
           const disponivelPrometer = Math.max(0, meta - prometido - entregue);
           const percReal = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
 
           disponibilidadeItens[item] = {
-            meta, prometido, entregue, faltandoReal, 
-            disponivelPrometer, 
+            meta: meta, prometido: prometido, entregue: entregue, faltandoReal: faltandoReal, 
+            disponivelPrometer: disponivelPrometer, 
             unidade: m.unidade || ""
           };
 
           itensRenderizados.push({
-            item, meta, prometido, entregue, faltandoReal, 
-            disponivelPrometer, 
-            percReal, unidade: m.unidade || ""
+            item: item, meta: meta, prometido: prometido, entregue: entregue, faltandoReal: faltandoReal, 
+            disponivelPrometer: disponivelPrometer, 
+            percReal: percReal, unidade: m.unidade || ""
           });
 
           if (disponivelPrometer > 0) {
             itensDisponiveis++;
             const opt = document.createElement("option");
             opt.value = item;
-            opt.textContent = `${item} (disponível: ${disponivelPrometer} ${m.unidade || ''})`;
+            opt.textContent = item + " (disponível: " + disponivelPrometer + " " + (m.unidade || "") + ")";
             select.appendChild(opt);
           }
-        });
+        }
 
         renderizarUrgentes();
         renderizarCategorias();
@@ -886,10 +913,10 @@
       }
 
       const info = disponibilidadeItens[valor];
-      const disponivel = info?.disponivelPrometer ?? 0;
-      const unidade = info?.unidade || "";
+      const disponivel = info ? info.disponivelPrometer : 0;
+      const unidade = info ? info.unidade : "";
 
-      texto.innerText = `${valor} • livre para você doar: ${disponivel} ${unidade}`;
+      texto.innerText = valor + " • livre para você doar: " + disponivel + " " + unidade;
       box.classList.remove("hidden");
 
       if (valor === "Frango") {
@@ -899,11 +926,14 @@
         infoFrango.classList.add("hidden");
       }
 
-      // Destaca o card do item selecionado na lista
       const listCards = document.querySelectorAll(".ifood-card");
-      listCards.forEach(c => c.classList.remove("selected", "selected-glow"));
-      const cardAtual = Array.from(listCards).find(c => c.querySelector('p.text-sm').innerText === valor);
-      if (cardAtual) cardAtual.classList.add("selected", "selected-glow");
+      for (let i = 0; i < listCards.length; i++) {
+        listCards[i].classList.remove("selected", "selected-glow");
+        const pTexto = listCards[i].querySelector('p.text-sm');
+        if (pTexto && pTexto.innerText === valor) {
+          listCards[i].classList.add("selected", "selected-glow");
+        }
+      }
     });
 
     document.getElementById("d_tel").addEventListener("input", function() {
@@ -917,60 +947,63 @@
       const btn = document.getElementById("btnEnviar");
       const textoOriginal = btn.innerHTML;
 
-      const qtd = parseInt(document.getElementById("d_qtd").value, 10);
+      const qtdStr = document.getElementById("d_qtd").value;
+      const qtd = parseInt(qtdStr, 10);
       const item = document.getElementById("d_item").value;
       const nome = document.getElementById("d_nome").value.trim();
       const telefone = document.getElementById("d_tel").value.replace(/\D/g, "");
       const equipe = document.getElementById("d_equipe").value;
       const dataEntrega = document.getElementById("d_data").value;
 
-      if (!Number.isInteger(qtd) || qtd <= 0) return showToast("Informe uma quantidade válida.", "error");
+      if (isNaN(qtd) || qtd <= 0) return showToast("Informe uma quantidade válida.", "error");
       if (!item || !nome || !equipe || !dataEntrega) return showToast("Preencha todos os campos corretamente.", "error");
       if (!/^\d{10,11}$/.test(telefone)) return showToast("WhatsApp inválido.", "error");
 
       const infoItem = disponibilidadeItens[item];
-      const maxDisponivel = infoItem?.disponivelPrometer ?? 0;
+      const maxDisponivel = infoItem ? infoItem.disponivelPrometer : 0;
 
       if (qtd > maxDisponivel) {
-        return showToast(`Para este item, o máximo disponível agora é ${maxDisponivel}.`, "error");
+        return showToast("Para este item, o máximo disponível agora é " + maxDisponivel + ".", "error");
       }
 
       btn.innerHTML = "Processando...";
       btn.disabled = true;
 
       try {
-        const { error } = await _supabase.rpc('registrar_doacao_publica', {
+        const payload = {
           p_item: item,
           p_quantidade: qtd,
           p_nome: nome,
           p_telefone: telefone,
           p_equipe: equipe,
           p_data_entrega: dataEntrega
-        });
+        };
 
-        if (error) {
-          console.error(error);
-          if (error.message.includes("Quantidade excede")) {
+        const res = await _supabase.rpc('registrar_doacao_publica', payload);
+
+        if (res.error) {
+          console.error(res.error);
+          if (res.error.message && res.error.message.indexOf("Quantidade excede") !== -1) {
              showToast("A quantidade pedida já foi ultrapassada por outra doação recente.", "error");
           } else {
              showToast("Erro ao registrar doação. Tente novamente.", "error");
           }
           btn.disabled = false;
           btn.innerHTML = textoOriginal;
-          await carregarDados(); 
+          await carregarDados(true); 
           return;
         }
 
         document.getElementById("areaForm").classList.add("hidden");
         document.getElementById("agradecimentoDoacao").classList.remove("hidden");
-        document.getElementById("agradecimentoTitulo").innerText = `Deus lhe pague, ${nome.split(' ')[0]}!`;
-        document.getElementById("agradecimentoTexto").innerHTML = `Sua doação de <b class="text-purple-700">${qtd}x ${esc(item)}</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜`;
+        document.getElementById("agradecimentoTitulo").innerText = "Deus lhe pague, " + nome.split(' ')[0] + "!";
+        document.getElementById("agradecimentoTexto").innerHTML = "Sua doação de <b class='text-purple-700'>" + qtd + "x " + esc(item) + "</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜";
 
-        showToast(`Doação registrada com sucesso!`);
+        showToast("Doação registrada com sucesso!");
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
 
-        await carregarDados(); 
+        await carregarDados(true); 
       } catch(err) {
         console.error(err);
         showToast("Erro de conexão.", "error");
@@ -980,14 +1013,12 @@
     });
 
     function novaDoacao() {
-      // Guarda os dados de quem já estava logado doando para não ter de digitar de novo
       const nomeDoador = document.getElementById("d_nome").value;
       const telDoador = document.getElementById("d_tel").value;
       const eqDoador = document.getElementById("d_equipe").value;
 
       document.getElementById("formDoacao").reset();
       
-      // Restaura dados
       document.getElementById("d_nome").value = nomeDoador;
       document.getElementById("d_tel").value = telDoador;
       document.getElementById("d_equipe").value = eqDoador;
@@ -998,42 +1029,64 @@
       document.getElementById("agradecimentoDoacao").classList.add("hidden");
       
       atualizarResumoItemSelecionado("");
-      carregarDados();
+      carregarDados(false);
     }
 
-    // --- MURAL DE MENSAGENS ---
+    // --- CARROSSEL DO MURAL DE MENSAGENS ---
     async function carregarMensagens() {
       const wrap = document.getElementById("listaMensagens");
 
-      const { data, error } = await _supabase
+      const res = await _supabase
         .from('mural_mensagens')
         .select('nome, mensagem')
         .eq('aprovada', true)
         .order('id', { ascending: false })
-        .limit(8);
+        .limit(10); // Pegando 10 mensagens para rotacionar
 
-      if (error) {
-        console.error("Erro Mural:", error);
-        wrap.innerHTML = `<p class="text-xs text-rose-400">Mural indisponível.</p>`;
+      if (res.error) {
+        console.error("Erro Mural:", res.error);
+        wrap.innerHTML = '<p class="text-xs text-rose-400">Mural indisponível.</p>';
         return;
       }
 
-      const msgs = data || [];
-      if (!msgs.length) {
-        wrap.innerHTML = `<p class="text-xs text-slate-400">Ainda não há mensagens no mural.</p>`;
+      mensagensMural = res.data || [];
+      
+      if (mensagensMural.length === 0) {
+        wrap.innerHTML = '<p class="text-xs text-slate-400">Ainda não há mensagens no mural.</p>';
         return;
       }
 
-      wrap.innerHTML = msgs.map(m => `
-        <div class="msg-card">
-          <p class="text-sm font-bold text-slate-800">${esc(m.nome || "Anônimo")}</p>
-          <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(m.mensagem || "")}</p>
-        </div>
-      `).join("");
+      if (muralInterval) clearInterval(muralInterval);
+      indiceMural = 0;
+      
+      rotacionarMural(); // Mostra a primeira
+
+      // Só ativa o carrossel se houver mais de uma mensagem
+      if (mensagensMural.length > 1) {
+        muralInterval = setInterval(rotacionarMural, 4500); // Troca a cada 4.5 segundos
+      }
+    }
+
+    function rotacionarMural() {
+      const wrap = document.getElementById("listaMensagens");
+      if (mensagensMural.length === 0) return;
+
+      const m = mensagensMural[indiceMural];
+
+      wrap.innerHTML = 
+        '<div class="msg-card animate-fade-in">' +
+          '<p class="text-sm font-bold text-slate-800">' + esc(m.nome || "Anônimo") + '</p>' +
+          '<p class="text-xs text-slate-600 mt-2 leading-relaxed">' + esc(m.mensagem || "") + '</p>' +
+        '</div>';
+
+      indiceMural++;
+      if (indiceMural >= mensagensMural.length) {
+        indiceMural = 0;
+      }
     }
 
     async function enviarMensagem() {
-      const agora = Date.now();
+      const agora = new Date().getTime();
       if (agora - ultimaMensagemTime < 15000) {
         return showToast("Aguarde alguns segundos antes de enviar outra mensagem.", "warn");
       }
@@ -1053,20 +1106,21 @@
       btn.disabled = true;
       btn.innerHTML = 'ENVIANDO...';
 
-      const { error } = await _supabase
+      const res = await _supabase
         .from('mural_mensagens')
         .insert([{ nome: nomeFinal, mensagem: mensagem, aprovada: true }]);
 
-      if (error) {
-        console.error(error);
+      if (res.error) {
+        console.error(res.error);
         showToast("Erro ao enviar a mensagem.", "error");
         btn.disabled = false;
         btn.innerHTML = original;
         return;
       }
 
-      ultimaMensagemTime = Date.now();
+      ultimaMensagemTime = new Date().getTime();
       document.getElementById("m_msg").value = "";
+      document.getElementById("m_nome").value = "";
       btn.disabled = false;
       btn.innerHTML = original;
       showToast("Mensagem enviada com sucesso!");
@@ -1076,11 +1130,18 @@
     window.onload = async function() {
       iniciarContador();
       
-      // Fixar a data mínima para hoje
-      const hoje = new Date().toISOString().slice(0,10);
-      document.getElementById("d_data").setAttribute("min", hoje);
+      const hj = new Date();
+      const ano = hj.getFullYear();
+      let mes = hj.getMonth() + 1;
+      let dia = hj.getDate();
+      if (mes < 10) mes = '0' + mes;
+      if (dia < 10) dia = '0' + dia;
+      const hoje = ano + '-' + mes + '-' + dia;
       
-      await carregarDados();
+      const campoData = document.getElementById("d_data");
+      if (campoData) campoData.setAttribute("min", hoje);
+      
+      await carregarDados(true);
       await carregarMensagens();
     };
   </script>
