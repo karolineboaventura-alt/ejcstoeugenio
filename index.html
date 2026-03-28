@@ -2494,3 +2494,56 @@
 
       btn.innerHTML = txtOriginal;
       btn.disabled = false;
+
+      if (erros > 0) {
+        showToast(`Concluído com ressalvas. ${erros} lançamento(s) falharam.`, "error");
+      } else {
+        showToast("Todos os lançamentos quitados com sucesso!");
+      }
+
+      fecharModalQuitarTudo();
+      await carregarDados();
+      if (abaAtiva === "DOACAO" && ROLE === "ADMIN") await carregarMetasAdmin();
+      abrirExtrato(extratoAtual.telefone, extratoAtual.nome, extratoAtual.equipe);
+    }
+
+    function fecharExtrato() {
+      const modal = document.getElementById("modalExtrato");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      extratoAtual = { nome: "", equipe: "", telefone: "", registros: [], registrosFiltrados: [] };
+      document.getElementById("filtroExtrato").value = "";
+    }
+
+    async function sair() {
+      await _supabase.auth.signOut();
+      location.reload();
+    }
+
+    window.onload = async () => {
+      const { data: { session } } = await _supabase.auth.getSession();
+      if (session) {
+        const p = await carregarPerfilUsuario(session.user);
+        if (p) {
+          currentUser = session.user;
+          currentProfile = p;
+          ROLE = (p.role || "").toUpperCase();
+          iniciarApp();
+        }
+      }
+    };
+
+    setInterval(() => {
+      if (
+        document.visibilityState === "visible" &&
+        !document.getElementById("appMain").classList.contains("hidden") &&
+        document.getElementById("modal").classList.contains("hidden") &&
+        document.getElementById("modalExtrato").classList.contains("hidden")
+      ) {
+        carregarDados();
+      }
+    }, 30000);
+  </script>
+</body>
+</html>
+
