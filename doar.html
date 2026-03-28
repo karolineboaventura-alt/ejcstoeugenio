@@ -311,35 +311,6 @@
       100% { box-shadow: 0 0 0 rgba(234,29,44,0); }
     }
 
-    .cart-item {
-      background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
-      border: 1px solid #efe7fb;
-      border-radius: 18px;
-      padding: 12px;
-      margin-bottom: 8px;
-    }
-
-    .cart-remove-btn {
-      border: 1px solid #fecdd3;
-      color: #be123c;
-      background: #fff1f2;
-      border-radius: 12px;
-      padding: 8px 10px;
-      font-weight: 800;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    .cart-edit-qtd {
-      width: 60px;
-      text-align: center;
-      padding: 4px;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
-      font-weight: bold;
-    }
-
     @media (min-width: 640px) {
       .ifood-grid { grid-template-columns: 1fr 1fr; }
     }
@@ -395,10 +366,10 @@
         <div>
           <p class="text-sm font-extrabold text-slate-800">Como funciona para doar?</p>
           <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Escolha um ou mais itens, informe as quantidades, monte seu carrinho e registre sua doação.
+            Escolha um item, informe a quantidade, preencha seus dados e registre sua doação.
           </p>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-            Os itens mais urgentes aparecem primeiro. Quando uma meta é preenchida, ela sai da prioridade. 💜
+            Os itens mais urgentes aparecem primeiro. Quando uma meta é preenchida, ela sai automaticamente da prioridade. 💜
           </p>
         </div>
       </div>
@@ -478,67 +449,36 @@
           </div>
         </div>
 
-        <div class="space-y-4">
-          <div class="section-card p-4">
-            <div class="flex items-center justify-between mb-3">
-              <div>
-                <p class="text-[10px] font-black uppercase tracking-widest text-[var(--brand)]">Monte sua doação</p>
-                <h3 class="text-sm font-extrabold text-slate-800 mt-1">Adicionar ao carrinho</h3>
-              </div>
-              <div class="pill bg-purple-50 text-purple-700 border border-purple-100">
-                <i class="fas fa-cart-shopping"></i>
-                <span id="cartCountBadge">0 itens</span>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-12 gap-3 items-end">
-              <div class="col-span-8 space-y-1">
-                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Item</label>
-                <select id="d_item" class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
-                  <option value="">Carregando...</option>
-                </select>
-              </div>
-
-              <div class="col-span-4 space-y-1">
-                <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
-                <input id="d_qtd" type="number" min="1" step="1" value="1" class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
-              </div>
-            </div>
-
-            <div id="infoFrango" class="hidden helper-box mt-3">
-              <p id="infoFrangoTexto" class="text-[11px] text-slate-600 leading-relaxed font-bold"></p>
-            </div>
-
-            <button 
-              type="button" 
-              onclick="adicionarAoCarrinho()" 
-              class="w-full mt-4 bg-slate-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-black active:scale-95 transition-all uppercase tracking-widest text-xs"
-            >
-              Adicionar ao carrinho
-            </button>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">O que vai doar?</label>
+            <select id="d_item" required class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white appearance-none">
+              <option value="">Carregando...</option>
+            </select>
           </div>
-
-          <div id="carrinhoBox" class="section-card p-4 hidden">
-            <div class="flex items-center justify-between gap-3 mb-3">
-              <div>
-                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Sua lista de doação</p>
-                <p id="cartResumo" class="text-sm font-extrabold text-slate-800 mt-1">0 itens adicionados</p>
-              </div>
-            </div>
-            
-            <div id="listaCarrinho" class="space-y-2 mb-4">
-              </div>
-            
-            <div class="space-y-1 pt-3 border-t border-slate-100">
-              <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data que pretende entregar todos os itens</label>
-              <input id="d_data" type="date" class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
-            </div>
-
-            <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
-              Confirmar doação inteira
-            </button>
+          <div class="space-y-1">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Quantidade</label>
+            <input id="d_qtd" type="number" min="1" step="1" value="1" required class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
           </div>
         </div>
+
+        <div id="itemEscolhidoBox" class="hidden bg-amber-50 border border-amber-100 rounded-2xl px-4 py-3">
+          <p class="text-[10px] font-black uppercase tracking-widest text-amber-700">Você escolheu</p>
+          <p id="itemEscolhidoTexto" class="text-sm font-bold text-slate-800 mt-1"></p>
+        </div>
+
+        <div id="infoFrango" class="hidden helper-box mt-3">
+          <p id="infoFrangoTexto" class="text-[11px] text-slate-600 leading-relaxed font-bold"></p>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Data de entrega</label>
+          <input id="d_data" type="date" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+        </div>
+
+        <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl shadow-purple-100 hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">
+          Confirmar doação
+        </button>
       </form>
     </div>
 
@@ -566,6 +506,7 @@
       </div>
 
       <div class="space-y-3 mb-4">
+        <input id="m_nome" placeholder="Seu nome (opcional)" maxlength="50" class="vault-input rounded-2xl py-3 px-5 font-bold text-slate-700 w-full" />
         <textarea id="m_msg" rows="3" maxlength="220" placeholder="Escreva uma mensagem de carinho para o EJC..." class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700 resize-none"></textarea>
         <button id="btnMsg" type="button" onclick="enviarMensagem()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-black active:scale-95 transition-all uppercase tracking-widest text-xs">
           Enviar mensagem
@@ -591,7 +532,6 @@
     // --- VARIÁVEIS GLOBAIS ---
     let disponibilidadeItens = {};
     let itensRenderizados = [];
-    let carrinhoDoacao = []; // Armazena os itens que a pessoa quer doar de uma vez
 
     const prioridadesFixas = [
       "Carne bovina",
@@ -695,7 +635,7 @@
 
       const info = disponibilidadeItens[item];
       nome.innerText = item;
-      meta.innerText = `Disponível para prometer: ${info.disponivelPrometer} ${info.unidade || ""} • Meta total: ${info.meta} ${info.unidade || ""}`;
+      meta.innerText = `Disponível para prometer: ${info.disponivelPrometer} ${info.unidade || ""} • Meta: ${info.meta}`;
       box.classList.remove("hidden");
     }
 
@@ -873,31 +813,27 @@
         const prometido = mapa[item]?.prometido || 0;
         const entregue = mapa[item]?.entregue || 0;
 
-        // Subtrai do carrinho atual pra pessoa não prometer o que já colocou no carrinho localmente
-        const noCarrinho = carrinhoDoacao.filter(c => c.item === item).reduce((s, c) => s + c.qtd, 0);
-
         const faltandoReal = Math.max(0, meta - entregue);
-        const disponivelReal = Math.max(0, meta - prometido - entregue);
-        const disponivelAposCarrinho = Math.max(0, disponivelReal - noCarrinho);
+        const disponivelPrometer = Math.max(0, meta - prometido - entregue);
         const percReal = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
 
         disponibilidadeItens[item] = {
           meta, prometido, entregue, faltandoReal, 
-          disponivelPrometer: disponivelAposCarrinho, 
+          disponivelPrometer, 
           unidade: m.unidade || ""
         };
 
         itensRenderizados.push({
           item, meta, prometido, entregue, faltandoReal, 
-          disponivelPrometer: disponivelAposCarrinho, 
+          disponivelPrometer, 
           percReal, unidade: m.unidade || ""
         });
 
-        if (disponivelAposCarrinho > 0) {
+        if (disponivelPrometer > 0) {
           itensDisponiveis++;
           const opt = document.createElement("option");
           opt.value = item;
-          opt.textContent = `${item} (disponível: ${disponivelAposCarrinho} ${m.unidade || ''})`;
+          opt.textContent = `${item} (disponível: ${disponivelPrometer} ${m.unidade || ''})`;
           select.appendChild(opt);
         }
       });
@@ -914,109 +850,6 @@
         document.getElementById("d_item").disabled = false;
         document.getElementById("d_qtd").disabled = false;
       }
-    }
-
-    // --- LÓGICA DO CARRINHO DE DOAÇÃO ---
-    function atualizarInterfaceCarrinho() {
-      const box = document.getElementById("carrinhoBox");
-      const lista = document.getElementById("listaCarrinho");
-      const badge = document.getElementById("cartCountBadge");
-      const resumo = document.getElementById("cartResumo");
-      
-      const totalItens = carrinhoDoacao.reduce((acc, obj) => acc + obj.qtd, 0);
-      badge.innerText = `${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`;
-
-      if (carrinhoDoacao.length === 0) {
-        box.classList.add("hidden");
-        document.getElementById("d_data").removeAttribute("required");
-        return;
-      }
-
-      box.classList.remove("hidden");
-      document.getElementById("d_data").setAttribute("required", "true");
-      resumo.innerText = `${carrinhoDoacao.length} ${carrinhoDoacao.length === 1 ? 'produto adicionado' : 'produtos diferentes'}`;
-
-      lista.innerHTML = carrinhoDoacao.map((c, index) => {
-        const info = disponibilidadeItens[c.item];
-        const un = info ? info.unidade : '';
-        return `
-          <div class="cart-item flex items-center justify-between">
-            <div class="flex-1">
-              <p class="font-bold text-sm text-slate-800">${esc(c.item)}</p>
-              <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest">${c.qtd} ${un}</p>
-            </div>
-            <div class="flex items-center gap-3">
-              <input type="number" min="1" value="${c.qtd}" onchange="editarQtdCarrinho(${index}, this.value)" class="cart-edit-qtd text-slate-800">
-              <button type="button" onclick="removerDoCarrinho(${index})" class="cart-remove-btn"><i class="fas fa-trash"></i></button>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function adicionarAoCarrinho() {
-      const selectItem = document.getElementById("d_item");
-      const item = selectItem.value;
-      const inputQtd = document.getElementById("d_qtd");
-      const qtd = parseInt(inputQtd.value, 10);
-
-      if (!item) return showToast("Selecione o que você quer doar primeiro.", "error");
-      if (isNaN(qtd) || qtd <= 0) return showToast("A quantidade deve ser maior que zero.", "error");
-
-      const info = disponibilidadeItens[item];
-      if (!info) return showToast("Item não encontrado.", "error");
-
-      if (qtd > info.disponivelPrometer) {
-        return showToast(`Ops, só temos ${info.disponivelPrometer} ${info.unidade} de ${item} disponíveis para prometer.`, "error");
-      }
-
-      const indexExistente = carrinhoDoacao.findIndex(c => c.item === item);
-      if (indexExistente >= 0) {
-        carrinhoDoacao[indexExistente].qtd += qtd;
-      } else {
-        carrinhoDoacao.push({ item, qtd });
-      }
-
-      selectItem.value = "";
-      inputQtd.value = "1";
-      document.getElementById("itemEscolhidoBox").classList.add("hidden");
-      document.getElementById("infoFrango").classList.add("hidden");
-
-      showToast(`${item} adicionado ao carrinho!`);
-      
-      carregarDados().then(() => {
-        atualizarInterfaceCarrinho();
-      });
-    }
-
-    function removerDoCarrinho(index) {
-      carrinhoDoacao.splice(index, 1);
-      carregarDados().then(() => {
-        atualizarInterfaceCarrinho();
-      });
-    }
-
-    function editarQtdCarrinho(index, novaQtdStr) {
-      const novaQtd = parseInt(novaQtdStr, 10);
-      if (isNaN(novaQtd) || novaQtd <= 0) {
-        return removerDoCarrinho(index);
-      }
-
-      const c = carrinhoDoacao[index];
-      const info = disponibilidadeItens[c.item];
-      
-      const limiteMaximo = (info?.disponivelPrometer || 0) + c.qtd;
-
-      if (novaQtd > limiteMaximo) {
-        showToast(`Máximo disponível de ${c.item} é ${limiteMaximo}.`, "error");
-        carrinhoDoacao[index].qtd = limiteMaximo; 
-      } else {
-        carrinhoDoacao[index].qtd = novaQtd;
-      }
-
-      carregarDados().then(() => {
-        atualizarInterfaceCarrinho();
-      });
     }
 
     // --- EVENTOS DOS CAMPOS ---
@@ -1056,77 +889,65 @@
       this.value = mascararWhatsapp(this.value);
     });
 
-    // --- ENVIO DO FORMULÁRIO (MULTIPLOS ITENS) ---
+    // --- ENVIO DO FORMULÁRIO (ÚNICO ITEM) ---
     document.getElementById("formDoacao").addEventListener("submit", async function(e) {
       e.preventDefault();
-
-      if (carrinhoDoacao.length === 0) {
-        return showToast("Adicione pelo menos um item ao carrinho antes de confirmar.", "error");
-      }
 
       const btn = document.getElementById("btnEnviar");
       const textoOriginal = btn.innerHTML;
 
+      const qtd = parseInt(document.getElementById("d_qtd").value, 10);
+      const item = document.getElementById("d_item").value;
       const nome = document.getElementById("d_nome").value.trim();
       const telefone = document.getElementById("d_tel").value.replace(/\D/g, "");
       const equipe = document.getElementById("d_equipe").value;
       const dataEntrega = document.getElementById("d_data").value;
 
-      if (!nome || !equipe || !dataEntrega) return showToast("Preencha todos os seus dados.", "error");
+      if (!Number.isInteger(qtd) || qtd <= 0) return showToast("Informe uma quantidade válida.", "error");
+      if (!item || !nome || !equipe || !dataEntrega) return showToast("Preencha todos os campos corretamente.", "error");
       if (!/^\d{10,11}$/.test(telefone)) return showToast("WhatsApp inválido.", "error");
 
-      btn.innerHTML = "REGISTRANDO DOAÇÕES...";
-      btn.disabled = true;
+      const infoItem = disponibilidadeItens[item];
+      const maxDisponivel = infoItem?.disponivelPrometer ?? 0;
 
-      let deuErro = false;
-
-      // Executa a inserção item por item usando o RPC de segurança
-      for (const c of carrinhoDoacao) {
-        const { error } = await _supabase.rpc('registrar_doacao_publica', {
-          p_item: c.item,
-          p_quantidade: c.qtd,
-          p_nome: nome,
-          p_telefone: telefone,
-          p_equipe: equipe,
-          p_data_entrega: dataEntrega
-        });
-
-        if (error) {
-          console.error(error);
-          deuErro = true;
-        }
+      if (qtd > maxDisponivel) {
+        return showToast(`Para este item, o máximo disponível agora é ${maxDisponivel}.`, "error");
       }
 
-      if (deuErro) {
-        showToast("Houve um erro de conexão ao registrar alguma das doações.", "error");
+      btn.innerHTML = "Processando...";
+      btn.disabled = true;
+
+      const { error } = await _supabase.rpc('registrar_doacao_publica', {
+        p_item: item,
+        p_quantidade: qtd,
+        p_nome: nome,
+        p_telefone: telefone,
+        p_equipe: equipe,
+        p_data_entrega: dataEntrega
+      });
+
+      if (error) {
+        console.error(error);
+        showToast("Erro ao registrar doação.", "error");
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
         return;
       }
 
-      // Tudo deu certo
       document.getElementById("areaForm").classList.add("hidden");
       document.getElementById("agradecimentoDoacao").classList.remove("hidden");
       document.getElementById("agradecimentoTitulo").innerText = `Deus lhe pague, ${nome.split(' ')[0]}!`;
-      
-      const resumoHTML = carrinhoDoacao.map(c => `<span class="font-bold text-purple-700">${c.qtd}x ${esc(c.item)}</span>`).join("<br>");
-      document.getElementById("agradecimentoTexto").innerHTML = `Sua doação foi registrada:<br><br>${resumoHTML}<br><br>Agora você faz parte da providência deste EJC. ✝️💜`;
+      document.getElementById("agradecimentoTexto").innerHTML = `Sua doação de <b class="text-purple-700">${qtd}x ${esc(item)}</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜`;
 
-      showToast(`Doações registradas com sucesso!`);
-      
-      // Limpa carrinho
-      carrinhoDoacao = [];
-      atualizarInterfaceCarrinho();
-      await carregarDados();
-
+      showToast(`Doação registrada com sucesso!`);
       btn.disabled = false;
       btn.innerHTML = textoOriginal;
+
+      await carregarDados();
     });
 
     function novaDoacao() {
       document.getElementById("formDoacao").reset();
-      carrinhoDoacao = [];
-      atualizarInterfaceCarrinho();
       
       document.getElementById("itemEscolhidoBox").classList.add("hidden");
       document.getElementById("infoFrango").classList.add("hidden");
@@ -1143,13 +964,14 @@
 
       const { data, error } = await _supabase
         .from('mural_mensagens')
-        .select('nome, mensagem, criado_em')
+        .select('nome, mensagem')
         .eq('aprovada', true)
-        .order('criado_em', { ascending: false })
+        .order('id', { ascending: false })
         .limit(8);
 
       if (error) {
-        wrap.innerHTML = `<p class="text-xs text-slate-400">Mural indisponível no momento.</p>`;
+        console.error("Erro Mural:", error);
+        wrap.innerHTML = `<p class="text-xs text-rose-400">Mural indisponível: ${error.message}</p>`;
         return;
       }
 
@@ -1161,19 +983,21 @@
 
       wrap.innerHTML = msgs.map(m => `
         <div class="msg-card">
-          <p class="text-sm font-bold text-slate-800">${esc(m.nome || "Participante")}</p>
+          <p class="text-sm font-bold text-slate-800">${esc(m.nome || "Anônimo")}</p>
           <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(m.mensagem || "")}</p>
         </div>
       `).join("");
     }
 
     async function enviarMensagem() {
-      const nome = document.getElementById("d_nome").value.trim();
+      let nomeMural = document.getElementById("m_nome").value.trim();
+      const nomeDoacao = document.getElementById("d_nome").value.trim();
       const mensagem = document.getElementById("m_msg").value.trim();
       const btn = document.getElementById("btnMsg");
       const original = btn.innerHTML;
 
-      if (!nome) return showToast("Preencha seu nome para enviar a mensagem.", "error");
+      const nomeFinal = nomeMural || nomeDoacao || "Anônimo";
+
       if (!mensagem) return showToast("Escreva uma mensagem para o mural.", "error");
       if (mensagem.length < 3) return showToast("Mensagem muito curta.", "error");
 
@@ -1182,17 +1006,18 @@
 
       const { error } = await _supabase
         .from('mural_mensagens')
-        .insert([{ nome, mensagem, aprovada: true }]);
+        .insert([{ nome: nomeFinal, mensagem: mensagem, aprovada: true }]);
 
       if (error) {
         console.error(error);
-        showToast("Não foi possível enviar a mensagem.", "error");
+        showToast("Erro: " + error.message, "error");
         btn.disabled = false;
         btn.innerHTML = original;
         return;
       }
 
       document.getElementById("m_msg").value = "";
+      document.getElementById("m_nome").value = "";
       btn.disabled = false;
       btn.innerHTML = original;
       showToast("Mensagem enviada com sucesso!");
