@@ -614,7 +614,7 @@
         const min = Math.floor((diff / (1000 * 60)) % 60);
         const seg = Math.floor((diff / 1000) % 60);
 
-        // Ajuste corrigido para a contagem regressiva não cortar números grandes
+        // Ajuste corrigido para não cortar números grandes como 104 dias
         document.getElementById('cdDias').innerText = dias < 10 ? '0' + dias : dias;
         document.getElementById('cdHoras').innerText = horas < 10 ? '0' + horas : horas;
         document.getElementById('cdMin').innerText = min < 10 ? '0' + min : min;
@@ -625,38 +625,38 @@
       setInterval(atualizar, 1000);
     }
 
-    // --- INTERFACE DE ACORDIONS ---
+    // --- INTERFACE DE ACORDIONS (CORRIGIDO) ---
     function toggleTodasNecessidades() {
-      const btn = document.getElementById("btnToggleTodas");
       const wrap = document.getElementById("todasNecessidadesWrap");
+      const btn = document.getElementById("btnToggleTodas");
       const icon = document.getElementById("iconToggleTodas");
-      const aberto = !wrap.classList.contains("hidden-soft");
+      const estaAberto = !wrap.classList.contains("hidden-soft");
       
-      if (aberto) {
-        wrap.classList.remove("hidden-soft");
-        btn.setAttribute("aria-expanded", "true");
-        icon.className = "fas fa-chevron-up text-slate-400";
-      } else {
+      if (estaAberto) {
         wrap.classList.add("hidden-soft");
-        btn.setAttribute("aria-expanded", "false");
-        icon.className = "fas fa-chevron-down text-slate-400";
+        if (btn) btn.setAttribute("aria-expanded", "false");
+        if (icon) icon.className = "fas fa-chevron-down text-slate-400";
+      } else {
+        wrap.classList.remove("hidden-soft");
+        if (btn) btn.setAttribute("aria-expanded", "true");
+        if (icon) icon.className = "fas fa-chevron-up text-slate-400";
       }
     }
 
     function toggleCategoria(id) {
-      const btn = document.querySelector('[aria-controls="' + id + '"]');
       const wrap = document.getElementById(id);
+      const btn = document.querySelector('[aria-controls="' + id + '"]');
       const icon = document.querySelector('[data-icon="' + id + '"]');
-      const aberto = !wrap.classList.contains("hidden-soft");
+      const estaAberto = !wrap.classList.contains("hidden-soft");
       
-      if (aberto) {
-        wrap.classList.remove("hidden-soft");
-        if (btn) btn.setAttribute("aria-expanded", "true");
-        if (icon) icon.className = "fas fa-chevron-up text-slate-400";
-      } else {
+      if (estaAberto) {
         wrap.classList.add("hidden-soft");
         if (btn) btn.setAttribute("aria-expanded", "false");
         if (icon) icon.className = "fas fa-chevron-down text-slate-400";
+      } else {
+        wrap.classList.remove("hidden-soft");
+        if (btn) btn.setAttribute("aria-expanded", "true");
+        if (icon) icon.className = "fas fa-chevron-up text-slate-400";
       }
     }
 
@@ -974,7 +974,7 @@
 
       if (isNaN(qtd) || qtd <= 0) return showToast("Informe uma quantidade válida.", "error");
       if (!item || !nome || !equipe || !dataEntrega) return showToast("Preencha todos os campos corretamente.", "error");
-      if (!/^\d{10,11}$/.test(telefone)) return showToast("WhatsApp inválido.", "error");
+      if (telefone.length < 10) return showToast("WhatsApp inválido.", "error");
 
       const infoItem = disponibilidadeItens[item];
       const maxDisponivel = infoItem ? infoItem.disponivelPrometer : 0;
@@ -1047,6 +1047,7 @@
       
       atualizarResumoItemSelecionado("");
       carregarDados(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     // --- CARROSSEL DO MURAL DE MENSAGENS ---
@@ -1079,11 +1080,9 @@
                '</div>';
       }).join("");
 
-      // Se houverem poucas mensagens, exibe-as normalmente
       if (msgs.length < 4) {
         wrap.innerHTML = '<div class="space-y-3">' + htmlMsgs + '</div>';
       } else {
-        // Se houver muitas mensagens, ativa o carrossel (Marquee animado)
         wrap.innerHTML = '' +
           '<div class="marquee-container">' +
             '<div class="marquee-content">' +
