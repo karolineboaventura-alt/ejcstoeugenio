@@ -515,7 +515,7 @@
         </div>
         <h3 id="agradecimentoTitulo" class="text-2xl font-black text-slate-800 mb-3">Deus lhe pague!</h3>
         <p id="agradecimentoTexto" class="text-slate-600 font-medium mx-auto leading-relaxed">
-          Sua doação foi registrada com sucesso.
+          Sua doação foi registada com sucesso.
         </p>
 
         <div class="mt-6">
@@ -540,7 +540,7 @@
       </div>
 
       <div id="listaMensagens" class="space-y-3 min-h-[90px]">
-        <p class="text-xs text-slate-300">Carregando mural...</p>
+        <p class="text-xs text-slate-300">A carregar mural...</p>
       </div>
     </div>
 
@@ -624,7 +624,7 @@
       setInterval(atualizar, 1000);
     }
 
-    // --- INTERFACE DE ACORDIONS (CORRIGIDO) ---
+    // --- INTERFACE DE ACORDIONS ---
     function toggleTodasNecessidades() {
       const btn = document.getElementById("btnToggleTodas");
       const wrap = document.getElementById("todasNecessidadesWrap");
@@ -960,7 +960,7 @@
       box.classList.remove("hidden");
 
       if (valor === "Frango") {
-        infoFrangoTexto.innerHTML = "Se desejar doar o <b>frango</b>, combine previamente com a equipe de compras a melhor forma de entrega e conservação (geladeira/freezer).";
+        infoFrangoTexto.innerHTML = "Se desejar doar o <b>frango</b>, combine previamente com a equipa de compras a melhor forma de entrega e conservação (frigorífico/congelador).";
         infoFrango.classList.remove("hidden");
       } else {
         infoFrango.classList.add("hidden");
@@ -1026,7 +1026,7 @@
           if (res.error.message && res.error.message.indexOf("Quantidade excede") !== -1) {
              showToast("A quantidade pedida já foi ultrapassada por outra doação recente.", "error");
           } else {
-             showToast("Erro ao registrar doação. Tente novamente.", "error");
+             showToast("Erro ao registar doação. Tente novamente.", "error");
           }
           btn.disabled = false;
           btn.innerHTML = textoOriginal;
@@ -1037,16 +1037,16 @@
         document.getElementById("areaForm").classList.add("hidden");
         document.getElementById("agradecimentoDoacao").classList.remove("hidden");
         document.getElementById("agradecimentoTitulo").innerText = "Deus lhe pague, " + nome.split(' ')[0] + "!";
-        document.getElementById("agradecimentoTexto").innerHTML = "Sua doação de <b class='text-purple-700'>" + qtd + "x " + esc(item) + "</b> foi registrada.<br><br>Agora você faz parte da providência deste encontro. ✝️💜";
+        document.getElementById("agradecimentoTexto").innerHTML = "Sua doação de <b class='text-purple-700'>" + qtd + "x " + esc(item) + "</b> foi registada.<br><br>Agora faz parte da providência deste encontro. ✝️💜";
 
-        showToast("Doação registrada com sucesso!");
+        showToast("Doação registada com sucesso!");
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
 
         await carregarDados(true); 
       } catch(err) {
         console.error(err);
-        showToast("Erro de conexão.", "error");
+        showToast("Erro de ligação.", "error");
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
       }
@@ -1098,7 +1098,7 @@
 
       const htmlMsgs = msgs.map(function(m) {
         return '<div class="msg-card">' +
-                 '<p class="text-sm font-bold text-slate-800">' + esc(m.nome || "Anônimo") + '</p>' +
+                 '<p class="text-sm font-bold text-slate-800">' + esc(m.nome || "Anónimo") + '</p>' +
                  '<p class="text-xs text-slate-600 mt-2 leading-relaxed">' + esc(m.mensagem || "") + '</p>' +
                '</div>';
       }).join("");
@@ -1125,7 +1125,7 @@
       const nomeDoacao = document.getElementById("d_nome").value.trim();
       const mensagem = document.getElementById("m_msg").value.trim();
       
-      const nomeFinal = nomeMural || nomeDoacao || "Anônimo";
+      const nomeFinal = nomeMural || nomeDoacao || "Anónimo";
 
       const btn = document.getElementById("btnMsg");
       const original = btn.innerHTML;
@@ -1134,7 +1134,7 @@
       if (mensagem.length < 3) return showToast("Mensagem muito curta.", "error");
 
       btn.disabled = true;
-      btn.innerHTML = 'ENVIANDO...';
+      btn.innerHTML = 'A ENVIAR...';
 
       const res = await _supabase
         .from('doacao_mural')
