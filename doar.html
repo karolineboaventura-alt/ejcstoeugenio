@@ -614,7 +614,6 @@
         const min = Math.floor((diff / (1000 * 60)) % 60);
         const seg = Math.floor((diff / 1000) % 60);
 
-        // Ajuste corrigido para não cortar números grandes como 104 dias
         document.getElementById('cdDias').innerText = dias < 10 ? '0' + dias : dias;
         document.getElementById('cdHoras').innerText = horas < 10 ? '0' + horas : horas;
         document.getElementById('cdMin').innerText = min < 10 ? '0' + min : min;
@@ -627,29 +626,31 @@
 
     // --- INTERFACE DE ACORDIONS (CORRIGIDO) ---
     function toggleTodasNecessidades() {
-      const wrap = document.getElementById("todasNecessidadesWrap");
       const btn = document.getElementById("btnToggleTodas");
+      const wrap = document.getElementById("todasNecessidadesWrap");
       const icon = document.getElementById("iconToggleTodas");
-      const estaAberto = !wrap.classList.contains("hidden-soft");
       
-      if (estaAberto) {
+      const aberto = !wrap.classList.contains("hidden-soft");
+
+      if (aberto) {
         wrap.classList.add("hidden-soft");
-        if (btn) btn.setAttribute("aria-expanded", "false");
-        if (icon) icon.className = "fas fa-chevron-down text-slate-400";
+        btn.setAttribute("aria-expanded", "false");
+        icon.className = "fas fa-chevron-down text-slate-400";
       } else {
         wrap.classList.remove("hidden-soft");
-        if (btn) btn.setAttribute("aria-expanded", "true");
-        if (icon) icon.className = "fas fa-chevron-up text-slate-400";
+        btn.setAttribute("aria-expanded", "true");
+        icon.className = "fas fa-chevron-up text-slate-400";
       }
     }
 
     function toggleCategoria(id) {
-      const wrap = document.getElementById(id);
       const btn = document.querySelector('[aria-controls="' + id + '"]');
+      const wrap = document.getElementById(id);
       const icon = document.querySelector('[data-icon="' + id + '"]');
-      const estaAberto = !wrap.classList.contains("hidden-soft");
       
-      if (estaAberto) {
+      const aberto = !wrap.classList.contains("hidden-soft");
+
+      if (aberto) {
         wrap.classList.add("hidden-soft");
         if (btn) btn.setAttribute("aria-expanded", "false");
         if (icon) icon.className = "fas fa-chevron-down text-slate-400";
@@ -836,12 +837,20 @@
 
         const select = document.getElementById("d_item");
 
-        const resMetas = await _supabase.from('metas_doacao').select('*').eq('ativo', true).order('item');
-        const resReg = await _supabase.from('transacoes').select('descricao, quantidade, status').eq('modulo', 'DOACAO');
+        const resMetas = await _supabase
+          .from('doacao_metas')
+          .select('*')
+          .eq('ativo', true)
+          .order('item');
+
+        const resReg = await _supabase
+          .from('doacoes')
+          .select('item, quantidade, status');
 
         if (resMetas.error || resReg.error) {
           console.error(resMetas.error, resReg.error);
-          document.getElementById("listaUrgentes").innerHTML = '<p class="text-center text-xs text-rose-400">Erro ao carregar banco de dados.</p>';
+          document.getElementById("listaUrgentes").innerHTML =
+            '<p class="text-center text-xs text-rose-400">Erro ao carregar banco de dados.</p>';
           return;
         }
 
@@ -851,11 +860,12 @@
         const mapa = {};
         for (let i = 0; i < registros.length; i++) {
           const r = registros[i];
-          const item = (r.descricao || "").trim();
+          const item = (r.item || "").trim();
           const qtd = Number(r.quantidade || 0);
+
           if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
           if (r.status === "PENDENTE") mapa[item].prometido += qtd;
-          if (r.status === "PAGO") mapa[item].entregue += qtd;
+          if (r.status === "ENTREGUE") mapa[item].entregue += qtd;
         }
 
         disponibilidadeItens = {};
@@ -876,15 +886,23 @@
           const percReal = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
 
           disponibilidadeItens[item] = {
-            meta: meta, prometido: prometido, entregue: entregue, faltandoReal: faltandoReal, 
-            disponivelPrometer: disponivelPrometer, 
+            meta: meta,
+            prometido: prometido,
+            entregue: entregue,
+            faltandoReal: faltandoReal,
+            disponivelPrometer: disponivelPrometer,
             unidade: m.unidade || ""
           };
 
           itensRenderizados.push({
-            item: item, meta: meta, prometido: prometido, entregue: entregue, faltandoReal: faltandoReal, 
-            disponivelPrometer: disponivelPrometer, 
-            percReal: percReal, unidade: m.unidade || ""
+            item: item,
+            meta: meta,
+            prometido: prometido,
+            entregue: entregue,
+            faltandoReal: faltandoReal,
+            disponivelPrometer: disponivelPrometer,
+            percReal: percReal,
+            unidade: m.unidade || ""
           });
 
           if (disponivelPrometer > 0) {
@@ -899,6 +917,11 @@
         renderizarUrgentes();
         renderizarCategorias();
         atualizarResumoItemSelecionado(document.getElementById("d_item").value);
+
+        if (metas.length === 0) {
+          document.getElementById("listaUrgentes").innerHTML =
+            '<div class="col-span-full section-card p-6 text-center text-sm font-bold text-slate-500">Nenhum item cadastrado ainda.</div>';
+        }
 
         if (itensDisponiveis === 0 && metas.length > 0) {
           document.getElementById("d_item").disabled = true;
@@ -1055,10 +1078,10 @@
       const wrap = document.getElementById("listaMensagens");
 
       const res = await _supabase
-        .from('mural_mensagens')
+        .from('doacao_mural')
         .select('nome, mensagem')
         .eq('aprovada', true)
-        .order('id', { ascending: false })
+        .order('criado_em', { ascending: false })
         .limit(20);
 
       if (res.error) {
@@ -1114,7 +1137,7 @@
       btn.innerHTML = 'ENVIANDO...';
 
       const res = await _supabase
-        .from('mural_mensagens')
+        .from('doacao_mural')
         .insert([{ nome: nomeFinal, mensagem: mensagem, aprovada: true }]);
 
       if (res.error) {
