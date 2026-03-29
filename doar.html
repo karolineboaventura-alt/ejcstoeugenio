@@ -526,19 +526,16 @@
   <div id="modalRecebimento" class="hidden fixed inset-0 z-[120] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
       <h3 class="text-xl font-black text-slate-800 mb-6 text-center">Confirmar recebimento</h3>
-
       <div class="space-y-4">
         <div class="vault-input rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Quem recebeu</label>
           <input id="recebidoPorModal" class="w-full bg-transparent font-bold text-slate-900 outline-none" placeholder="Ex: Karol" />
         </div>
-
         <div class="vault-input rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Data do recebimento</label>
           <input id="dataRecebimentoModal" type="date" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
         </div>
       </div>
-
       <div class="flex gap-3 mt-6">
         <button onclick="confirmarRecebimentoModal()" class="flex-1 bg-emerald-600 text-white py-4 rounded-xl font-black">Confirmar</button>
         <button onclick="fecharModalRecebimento()" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-xl font-black">Cancelar</button>
@@ -1169,9 +1166,7 @@
       document.getElementById("fjPagos").innerText = entregues;
       document.getElementById("fjPendentes").innerText = prometidos;
       document.getElementById("fjRestantes").innerText = cancelados;
-      document.getElementById("fjMercado").innerText = "Itens";
-      document.getElementById("fjLucro").innerText = `${entregues}`;
-
+      
       const elLucroCard = document.getElementById("fjLucroCard");
       if(elLucroCard) elLucroCard.className = "soft-stat emerald";
       const elLucro = document.getElementById("fjLucro");
@@ -1186,6 +1181,9 @@
         labels[4].innerText = "Tipo";
         labels[5].innerText = "Progresso";
       }
+
+      document.getElementById("fjMercado").innerText = "Itens";
+      document.getElementById("fjLucro").innerText = `${entregues}`;
     }
 
     function renderizarGraficoEquipes() {
@@ -2053,6 +2051,155 @@
       modal.classList.remove("flex");
       extratoAtual = { nome: "", equipe: "", telefone: "", registros: [], registrosFiltrados: [] };
       document.getElementById("filtroExtrato").value = "";
+    }
+
+    function compartilharFechamentoFeijoada() {
+      const elVendidos = document.getElementById("fjVendidos");
+      const vendidos = elVendidos ? elVendidos.innerText : "0";
+      
+      const elPagos = document.getElementById("fjPagos");
+      const pagos = elPagos ? elPagos.innerText : "0";
+      
+      const elPendentes = document.getElementById("fjPendentes");
+      const pendentes = elPendentes ? elPendentes.innerText : "0";
+      
+      const elRestantes = document.getElementById("fjRestantes");
+      const restantes = elRestantes ? elRestantes.innerText : "0";
+      
+      const elCustos = document.getElementById("fjMercado");
+      const custos = elCustos ? elCustos.innerText : "R$ 0,00";
+      
+      const elLucro = document.getElementById("fjLucro");
+      const lucro = elLucro ? elLucro.innerText : "R$ 0,00";
+      
+      const statusLucro = (elLucro && elLucro.previousElementSibling) ? elLucro.previousElementSibling.innerText : "Lucro Atual";
+
+      const receitaRecebida = formatarMoeda(Number(pagos) * PRECO_VOUCHER_FEIJOADA);
+      const valorPendente = formatarMoeda(Number(pendentes) * PRECO_VOUCHER_FEIJOADA);
+
+      const texto =
+        "🐷 *FECHAMENTO FEIJOADA 25/04*\n\n" +
+        "🎟️ Vendidos: " + vendidos + "/" + TOTAL_VOUCHERS_FEIJOADA + "\n" +
+        "✅ Pagos: " + pagos + "\n" +
+        "⏳ Pendentes: " + pendentes + "\n" +
+        "📉 Restantes: " + restantes + "\n\n" +
+        "💰 Receita: " + receitaRecebida + "\n" +
+        "💸 A receber: " + valorPendente + "\n" +
+        "🛒 Custos: " + custos + "\n" +
+        "📈 " + statusLucro + ": " + lucro + "\n\n" +
+        "_EJC BANK_";
+
+      navigator.clipboard.writeText(texto)
+        .then(function() { showToast("Fechamento copiado!"); })
+        .catch(function() { showToast("Erro ao copiar fechamento.", "error"); });
+    }
+
+    function copiarPixCaixaEJC() {
+      navigator.clipboard.writeText(PIX_CAIXA_EJC_PAYLOAD)
+        .then(function() { showToast("Código Pix copiado. Abra o banco e faça a transferência."); })
+        .catch(function() { showToast("Não foi possível copiar o código Pix.", "error"); });
+    }
+
+    function abrirModalTransferenciaEJC() {
+      if (abaAtiva !== "MERCADINHO" && abaAtiva !== "FEIJOADA") {
+        showToast("Abra o Mercadinho ou Feijoada para registrar a transferência.", "error");
+        return;
+      }
+
+      document.getElementById("tx_valor").value = "";
+      document.getElementById("tx_data").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("tx_responsavel").value = currentProfile ? currentProfile.nome : "";
+
+      const modal = document.getElementById("modalTransferenciaEJC");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function fecharModalTransferenciaEJC() {
+      const modal = document.getElementById("modalTransferenciaEJC");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    async function confirmarTransferenciaEJC() {
+      const origemModulo = abaAtiva;
+      const valor = parseNumeroFlex(document.getElementById("tx_valor").value);
+      const dataStr = document.getElementById("tx_data").value;
+      const responsavel = limparTexto(document.getElementById("tx_responsavel").value);
+
+      if (origemModulo !== "MERCADINHO" && origemModulo !== "FEIJOADA") {
+        showToast("Transferência permitida apenas no Mercadinho ou Feijoada.", "error");
+        return;
+      }
+
+      if (!valor || valor <= 0) {
+        showToast("Informe um valor válido.", "error");
+        return;
+      }
+
+      if (!dataStr) {
+        showToast("Informe a data da transferência.", "error");
+        return;
+      }
+
+      if (!responsavel) {
+        showToast("Informe quem realizou a transferência.", "error");
+        return;
+      }
+
+      const confirmar = confirm("Confirmar transferência de " + formatarMoeda(valor) + " do " + origemModulo + " para o Caixa EJC?");
+      if (!confirmar) return;
+
+      const recebidoEm = dataLocalMeioDiaISO(dataStr);
+      const criadoEm = agoraISO();
+
+      const payloadSaida = {
+        modulo: origemModulo,
+        descricao: "Transferência para Caixa EJC",
+        quantidade: 1,
+        valor: valor,
+        natureza: "SAIDA",
+        status: "PAGO",
+        forma_pagamento: "TRANSF_INTERNA",
+        nome_pessoa: "",
+        equipe: "",
+        telefone: "",
+        recebido_por: responsavel,
+        recebido_em: recebidoEm,
+        criado_em: criadoEm,
+        user_id: currentUser ? currentUser.id : null
+      };
+
+      const payloadEntrada = {
+        modulo: "EJC",
+        descricao: "Transferência vinda de " + origemModulo,
+        quantidade: 1,
+        valor: valor,
+        natureza: "ENTRADA",
+        status: "PAGO",
+        forma_pagamento: "TRANSF_INTERNA",
+        nome_pessoa: "",
+        equipe: "",
+        telefone: "",
+        recebido_por: responsavel,
+        recebido_em: recebidoEm,
+        criado_em: criadoEm,
+        user_id: currentUser ? currentUser.id : null
+      };
+
+      const { error } = await _supabase
+        .from("transacoes")
+        .insert([payloadSaida, payloadEntrada]);
+
+      if (error) {
+        console.error(error);
+        showToast("Erro ao registrar transferência.", "error");
+        return;
+      }
+
+      showToast("Transferência registrada com sucesso!");
+      fecharModalTransferenciaEJC();
+      await carregarDados(true);
     }
 
     function abrirRankingFeijoada() {
