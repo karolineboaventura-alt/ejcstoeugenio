@@ -9,176 +9,42 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    :root {
-      --nu-roxo: #820ad1;
-      --nu-roxo-dark: #4b0082;
-      --nu-bg: #f8fafc;
-    }
-
-    body {
-      font-family: "Plus Jakarta Sans", sans-serif;
-      background-color: var(--nu-bg);
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .bg-roxo-premium {
-      background: radial-gradient(circle at top right, #820ad1, #4b0082);
-      position: relative;
-    }
-
-    .bg-roxo-premium::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
-      opacity: 0.1;
-    }
-
-    .premium-card {
-      background: rgba(255,255,255,0.98);
-      border-radius: 40px;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,.35);
-      backdrop-filter: blur(10px);
-    }
-
-    .vault-input {
-      background: #f8fafc;
-      border: 2px solid #f1f5f9;
-      transition: all .3s ease;
-    }
-
-    .vault-input:focus {
-      background: white;
-      border-color: var(--nu-roxo);
-      box-shadow: 0 0 0 4px rgba(130,10,209,.1);
-      outline: none;
-    }
-
-    .nu-header {
-      background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
-      color: white;
-      padding-bottom: 24px;
-      border-bottom-left-radius: 32px;
-      border-bottom-right-radius: 32px;
-    }
-
-    .choice-card {
-      background: #fff;
-      border: 2px solid #f1f5f9;
-      transition: all .3s cubic-bezier(.4,0,.2,1);
-    }
-
-    .choice-card:active {
-      transform: scale(.97);
-      border-color: var(--nu-roxo);
-    }
-
+    :root { --nu-roxo: #820ad1; --nu-roxo-dark: #4b0082; --nu-bg: #f8fafc; }
+    body { font-family: "Plus Jakarta Sans", sans-serif; background-color: var(--nu-bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+    .bg-roxo-premium { background: radial-gradient(circle at top right, #820ad1, #4b0082); position: relative; }
+    .bg-roxo-premium::before { content: ""; position: absolute; inset: 0; background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); opacity: 0.1; }
+    .premium-card { background: rgba(255,255,255,0.98); border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,.35); backdrop-filter: blur(10px); }
+    .vault-input { background: #f8fafc; border: 2px solid #f1f5f9; transition: all .3s ease; }
+    .vault-input:focus { background: white; border-color: var(--nu-roxo); box-shadow: 0 0 0 4px rgba(130,10,209,.1); outline: none; }
+    .nu-header { background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%); color: white; padding-bottom: 24px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px; }
+    .choice-card { background: #fff; border: 2px solid #f1f5f9; transition: all .3s cubic-bezier(.4,0,.2,1); }
+    .choice-card:active { transform: scale(.97); border-color: var(--nu-roxo); }
     .hidden { display: none !important; }
-
-    #toast-container {
-      position: fixed;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      width: 90%;
-      max-width: 400px;
-    }
-
-    .toast {
-      background: #1e293b;
-      color: white;
-      padding: 16px 20px;
-      border-radius: 16px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,.2);
-      margin-bottom: 8px;
-    }
-
-    @keyframes slideIn {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
+    #toast-container { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 400px; }
+    .toast { background: #1e293b; color: white; padding: 16px 20px; border-radius: 16px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,.2); margin-bottom: 8px; }
+    @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .animate-elite { animation: slideIn .5s ease-out forwards; }
-
-    .action-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: all .2s ease;
-      flex-shrink: 0;
-    }
-
+    .action-btn { width: 40px; height: 40px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; transition: all .2s ease; flex-shrink: 0; }
     .action-btn:active { transform: scale(.95); }
-
-    .nubank-card {
-      background: linear-gradient(180deg, #ffffff 0%, #fbf9ff 100%);
-      border: 1px solid #eee7fb;
-      border-radius: 24px;
-      box-shadow: 0 14px 35px -28px rgba(0,0,0,.35);
-    }
-
-    .soft-stat {
-      border-radius: 18px;
-      padding: 12px;
-      border: 1px solid #edf2f7;
-      background: #fafafa;
-    }
-
+    .nubank-card { background: linear-gradient(180deg, #ffffff 0%, #fbf9ff 100%); border: 1px solid #eee7fb; border-radius: 24px; box-shadow: 0 14px 35px -28px rgba(0,0,0,.35); }
+    .soft-stat { border-radius: 18px; padding: 12px; border: 1px solid #edf2f7; background: #fafafa; }
     .soft-stat.roxo { background: #faf5ff; border-color: #eadcff; }
     .soft-stat.rose { background: #fff1f2; border-color: #ffe4e6; }
     .soft-stat.emerald { background: #ecfdf5; border-color: #d1fae5; }
     .soft-stat.amber { background: #fffbeb; border-color: #fde68a; }
-
-    .extrato-item {
-      border: 1px solid #edf2f7;
-      background: linear-gradient(180deg, #fff 0%, #faf7ff 100%);
-      border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 8px;
-    }
-
-    .bar-bg {
-      height: 10px;
-      border-radius: 999px;
-      background: #eef2f7;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #820ad1, #a855f7);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
+    .extrato-item { border: 1px solid #edf2f7; background: linear-gradient(180deg, #fff 0%, #faf7ff 100%); border-radius: 18px; padding: 14px; margin-bottom: 8px; }
+    .bar-bg { height: 10px; border-radius: 999px; background: #eef2f7; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #820ad1, #a855f7); }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
   </style>
 </head>
 <body class="text-slate-900 min-h-screen flex flex-col">
 
   <div id="toast-container"></div>
 
+  <!-- LOGIN -->
   <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-roxo-premium">
     <div class="w-full max-w-sm premium-card p-10 animate-elite overflow-hidden">
       <div id="stepProfile">
@@ -187,63 +53,41 @@
           <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Escolha seu perfil de acesso</p>
         </div>
-
         <div class="space-y-4">
           <button onclick="escolherPerfil('compras')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5 hover:bg-slate-50">
-            <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-2xl flex items-center justify-center text-xl">
-              <i class="fas fa-shopping-cart"></i>
-            </div>
-            <div class="text-left">
-              <p class="text-lg font-bold text-slate-800">🛍️ COMPRAS</p>
-            </div>
+            <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-shopping-cart"></i></div>
+            <div class="text-left"><p class="text-lg font-bold text-slate-800">🛍️ COMPRAS</p></div>
           </button>
-
           <button onclick="escolherPerfil('pilotos')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5 hover:bg-slate-50">
-            <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center text-xl">
-              <i class="fas fa-user-shield"></i>
-            </div>
-            <div class="text-left">
-              <p class="text-lg font-bold text-slate-800">✈️ PILOTOS</p>
-            </div>
+            <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-user-shield"></i></div>
+            <div class="text-left"><p class="text-lg font-bold text-slate-800">✈️ PILOTOS</p></div>
           </button>
         </div>
       </div>
-
       <div id="stepAuth" class="hidden">
-        <button onclick="voltarParaSelecao()" class="text-slate-400 hover:text-purple-700 transition text-[10px] font-black uppercase tracking-widest mb-8 flex items-center gap-2">
-          <i class="fas fa-chevron-left"></i> Voltar
-        </button>
-
+        <button onclick="voltarParaSelecao()" class="text-slate-400 hover:text-purple-700 transition text-[10px] font-black uppercase tracking-widest mb-8 flex items-center gap-2"><i class="fas fa-chevron-left"></i> Voltar</button>
         <div class="mb-8">
           <h2 id="authTitle" class="text-2xl font-black text-slate-800">Acesso Seguro</h2>
           <p class="text-xs text-slate-400 font-bold mt-1">Informe suas credenciais</p>
         </div>
-
         <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-6 hidden">
           <div class="space-y-2">
             <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Senha de acesso</p>
             <input type="password" id="senhaCompras" placeholder="••••" required class="vault-input w-full rounded-xl py-4 px-5 font-bold outline-none text-center text-2xl tracking-[0.5em] text-slate-800" />
           </div>
-          <button type="submit" id="btnCompras" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700 shadow-lg shadow-purple-200 hover:bg-purple-800 transition-all">
-            ENTRAR NO SISTEMA
-          </button>
+          <button type="submit" id="btnCompras" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700 shadow-lg shadow-purple-200 hover:bg-purple-800 transition-all">ENTRAR NO SISTEMA</button>
         </form>
-
         <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
           <input type="email" id="emailPiloto" placeholder="E-mail" required class="vault-input w-full rounded-xl py-4 px-5 font-bold outline-none text-slate-700" />
           <input type="password" id="senhaPiloto" placeholder="Senha" required class="vault-input w-full rounded-xl py-4 px-5 font-bold outline-none text-slate-700" />
-          <button type="submit" id="btnPiloto" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900 shadow-xl hover:bg-black transition-all mt-2">
-            ACESSAR PAINEL
-          </button>
+          <button type="submit" id="btnPiloto" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900 shadow-xl hover:bg-black transition-all mt-2">ACESSAR PAINEL</button>
         </form>
-
-        <p id="msgErroLogin" class="hidden mt-6 text-rose-600 text-[10px] font-bold text-center uppercase tracking-widest bg-rose-50 py-3 rounded-lg border border-rose-100">
-          Credenciais inválidas
-        </p>
+        <p id="msgErroLogin" class="hidden mt-6 text-rose-600 text-[10px] font-bold text-center uppercase tracking-widest bg-rose-50 py-3 rounded-lg border border-rose-100">Credenciais inválidas</p>
       </div>
     </div>
   </div>
 
+  <!-- APP -->
   <div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
     <header class="nu-header sticky top-0 z-40 px-6 pt-8 text-white">
       <div class="flex justify-between items-center mb-8">
@@ -254,11 +98,8 @@
             <h1 id="headerTitle" class="font-extrabold text-xl tracking-tight leading-none uppercase">EJC BANK</h1>
           </div>
         </div>
-        <button onclick="sair()" class="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition shadow-sm">
-          <i class="fas fa-power-off"></i>
-        </button>
+        <button onclick="sair()" class="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition shadow-sm"><i class="fas fa-power-off"></i></button>
       </div>
-
       <div class="flex gap-3 overflow-x-auto pb-2">
         <button id="tab-admin" onclick="mudarAba('ADMIN')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Geral</button>
         <button id="tab-ejc" onclick="mudarAba('EJC')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Caixa EJC</button>
@@ -272,22 +113,10 @@
     <main class="px-6 py-8 space-y-8">
       <div id="dashAdmin" class="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 hidden">
         <div id="dashGrid" class="grid grid-cols-1 sm:grid-cols-4 gap-8">
-          <div>
-            <p id="tituloEntradasGlobais" class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Entradas (Pagas)</p>
-            <h2 id="totalRecebido" class="text-3xl font-extrabold text-emerald-600">R$ 0,00</h2>
-          </div>
-          <div>
-            <p id="tituloPendenteGlobal" class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">A Receber (Fiado)</p>
-            <h2 id="totalPendente" class="text-3xl font-extrabold text-amber-500">R$ 0,00</h2>
-          </div>
-          <div>
-            <p id="tituloSaidasGlobais" class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Saídas (Gastos)</p>
-            <h2 id="totalSaidas" class="text-3xl font-black text-rose-600">R$ 0,00</h2>
-          </div>
-          <div id="cardSaldoLiquido">
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Em Caixa (Caixa EJC Real)</p>
-            <h2 id="totalLiquido" class="text-3xl font-extrabold text-purple-700">R$ 0,00</h2>
-          </div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Entradas (Pagas)</p><h2 id="totalRecebido" class="text-3xl font-extrabold text-emerald-600">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">A Receber (Fiado)</p><h2 id="totalPendente" class="text-3xl font-extrabold text-amber-500">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Saídas (Gastos)</p><h2 id="totalSaidas" class="text-3xl font-black text-rose-600">R$ 0,00</h2></div>
+          <div id="cardSaldoLiquido"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Em Caixa (Caixa EJC Real)</p><h2 id="totalLiquido" class="text-3xl font-extrabold text-purple-700">R$ 0,00</h2></div>
         </div>
       </div>
 
@@ -298,52 +127,20 @@
             <h3 class="text-xl font-black text-slate-800">Painel de Controle</h3>
           </div>
           <div id="botoesPainelWrap" class="flex items-center gap-2 flex-wrap">
-            <div id="pillVoucher" class="pill bg-purple-50 text-purple-700 border border-purple-100 hidden">
-              Voucher: R$ 55,00
-            </div>
-            <button id="btnRanking" onclick="abrirRankingFeijoada()" class="action-btn bg-amber-50 text-amber-600 hover:bg-amber-100 shadow-sm hidden" title="Ranking de Vendas"><i class="fas fa-trophy"></i></button>
-            <button id="btnCobranca" onclick="abrirFilaCobrancaFeijoada()" class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100 shadow-sm hidden" title="Cobrar Pendentes"><i class="fas fa-hand-holding-dollar"></i></button>
-            <button id="btnCompartilhar" onclick="compartilharFechamentoFeijoada()" class="action-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100 shadow-sm hidden" title="Compartilhar Fechamento"><i class="fab fa-whatsapp"></i></button>
-            <button id="btnTransferir" onclick="abrirModalTransferenciaEJC()" class="action-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 shadow-sm hidden" title="Registrar transferência p/ Caixa EJC"><i class="fas fa-arrow-right-arrow-left"></i></button>
+            <div id="pillVoucher" class="pill bg-purple-50 text-purple-700 border border-purple-100 hidden">Voucher: R$ 55,00</div>
+            <button id="btnRanking" class="action-btn bg-amber-50 text-amber-600 hover:bg-amber-100 shadow-sm hidden" title="Ranking de Vendas"><i class="fas fa-trophy"></i></button>
+            <button id="btnCobranca" class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100 shadow-sm hidden" title="Cobrar Pendentes"><i class="fas fa-hand-holding-dollar"></i></button>
           </div>
         </div>
 
         <div id="gridMetricasFeijoada" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 hidden">
-          <div class="soft-stat roxo">
-            <p class="text-[10px] font-black uppercase tracking-wider text-purple-400">Vendidos</p>
-            <p id="fjVendidos" class="text-xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="soft-stat emerald">
-            <p class="text-[10px] font-black uppercase tracking-wider text-emerald-500">Pagos</p>
-            <p id="fjPagos" class="text-xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="soft-stat amber">
-            <p class="text-[10px] font-black uppercase tracking-wider text-amber-500">Pendentes</p>
-            <p id="fjPendentes" class="text-xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="soft-stat bg-slate-50 border-slate-200">
-            <p class="text-[10px] font-black uppercase tracking-wider text-slate-500">Restantes</p>
-            <p id="fjRestantes" class="text-xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="soft-stat rose">
-            <p class="text-[10px] font-black uppercase tracking-wider text-rose-500">Custos</p>
-            <p id="fjMercado" class="text-xl font-extrabold text-slate-800 mt-1">R$ 0,00</p>
-          </div>
-          <div id="fjLucroCard" class="soft-stat emerald">
-            <p class="text-[10px] font-black uppercase tracking-wider text-emerald-500">Lucro Atual</p>
-            <p id="fjLucro" class="text-xl font-extrabold text-emerald-700 mt-1">R$ 0,00</p>
-          </div>
+          <div class="soft-stat roxo"><p class="text-[10px] font-black uppercase tracking-wider text-purple-400">Vendidos</p><p id="fjVendidos" class="text-xl font-extrabold text-slate-800 mt-1">0</p></div>
+          <div class="soft-stat emerald"><p class="text-[10px] font-black uppercase tracking-wider text-emerald-500">Pagos</p><p id="fjPagos" class="text-xl font-extrabold text-slate-800 mt-1">0</p></div>
+          <div class="soft-stat amber"><p class="text-[10px] font-black uppercase tracking-wider text-amber-500">Pendentes</p><p id="fjPendentes" class="text-xl font-extrabold text-slate-800 mt-1">0</p></div>
+          <div class="soft-stat bg-slate-50 border-slate-200"><p class="text-[10px] font-black uppercase tracking-wider text-slate-500">Restantes</p><p id="fjRestantes" class="text-xl font-extrabold text-slate-800 mt-1">0</p></div>
+          <div class="soft-stat rose"><p class="text-[10px] font-black uppercase tracking-wider text-rose-500">Custos</p><p id="fjMercado" class="text-xl font-extrabold text-slate-800 mt-1">R$ 0,00</p></div>
+          <div id="fjLucroCard" class="soft-stat emerald"><p class="text-[10px] font-black uppercase tracking-wider text-emerald-500">Lucro Atual</p><p id="fjLucro" class="text-xl font-extrabold text-emerald-700 mt-1">R$ 0,00</p></div>
         </div>
-      </div>
-
-      <div id="graficoWrap" class="bg-white rounded-[32px] p-6 shadow-sm border border-slate-100 hidden">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Consumo Interno</p>
-            <h3 class="text-lg font-black text-slate-800">Gastos por equipe</h3>
-          </div>
-        </div>
-        <div id="graficoEquipes" class="space-y-4"></div>
       </div>
 
       <div id="blocoAdminDoacao" class="hidden">
@@ -354,30 +151,13 @@
       </div>
 
       <div class="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm mb-20">
-        <div id="filtrosUniversalWrap" class="p-6 pb-0 hidden">
-          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Filtrar Situação</p>
-          <div class="flex flex-wrap gap-2">
-            <button data-filtro="TODOS" onclick="setFiltroUniversal('TODOS')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-md ring-2 ring-slate-900 ring-offset-1">Todos</button>
-            <button data-filtro="PENDENTE" onclick="setFiltroUniversal('PENDENTE')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">Pendentes / Fiado</button>
-            <button data-filtro="ATRASADO" onclick="setFiltroUniversal('ATRASADO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">Atrasados</button>
-            <button data-filtro="PAGO" onclick="setFiltroUniversal('PAGO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Pagos / Entregues</button>
-            <button data-filtro="CANCELADO" onclick="setFiltroUniversal('CANCELADO')" class="btn-filtro-prov px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">Cancelados</button>
-          </div>
-        </div>
-
         <div class="p-6 border-b border-slate-50 flex gap-4 items-center">
           <i class="fas fa-search text-slate-300"></i>
-          <input id="campoBusca" onkeyup="renderizar()" placeholder="Buscar nos registros..." class="w-full text-sm font-semibold outline-none text-slate-700" />
+          <input id="campoBusca" placeholder="Buscar nos registros..." class="w-full text-sm font-semibold outline-none text-slate-700" />
         </div>
-
-        <div id="loading" class="hidden p-12 text-center text-slate-300">
-          <i class="fas fa-circle-notch fa-spin text-2xl"></i>
-        </div>
-
+        <div id="loading" class="hidden p-12 text-center text-slate-300"><i class="fas fa-circle-notch fa-spin text-2xl"></i></div>
         <div class="overflow-x-auto pb-24">
-          <table class="w-full text-left text-sm border-collapse">
-            <tbody id="corpoTabela" class="divide-y divide-slate-50"></tbody>
-          </table>
+          <table class="w-full text-left text-sm border-collapse"><tbody id="corpoTabela" class="divide-y divide-slate-50"></tbody></table>
         </div>
       </div>
     </main>
@@ -387,10 +167,11 @@
     </button>
   </div>
 
+  <!-- MODAL META -->
   <div id="modalMeta" class="hidden fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
       <h2 class="text-xl font-black text-slate-800 mb-6 text-center">Nova Meta de Providência</h2>
-      <form id="formMeta" onsubmit="event.preventDefault(); salvarMeta();" class="space-y-4">
+      <form id="formMeta" class="space-y-4">
         <input id="m_item" placeholder="Ex: Arroz ou Óleo" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
         <div class="flex gap-2">
           <input id="m_qtd" type="number" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none text-slate-700">
@@ -402,6 +183,7 @@
     </div>
   </div>
 
+  <!-- MODAL REGISTRO -->
   <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="absolute inset-0" onclick="fecharModal()"></div>
     <div class="relative bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -411,7 +193,7 @@
       </div>
 
       <form id="formFin" class="space-y-4">
-        <div id="blocoModulo" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-100">
+        <div id="blocoModulo" class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Destino da Tabela</label>
           <select id="f_modulo" class="w-full bg-transparent font-bold text-slate-900 outline-none" onchange="atualizarModalDinamico()">
             <option value="EJC">Caixa Fundo Principal</option>
@@ -424,7 +206,7 @@
 
         <div id="blocoTipoFeijoada" class="hidden vault-input rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Tipo da Feijoada</label>
-          <select id="f_tipo_feijoada" class="w-full bg-transparent font-bold text-slate-900 outline-none" onchange="atualizarModalDinamico()">
+          <select id="f_tipo_feijoada" class="w-full bg-transparent font-bold text-slate-900 outline-none">
             <option value="VOUCHER">Voucher</option>
             <option value="COMPRA_MERCADO">Compra de mercado</option>
             <option value="OUTRA_ENTRADA">Outra entrada</option>
@@ -460,11 +242,10 @@
         </div>
 
         <div id="camposMercado" class="hidden bg-pink-50 p-5 rounded-2xl border border-pink-100 space-y-4">
-          <select id="f_tipo_pessoa" onchange="controlarTipoPessoa()" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
+          <select id="f_tipo_pessoa" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
             <option value="SERVO">🙋‍♂️ Servo do EJC (Pode Fiado)</option>
             <option value="PAROQUIANO">👤 Paroquiano (Somente Pago)</option>
           </select>
-
           <label class="block">
             <span id="labelEquipeTexto" class="text-[9px] font-black text-slate-400 uppercase block mb-2">Equipe do Responsável</span>
             <select id="f_equipe_merc" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
@@ -524,392 +305,72 @@
           <input id="f_recebido" required class="w-full bg-transparent font-bold text-purple-900 outline-none" />
         </div>
 
-        <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">
-          CONCLUIR REGISTRO
-        </button>
+        <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">CONCLUIR REGISTRO</button>
       </form>
     </div>
   </div>
 
-  <div id="modalRecebimento" class="hidden fixed inset-0 z-[120] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
-      <h3 class="text-xl font-black text-slate-800 mb-6 text-center">Confirmar recebimento</h3>
-      <div class="space-y-4">
-        <div class="vault-input rounded-2xl px-4 py-3">
-          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Quem recebeu</label>
-          <input id="recebidoPorModal" class="w-full bg-transparent font-bold text-slate-900 outline-none" placeholder="Ex: Karol" />
-        </div>
-        <div class="vault-input rounded-2xl px-4 py-3">
-          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Data do recebimento</label>
-          <input id="dataRecebimentoModal" type="date" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
-        </div>
-      </div>
-      <div class="flex gap-3 mt-6">
-        <button onclick="confirmarRecebimentoModal()" class="flex-1 bg-emerald-600 text-white py-4 rounded-xl font-black">Confirmar</button>
-        <button onclick="fecharModalRecebimento()" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-xl font-black">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="modalExtrato" class="hidden fixed inset-0 z-[125] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-2xl rounded-[32px] p-6 shadow-2xl max-h-[92vh] overflow-hidden flex flex-col">
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <h3 class="text-lg font-black text-slate-800">Extrato</h3>
-          <p class="text-[11px] text-slate-400">Histórico por data</p>
-        </div>
-        <button onclick="fecharExtrato()" class="text-slate-400 hover:text-slate-700"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="nubank-card p-4 mb-4">
-        <p id="extratoNome" class="text-sm font-black text-slate-800"></p>
-        <p id="extratoEquipe" class="text-[11px] text-slate-500 mt-1"></p>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-          <div class="soft-stat roxo">
-            <p class="text-[10px] font-black uppercase tracking-wider text-purple-400">Lançamentos</p>
-            <p id="extratoQtdLanc" class="text-xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="soft-stat emerald">
-            <p class="text-[10px] font-black uppercase tracking-wider text-emerald-500">Total pago</p>
-            <p id="extratoTotalPago" class="text-xl font-extrabold text-slate-800 mt-1">R$ 0,00</p>
-          </div>
-          <div class="soft-stat rose">
-            <p class="text-[10px] font-black uppercase tracking-wider text-rose-500">Em aberto</p>
-            <p id="extratoTotal" class="text-xl font-extrabold text-rose-600 mt-1">R$ 0,00</p>
-          </div>
-        </div>
-      </div>
-      <div class="mb-3"><input id="filtroExtrato" type="text" placeholder="Filtrar por item ou status..." oninput="renderizarExtrato()" class="vault-input w-full rounded-xl px-4 py-3 font-bold text-sm outline-none text-slate-700" /></div>
-      <div id="extratoLista" class="flex-1 overflow-y-auto space-y-4 pr-1"></div>
-      <div class="mt-4 border-t pt-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-          <button onclick="copiarExtratoWhatsApp()" class="bg-slate-900 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition"><i class="fas fa-copy"></i> Copiar</button>
-          <button onclick="enviarExtratoDiretoWhatsApp()" class="bg-emerald-600 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition"><i class="fab fa-whatsapp"></i> Enviar</button>
-          <button onclick="cobrarValorEmAbertoDoExtrato()" class="bg-amber-500 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition"><i class="fas fa-hand-holding-dollar"></i> Cobrar</button>
-          <button onclick="abrirModalQuitarTudo()" class="bg-purple-700 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition">Quitar tudo</button>
-        </div>
-        <button onclick="fecharExtrato()" class="w-full mt-2 bg-slate-100 text-slate-700 py-3 rounded-xl font-bold text-sm">Fechar</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="modalQuitarTudo" class="hidden fixed inset-0 z-[130] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
-      <h3 id="tituloModalQuitar" class="text-xl font-black text-slate-800 mb-2 text-center">Quitar tudo</h3>
-      <p id="textoConfirmacaoQuitarTudo" class="text-xs text-slate-500 text-center mb-6">Vai dar baixa em todos os lançamentos em aberto do extrato atual.</p>
-      <div class="space-y-4">
-        <div class="vault-input rounded-2xl px-4 py-3"><label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Quem recebeu</label><input id="quitarTudoRecebidoPor" class="w-full bg-transparent font-bold text-slate-900 outline-none" placeholder="Ex: Karol" /></div>
-        <div class="vault-input rounded-2xl px-4 py-3"><label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Data do recebimento</label><input id="quitarTudoData" type="date" class="w-full bg-transparent font-bold text-slate-900 outline-none" /></div>
-      </div>
-      <div class="flex gap-3 mt-6">
-        <button id="btnConfirmarQuitar" onclick="confirmarQuitarTudo()" class="flex-1 bg-purple-700 text-white py-4 rounded-xl font-black">Confirmar</button>
-        <button onclick="fecharModalQuitarTudo()" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-xl font-black">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="modalTransferenciaEJC" class="hidden fixed inset-0 z-[135] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
-      <h3 class="text-xl font-black text-slate-800 mb-2 text-center">Transferência para Caixa EJC</h3>
-      <p class="text-xs text-slate-500 text-center mb-4">Isto criará uma SAÍDA neste painel e uma ENTRADA automática no Caixa Geral do EJC de forma atômica.</p>
-      <div class="space-y-4">
-        <div class="vault-input rounded-2xl px-4 py-3"><label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Valor Transferido (R$)</label><input id="tx_valor" type="text" inputmode="decimal" class="w-full bg-transparent font-bold text-slate-900 outline-none text-right" placeholder="0,00" /></div>
-        <div class="vault-input rounded-2xl px-4 py-3"><label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Data</label><input id="tx_data" type="date" class="w-full bg-transparent font-bold text-slate-900 outline-none" /></div>
-        <div class="vault-input rounded-2xl px-4 py-3"><label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Responsável</label><input id="tx_responsavel" class="w-full bg-transparent font-bold text-slate-900 outline-none" placeholder="Ex: Karol" /></div>
-      </div>
-      <div class="flex gap-3 mt-6">
-        <button onclick="confirmarTransferenciaEJC()" class="flex-1 bg-emerald-600 text-white py-4 rounded-xl font-black">Registrar</button>
-        <button onclick="fecharModalTransferenciaEJC()" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-xl font-black">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="modalRanking" class="hidden fixed inset-0 z-[140] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-6 shadow-2xl max-h-[80vh] overflow-hidden flex flex-col">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-black text-slate-800"><i class="fas fa-trophy text-amber-500 mr-2"></i> Ranking de Vendas</h3>
-        <button onclick="fecharRanking()" class="text-slate-400 hover:text-slate-700"><i class="fas fa-times"></i></button>
-      </div>
-      <div id="rankingLista" class="flex-1 overflow-y-auto space-y-2 pr-1"></div>
-    </div>
-  </div>
-
-  <div id="modalFilaCobranca" class="hidden fixed inset-0 z-[140] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-6 shadow-2xl max-h-[80vh] overflow-hidden flex flex-col">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-black text-slate-800"><i class="fas fa-hand-holding-dollar text-rose-500 mr-2"></i> Fila de Cobrança</h3>
-        <button onclick="fecharFilaCobranca()" class="text-slate-400 hover:text-slate-700"><i class="fas fa-times"></i></button>
-      </div>
-      <div id="filaCobrancaLista" class="flex-1 overflow-y-auto space-y-2 pr-1"></div>
-    </div>
-  </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Conexão Supabase
+    // ============================
+    // SUPABASE
+    // ============================
     const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_cMEBXmudaJN7pALr1aV9-g_EPwoTfiB';
+    const SUPABASE_ANON_KEY = 'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const PRECO_VOUCHER_FEIJOADA = 55;
-    const TOTAL_VOUCHERS_FEIJOADA = 150;
+    // UTILITÁRIOS
+    function esc(str) {
+      return str ? str.toString().replace(/[&<>'"]/g, (t) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+      }[t])) : "";
+    }
+    function showToast(msg, type = "success") {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+      const t = document.createElement("div");
+      t.className = "toast animate-elite";
+      t.innerHTML = `
+        <i class="fas ${type === "error" ? "fa-circle-xmark text-rose-500" : "fa-circle-check text-emerald-500"}"></i>
+        <span>${esc(msg)}</span>`;
+      container.appendChild(t);
+      setTimeout(() => t.remove(), 4000);
+    }
+    function parseMoedaBR(valorStr) {
+      if (!valorStr) return 0;
+      const limpo = valorStr.replace(/s/g, '').replace(/./g, '').replace(',', '.');
+      const n = Number(limpo);
+      return Number.isFinite(n) ? n : 0;
+    }
+    function normalizarTelefone(tel) {
+      let num = String(tel || '').replace(/D/g, '');
+      if (!num) return null;
+      if (num.startsWith('0')) num = num.slice(1);
+      if (!num.startsWith('55')) num = '55' + num;
+      return num;
+    }
+    function hojeISODate() { return new Date().toISOString().slice(0, 10); }
 
-    let currentUser = null;
-    let currentProfile = null;
+    // ESTADO
     let ROLE = "";
     let abaAtiva = "ADMIN";
     let dadosCache = [];
-    let filtroUniversal = "TODOS";
-    let idRecebimentoAtual = null;
-    let versionRecebimentoAtual = null;
-    let editandoRegistroId = null;
-    let editandoRegistroVersion = null;
-    let moduloDoRegistroEditado = null; 
-    let ultimoLoad = 0;
 
-    let extratoAtual = { nome: "", equipe: "", telefone: "", registros: [], registrosFiltrados: [] };
-
-    const esc = (str) => str ? str.toString().replace(/[&<>'"]/g, (t) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[t])) : "";
-
-    function normalizarTelefone(tel) {
-      let num = String(tel || "").replace(/\D/g, "");
-      if (!num) return "";
-      if (num.startsWith("0")) num = num.substring(1);
-      if (num.length > 0 && !num.startsWith("55")) num = "55" + num;
-      return num;
-    }
-
-    function showToast(msg, type = "success") {
-      const t = document.createElement("div");
-      t.className = "toast";
-      t.innerHTML = `<i class="fas ${type === "error" ? "fa-circle-xmark text-rose-500" : "fa-circle-check text-emerald-500"}"></i> ${esc(msg)}`;
-      document.getElementById("toast-container").appendChild(t);
-      setTimeout(() => t.remove(), 3500);
-    }
-
-    function formatarMoeda(valor) { return "R$ " + Number(valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 }); }
-    function formatarData(dataStr) {
-      if (!dataStr) return "Sem data";
-      const d = new Date(dataStr);
-      if (Number.isNaN(d.getTime())) return dataStr;
-      return d.toLocaleDateString("pt-BR");
-    }
-
-    function parseMoedaBR(valor) {
-      if (valor === null || valor === undefined) return 0;
-      const texto = String(valor).trim();
-      if (!texto) return 0;
-      const limpo = texto.replace(/\s/g, "").replace(/R\$/gi, "").replace(/\./g, "").replace(/,/g, ".");
-      const numero = Number(limpo);
-      return Number.isFinite(numero) ? numero : 0;
-    }
-
-    function parseNumeroFlex(valor) {
-      if (valor === null || valor === undefined) return 0;
-      const texto = String(valor).trim();
-      if (!texto) return 0;
-      if (texto.includes(",") || texto.includes("R$")) return parseMoedaBR(texto);
-      const numero = Number(texto);
-      return Number.isFinite(numero) ? numero : 0;
-    }
-
-    function parseInteiroSeguro(valor) {
-      const texto = String(valor || "").trim();
-      const numero = parseInt(texto.replace(/[^\d-]/g, ""), 10);
-      return Number.isInteger(numero) ? numero : 0;
-    }
-
-    function limparTexto(valor) { return String(valor || "").trim(); }
-    function agoraISO() { return new Date().toISOString(); }
-    function dataLocalMeioDiaISO(dataStr) { return dataStr ? `${dataStr}T12:00:00` : null; }
-
-    function obterNomeTabela(modulo) {
-      if (modulo === 'EJC') return 'caixa_ejc';
-      if (modulo === 'FEIJOADA') return 'feijoada';
-      if (modulo === 'MERCADINHO') return 'mercadinho';
-      if (modulo === 'CAMISETAS') return 'camisetas';
-      if (modulo === 'DOACAO') return 'doacoes';
-      return 'caixa_ejc'; 
-    }
-
-    function calcularStatusENatureza(modulo, tipoSelecionado, tipoFeijoada) {
-      let natureza = tipoSelecionado === "SAIDA" ? "SAIDA" : "ENTRADA";
-      let status = tipoSelecionado === "PENDENTE" ? "PENDENTE" : "PAGO";
-      if (modulo === "FEIJOADA") {
-        if (tipoFeijoada === "VOUCHER") {
-          natureza = "ENTRADA";
-          status = tipoSelecionado === "PENDENTE" ? "PENDENTE" : "PAGO";
-        } else if (tipoFeijoada === "COMPRA_MERCADO" || tipoFeijoada === "OUTRA_SAIDA") {
-          natureza = "SAIDA";
-          status = "PAGO";
-        } else if (tipoFeijoada === "OUTRA_ENTRADA") {
-          natureza = "ENTRADA";
-          status = tipoSelecionado === "PENDENTE" ? "PENDENTE" : "PAGO";
-        }
-      }
-      return { natureza, status };
-    }
-
-    function montarDescricaoFinal(modulo, descricaoBase, tipoFeijoada) {
-      const desc = limparTexto(descricaoBase).replace(/\s+/g, ' ');
-      if (modulo === "FEIJOADA") {
-        if (tipoFeijoada === "VOUCHER") return `[VOUCHER] ${desc}`;
-        if (tipoFeijoada === "COMPRA_MERCADO") return `[MERCADO] ${desc}`;
-        if (tipoFeijoada === "OUTRA_ENTRADA") return `[FEIJOADA-ENTRADA] ${desc}`;
-        if (tipoFeijoada === "OUTRA_SAIDA") return `[FEIJOADA-SAIDA] ${desc}`;
-      }
-      return desc;
-    }
-
-    function obterEquipeDoFormulario(modulo) {
-      if (modulo === "MERCADINHO" || modulo === "CAMISETAS") {
-        const tipoPessoa = document.getElementById("f_tipo_pessoa").value;
-        return tipoPessoa === "SERVO" ? limparTexto(document.getElementById("f_equipe_merc").value) : "PAROQUIANO";
-      }
-      if (modulo === "DOACAO" || modulo === "FEIJOADA") {
-        return limparTexto(document.getElementById("f_equipe_merc").value);
-      }
-      return "";
-    }
-
-    function isVoucherFeijoada(desc = "") { return String(desc || "").startsWith("[VOUCHER]"); }
-    function isMercadoFeijoada(desc = "") { return String(desc || "").startsWith("[MERCADO]"); }
-    function isOutraEntradaFeijoada(desc = "") { return String(desc || "").startsWith("[FEIJOADA-ENTRADA]"); }
-    function isOutraSaidaFeijoada(desc = "") { return String(desc || "").startsWith("[FEIJOADA-SAIDA]"); }
-    function limparPrefixoDescricao(desc = "") { return String(desc || "").replace(/^\[VOUCHER\]\s*/,"").replace(/^\[MERCADO\]\s*/,"").replace(/^\[FEIJOADA-ENTRADA\]\s*/,"").replace(/^\[FEIJOADA-SAIDA\]\s*/,""); }
-
-    // VALIDAÇÕES CENTRAIS
-    function podeOperarProvidencia() { return ROLE === "ADMIN" || ROLE === "COMPRAS"; }
-    function podeUsarModalRecebimento(moduloStr) { 
-      if (ROLE === "ADMIN") return true; 
-      if (ROLE === "COMPRAS") return ["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"].includes(moduloStr); 
-      return false; 
-    }
-
-    function abrirRankingFeijoada() { 
-      const vendas = dadosCache.filter(r => r.modulo === 'FEIJOADA' && isVoucherFeijoada(r.descricao));
-      const ranking = {};
-      vendas.forEach(v => {
-        const eq = v.equipe || "Sem equipe";
-        ranking[eq] = (ranking[eq] || 0) + parseInteiroSeguro(v.quantidade || 1);
-      });
-      const ordenado = Object.entries(ranking).sort((a,b) => b[1] - a[1]);
-      
-      const lista = document.getElementById('rankingLista');
-      if(!ordenado.length) {
-        lista.innerHTML = '<p class="text-xs text-center text-slate-400 py-4">Nenhuma venda de voucher registrada.</p>';
-      } else {
-        lista.innerHTML = ordenado.map((item, index) => `
-          <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl mb-2 border border-slate-100">
-            <span class="font-bold text-sm text-slate-700">${index + 1}º ${esc(item[0])}</span>
-            <span class="font-black text-amber-500">${item[1]} un</span>
-          </div>
-        `).join('');
-      }
-      document.getElementById('modalRanking').classList.remove('hidden'); 
-      document.getElementById('modalRanking').classList.add('flex'); 
-    }
-    
-    function fecharRanking() { 
-      document.getElementById('modalRanking').classList.add('hidden'); 
-      document.getElementById('modalRanking').classList.remove('flex'); 
-    }
-    
-    function abrirFilaCobrancaFeijoada() { 
-      const pendentes = dadosCache.filter(r => r.modulo === 'FEIJOADA' && r.status === 'PENDENTE' && isVoucherFeijoada(r.descricao));
-      const lista = document.getElementById('filaCobrancaLista');
-      
-      if(!pendentes.length) {
-        lista.innerHTML = '<p class="text-xs text-center text-slate-400 py-4">Nenhuma cobrança de voucher pendente.</p>';
-      } else {
-        lista.innerHTML = pendentes.map(p => {
-          const tel = normalizarTelefone(p.telefone);
-          const nome = esc(p.nome_pessoa || "Sem nome");
-          const val = formatarMoeda(p.valor);
-          const btn = tel ? `<button onclick="cobrarZapDoRegistro('${p.id}', 'FEIJOADA')" class="bg-emerald-100 text-emerald-700 p-2 rounded-lg active:scale-95"><i class="fab fa-whatsapp"></i></button>` : `<span class="text-[10px] text-slate-400">Sem telefone</span>`;
-          
-          return `
-          <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl mb-2 border border-slate-100">
-            <div>
-              <p class="font-bold text-sm text-slate-700">${nome}</p>
-              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">${val}</p>
-            </div>
-            ${btn}
-          </div>`;
-        }).join('');
-      }
-      document.getElementById('modalFilaCobranca').classList.remove('hidden'); 
-      document.getElementById('modalFilaCobranca').classList.add('flex'); 
-    }
-    
-    function fecharFilaCobranca() { 
-      document.getElementById('modalFilaCobranca').classList.add('hidden'); 
-      document.getElementById('modalFilaCobranca').classList.remove('flex'); 
-    }
-    
-    function compartilharFechamentoFeijoada() { 
-      const vouchers = dadosCache.filter(r => r.modulo === 'FEIJOADA' && isVoucherFeijoada(r.descricao));
-      const vendidos = vouchers.reduce((acc, r) => acc + parseInteiroSeguro(r.quantidade || 1), 0);
-      const pagos = vouchers.filter(r => r.status === 'PAGO').reduce((acc, r) => acc + parseInteiroSeguro(r.quantidade || 1), 0);
-      const pendentes = vouchers.filter(r => r.status === 'PENDENTE').reduce((acc, r) => acc + parseInteiroSeguro(r.quantidade || 1), 0);
-      
-      const custos = dadosCache.filter(r => r.modulo === 'FEIJOADA' && r.natureza === 'SAIDA' && r.status !== 'CANCELADO').reduce((soma, r) => soma + parseNumeroFlex(r.valor), 0);
-      const receitaBruta = vouchers.filter(r => r.status === 'PAGO').reduce((soma, r) => soma + parseNumeroFlex(r.valor), 0);
-      const lucro = receitaBruta - custos;
-
-      const msg = `*📊 FECHAMENTO PARCIAL - FEIJOADA 25/04*\n\n*Vouchers Vendidos:* ${vendidos}\n*Vouchers Pagos:* ${pagos}\n*Vouchers Pendentes:* ${pendentes}\n\n*Custos/Mercado:* ${formatarMoeda(custos)}\n*Lucro Atual:* ${formatarMoeda(lucro)}\n\n_Atualizado em ${new Date().toLocaleString('pt-BR')}_`;
-      
-      navigator.clipboard.writeText(msg).then(() => { showToast("Fechamento copiado para o WhatsApp!"); });
-    }
-
-    function abrirModalTransferenciaEJC() { 
-      document.getElementById("tx_responsavel").value = currentProfile?.nome || "";
-      document.getElementById("tx_data").value = new Date().toISOString().slice(0, 10);
-      document.getElementById('modalTransferenciaEJC').classList.remove('hidden'); 
-      document.getElementById('modalTransferenciaEJC').classList.add('flex'); 
-    }
-    
-    function fecharModalTransferenciaEJC() { 
-      document.getElementById('modalTransferenciaEJC').classList.add('hidden'); 
-      document.getElementById('modalTransferenciaEJC').classList.remove('flex'); 
-      document.getElementById('tx_valor').value = "";
-    }
-
-    // TRANSFERÊNCIA ATÔMICA VIA RPC
-    async function confirmarTransferenciaEJC() { 
-      if (ROLE !== "COMPRAS") return showToast("Apenas a equipe de Compras pode transferir saldos parciais para o Caixa Central.", "error");
-
-      const modulosTransferiveis = ["FEIJOADA", "MERCADINHO", "CAMISETAS"]; 
-      if (!modulosTransferiveis.includes(abaAtiva)) { return showToast("Este módulo não permite transferência operacional.", "error"); }
-
-      const valStr = document.getElementById("tx_valor").value;
-      const dataTx = document.getElementById("tx_data").value;
-      const resp = document.getElementById("tx_responsavel").value;
-      const valor = parseNumeroFlex(valStr);
-
-      if(valor <= 0 || !dataTx || !resp) return showToast("Preencha todos os campos corretamente.", "error");
-
-      const { error } = await _supabase.rpc('transferir_para_caixa', {
-        p_modulo_origem: abaAtiva,
-        p_valor: valor,
-        p_data_tx: dataLocalMeioDiaISO(dataTx),
-        p_responsavel: resp
-      });
-
-      if (error) return showToast("Erro na transferência: " + error.message, "error");
-
-      showToast("Transferência contábil registrada com sucesso!");
-      fecharModalTransferenciaEJC();
-      carregarDados(true);
-    }
-
-    // AUTH
-    function escolherPerfil(p) {
-      document.getElementById("msgErroLogin").classList.add("hidden");
+    // LOGIN / PERFIL
+    function escolherPerfil(perfil) {
       document.getElementById("stepProfile").classList.add("hidden");
       document.getElementById("stepAuth").classList.remove("hidden");
-      const isCompras = p === "compras";
-      document.getElementById("formCompras").classList.toggle("hidden", !isCompras);
-      document.getElementById("formPilotos").classList.toggle("hidden", isCompras);
-      document.getElementById("authTitle").innerText = isCompras ? "Acesso Compras" : "Acesso Pilotos";
+      document.getElementById("msgErroLogin").classList.add("hidden");
+
+      if (perfil === 'compras') {
+        document.getElementById("formCompras").classList.remove("hidden");
+        document.getElementById("formPilotos").classList.add("hidden");
+        document.getElementById("authTitle").textContent = "Acesso Compras";
+      } else {
+        document.getElementById("formCompras").classList.add("hidden");
+        document.getElementById("formPilotos").classList.remove("hidden");
+        document.getElementById("authTitle").textContent = "Acesso Pilotos";
+      }
     }
 
     function voltarParaSelecao() {
@@ -920,1112 +381,469 @@
       document.getElementById("formPilotos").reset();
     }
 
-    async function carregarPerfilUsuario(user) {
-      const { data: profile, error } = await _supabase.from("perfis").select("role, active, nome").eq("id", user.id).single();
-      if (error || !profile || !profile.active) { await _supabase.auth.signOut(); return null; }
-      return profile;
-    }
+    async function loginPiloto() {
+      const email = document.getElementById("emailPiloto").value.trim();
+      const senha = document.getElementById("senhaPiloto").value.trim();
+      const msgErro = document.getElementById("msgErroLogin");
 
-    async function executarLogin(email, senha, btnElement) {
-      const textoOriginal = btnElement.innerHTML;
-      btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Entrando...';
-      const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
-      if (error) { document.getElementById("msgErroLogin").classList.remove("hidden"); btnElement.innerHTML = textoOriginal; return; }
-      const profile = await carregarPerfilUsuario(data.user);
-      if (!profile) { document.getElementById("msgErroLogin").classList.remove("hidden"); btnElement.innerHTML = textoOriginal; return; }
-      currentUser = data.user; currentProfile = profile; ROLE = (profile.role || "").toUpperCase();
-      iniciarApp();
-    }
+      const { data, error } = await _supabase.auth.signInWithPassword({
+        email,
+        password: senha
+      });
 
-    function loginCompras() { executarLogin("compras@ejcbank.com.br", document.getElementById("senhaCompras").value, document.getElementById("btnCompras")); }
-    function loginPiloto() { executarLogin(document.getElementById("emailPiloto").value.trim().toLowerCase(), document.getElementById("senhaPiloto").value, document.getElementById("btnPiloto")); }
+      if (error || !data?.user) {
+        console.error(error);
+        msgErro.classList.remove("hidden");
+        return;
+      }
 
-    function iniciarApp() {
+      const user = data.user;
+      if (user.email === "compras@ejcbank.com.br") ROLE = "COMPRAS";
+      else ROLE = "ADMIN";
+
+      msgErro.classList.add("hidden");
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appMain").classList.remove("hidden");
-      document.getElementById("userAvatar").innerText = (currentProfile?.nome || ROLE).charAt(0).toUpperCase();
+      document.getElementById("userAvatar").textContent =
+        (user.email[0] || "U").toUpperCase();
 
-      if (ROLE === "ADMIN") document.getElementById("headerTitle").innerText = "EJC BANK • PILOTOS";
-      else if (ROLE === "COMPRAS") document.getElementById("headerTitle").innerText = "EJC BANK • COMPRAS";
-      
+      configurarAbasPorPerfil();
+    }
+
+    async function loginCompras() {
+      const senha = document.getElementById("senhaCompras").value.trim();
+      const msgErro = document.getElementById("msgErroLogin");
+
+      const { data, error } = await _supabase.auth.signInWithPassword({
+        email: "compras@ejcbank.com.br",
+        password: senha
+      });
+
+      if (error || !data?.user) {
+        console.error(error);
+        msgErro.classList.remove("hidden");
+        return;
+      }
+
+      ROLE = "COMPRAS";
+
+      msgErro.classList.add("hidden");
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("appMain").classList.remove("hidden");
+      document.getElementById("headerTitle").textContent = "EJC BANK • Compras";
+      document.getElementById("userAvatar").textContent = "C";
+
       configurarAbasPorPerfil();
     }
 
     function configurarAbasPorPerfil() {
-      const isCompras = (ROLE === 'COMPRAS');
-      document.getElementById('tab-admin').classList.toggle('hidden', isCompras);
-      document.getElementById('tab-ejc').classList.toggle('hidden', isCompras);
-      document.getElementById('tab-mercadinho').classList.remove('hidden');
-      document.getElementById('tab-feijoada').classList.remove('hidden');
-      document.getElementById('tab-camisetas').classList.remove('hidden');
-      document.getElementById('tab-doacao').classList.remove('hidden');
+      const isCompras = (ROLE === "COMPRAS");
 
-      const blocoModulo = document.getElementById('blocoModulo');
-      if (isCompras) { blocoModulo.classList.add('hidden'); mudarAba('MERCADINHO'); }
-      else { blocoModulo.classList.remove('hidden'); mudarAba('ADMIN'); }
+      document.getElementById("tab-admin").classList.toggle("hidden", isCompras);
+      document.getElementById("tab-ejc").classList.toggle("hidden", isCompras);
+
+      document.getElementById("tab-mercadinho").classList.remove("hidden");
+      document.getElementById("tab-feijoada").classList.remove("hidden");
+      document.getElementById("tab-camisetas").classList.remove("hidden");
+      document.getElementById("tab-doacao").classList.remove("hidden");
+
+      if (isCompras) {
+        document.getElementById("headerTitle").textContent = "EJC BANK • Compras";
+        document.getElementById("blocoModulo").classList.add("hidden");
+        mudarAba("MERCADINHO");
+      } else {
+        document.getElementById("headerTitle").textContent = "EJC BANK • ADMIN";
+        document.getElementById("blocoModulo").classList.remove("hidden");
+        mudarAba("ADMIN");
+      }
     }
 
-    async function mudarAba(novaAba) {
+    function sair() {
+      ROLE = "";
+      abaAtiva = "ADMIN";
+      _supabase.auth.signOut();
+      document.getElementById("appMain").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+    }
+
+    // ABAS / MODULOS
+    function obterModuloAtual() {
+      switch (abaAtiva) {
+        case "EJC":        return "EJC";
+        case "MERCADINHO": return "MERCADINHO";
+        case "FEIJOADA":   return "FEIJOADA";
+        case "CAMISETAS":  return "CAMISETAS";
+        case "DOACAO":     return "DOACAO";
+        default:           return "EJC";
+      }
+    }
+    function obterNomeTabela(modulo) {
+      if (modulo === 'EJC')        return 'caixa_ejc';
+      if (modulo === 'FEIJOADA')   return 'feijoada';
+      if (modulo === 'MERCADINHO') return 'mercadinho';
+      if (modulo === 'CAMISETAS')  return 'camisetas';
+      if (modulo === 'DOACAO')     return 'doacao';
+      return 'caixa_ejc';
+    }
+
+    async function mudarAba(aba) {
       const modulosCompras = ["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"];
-      if (ROLE === "COMPRAS" && !modulosCompras.includes(novaAba)) {
-        return showToast("Sem acesso a este módulo.", "error");
+      if (ROLE === "COMPRAS" && !modulosCompras.includes(aba)) {
+        showToast("Sem acesso a este módulo.", "error");
+        return;
       }
 
-      abaAtiva = novaAba;
+      abaAtiva = aba;
       dadosCache = [];
-      const corpoTabela = document.getElementById("corpoTabela");
-      if (corpoTabela) {
-        corpoTabela.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs font-bold uppercase tracking-widest"><i class="fas fa-circle-notch fa-spin mr-2"></i> Carregando...</td></tr>`;
-      }
 
-      ['fjVendidos', 'fjPagos', 'fjPendentes', 'fjRestantes'].forEach(id => { const el = document.getElementById(id); if (el) el.innerText = '0'; });
-      const elMercado = document.getElementById('fjMercado'); if (elMercado) elMercado.innerText = '--';
-      const elLucro = document.getElementById('fjLucro'); if (elLucro) elLucro.innerText = '--';
-
-      const tabs = ['ADMIN', 'EJC', 'MERCADINHO', 'FEIJOADA', 'CAMISETAS', 'DOACAO'];
-      tabs.forEach((t) => {
-        const btn = document.getElementById(`tab-${t.toLowerCase()}`);
-        if (btn) {
-          btn.classList.toggle('bg-white', t === novaAba);
-          btn.classList.toggle('text-purple-700', t === novaAba);
-          btn.classList.toggle('bg-white/10', t !== novaAba);
-          btn.classList.toggle('text-white', t !== novaAba);
-        }
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("bg-white", "text-slate-900");
+        btn.classList.add("bg-white/10", "text-white");
       });
+      const tab = document.getElementById("tab-" + aba.toLowerCase());
+      if (tab) {
+        tab.classList.add("bg-white", "text-slate-900");
+        tab.classList.remove("bg-white/10", "text-white");
+      }
 
-      document.getElementById('dashAdmin').classList.toggle('hidden', !['ADMIN', 'EJC', 'MERCADINHO', 'CAMISETAS'].includes(novaAba));
-      
-      const pFeijoada = document.getElementById('painelFeijoada');
-      if (['FEIJOADA', 'MERCADINHO', 'DOACAO', 'CAMISETAS'].includes(novaAba)) {
-        pFeijoada.classList.remove('hidden');
-        document.getElementById('pillVoucher').classList.add('hidden');
-        document.getElementById('btnRanking').classList.add('hidden');
-        document.getElementById('btnCobranca').classList.add('hidden');
-        document.getElementById('btnCompartilhar').classList.add('hidden');
-        document.getElementById('btnTransferir').classList.toggle('hidden', ROLE !== 'COMPRAS');
-        
-        if (novaAba === 'FEIJOADA') {
-            document.getElementById('tituloPainelModulo').innerText = 'Feijoada 25/04';
-            document.getElementById('pillVoucher').classList.remove('hidden');
-            document.getElementById('gridMetricasFeijoada').classList.remove('hidden');
-            if(ROLE === 'ADMIN') {
-              document.getElementById('btnRanking').classList.remove('hidden');
-              document.getElementById('btnCobranca').classList.remove('hidden');
-              document.getElementById('btnCompartilhar').classList.remove('hidden');
-            }
-        } else if (novaAba === 'MERCADINHO') {
-            document.getElementById('tituloPainelModulo').innerText = 'Painel Mercadinho';
-            document.getElementById('gridMetricasFeijoada').classList.add('hidden');
-        } else if (novaAba === 'CAMISETAS') {
-            document.getElementById('tituloPainelModulo').innerText = 'Painel Camisetas';
-            document.getElementById('btnTransferir').classList.add('hidden');
-            document.getElementById('gridMetricasFeijoada').classList.add('hidden');
-        } else if (novaAba === 'DOACAO') {
-            document.getElementById('tituloPainelModulo').innerText = 'Painel Providência';
-            document.getElementById('btnTransferir').classList.add('hidden');
-            document.getElementById('gridMetricasFeijoada').classList.remove('hidden');
+      document.getElementById("dashAdmin").classList.add("hidden");
+      document.getElementById("painelFeijoada").classList.add("hidden");
+      document.getElementById("blocoAdminDoacao").classList.add("hidden");
+
+      if (aba === "ADMIN" || aba === "EJC") {
+        document.getElementById("dashAdmin").classList.remove("hidden");
+      }
+      if (["FEIJOADA","MERCADINHO","CAMISETAS","DOACAO"].includes(aba)) {
+        document.getElementById("painelFeijoada").classList.remove("hidden");
+      }
+      if (aba === "DOACAO" && ROLE === "ADMIN") {
+        document.getElementById("blocoAdminDoacao").classList.remove("hidden");
+      }
+
+      atualizarPainelFeijoada();
+      carregarRegistros();
+    }
+
+    function atualizarPainelFeijoada() {
+      document.getElementById("pillVoucher").classList.add("hidden");
+      document.getElementById("gridMetricasFeijoada").classList.add("hidden");
+      document.getElementById("btnRanking").classList.add("hidden");
+      document.getElementById("btnCobranca").classList.add("hidden");
+
+      if (abaAtiva === "FEIJOADA") {
+        document.getElementById("tituloPainelModulo").textContent = "Feijoada 25/04";
+        document.getElementById("pillVoucher").classList.remove("hidden");
+        document.getElementById("gridMetricasFeijoada").classList.remove("hidden");
+        if (ROLE === "ADMIN") {
+          document.getElementById("btnRanking").classList.remove("hidden");
+          document.getElementById("btnCobranca").classList.remove("hidden");
         }
-      } else {
-        pFeijoada.classList.add('hidden');
-      }
-
-      document.getElementById('blocoAdminDoacao').classList.toggle('hidden', novaAba !== 'DOACAO' || ROLE !== 'ADMIN');
-      document.getElementById('filtrosUniversalWrap').classList.remove('hidden');
-
-      const blocoModulo = document.getElementById('blocoModulo');
-      if (ROLE === 'COMPRAS') blocoModulo.classList.add('hidden');
-      else blocoModulo.classList.toggle('hidden', novaAba !== 'ADMIN');
-
-      const podeAbrir = ROLE === "ADMIN" || (ROLE === "COMPRAS" && ["DOACAO", "FEIJOADA", "MERCADINHO", "CAMISETAS"].includes(abaAtiva));
-      document.getElementById("fabNovoRegistro").classList.toggle("hidden", !podeAbrir);
-
-      filtroUniversal = "TODOS";
-      document.querySelector('[data-filtro="PAGO"]').innerText = abaAtiva === 'DOACAO' ? 'Entregues' : 'Pagos / Entregues';
-      document.querySelector('[data-filtro="PENDENTE"]').innerText = abaAtiva === 'DOACAO' ? 'Prometidos' : 'Pendentes / Fiado';
-      atualizarBotoesFiltro();
-
-      await carregarDados(true);
-    }
-
-    function atualizarBotoesFiltro() {
-      document.querySelectorAll(".btn-filtro-prov").forEach(b => {
-        b.classList.remove("ring-2", "ring-slate-900", "ring-offset-1", "shadow-md");
-        if (b.dataset.filtro === filtroUniversal) b.classList.add("ring-2", "ring-slate-900", "ring-offset-1", "shadow-md");
-      });
-    }
-
-    function setFiltroUniversal(f) { filtroUniversal = f; atualizarBotoesFiltro(); renderizar(); }
-
-    async function carregarDados(force = false) {
-      document.getElementById("loading").classList.remove("hidden");
-      try {
-        const agora = Date.now();
-        if (!force && (agora - ultimoLoad < 30000)) return;
-        ultimoLoad = agora;
-
-        dadosCache = [];
-
-        if (abaAtiva === "ADMIN" && ROLE === "ADMIN") {
-          const [rEJC, rFei, rMerc, rCam] = await Promise.all([
-             _supabase.from('caixa_ejc').select('*'),
-             _supabase.from('feijoada').select('*'),
-             _supabase.from('mercadinho').select('*'),
-             _supabase.from('camisetas').select('*')
-          ]);
-          let combinados = [];
-          if(rEJC.data) combinados = combinados.concat(rEJC.data.map(i => ({...i, modulo: 'EJC'})));
-          if(rFei.data) combinados = combinados.concat(rFei.data.map(i => ({...i, modulo: 'FEIJOADA'})));
-          if(rMerc.data) combinados = combinados.concat(rMerc.data.map(i => ({...i, modulo: 'MERCADINHO'})));
-          if(rCam.data) combinados = combinados.concat(rCam.data.map(i => ({...i, modulo: 'CAMISETAS'})));
-          
-          dadosCache = combinados.sort((a,b) => new Date(b.criado_em).getTime() - new Date(a.criado_em).getTime());
-          carregarDashboard();
-          renderizar();
-          return;
-        }
-
-        if (abaAtiva === "DOACAO") {
-          const { data, error } = await _supabase.from("doacoes").select("*").order("criado_em", { ascending: false });
-          if (!error && data) {
-            dadosCache = data.map((r) => ({ ...r, descricao: r.item || "", nome_pessoa: r.nome || "", modulo: "DOACAO", natureza: "ENTRADA", valor: 0 }));
-          }
-          atualizarPainelProvidencia(dadosCache);
-          renderizar();
-          if (ROLE === "ADMIN") await carregarMetasAdmin();
-          return;
-        }
-
-        const tabela = obterNomeTabela(abaAtiva);
-        const {data, error} = await _supabase.from(tabela).select('*').order("criado_em", { ascending: false });
-        if(!error && data) {
-            dadosCache = data.map(i => ({...i, modulo: abaAtiva}));
-        }
-
-        if (['EJC', 'MERCADINHO', 'CAMISETAS'].includes(abaAtiva)) carregarDashboard();
-        if (abaAtiva === "FEIJOADA") atualizarPainelFeijoada(dadosCache);
-        renderizar();
-
-      } finally {
-        document.getElementById("loading").classList.add("hidden");
+      } else if (abaAtiva === "MERCADINHO") {
+        document.getElementById("tituloPainelModulo").textContent = "Mercadinho do EJC";
+      } else if (abaAtiva === "CAMISETAS") {
+        document.getElementById("tituloPainelModulo").textContent = "Camisetas EJC";
+      } else if (abaAtiva === "DOACAO") {
+        document.getElementById("tituloPainelModulo").textContent = "Providência Física";
       }
     }
 
-    function animarNumeroMoeda(el, valorFinal) {
-      if (!el) return;
-      const numero = Number(valorFinal || 0);
-      const duracao = 500;
-      const start = performance.now();
-      function passo(now) {
-        const progresso = Math.min((now - start) / duracao, 1);
-        el.innerText = formatarMoeda(numero * progresso);
-        if (progresso < 1) requestAnimationFrame(passo);
-      }
-      requestAnimationFrame(passo);
+    // MODAL REGISTRO
+    function abrirModal() {
+      document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
+      document.getElementById("formFin").reset();
+      document.getElementById("f_modulo").value = obterModuloAtual();
+      atualizarModalDinamico();
+      document.getElementById("modal").classList.remove("hidden");
     }
-
-    async function carregarDashboard() {
-      const cardSaldo = document.getElementById("cardSaldoLiquido");
-
-      if (ROLE === "COMPRAS") {
-        document.getElementById('tituloEntradasGlobais').innerText = `Entradas (${abaAtiva})`;
-        document.getElementById('tituloPendenteGlobal').innerText = `A Receber (${abaAtiva})`;
-        document.getElementById('tituloSaidasGlobais').innerText = `Saídas (${abaAtiva})`;
-
-        const entradasPagas = dadosCache.filter(t => t.natureza === "ENTRADA" && t.status === "PAGO" && t.status !== "CANCELADO").reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
-        const pendenteTotal = dadosCache.filter(t => t.status === "PENDENTE" && t.status !== "CANCELADO").reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
-        const saidasPagas = dadosCache.filter(t => t.natureza === "SAIDA" && t.status === "PAGO" && t.status !== "CANCELADO").reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
-
-        animarNumeroMoeda(document.getElementById('totalRecebido'), entradasPagas);
-        animarNumeroMoeda(document.getElementById('totalPendente'), pendenteTotal);
-        animarNumeroMoeda(document.getElementById('totalSaidas'), saidasPagas);
-        if (cardSaldo) cardSaldo.classList.add("hidden");
-        return;
-      }
-
-      document.getElementById('tituloEntradasGlobais').innerText = abaAtiva === 'ADMIN' ? 'Entradas Globais (Pagas)' : `Entradas (${abaAtiva})`;
-      document.getElementById('tituloPendenteGlobal').innerText = abaAtiva === 'ADMIN' ? 'A Receber (Fiado Global)' : `Fiado (${abaAtiva})`;
-      document.getElementById('tituloSaidasGlobais').innerText = abaAtiva === 'ADMIN' ? 'Saídas Globais (Gastos)' : `Saídas (${abaAtiva})`;
-
-      let entradasPagas = 0, fiadoTotal = 0, saidasPagas = 0, entradasEJC = 0, saidasEJC = 0;
-      (dadosCache || []).forEach((t) => {
-        if (t.status === 'CANCELADO') return;
-        const v = Number(t.valor) || 0;
-        if (t.natureza === 'ENTRADA' && t.status === 'PAGO') { entradasPagas += v; if (t.modulo === 'EJC') entradasEJC += v; }
-        if (t.status === 'PENDENTE') fiadoTotal += v;
-        if (t.natureza === 'SAIDA' && t.status === 'PAGO') { saidasPagas += v; if (t.modulo === 'EJC') saidasEJC += v; }
-      });
-      
-      animarNumeroMoeda(document.getElementById('totalRecebido'), entradasPagas);
-      animarNumeroMoeda(document.getElementById('totalPendente'), fiadoTotal);
-      animarNumeroMoeda(document.getElementById('totalSaidas'), saidasPagas);
-      
-      if(abaAtiva === 'ADMIN' || abaAtiva === 'EJC') {
-         if (cardSaldo) cardSaldo.classList.remove("hidden");
-         animarNumeroMoeda(document.getElementById('totalLiquido'), (entradasEJC - saidasEJC));
-      } else {
-         if (cardSaldo) cardSaldo.classList.add("hidden");
-      }
-    }
-
-    function atualizarPainelFeijoada(todosRegistros) {
-      const vouchers = todosRegistros.filter(r => isVoucherFeijoada(r.descricao));
-      const vendidos = vouchers.reduce((acc, r) => acc + parseInteiroSeguro(r.quantidade || 1), 0);
-      const pagos = vouchers.filter(r => r.status === 'PAGO').reduce((acc, r) => acc + parseInteiroSeguro(r.quantidade || 1), 0);
-      const pendentes = vouchers.filter(r => r.status === 'PENDENTE').reduce((acc, r) => acc + parseInteiroSeguro(r.quantidade || 1), 0);
-      const restantes = TOTAL_VOUCHERS_FEIJOADA - vendidos;
-
-      document.getElementById('fjVendidos').innerText = vendidos;
-      document.getElementById('fjPagos').innerText = pagos;
-      document.getElementById('fjPendentes').innerText = pendentes;
-      document.getElementById('fjRestantes').innerText = Math.max(restantes, 0);
-
-      const custos = todosRegistros.filter(r => r.natureza === 'SAIDA' && r.status !== 'CANCELADO').reduce((soma, r) => soma + parseNumeroFlex(r.valor), 0);
-      document.getElementById('fjMercado').innerText = formatarMoeda(custos);
-
-      const receitaBruta = vouchers.filter(r => r.status === 'PAGO').reduce((soma, r) => soma + parseNumeroFlex(r.valor), 0);
-      const lucro = receitaBruta - custos;
-      const elLucro = document.getElementById('fjLucro');
-      const elLucroCard = document.getElementById("fjLucroCard");
-      
-      const labels = document.querySelectorAll("#gridMetricasFeijoada .soft-stat p.text-[10px]");
-      if (labels.length >= 6) {
-        labels[0].innerText = "Vendidos"; labels[1].innerText = "Pagos"; labels[2].innerText = "Pendentes";
-        labels[3].innerText = "Restantes"; labels[4].innerText = "Custos"; labels[5].innerText = lucro >= 0 ? "Lucro Atual" : "Prejuízo Atual";
-      }
-
-      elLucro.innerText = formatarMoeda(lucro);
-      if (elLucroCard) {
-        elLucroCard.className = `soft-stat ${lucro >= 0 ? "emerald" : "rose"}`;
-        elLucro.className = `text-xl font-extrabold ${lucro >= 0 ? "text-emerald-700" : "text-rose-700"} mt-1`;
-      }
-    }
-
-    function atualizarPainelProvidencia(registros) {
-      const prometidos = registros.filter(r => r.status === "PENDENTE").reduce((acc, r) => acc + Number(r.quantidade || 0), 0);
-      const entregues = registros.filter(r => r.status === "ENTREGUE").reduce((acc, r) => acc + Number(r.quantidade || 0), 0);
-      const cancelados = registros.filter(r => r.status === "CANCELADO").reduce((acc, r) => acc + Number(r.quantidade || 0), 0);
-      const total = prometidos + entregues;
-
-      document.getElementById("fjVendidos").innerText = total;
-      document.getElementById("fjPagos").innerText = entregues;
-      document.getElementById("fjPendentes").innerText = prometidos;
-      document.getElementById("fjRestantes").innerText = cancelados;
-      document.getElementById("fjMercado").innerText = "Itens";
-      document.getElementById("fjLucro").innerText = `${entregues} un`;
-
-      const labels = document.querySelectorAll("#gridMetricasFeijoada .soft-stat p.text-[10px]");
-      if (labels.length >= 6) {
-        labels[0].innerText = "Registrados"; labels[1].innerText = "Entregues"; labels[2].innerText = "Prometidos";
-        labels[3].innerText = "Cancelados"; labels[4].innerText = "Tipo"; labels[5].innerText = "Total entregue";
-      }
-
-      const elLucroCard = document.getElementById("fjLucroCard");
-      const elLucro = document.getElementById("fjLucro");
-      if(elLucroCard) elLucroCard.className = "soft-stat emerald";
-      if(elLucro) elLucro.className = "text-xl font-extrabold text-emerald-700 mt-1";
-    }
-
-    function renderizarGraficoEquipes() {
-      const wrap = document.getElementById("graficoEquipes");
-      if (!wrap) return;
-
-      const mapa = {};
-      dadosCache.filter(i => i.natureza === "SAIDA" && i.modulo === "MERCADINHO").forEach(i => {
-        const equipe = i.equipe || "Sem equipe";
-        mapa[equipe] = (mapa[equipe] || 0) + Number(i.valor || 0);
-      });
-
-      const itens = Object.entries(mapa).sort((a, b) => b[1] - a[1]);
-      if (!itens.length) {
-        wrap.innerHTML = `<p class="text-sm text-slate-400">Ainda não há gastos para exibir.</p>`;
-        return;
-      }
-
-      const maior = itens[0][1] || 1;
-      wrap.innerHTML = itens.map(([equipe, valor]) => {
-        const perc = Math.max(6, Math.round((valor / maior) * 100));
-        return `
-          <div>
-            <div class="flex justify-between items-center mb-2">
-              <p class="text-sm font-bold text-slate-700">${esc(equipe)}</p>
-              <p class="text-sm font-extrabold text-slate-900">${formatarMoeda(valor)}</p>
-            </div>
-            <div class="bar-bg"><div class="bar-fill" style="width:${perc}%"></div></div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function renderizar() {
-      const tb = document.getElementById("corpoTabela");
-      const busca = document.getElementById("campoBusca").value.toLowerCase();
-      const hojeTempo = new Date().setHours(0,0,0,0);
-
-      let filtrados = dadosCache.filter(i => ((i.descricao || "") + " " + (i.nome_pessoa || "") + " " + (i.equipe || "") + " " + (i.telefone || "") + " " + (i.recebido_por || "") + " " + (i.status || "") + " " + (i.tamanho || "")).toLowerCase().includes(busca));
-      
-      if (filtroUniversal === "PAGO") {
-        filtrados = filtrados.filter(i => i.status === "PAGO" || i.status === "ENTREGUE");
-      } else if (filtroUniversal === "ATRASADO") {
-        filtrados = filtrados.filter(i => i.status === "PENDENTE" && i.data_entrega && new Date(i.data_entrega + "T00:00:00").getTime() < hojeTempo);
-      } else if (filtroUniversal === "PENDENTE") {
-        filtrados = filtrados.filter(i => i.status === "PENDENTE");
-      } else if (filtroUniversal === "CANCELADO") {
-        filtrados = filtrados.filter(i => i.status === "CANCELADO");
-      }
-
-      if (!filtrados.length) {
-        tb.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">Nenhum registro encontrado.</td></tr>';
-        return;
-      }
-
-      const isAdmin = ROLE === "ADMIN";
-      const isCompras = ROLE === "COMPRAS";
-
-      tb.innerHTML = filtrados.map(i => {
-        const qtd = Number(i.quantidade || 1);
-        const nome = esc(i.nome_pessoa || "Sem nome");
-        const equipe = esc(i.equipe || "Sem equipe");
-        const telefone = i.telefone || "";
-        const item = esc(limparPrefixoDescricao(i.descricao || "-"));
-        const valor = Number(i.valor || 0);
-
-        const isAtrasado = i.status === "PENDENTE" && i.data_entrega ? new Date(i.data_entrega + "T00:00:00").getTime() < hojeTempo : false;
-        let statusBadge = "";
-        
-        if (i.modulo === "DOACAO") {
-          if (i.status === "ENTREGUE") statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700">ENTREGUE</span>`;
-          else if (i.status === "CANCELADO") statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-700">CANCELADO</span>`;
-          else if (isAtrasado) statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-rose-100 text-rose-700">ATRASADO</span>`;
-          else statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-amber-100 text-amber-700">PROMETIDO</span>`;
-        } else {
-          if (i.status === "PAGO") statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700">PAGO</span>`;
-          else if (i.status === "CANCELADO") statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-700">CANCELADO</span>`;
-          else if (isAtrasado) statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-rose-100 text-rose-700">ATRASADO</span>`;
-          else statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-amber-100 text-amber-700">PENDENTE</span>`;
-        }
-
-        const botaoReceber = ((isAdmin || isCompras) && i.status === "PENDENTE" && podeUsarModalRecebimento(i.modulo)) ? `<button onclick="abrirModalRecebimento('${i.id}', ${i.version || 0}, '${i.modulo}')" class="action-btn bg-purple-700 text-white shadow-lg" title="Dar baixa"><i class="fas fa-check text-xs"></i></button>` : "";
-        const botaoCancelar = ((isAdmin || isCompras) && i.status === "PENDENTE") ? `<button onclick="cancelarRegistro('${i.id}', ${i.version || 0}, '${i.modulo}')" class="action-btn bg-rose-50 text-rose-600 shadow-sm hover:bg-rose-100" title="Cancelar"><i class="fas fa-ban text-xs"></i></button>` : "";
-        const botaoEditarVisual = (isAdmin) ? `<button onclick="editarRegistro('${i.id}', '${i.modulo}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Editar"><i class="fas fa-pen text-xs"></i></button>` : "";
-        const botaoZapVisual = ((isAdmin || isCompras) && i.status === "PENDENTE" && telefone) ? `<button onclick="cobrarZapDoRegistro('${i.id}', '${i.modulo}')" class="action-btn bg-emerald-50 text-emerald-600 shadow-sm hover:bg-emerald-100" title="Cobrar no WhatsApp"><i class="fab fa-whatsapp"></i></button>` : "";
-        
-        const safeNome = (i.nome_pessoa || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        const safeEquipe = (i.equipe || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        const botaoExtrato = ((safeNome || safeEquipe)) ? `<button onclick="abrirExtratoPessoa('${safeNome}', '${safeEquipe}')" class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200" title="Extrato"><i class="fas fa-file-invoice"></i></button>` : "";
-
-        let badgeModuloTag = "";
-        if(abaAtiva === 'ADMIN') {
-           if (i.modulo === "MERCADINHO") badgeModuloTag = `<span class="pill bg-pink-50 text-pink-600 border border-pink-200 ml-2">Mercadinho</span>`;
-           else if (i.modulo === "FEIJOADA") badgeModuloTag = `<span class="pill bg-purple-50 text-purple-600 border border-purple-200 ml-2">Feijoada</span>`;
-           else if (i.modulo === "EJC") badgeModuloTag = `<span class="pill bg-slate-900 text-white border border-slate-900/30 ml-2">Caixa EJC</span>`;
-           else if (i.modulo === "CAMISETAS") badgeModuloTag = `<span class="pill bg-blue-50 text-blue-600 border border-blue-200 ml-2">Camisetas</span>`;
-        }
-
-        let subtitulo = `Qtd: <span class="font-bold">${qtd}</span>`;
-        if (i.modulo === "DOACAO") {
-          subtitulo += ` • Tipo: <span class="font-bold">Doação física</span>`;
-        } else if (valor > 0) {
-          subtitulo += ` • Total: <span class="font-bold">${formatarMoeda(valor)}</span>`;
-        }
-        if (i.modulo === "CAMISETAS" && i.tamanho) {
-          subtitulo += ` • Tamanho: <span class="font-bold text-blue-600">${i.tamanho}</span>`;
-        }
-
-        let dataInfo = `${i.data_entrega ? `Entrega/Previsão: ${formatarData(i.data_entrega)} • ` : ""}${i.recebido_em ? `Recebido: ${formatarData(i.recebido_em)}` : "Ainda não recebido"}${i.recebido_por ? ` • por ${esc(i.recebido_por)}` : ""}`;
-
-        return `
-          <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-colors">
-            <td class="p-6">
-              <p class="text-sm font-bold text-slate-900">${item} ${badgeModuloTag}</p>
-              <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">${nome} • ${equipe}</p>
-              <p class="text-[10px] text-slate-500 mt-1">${subtitulo}</p>
-              <p class="text-[10px] text-slate-400 mt-1">${dataInfo}</p>
-            </td>
-            <td class="p-6 text-right">
-              <div class="flex justify-end items-center gap-2 flex-wrap">${statusBadge}${botaoReceber}${botaoZapVisual}${botaoExtrato}${botaoEditarVisual}${botaoCancelar}</div>
-            </td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    function resetarOpcoesStatusPadrao() {
-      const statusSelect = document.getElementById("f_type");
-      statusSelect.innerHTML = `<option value="ENTRADA">Recebido / Entregue ✅</option><option value="PENDENTE">A receber / Prometido 🟠</option><option value="SAIDA">Gasto 🔴</option>`;
+    function fecharModal() {
+      document.getElementById("modal").classList.add("hidden");
     }
 
     function atualizarModalDinamico() {
-      resetarOpcoesStatusPadrao();
-      const mod = abaAtiva === "ADMIN" ? document.getElementById("f_modulo").value : abaAtiva;
-      const isMercado = mod === "MERCADINHO";
-      const isDoacao = mod === "DOACAO";
-      const isFeijoada = mod === "FEIJOADA";
-      const isCamisetas = mod === "CAMISETAS";
+      const modulo = document.getElementById("f_modulo").value;
+      const blocoFeijoada = document.getElementById("blocoTipoFeijoada");
+      const blocoTamCamiseta = document.getElementById("blocoTamanhoCamiseta");
+      const blocoMercado = document.getElementById("camposMercado");
+      const campoDataEntrega = document.getElementById("campoDataEntregaWrap");
 
-      document.getElementById("blocoModulo").classList.toggle("hidden", abaAtiva !== "ADMIN");
-      document.getElementById("camposMercado").classList.toggle("hidden", !(isMercado || isDoacao || isFeijoada || isCamisetas));
-      document.getElementById("campoDataEntregaWrap").classList.toggle("hidden", !(isDoacao || isCamisetas));
-      document.getElementById("blocoTipoFeijoada").classList.toggle("hidden", !isFeijoada);
-      document.getElementById("blocoTamanhoCamiseta").classList.toggle("hidden", !isCamisetas);
+      blocoFeijoada.classList.add("hidden");
+      blocoTamCamiseta.classList.add("hidden");
+      blocoMercado.classList.add("hidden");
+      campoDataEntrega.classList.add("hidden");
 
-      const tipoPessoa = document.getElementById("f_tipo_pessoa");
-      const equipeMerc = document.getElementById("f_equipe_merc");
-      const labelEquipeTexto = document.getElementById("labelEquipeTexto");
-      const labelVal = document.getElementById("labelVal");
-      const inputVal = document.getElementById("f_val");
-      const labelDesc = document.getElementById("labelDesc");
-      const statusSelect = document.getElementById("f_type");
-
-      inputVal.type = "text";
-
-      if (isDoacao) {
-        tipoPessoa.classList.add("hidden"); equipeMerc.classList.remove("hidden");
-        labelEquipeTexto.textContent = "Equipe do doador / responsável";
-        labelVal.textContent = "Quantidade"; labelDesc.textContent = "Descrição / Item";
-        inputVal.setAttribute("inputmode", "numeric"); inputVal.placeholder = "Qtd";
-        document.getElementById("f_forma").value = "FISICO";
-        statusSelect.innerHTML = `<option value="PENDENTE">Prometido 🟠</option><option value="ENTRADA">Entregue ✅</option>`;
-      } else if (isFeijoada) {
-        const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
-        tipoPessoa.classList.add("hidden"); equipeMerc.classList.remove("hidden");
-        labelEquipeTexto.textContent = "Equipe de quem vendeu/comprou";
-        if (tipoFeijoada === "VOUCHER") {
-          labelDesc.textContent = "Nome / referência"; labelVal.textContent = "Quantidade de vouchers";
-          inputVal.setAttribute("inputmode", "numeric"); inputVal.placeholder = "Qtd";
-          statusSelect.value = "PENDENTE";
-        } else {
-          labelDesc.textContent = "Descrição / Item"; labelVal.textContent = "Valor R$";
-          inputVal.setAttribute("inputmode", "decimal"); inputVal.placeholder = "0,00";
-          if (tipoFeijoada === "COMPRA_MERCADO" || tipoFeijoada === "OUTRA_SAIDA") statusSelect.value = "SAIDA";
-          else if (tipoFeijoada === "OUTRA_ENTRADA") statusSelect.value = "ENTRADA";
-        }
-      } else if (isCamisetas) {
-        tipoPessoa.classList.remove("hidden");
-        labelEquipeTexto.textContent = "Equipe do Responsável";
-        labelVal.textContent = "Valor Total R$"; labelDesc.textContent = "Nome do Comprador";
-        inputVal.setAttribute("inputmode", "decimal"); inputVal.placeholder = "0,00";
-        statusSelect.value = "PENDENTE";
-      } else {
-        tipoPessoa.classList.remove("hidden");
-        labelEquipeTexto.textContent = "Equipe do Responsável";
-        labelVal.textContent = "Valor R$"; labelDesc.textContent = "Descrição / Item";
-        inputVal.setAttribute("inputmode", "decimal"); inputVal.placeholder = "0,00";
-      }
-
-      if (isMercado || isCamisetas) {
-        const optF = statusSelect.querySelector('option[value="PENDENTE"]');
-        if (tipoPessoa.value === "PAROQUIANO") {
-          equipeMerc.classList.add("hidden");
-          statusSelect.value = "ENTRADA";
-          if (optF) optF.disabled = true;
-        } else {
-          equipeMerc.classList.remove("hidden");
-          if (optF) optF.disabled = false;
-        }
+      if (modulo === "FEIJOADA") {
+        blocoFeijoada.classList.remove("hidden");
+        blocoMercado.classList.remove("hidden");
+        campoDataEntrega.classList.remove("hidden");
+      } else if (modulo === "MERCADINHO") {
+        blocoMercado.classList.remove("hidden");
+      } else if (modulo === "CAMISETAS") {
+        blocoTamCamiseta.classList.remove("hidden");
+        campoDataEntrega.classList.remove("hidden");
+      } else if (modulo === "DOACAO") {
+        campoDataEntrega.classList.remove("hidden");
       }
     }
 
-    function controlarTipoPessoa() { atualizarModalDinamico(); }
+    // SALVAR REGISTRO
+    function montarPayloadBasico() {
+      const tipo       = document.getElementById('f_type').value;
+      const forma      = document.getElementById('f_forma').value;
+      const desc       = document.getElementById('f_desc').value.trim();
+      const valorStr   = document.getElementById('f_val').value;
+      const nome       = document.getElementById('f_nome').value.trim();
+      const tel        = normalizarTelefone(document.getElementById('f_tel').value);
+      const dataPrev   = document.getElementById('f_data_entrega')?.value || null;
+      const resp       = document.getElementById('f_recebido').value.trim();
 
-    function abrirModal() {
-      if (abaAtiva === "DOACAO" && !podeOperarProvidencia()) return;
-      document.getElementById("formFin").reset();
-      editandoRegistroId = null; editandoRegistroVersion = null; moduloDoRegistroEditado = null;
-      document.getElementById("tituloModalRegistro").innerText = "Novo Registro";
-      document.getElementById("f_val").placeholder = "0,00";
-      document.getElementById("f_val").setAttribute("inputmode", "decimal");
-      document.getElementById("btnSubmitRegistro").innerHTML = "CONCLUIR REGISTRO";
-      document.getElementById("btnSubmitRegistro").disabled = false;
-
-      document.getElementById("modal").classList.remove("hidden");
-      document.getElementById("f_recebido").value = currentProfile?.nome || "";
-
-      if (abaAtiva !== "ADMIN") document.getElementById("f_modulo").value = abaAtiva;
-      atualizarModalDinamico();
-      
-      if (abaAtiva === "DOACAO") {
-        document.getElementById("f_type").value = "PENDENTE"; document.getElementById("f_forma").value = "FISICO";
-        document.getElementById("f_val").placeholder = "Qtd"; document.getElementById("f_val").setAttribute("inputmode", "numeric");
-      }
-    }
-
-    function fecharModal() {
-      document.getElementById("modal").classList.add("hidden");
-      document.getElementById("formFin").reset();
-      document.getElementById("camposMercado").classList.add("hidden");
-      document.getElementById("campoDataEntregaWrap").classList.add("hidden");
-      document.getElementById("blocoTipoFeijoada").classList.add("hidden");
-      document.getElementById("blocoTamanhoCamiseta").classList.add("hidden");
-      document.getElementById("btnSubmitRegistro").innerHTML = "CONCLUIR REGISTRO";
-      document.getElementById("btnSubmitRegistro").disabled = false;
-      editandoRegistroId = null; editandoRegistroVersion = null; moduloDoRegistroEditado = null;
-    }
-
-    // FUNÇÕES DE PROVIDENCE METAS
-    async function carregarMetasAdmin() {
-      const container = document.getElementById("listaGerenciarMetas");
-      container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center py-4"><i class="fas fa-circle-notch fa-spin mr-2"></i> Calculando necessidades...</p>';
-
-      const { data: metas, error: metasError } = await _supabase.from("doacao_metas").select("*").eq("ativo", true).order("item");
-      if (metasError || !metas || metas.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 font-bold text-center py-4">Sem metas cadastradas.</p>';
-        return;
-      }
-
-      const { data: registros, error: regError } = await _supabase.from("doacoes").select("item, quantidade, status");
-      if (regError) console.error(regError);
-
-      const mapa = {};
-      (registros || []).forEach(r => {
-        const item = (r.item || "").trim().replace(/\s+/g, " ").toUpperCase();
-        const qtd = Number(r.quantidade || 0);
-        if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
-        if (r.status === "PENDENTE") mapa[item].prometido += qtd;
-        if (r.status === "ENTREGUE") mapa[item].entregue += qtd;
-      });
-
-      container.innerHTML = metas.map(m => {
-        const metaItemNormalizado = (m.item || "").trim().replace(/\s+/g, " ").toUpperCase();
-        const meta = Number(m.qtd_necessaria || 0);
-        const prometido = mapa[metaItemNormalizado]?.prometido || 0;
-        const entregue = mapa[metaItemNormalizado]?.entregue || 0;
-        const faltam = Math.max(0, meta - entregue);
-        const perc = meta > 0 ? Math.min(100, Math.round((entregue / meta) * 100)) : 0;
-
-        return `
-          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-4 shadow-sm">
-            <div class="flex justify-between items-start gap-3">
-              <div>
-                <p class="text-sm font-bold text-slate-800">${esc(m.item)}</p>
-                <p class="text-[10px] text-slate-500 font-medium">Meta oficial: ${meta} ${esc(m.unidade || "")}</p>
-              </div>
-              <button onclick="excluirMeta('${m.id}')" class="text-slate-300 hover:text-rose-500 transition p-2">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-            <div class="bar-bg"><div class="bar-fill" style="width:${perc}%"></div></div>
-            <div class="grid grid-cols-3 gap-2 text-center">
-              <div class="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
-                <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">Prometido</p>
-                <p class="text-sm font-extrabold text-amber-500">${prometido}</p>
-              </div>
-              <div class="bg-white rounded-xl p-3 border border-slate-100 shadow-sm">
-                <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">Entregue</p>
-                <p class="text-sm font-extrabold text-emerald-500">${entregue}</p>
-              </div>
-              <div class="bg-white rounded-xl p-3 border border-purple-100 shadow-sm bg-purple-50">
-                <p class="text-[9px] font-black uppercase tracking-wider text-purple-400">Faltam</p>
-                <p class="text-sm font-extrabold text-purple-700">${faltam}</p>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    async function salvarMeta() {
-      if (ROLE !== "ADMIN") return showToast("Apenas Pilotos podem gerenciar metas.", "error");
-
-      const itemOriginal = document.getElementById("m_item").value.trim();
-      const itemNormalizado = itemOriginal.replace(/\s+/g, " ").toUpperCase();
-      const qtd = parseInt(document.getElementById("m_qtd").value, 10);
-      const un = document.getElementById("m_un").value.trim().toUpperCase();
-
-      const { data: existentes } = await _supabase.from("doacao_metas").select("item").eq("ativo", true);
-      const duplicado = (existentes || []).some(m => (m.item || "").trim().replace(/\s+/g, " ").toUpperCase() === itemNormalizado);
-
-      if (duplicado) return showToast("Esta necessidade já está cadastrada.", "error");
-
-      const { error } = await _supabase.from("doacao_metas").insert([{ item: itemOriginal, qtd_necessaria: qtd, unidade: un }]);
-      if (error) return showToast(error.message || "Não foi possível salvar a meta.", "error");
-
-      showToast("Meta cadastrada com sucesso!");
-      document.getElementById("modalMeta").classList.add("hidden");
-      document.getElementById("formMeta").reset();
-      carregarMetasAdmin();
-    }
-
-    async function excluirMeta(id) {
-      if (ROLE !== "ADMIN") return showToast("Apenas Pilotos podem excluir metas.", "error");
-      if (!confirm("Remover esta necessidade?")) return;
-      const { error } = await _supabase.from("doacao_metas").delete().eq("id", id);
-      if (error) return showToast(error.message || "Não foi possível excluir.", "error");
-      carregarMetasAdmin();
-    }
-
-    // CRUD GERAL EJC BANK
-    function montarPayloadDoacao() {
-      const item = limparTexto(document.getElementById("f_desc").value);
-      const quantidade = parseInteiroSeguro(document.getElementById("f_val").value);
-      const nome = limparTexto(document.getElementById("f_nome").value);
-      const telefone = normalizarTelefone(document.getElementById("f_tel").value);
-      const equipe = limparTexto(document.getElementById("f_equipe_merc").value);
-      const recebidoPor = limparTexto(document.getElementById("f_recebido").value);
-      const dataEntrega = document.getElementById("f_data_entrega").value;
-      const tipoSelecionado = document.getElementById("f_type").value;
-
-      if (!item) throw new Error("Informe o item.");
-      if (quantidade <= 0) throw new Error("Informe uma quantidade válida.");
-      if (!nome) throw new Error("Informe o nome do doador.");
-      if (!telefone) throw new Error("Informe o WhatsApp.");
-      if (!equipe) throw new Error("Selecione a equipe.");
-      if (!dataEntrega) throw new Error("Informe a data prevista de entrega.");
+      const valorNum   = parseMoedaBR(valorStr);
+      const hoje       = hojeISODate();
 
       return {
-        item, quantidade, status: tipoSelecionado === "ENTRADA" ? "ENTREGUE" : "PENDENTE",
-        nome, telefone, equipe, data_entrega: dataEntrega,
-        recebido_por: tipoSelecionado === "ENTRADA" ? recebidoPor : null,
-        recebido_em: tipoSelecionado === "ENTRADA" ? agoraISO() : null
+        tipo,
+        forma,
+        descricao: desc,
+        valor: valorNum,
+        nome: nome || null,
+        telefone: tel,
+        data_movimento: hoje,
+        data_previsao: dataPrev,
+        responsavel_lanc: resp
       };
     }
 
-    function montarPayloadFinanceiro() {
-      let modulo = abaAtiva === 'ADMIN' ? document.getElementById('f_modulo').value : abaAtiva;
-      if (ROLE === 'COMPRAS') modulo = abaAtiva; 
-
-      const tipoSelecionado = document.getElementById("f_type").value;
-      const tipoFeijoada = document.getElementById("f_tipo_feijoada").value;
-      const descricaoBase = limparTexto(document.getElementById("f_desc").value);
-      const valorCampo = document.getElementById("f_val").value;
-      const nomePessoa = limparTexto(document.getElementById("f_nome").value);
-      const telefone = normalizarTelefone(document.getElementById("f_tel").value);
-      const recebidoPor = limparTexto(document.getElementById("f_recebido").value);
-      const formaPagamento = document.getElementById("f_forma").value;
-      const dataEntrega = document.getElementById("f_data_entrega").value;
-      const equipe = obterEquipeDoFormulario(modulo);
-
-      if (!descricaoBase) throw new Error("Informe a descrição.");
-      if (!recebidoPor) throw new Error("Informe quem está lançando.");
-
-      let quantidade = 1;
-      let valor = 0;
-
-      if (modulo === "FEIJOADA" && tipoFeijoada === "VOUCHER") {
-        quantidade = parseInteiroSeguro(valorCampo);
-        valor = quantidade * PRECO_VOUCHER_FEIJOADA; 
-        if (quantidade <= 0) throw new Error("Informe uma quantidade válida de vouchers.");
-        if (!equipe) throw new Error("Selecione a equipe responsável.");
-      } else {
-        valor = parseNumeroFlex(valorCampo);
-        quantidade = 1;
-        if (valor <= 0) throw new Error("Informe um valor válido.");
-        if ((modulo === "FEIJOADA" || modulo === "DOACAO") && !equipe) throw new Error("Selecione a equipe responsável.");
-      }
-
-      const { natureza, status } = calcularStatusENatureza(modulo, tipoSelecionado, tipoFeijoada);
-
-      return {
-        descricao: montarDescricaoFinal(modulo, descricaoBase, tipoFeijoada),
-        quantidade, valor, natureza, status, forma_pagamento: formaPagamento,
-        nome_pessoa: nomePessoa, equipe, telefone, recebido_por: recebidoPor,
-        user_id: currentUser.id, recebido_em: status === "PAGO" ? agoraISO() : null,
-        data_entrega: (modulo === "CAMISETAS" && dataEntrega) ? dataEntrega : null
-      };
-    }
-
-    async function editarRegistro(id, modOrigem) {
-      if (ROLE !== "ADMIN") return showToast("Somente pilotos podem editar.", "error");
-
-      const tabela = obterNomeTabela(modOrigem);
-      const { data, error } = await _supabase.from(tabela).select("*").eq("id", id).single();
-      if (error || !data) return showToast("Não foi possível carregar.", "error");
-
-      editandoRegistroId = data.id;
-      editandoRegistroVersion = data.version || 0;
-      moduloDoRegistroEditado = modOrigem;
-
-      document.getElementById("modal").classList.remove("hidden");
-      document.getElementById("tituloModalRegistro").innerText = "Editar Registro";
-      document.getElementById("f_modulo").value = modOrigem;
-      
-      if (modOrigem === "FEIJOADA") {
-        if (isVoucherFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "VOUCHER";
-        else if (isMercadoFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "COMPRA_MERCADO";
-        else if (isOutraEntradaFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "OUTRA_ENTRADA";
-        else if (isOutraSaidaFeijoada(data.descricao)) document.getElementById("f_tipo_feijoada").value = "OUTRA_SAIDA";
-      } else if (modOrigem === "MERCADINHO" || modOrigem === "CAMISETAS") {
-        document.getElementById("f_tipo_pessoa").value = (data.equipe === "PAROQUIANO") ? "PAROQUIANO" : "SERVO";
-      }
-
-      atualizarModalDinamico();
-
-      if(modOrigem === "DOACAO") {
-         document.getElementById("f_desc").value = data.item || "";
-      } else {
-         document.getElementById("f_desc").value = limparPrefixoDescricao(data.descricao || "");
-      }
-      
-      document.getElementById("f_val").value = (modOrigem === "DOACAO" || isVoucherFeijoada(data.descricao)) ? String(Number(data.quantidade || 0)) : String(Number(data.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-      document.getElementById("f_type").value = data.natureza === "SAIDA" ? "SAIDA" : data.status === "PENDENTE" ? "PENDENTE" : "ENTRADA";
-      document.getElementById("f_forma").value = data.forma_pagamento || (modOrigem==="DOACAO"?"FISICO":"PIX");
-      document.getElementById("f_nome").value = data.nome_pessoa || data.nome || "";
-      document.getElementById("f_tel").value = data.telefone || "";
-      document.getElementById("f_recebido").value = currentProfile?.nome || "";
-      if(modOrigem === "CAMISETAS" && data.tamanho) document.getElementById("f_tamanho").value = data.tamanho;
-
-      if (["DOACAO", "FEIJOADA", "MERCADINHO", "CAMISETAS"].includes(modOrigem)) {
-        if ((modOrigem === "MERCADINHO" || modOrigem === "CAMISETAS") && data.equipe === "PAROQUIANO") document.getElementById("f_equipe_merc").value = "";
-        else document.getElementById("f_equipe_merc").value = data.equipe || "";
-      }
-      if (modOrigem === "DOACAO" || modOrigem === "CAMISETAS") document.getElementById("f_data_entrega").value = data.data_entrega || "";
-    }
-
-    document.getElementById("formFin").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      if (ROLE !== "ADMIN" && ROLE !== "COMPRAS") return showToast("Sem permissão.", "error");
-
-      const btn = document.getElementById("btnSubmitRegistro");
-      const txtOriginal = btn.innerHTML;
-
+    async function salvarRegistro() {
       try {
-        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> SALVANDO...';
-        btn.disabled = true;
+        const modulo = document.getElementById('f_modulo').value;
+        const base   = montarPayloadBasico();
 
-        let modDestino = abaAtiva === 'ADMIN' ? document.getElementById("f_modulo").value : abaAtiva;
-        if(editandoRegistroId) modDestino = moduloDoRegistroEditado;
+        let tabela;
+        let payload = { ...base };
 
-        if (ROLE === "COMPRAS" && modDestino === "EJC") {
-          throw new Error("Compras não tem permissão para lançamentos no Caixa EJC.");
-        }
+        switch (modulo) {
+          case 'EJC':
+            tabela = 'caixa_ejc';
+            break;
+          case 'FEIJOADA': {
+            tabela = 'feijoada';
+            const tipoRegistro = document.getElementById('f_tipo_feijoada').value;
+            const equipe       = document.getElementById('f_equipe_merc')?.value || null;
+            const tipoPessoa   = document.getElementById('f_tipo_pessoa')?.value || null;
 
-        if (modDestino === "DOACAO") {
-          const payload = montarPayloadDoacao();
-          const res = editandoRegistroId ? await _supabase.from("doacoes").update(payload).eq("id", editandoRegistroId) : await _supabase.from("doacoes").insert([payload]);
-          if (res.error) throw new Error(res.error.message);
-        } else {
-          const payload = montarPayloadFinanceiro();
-          const tabelaParaSalvar = obterNomeTabela(modDestino);
-          
-          if(modDestino === 'CAMISETAS') {
-             payload.tamanho = document.getElementById('f_tamanho').value;
+            payload = { ...base, tipo_registro: tipoRegistro, equipe, tipo_pessoa: tipoPessoa };
+            break;
           }
+          case 'MERCADINHO': {
+            tabela = 'mercadinho';
+            const equipe     = document.getElementById('f_equipe_merc').value || null;
+            const tipoPessoa = document.getElementById('f_tipo_pessoa').value || null;
+            payload = { ...base, equipe, tipo_pessoa: tipoPessoa };
+            break;
+          }
+          case 'CAMISETAS': {
+            tabela = 'camisetas';
+            const tamanho = document.getElementById('f_tamanho').value;
+            payload = { ...base, tamanho };
+            break;
+          }
+          case 'DOACAO': {
+            tabela = 'doacao';
+            const item   = document.getElementById('m_item')?.value.trim()
+                        || document.getElementById('f_desc').value.trim();
+            const qtdStr = document.getElementById('m_qtd')?.value || null;
+            const un     = document.getElementById('m_un')?.value || null;
 
-          const res = editandoRegistroId ? await _supabase.from(tabelaParaSalvar).update(payload).eq("id", editandoRegistroId).eq("version", editandoRegistroVersion) : await _supabase.from(tabelaParaSalvar).insert([payload]);
-          if (res.error) throw new Error(res.error.message);
+            const valorEstimado = base.valor;
+            const qtdNum        = qtdStr ? Number(qtdStr) : null;
+
+            payload = {
+              tipo: base.tipo,
+              forma: 'FISICO',
+              item,
+              quantidade: qtdNum,
+              unidade: un,
+              valor_estimado: valorEstimado,
+              nome: base.nome,
+              telefone: base.telefone,
+              data_movimento: base.data_movimento,
+              data_previsao: base.data_previsao,
+              responsavel_lanc: base.responsavel_lanc
+            };
+            break;
+          }
+          default:
+            showToast('Módulo inválido', 'error');
+            return;
         }
 
-        showToast(editandoRegistroId ? "Atualizado!" : "Concluído!");
-        fecharModal();
-        await carregarDados(true);
+        const { error } = await _supabase.from(tabela).insert([payload]);
+        if (error) {
+          console.error(error);
+          showToast('Erro ao salvar registro', 'error');
+          return;
+        }
 
+        showToast('Registro salvo com sucesso!');
+        fecharModal();
+        carregarRegistros();
       } catch (err) {
-        showToast(err.message || "Erro ao salvar.", "error");
-      } finally {
-        btn.innerHTML = txtOriginal;
-        btn.disabled = false;
+        console.error(err);
+        showToast('Erro inesperado ao salvar', 'error');
       }
+    }
+
+    document.getElementById('formFin').addEventListener('submit', function (e) {
+      e.preventDefault();
+      salvarRegistro();
     });
 
-    function abrirModalRecebimento(id, ver, moduloStr) {
-      if (ROLE !== "ADMIN" && ROLE !== "COMPRAS") return showToast("Sem permissão.", "error");
-      if (ROLE === "COMPRAS" && moduloStr === "EJC") return showToast("Compras não pode dar baixa no EJC.", "error");
+    // METAS
+    async function salvarMeta() {
+      try {
+        const item   = document.getElementById('m_item').value.trim();
+        const qtdStr = document.getElementById('m_qtd').value;
+        const un     = document.getElementById('m_un').value.trim();
 
-      idRecebimentoAtual = id; versionRecebimentoAtual = ver; moduloDoRegistroEditado = moduloStr;
-      document.getElementById("recebidoPorModal").value = currentProfile?.nome || "";
-      document.getElementById("dataRecebimentoModal").value = new Date().toISOString().slice(0, 10);
-      document.getElementById("modalRecebimento").classList.remove("hidden");
-      document.getElementById("modalRecebimento").classList.add("flex");
-    }
+        const qtdNum = Number(qtdStr) || 0;
 
-    function fecharModalRecebimento() {
-      document.getElementById("modalRecebimento").classList.add("hidden");
-      document.getElementById("modalRecebimento").classList.remove("flex");
-      idRecebimentoAtual = null; versionRecebimentoAtual = null; moduloDoRegistroEditado = null;
-    }
+        const { error } = await _supabase.from('metas_providencia').insert([{
+          item,
+          unidade: un,
+          quantidade_alvo: qtdNum,
+          quantidade_recebida: 0,
+          status_meta: 'ABERTA'
+        }]);
 
-    async function confirmarRecebimentoModal() {
-      if (ROLE !== "ADMIN" && ROLE !== "COMPRAS") return showToast("Sem permissão.", "error");
-
-      const recebidoPor = document.getElementById("recebidoPorModal").value.trim();
-      const dataRecebimento = document.getElementById("dataRecebimentoModal").value;
-      if (!recebidoPor || !dataRecebimento || !idRecebimentoAtual) return;
-
-      const tabela = obterNomeTabela(moduloDoRegistroEditado);
-      let error;
-      if (moduloDoRegistroEditado === "DOACAO") {
-        const res = await _supabase.from(tabela).update({ status: "ENTREGUE", recebido_por: recebidoPor, recebido_em: dataLocalMeioDiaISO(dataRecebimento) }).eq("id", idRecebimentoAtual);
-        error = res.error;
-      } else {
-        const res = await _supabase.from(tabela).update({ status: "PAGO", recebido_por: recebidoPor, recebido_em: dataLocalMeioDiaISO(dataRecebimento) }).eq("id", idRecebimentoAtual).eq("version", versionRecebimentoAtual);
-        error = res.error;
-      }
-
-      if (error) return showToast(error.message, "error");
-      showToast("Baixa realizada!");
-      fecharModalRecebimento();
-      await carregarDados(true);
-      if (!document.getElementById("modalExtrato").classList.contains("hidden") && extratoAtual.telefone) abrirExtratoPessoa(extratoAtual.nome, extratoAtual.equipe);
-    }
-
-    async function cancelarRegistro(id, ver, modOrigem) {
-      if (ROLE !== "ADMIN" && ROLE !== "COMPRAS") return showToast("Sem permissão.", "error");
-      if (ROLE === "COMPRAS" && modOrigem === "EJC") return showToast("Compras não pode cancelar no Caixa EJC.", "error");
-
-      if (!confirm("Cancelar este registro?")) return;
-      const tabela = obterNomeTabela(modOrigem);
-      const res = modOrigem === "DOACAO" 
-         ? await _supabase.from(tabela).update({ status: "CANCELADO" }).eq("id", id) 
-         : await _supabase.from(tabela).update({ status: "CANCELADO" }).eq("id", id).eq("version", ver);
-      
-      if (res.error) return showToast(res.error.message, "error");
-      showToast("Cancelado.");
-      await carregarDados(true);
-    }
-
-    function cobrarZapDoRegistro(id, moduloStr) {
-      if (ROLE !== "ADMIN" && ROLE !== "COMPRAS") return;
-      const reg = dadosCache.find(r => r.id === id && r.modulo === moduloStr);
-      if (!reg) return;
-      const num = normalizarTelefone(reg.telefone); if (!num) return showToast("Telefone inválido.", "error");
-      const primeiroNome = (reg.nome_pessoa || "Irmão").trim().split(" ")[0];
-      const responsavel = (currentProfile?.nome || "Equipe do EJC").trim();
-
-      if (moduloStr === "DOACAO") {
-        const qtd = Number(reg.quantidade || 1);
-        const item = limparPrefixoDescricao(reg.descricao);
-        const msg = `Oi, *${primeiroNome}*! Tudo bem?\nAqui é *${responsavel}*, do EJC da *Paróquia Santo Eugênio de Mazenod*💛\nPassando para falar sobre a doação: *${item}* (${qtd} un)\nVocê consegue nos dar um retorno sobre a entrega?`;
-        window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
-        return;
-      }
-      
-      const pendentes = dadosCache.filter(i => i.status === "PENDENTE" && i.modulo === moduloStr && normalizarTelefone(i.telefone) === num);
-      const total = pendentes.reduce((acc, i) => acc + parseNumeroFlex(i.valor), 0);
-      const msg = `Oi, *${primeiroNome}*! Tudo bem?\nAqui é *${responsavel}*, do EJC da *Paróquia Santo Eugênio de Mazenod*💛\nPassando para confirmar que consta um valor em aberto para você no(a) ${moduloStr}:\n*${formatarMoeda(total)}*\nVocê consegue nos dar um retorno?`;
-      window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
-    }
-
-    function abrirExtratoPessoa(nome, equipe = "") {
-      const nomeTrim = (nome || "").trim(); const equipeTrim = (equipe || "").trim();
-      extratoAtual.nome = nomeTrim; extratoAtual.equipe = equipeTrim;
-      
-      extratoAtual.registros = dadosCache.filter(r => {
-        const mesmoNome = (r.nome_pessoa || "").trim() === nomeTrim;
-        const mesmaEquipe = equipeTrim ? (r.equipe || "").trim() === equipeTrim : true;
-        const mesmoModulo = abaAtiva === "ADMIN" ? true : r.modulo === abaAtiva;
-        return mesmoNome && mesmaEquipe && mesmoModulo;
-      });
-      
-      const regComTel = extratoAtual.registros.find(r => r.telefone && normalizarTelefone(r.telefone));
-      extratoAtual.telefone = regComTel ? normalizarTelefone(regComTel.telefone) : "";
-      extratoAtual.registrosFiltrados = [...extratoAtual.registros];
-
-      document.getElementById("extratoNome").innerText = nomeTrim || "Sem nome";
-      document.getElementById("extratoEquipe").innerText = equipeTrim || "Sem equipe";
-      ajustarLabelsExtrato(); renderizarExtrato();
-
-      document.getElementById("modalExtrato").classList.remove("hidden");
-      document.getElementById("modalExtrato").classList.add("flex");
-    }
-
-    function renderizarExtrato() {
-      const termo = (document.getElementById("filtroExtrato").value || "").toLowerCase().trim();
-      extratoAtual.registrosFiltrados = (extratoAtual.registros||[]).filter((r) => {
-        if (!termo) return true;
-        return [r.modulo, r.descricao, r.status, r.forma_pagamento, r.natureza, r.equipe, r.nome_pessoa, r.recebido_por].map(x => (x||"").toString().toLowerCase()).join(" ").includes(termo);
-      });
-
-      const lista = document.getElementById("extratoLista"); lista.innerHTML = "";
-      const isDoacaoTab = abaAtiva === "DOACAO";
-
-      const totalPago = extratoAtual.registrosFiltrados.filter(r => r.status === "PAGO" || r.status === "ENTREGUE").reduce((s, r) => s + (isDoacaoTab ? Number(r.quantidade || 0) : parseNumeroFlex(r.valor)), 0);
-      const totalPendente = extratoAtual.registrosFiltrados.filter(r => r.status === "PENDENTE").reduce((s, r) => s + (isDoacaoTab ? Number(r.quantidade || 0) : parseNumeroFlex(r.valor)), 0);
-
-      document.getElementById("extratoQtdLanc").innerText = extratoAtual.registrosFiltrados.length;
-      document.getElementById("extratoTotalPago").innerText = isDoacaoTab ? `${totalPago} un` : formatarMoeda(totalPago);
-      document.getElementById("extratoTotal").innerText = isDoacaoTab ? `${totalPendente} un` : formatarMoeda(totalPendente);
-
-      if (extratoAtual.registrosFiltrados.length === 0) { lista.innerHTML = `<div class="text-center text-slate-400 text-sm py-6">Nenhum lançamento encontrado.</div>`; return; }
-
-      [...extratoAtual.registrosFiltrados].sort((a, b) => new Date(b.criado_em || 0).getTime() - new Date(a.criado_em || 0).getTime()).forEach(r => {
-        const valorFmt = r.modulo === "DOACAO" ? `${Number(r.quantidade||0)} un` : formatarMoeda(parseNumeroFlex(r.valor));
-        const isSaida = r.natureza === "SAIDA"; const isPendente = r.status === "PENDENTE"; const isPago = r.status === "PAGO" || r.status === "ENTREGUE";
-        const corValor = isSaida ? "text-rose-600" : isPendente ? "text-amber-600" : "text-emerald-600";
-        
-        let badgeStatus = "";
-        if (r.modulo === "DOACAO") {
-           if (isPendente) badgeStatus = `<span class="pill bg-amber-50 text-amber-600 border border-amber-200">Prometido</span>`;
-           else if (isPago) badgeStatus = `<span class="pill bg-emerald-50 text-emerald-600 border border-emerald-200">Entregue</span>`;
-           else badgeStatus = `<span class="pill bg-slate-50 text-slate-500 border border-slate-200">Cancelado</span>`;
-        } else {
-           if (isPendente) badgeStatus = `<span class="pill bg-amber-50 text-amber-600 border border-amber-200">Pendente</span>`;
-           else if (isPago) badgeStatus = `<span class="pill bg-emerald-50 text-emerald-600 border border-emerald-200">Pago</span>`;
-           else badgeStatus = `<span class="pill bg-slate-50 text-slate-500 border border-slate-200">Cancelado</span>`;
+        if (error) {
+          console.error(error);
+          showToast('Erro ao registrar meta', 'error');
+          return;
         }
 
-        let badgeModulo = "";
-        if (r.modulo === "MERCADINHO") badgeModulo = `<span class="pill bg-pink-50 text-pink-600 border border-pink-200">Mercadinho</span>`;
-        else if (r.modulo === "FEIJOADA") badgeModulo = `<span class="pill bg-purple-50 text-purple-600 border border-purple-200">Feijoada</span>`;
-        else if (r.modulo === "EJC") badgeModulo = `<span class="pill bg-slate-900 text-white border border-slate-900/30">Caixa EJC</span>`;
-        else if (r.modulo === "DOACAO") badgeModulo = `<span class="pill bg-emerald-50 text-emerald-600 border border-emerald-200">Providência</span>`;
-        else if (r.modulo === "CAMISETAS") badgeModulo = `<span class="pill bg-blue-50 text-blue-600 border border-blue-200">Camisetas</span>`;
+        showToast('Meta de providência registrada!');
+        document.getElementById('modalMeta').classList.add('hidden');
+        document.getElementById('formMeta').reset();
+        carregarMetas();
+      } catch (err) {
+        console.error(err);
+        showToast('Erro inesperado ao salvar meta', 'error');
+      }
+    }
 
-        let extraTxt = r.modulo === "CAMISETAS" && r.tamanho ? ` • Tam: ${r.tamanho}` : "";
-        const div = document.createElement("div"); div.className = "extrato-item flex gap-3";
-        div.innerHTML = `<div class="flex-1"><div class="flex items-center justify-between gap-3"><div><p class="text-sm font-bold text-slate-800">${esc(r.descricao)}</p><p class="text-[11px] text-slate-400 mt-1">${formatarData(r.criado_em)} • ${esc(r.forma_pagamento)} ${extraTxt}</p></div><div class="text-right"><p class="text-sm font-extrabold ${corValor}">${valorFmt}</p></div></div><div class="flex flex-wrap items-center justify-between gap-2 mt-3"><div class="flex flex-wrap gap-2">${badgeStatus}${badgeModulo}</div><p class="text-[10px] text-slate-400">Reg: ${esc(r.id).slice(0, 8)}</p></div></div>`;
+    document.getElementById('formMeta').addEventListener('submit', function (e) {
+      e.preventDefault();
+      salvarMeta();
+    });
+
+    async function carregarMetas() {
+      const lista = document.getElementById('listaGerenciarMetas');
+      if (!lista) return;
+      lista.innerHTML = '<p class="text-xs text-slate-400">Carregando metas...</p>';
+
+      const { data, error } = await _supabase
+        .from('metas_providencia')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error(error);
+        lista.innerHTML = '<p class="text-xs text-rose-500">Erro ao carregar metas.</p>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        lista.innerHTML = '<p class="text-xs text-slate-400">Nenhuma meta cadastrada.</p>';
+        return;
+      }
+
+      lista.innerHTML = '';
+      data.forEach(meta => {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between bg-slate-50 rounded-2xl px-4 py-3";
+        div.innerHTML = `
+          <div>
+            <p class="text-sm font-bold text-slate-800">${esc(meta.item)} (${esc(meta.unidade)})</p>
+            <p class="text-[11px] text-slate-500">
+              Alvo: ${meta.quantidade_alvo} • Recebido: ${meta.quantidade_recebida} • Status: ${meta.status_meta}
+            </p>
+          </div>`;
         lista.appendChild(div);
       });
     }
 
-    function ajustarLabelsExtrato() {
-      const cards = document.querySelectorAll("#modalExtrato .soft-stat p.text-[10px]");
-      if (cards.length >= 3) {
-        cards[1].innerText = abaAtiva === "DOACAO" ? "Entregues" : "Total pago";
-        cards[2].innerText = abaAtiva === "DOACAO" ? "Prometidos" : "Em aberto";
+    // LISTA PRINCIPAL
+    async function carregarRegistros() {
+      const modulo = obterModuloAtual();
+      const tabela = obterNomeTabela(modulo);
+      const corpo  = document.getElementById("corpoTabela");
+      const loading = document.getElementById("loading");
+      if (!corpo || !loading) return;
+
+      loading.classList.remove("hidden");
+      corpo.innerHTML = "";
+
+      const { data, error } = await _supabase
+        .from(tabela)
+        .select('*')
+        .order('data_movimento', { ascending: false });
+
+      loading.classList.add("hidden");
+
+      if (error) {
+        console.error(error);
+        showToast('Erro ao carregar registros', 'error');
+        return;
       }
+
+      dadosCache = data || [];
+      renderizar();
     }
 
-    // Export e fechamento via WhatsApp
-    function cobrarValorEmAbertoDoExtrato() {
-      const num = normalizarTelefone(extratoAtual.telefone);
-      if (!num) return showToast("Sem telefone", "error");
-      const pendentes = extratoAtual.registrosFiltrados.filter(r => r.status === "PENDENTE");
-      if (!pendentes.length) return;
-      const total = pendentes.reduce((a, r) => a + (abaAtiva === "DOACAO" ? Number(r.quantidade||0) : parseNumeroFlex(r.valor)), 0);
-      const msg = `Oi, *${extratoAtual.nome.split(" ")[0]}*!\nAqui é do EJC Santo Eugênio. Consta pendência em aberto para você no(a) ${abaAtiva}: *${abaAtiva==="DOACAO"?total+" un":formatarMoeda(total)}*. Consegue retornar?`;
-      window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
-    }
-
-    async function copiarExtratoWhatsApp() {
-      const registros = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
-      if (!registros.length) return showToast("Extrato vazio.", "error");
-
-      const linhas = registros.map(r => {
-        const data = r.criado_em ? formatarData(r.criado_em) : "Sem data";
-        const qtd = Number(r.quantidade || 1);
-
-        if (abaAtiva === "DOACAO") {
-          const status = r.status === "PENDENTE" ? "Prometido" : r.status === "ENTREGUE" ? "Entregue" : r.status;
-          return `• ${data} — ${limparPrefixoDescricao(r.descricao)} — Qtd: ${qtd} — ${status}`;
-        }
-        const valor = formatarMoeda(r.valor || 0);
-        const status = r.status === "PENDENTE" ? "Em aberto" : r.status === "PAGO" ? "Pago" : r.status;
-        return `• ${data} — ${limparPrefixoDescricao(r.descricao)} — Qtd: ${qtd} — ${valor} — ${status}`;
+    function aplicarFiltroEBusca() {
+      const termo = (document.getElementById("campoBusca").value || "").toLowerCase();
+      return dadosCache.filter(reg => {
+        const texto = [
+          reg.descricao,
+          reg.nome,
+          reg.tipo,
+          reg.forma,
+          reg.item
+        ].join(" ").toLowerCase();
+        return texto.includes(termo);
       });
-
-      const totalAberto = registros.filter(r => r.status === "PENDENTE").reduce((a, r) => a + (abaAtiva === "DOACAO" ? Number(r.quantidade || 0) : parseNumeroFlex(r.valor)), 0);
-
-      const texto = abaAtiva === "DOACAO"
-        ? `Extrato de ${extratoAtual.nome}\n${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}\n${linhas.join("\n")}\n\nTotal em aberto: ${totalAberto} un`
-        : `Extrato de ${extratoAtual.nome}\n${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}\n${linhas.join("\n")}\n\nTotal em aberto: ${formatarMoeda(totalAberto)}`;
-
-      try {
-        await navigator.clipboard.writeText(texto);
-        showToast("Extrato copiado!");
-      } catch {
-        showToast("Não foi possível copiar.", "error");
-      }
     }
 
-    function enviarExtratoDiretoWhatsApp() {
-      const num = normalizarTelefone(extratoAtual.telefone);
-      if (!/^\d{12,13}$/.test(num)) return showToast("Telefone inválido para WhatsApp.", "error");
+    function renderizar() {
+      const corpo = document.getElementById("corpoTabela");
+      if (!corpo) return;
+      corpo.innerHTML = "";
 
-      const registros = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
-      if (!registros.length) return showToast("Extrato vazio.", "error");
+      const lista = aplicarFiltroEBusca();
 
-      const primeiroNome = (extratoAtual.nome || "Irmão").split(" ")[0];
-      const responsavel = (currentProfile?.nome || "Equipe do EJC").trim();
+      lista.forEach(reg => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50";
+        const valor = (reg.valor ?? reg.valor_estimado) || 0;
+        const desc  = reg.descricao || reg.item || "-";
 
-      const linhas = registros.map(r => {
-        const data = r.criado_em ? formatarData(r.criado_em) : "Sem data";
-        const qtd = Number(r.quantidade || 1);
-
-        if (abaAtiva === "DOACAO") {
-          const status = r.status === "PENDENTE" ? "Prometido" : r.status === "ENTREGUE" ? "Entregue" : r.status;
-          return `• ${data} — ${limparPrefixoDescricao(r.descricao)} — Qtd: ${qtd} — ${status}`;
-        }
-        const valor = formatarMoeda(r.valor || 0);
-        const status = r.status === "PENDENTE" ? "Em aberto" : r.status === "PAGO" ? "Pago" : r.status;
-        return `• ${data} — ${limparPrefixoDescricao(r.descricao)} — Qtd: ${qtd} — ${valor} — ${status}`;
+        tr.innerHTML = `
+          <td class="px-4 py-3">
+            <div class="font-bold text-slate-800 text-sm">${esc(desc)}</div>
+            <div class="text-[11px] text-slate-500">${esc(reg.nome || '')}</div>
+          </td>
+          <td class="px-4 py-3 text-right whitespace-nowrap">
+            <div class="font-bold ${reg.tipo === 'SAIDA' ? 'text-rose-600' : 'text-emerald-600'}">
+              R$ ${Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </div>
+            <div class="text-[11px] text-slate-400">
+              ${esc(reg.tipo || '')} • ${esc(reg.forma || '')}
+            </div>
+          </td>`;
+        corpo.appendChild(tr);
       });
-
-      const totalAberto = registros.filter(r => r.status === "PENDENTE").reduce((a, r) => a + (abaAtiva === "DOACAO" ? Number(r.quantidade || 0) : parseNumeroFlex(r.valor)), 0);
-
-      const msg = `Oi, *${primeiroNome}*! Tudo bem? 😊\n\nAqui é *${responsavel}* do EJC Santo Eugênio 💛\n\nSegue o detalhamento dos seus lançamentos:\n\n${linhas.join("\n")}\n\n*Total em aberto: ${abaAtiva === "DOACAO" ? totalAberto + " un" : formatarMoeda(totalAberto)}*\n\nQualquer dúvida, estou por aqui ✨`;
-
-      window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
     }
 
-    function abrirModalQuitarTudo() {
-      const pendentes = extratoAtual.registrosFiltrados.filter(r => r.status === "PENDENTE");
-      if (!pendentes.length) return showToast("Sem pendências.", "success");
-      document.getElementById("quitarTudoRecebidoPor").value = currentProfile?.nome || "";
-      document.getElementById("quitarTudoData").value = new Date().toISOString().slice(0, 10);
-      document.getElementById("modalQuitarTudo").classList.remove("hidden");
-      document.getElementById("modalQuitarTudo").classList.add("flex");
-    }
-
-    function fecharModalQuitarTudo() {
-      document.getElementById("modalQuitarTudo").classList.add("hidden");
-      document.getElementById("modalQuitarTudo").classList.remove("flex");
-    }
-
-    async function confirmarQuitarTudo() {
-      if (ROLE !== "ADMIN" && ROLE !== "COMPRAS") return showToast("Sem permissão.", "error");
-
-      const rec = document.getElementById("quitarTudoRecebidoPor").value.trim();
-      const dat = document.getElementById("quitarTudoData").value;
-      if (!rec || !dat) return showToast("Preencha todos os campos.", "error");
-      
-      const pendentes = extratoAtual.registrosFiltrados.filter(r => r.status === "PENDENTE");
-      if (!pendentes.length) return showToast("Nenhum lançamento pendente encontrado.", "error");
-
-      if(!confirm(`Dar baixa em ${pendentes.length} pendências?`)) return;
-
-      const btn = document.getElementById("btnConfirmarQuitar");
-      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processando...'; 
-      btn.disabled = true;
-
-      // Agrupa os IDs por tabela para garantir consistência usando a RPC
-      const idsPorModulo = {};
-      pendentes.forEach(r => {
-         if(!idsPorModulo[r.modulo]) idsPorModulo[r.modulo] = [];
-         idsPorModulo[r.modulo].push(r.id);
-      });
-
-      try {
-        const promises = Object.keys(idsPorModulo).map(mod =>
-           _supabase.rpc('quitar_em_lote', {
-              p_ids: idsPorModulo[mod],
-              p_modulo: mod,
-              p_recebido_por: rec,
-              p_data_recebimento: dataLocalMeioDiaISO(dat)
-           })
-        );
-
-        const resultados = await Promise.all(promises);
-        const comErro = resultados.find(r => r.error);
-        
-        if (comErro) throw new Error(comErro.error.message);
-
-        showToast("Todos os lançamentos foram quitados com sucesso!");
-        fecharModalQuitarTudo();
-      } catch (err) {
-        showToast("Erro ao quitar em lote: " + err.message, "error");
-      } finally {
-        btn.innerHTML = 'Confirmar';
-        btn.disabled = false;
-      }
-
-      await carregarDados(true);
-      abrirExtratoPessoa(extratoAtual.nome, extratoAtual.equipe);
-    }
-
-    function fecharExtrato() {
-      document.getElementById("modalExtrato").classList.add("hidden");
-      document.getElementById("modalExtrato").classList.remove("flex");
-      document.getElementById("filtroExtrato").value = "";
-    }
-
-    async function sair() { await _supabase.auth.signOut(); location.reload(); }
-
-    window.onload = async () => {
-      const { data: { session } } = await _supabase.auth.getSession();
-      if (session) {
-        const p = await carregarPerfilUsuario(session.user);
-        if (p) { currentUser = session.user; currentProfile = p; ROLE = (p.role || "").toUpperCase(); iniciarApp(); }
-      }
-    };
+    document.getElementById("campoBusca").addEventListener("keyup", renderizar);
   </script>
 </body>
 </html>
