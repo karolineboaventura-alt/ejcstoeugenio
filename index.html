@@ -14,7 +14,7 @@
     :root { --nu-roxo: #820ad1; --nu-roxo-dark: #4b0082; --nu-bg: #f8fafc; }
     body { font-family: "Plus Jakarta Sans", sans-serif; background-color: var(--nu-bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
     .bg-roxo-premium { background: radial-gradient(circle at top right, #820ad1, #4b0082); position: relative; }
-    .bg-roxo-premium::before { content: absolute; inset: 0; background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); opacity: 0.1; }
+    .bg-roxo-premium::before { content: ""; position: absolute; inset: 0; background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); opacity: 0.1; }
     .premium-card { background: rgba(255,255,255,0.98); border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,.35); backdrop-filter: blur(10px); }
     .vault-input { background: #f8fafc; border: 2px solid #f1f5f9; transition: all .3s ease; }
     .vault-input:focus { background: white; border-color: var(--nu-roxo); box-shadow: 0 0 0 4px rgba(130,10,209,.1); outline: none; }
@@ -90,7 +90,7 @@
     <header class="nu-header sticky top-0 z-40 px-6 pt-8 text-white">
       <div class="flex justify-between items-center mb-8">
         <div class="flex items-center gap-4">
-          <div id="userAvatar" class="w-12 h-12 bg-white/20 border border-white/30 rounded-xl flex items-center justify-center font-bold text-xl backdrop-blur-sm shadow-inner">U</div>
+          <div id="userAvatar" class="w-12 h-12 bg-white/20 border border-white/30 rounded-xl flex items-center justify-center font-bold text-xl backdrop-blur-sm shadow-inner">P</div>
           <div>
             <p class="text-[10px] font-bold text-white/60 uppercase tracking-widest mb-1 italic">"A morte não venceu!"</p>
             <h1 id="headerTitle" class="font-extrabold text-xl tracking-tight leading-none uppercase">EJC BANK</h1>
@@ -470,6 +470,12 @@
       return status === "PENDENTE" || status === "PARCIAL" ? valor : 0;
     }
 
+    // ESTADO GLOBAL
+    let ROLE = "";
+    let abaAtiva = "EJC";
+    let dadosCache = [];
+    let extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
+
     function obterEquipeResponsavel() {
       return ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças";
     }
@@ -504,12 +510,6 @@
         `${fechamento}`
       );
     }
-
-    // ESTADO GLOBAL
-    let ROLE = "";
-    let abaAtiva = "EJC";
-    let dadosCache = [];
-    let extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
 
     // LOGIN / PERFIL
     function escolherPerfil(perfil) {
@@ -549,7 +549,7 @@
 
       try {
         if (email === "compras@ejcbank.com.br") {
-          msgErro.textContent = "ACESSO NEGADO: O perfil Compras não tem permissão nesta área.";
+          msgErro.textContent = "Compras entra apenas pelo botão de Compras.";
           msgErro.classList.remove("hidden");
           return;
         }
@@ -559,21 +559,23 @@
           password: senha
         });
 
+        console.log("LOGIN PILOTOS", { data, error });
+
         if (error || !data?.user) {
           msgErro.textContent = error?.message || "Credenciais inválidas";
           msgErro.classList.remove("hidden");
           return;
         }
 
-        ROLE = "ADMIN";
-
+        ROLE = "PILOTOS";
         document.getElementById("loginScreen").classList.add("hidden");
         document.getElementById("appMain").classList.remove("hidden");
-        document.getElementById("headerTitle").textContent = "EJC BANK • ADMIN";
-        document.getElementById("userAvatar").textContent = (email[0] || "U").toUpperCase();
+        document.getElementById("headerTitle").textContent = "EJC BANK • PILOTOS";
+        document.getElementById("userAvatar").textContent = "P";
 
         configurarAbasPorPerfil();
       } catch (e) {
+        console.error("ERRO LOGIN PILOTOS:", e);
         msgErro.textContent = e.message || "Erro de conexão";
         msgErro.classList.remove("hidden");
       } finally {
@@ -598,6 +600,8 @@
           password: senha
         });
 
+        console.log("LOGIN COMPRAS", { data, error });
+
         if (error || !data?.user) {
           msgErro.textContent = error?.message || "Credenciais inválidas";
           msgErro.classList.remove("hidden");
@@ -614,11 +618,12 @@
         ROLE = "COMPRAS";
         document.getElementById("loginScreen").classList.add("hidden");
         document.getElementById("appMain").classList.remove("hidden");
-        document.getElementById("headerTitle").textContent = "EJC BANK • Compras";
+        document.getElementById("headerTitle").textContent = "EJC BANK • COMPRAS";
         document.getElementById("userAvatar").textContent = "C";
 
         configurarAbasPorPerfil();
       } catch (e) {
+        console.error("ERRO LOGIN COMPRAS:", e);
         msgErro.textContent = e.message || "Erro de conexão";
         msgErro.classList.remove("hidden");
       } finally {
@@ -629,16 +634,20 @@
 
     function configurarAbasPorPerfil() {
       const isCompras = (ROLE === "COMPRAS");
+      const tabEjc = document.getElementById("tab-ejc");
+      const tabMercadinho = document.getElementById("tab-mercadinho");
+      const tabFeijoada = document.getElementById("tab-feijoada");
+      const tabCamisetas = document.getElementById("tab-camisetas");
+      const tabDoacao = document.getElementById("tab-doacao");
 
-      document.getElementById("tab-ejc").classList.toggle("hidden", isCompras);
-
-      document.getElementById("tab-mercadinho").classList.remove("hidden");
-      document.getElementById("tab-feijoada").classList.remove("hidden");
-      document.getElementById("tab-camisetas").classList.remove("hidden");
-      document.getElementById("tab-doacao").classList.remove("hidden");
+      if (tabEjc) tabEjc.classList.toggle("hidden", isCompras);
+      if (tabMercadinho) tabMercadinho.classList.remove("hidden");
+      if (tabFeijoada) tabFeijoada.classList.remove("hidden");
+      if (tabCamisetas) tabCamisetas.classList.remove("hidden");
+      if (tabDoacao) tabDoacao.classList.remove("hidden");
 
       if (isCompras) {
-        document.getElementById("headerTitle").textContent = "EJC BANK • Compras";
+        document.getElementById("headerTitle").textContent = "EJC BANK • COMPRAS";
         document.getElementById("blocoModulo").classList.add("hidden");
         mudarAba("MERCADINHO");
       } else {
@@ -707,11 +716,11 @@
         document.getElementById("dashAdmin").classList.remove("hidden");
       }
 
-      if (["FEIJOADA","MERCADINHO","CAMISETAS","DOACAO"].includes(aba)) {
+      if (["FEIJOADA", "MERCADINHO", "CAMISETAS", "DOACAO"].includes(aba)) {
         document.getElementById("painelFeijoada").classList.remove("hidden");
       }
 
-      if (aba === "DOACAO" && ROLE === "ADMIN") {
+      if (aba === "DOACAO" && ROLE === "PILOTOS") {
         document.getElementById("blocoAdminDoacao").classList.remove("hidden");
       }
 
@@ -729,7 +738,7 @@
         document.getElementById("tituloPainelModulo").textContent = "Feijoada 25/04";
         document.getElementById("pillVoucher").classList.remove("hidden");
         document.getElementById("gridMetricasFeijoada").classList.remove("hidden");
-        if (ROLE === "ADMIN") {
+        if (ROLE === "PILOTOS") {
           document.getElementById("btnRanking").classList.remove("hidden");
           document.getElementById("btnCobranca").classList.remove("hidden");
         }
@@ -1391,4 +1400,3 @@
   </script>
 </body>
 </html>
-
