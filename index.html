@@ -14,7 +14,7 @@
     :root { --nu-roxo: #820ad1; --nu-roxo-dark: #4b0082; --nu-bg: #f8fafc; }
     body { font-family: "Plus Jakarta Sans", sans-serif; background-color: var(--nu-bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
     .bg-roxo-premium { background: radial-gradient(circle at top right, #820ad1, #4b0082); position: relative; }
-    .bg-roxo-premium::before { content: ""; position: absolute; inset: 0; background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); opacity: 0.1; }
+    .bg-roxo-premium::before { content: absolute; inset: 0; background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); opacity: 0.1; }
     .premium-card { background: rgba(255,255,255,0.98); border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,.35); backdrop-filter: blur(10px); }
     .vault-input { background: #f8fafc; border: 2px solid #f1f5f9; transition: all .3s ease; }
     .vault-input:focus { background: white; border-color: var(--nu-roxo); box-shadow: 0 0 0 4px rgba(130,10,209,.1); outline: none; }
@@ -311,7 +311,7 @@
     // ============================
     // SUPABASE
     // ============================
-    const SUPABASE_URL = 'https://sfxlfkfjqaemjotsedep.supabase.co';
+    const SUPABASE_URL = 'https://ilzgmueeblxeyieumpyk.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -321,6 +321,7 @@
         "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
       }[t])) : "";
     }
+    
     function showToast(msg, type = "success") {
       const container = document.getElementById("toast-container");
       if (!container) return;
@@ -332,16 +333,14 @@
       container.appendChild(t);
       setTimeout(() => t.remove(), 4000);
     }
-    
-    // CORREÇÃO: REGEX MOEDA
+
     function parseMoedaBR(valorStr) {
       if (!valorStr) return 0;
       const limpo = String(valorStr).replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
       const n = Number(limpo);
       return Number.isFinite(n) ? n : 0;
     }
-    
-    // CORREÇÃO: REGEX TELEFONE
+
     function normalizarTelefone(tel) {
       let num = String(tel || '').replace(/\D/g, '');
       if (!num) return null;
@@ -349,7 +348,7 @@
       if (!num.startsWith('55')) num = '55' + num;
       return num;
     }
-    
+
     function hojeISODate() { return new Date().toISOString().slice(0, 10); }
 
     // ESTADO
@@ -382,7 +381,6 @@
       document.getElementById("formPilotos").reset();
     }
 
-    // CORREÇÃO: FUNÇÃO LOGIN PILOTO COM MENSAGEM EXATA DE ERRO
     async function loginPiloto() {
       const email = document.getElementById("emailPiloto").value.trim().toLowerCase();
       const senha = document.getElementById("senhaPiloto").value.trim();
@@ -390,69 +388,94 @@
       const btn = document.getElementById("btnPiloto");
       const original = btn.innerHTML;
 
+      msgErro.classList.add("hidden");
       btn.disabled = true;
       btn.innerHTML = "Entrando...";
 
-      const { data, error } = await _supabase.auth.signInWithPassword({
-        email,
-        password: senha
-      });
+      try {
+        if (email === "compras@ejcbank.com.br") {
+          msgErro.textContent = "Compras entra apenas pelo botão de Compras.";
+          msgErro.classList.remove("hidden");
+          return;
+        }
 
-      console.log("LOGIN PILOTO:", { data, error });
+        const { data, error } = await _supabase.auth.signInWithPassword({
+          email,
+          password: senha
+        });
 
-      btn.disabled = false;
-      btn.innerHTML = original;
+        console.log("LOGIN PILOTO", { data, error });
 
-      if (error || !data?.user) {
-        msgErro.textContent = error?.message || "Credenciais inválidas";
+        if (error || !data?.user) {
+          msgErro.textContent = error?.message || "Credenciais inválidas";
+          msgErro.classList.remove("hidden");
+          return;
+        }
+
+        ROLE = "ADMIN";
+
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("appMain").classList.remove("hidden");
+        document.getElementById("headerTitle").textContent = "EJC BANK • ADMIN";
+        document.getElementById("userAvatar").textContent = (email[0] || "U").toUpperCase();
+
+        configurarAbasPorPerfil();
+      } catch (e) {
+        console.error("ERRO LOGIN PILOTO:", e);
+        msgErro.textContent = e.message || "Erro de conexão";
         msgErro.classList.remove("hidden");
-        return;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
       }
-
-      ROLE = email === "compras@ejcbank.com.br" ? "COMPRAS" : "ADMIN";
-
-      msgErro.classList.add("hidden");
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("appMain").classList.remove("hidden");
-      document.getElementById("userAvatar").textContent = (email[0] || "U").toUpperCase();
-
-      configurarAbasPorPerfil();
     }
 
-    // CORREÇÃO: FUNÇÃO LOGIN COMPRAS COM MENSAGEM EXATA DE ERRO
     async function loginCompras() {
       const senha = document.getElementById("senhaCompras").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
       const btn = document.getElementById("btnCompras");
       const original = btn.innerHTML;
 
+      msgErro.classList.add("hidden");
       btn.disabled = true;
       btn.innerHTML = "Entrando...";
 
-      const { data, error } = await _supabase.auth.signInWithPassword({
-        email: "compras@ejcbank.com.br",
-        password: senha
-      });
+      try {
+        const { data, error } = await _supabase.auth.signInWithPassword({
+          email: "compras@ejcbank.com.br",
+          password: senha
+        });
 
-      console.log("LOGIN COMPRAS:", { data, error });
+        console.log("LOGIN COMPRAS", { data, error });
 
-      btn.disabled = false;
-      btn.innerHTML = original;
+        if (error || !data?.user) {
+          msgErro.textContent = error?.message || "Credenciais inválidas";
+          msgErro.classList.remove("hidden");
+          return;
+        }
 
-      if (error || !data?.user) {
-        msgErro.textContent = error?.message || "Credenciais inválidas";
+        if ((data.user.email || "").toLowerCase() !== "compras@ejcbank.com.br") {
+          await _supabase.auth.signOut();
+          msgErro.textContent = "Acesso permitido apenas para o perfil Compras.";
+          msgErro.classList.remove("hidden");
+          return;
+        }
+
+        ROLE = "COMPRAS";
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("appMain").classList.remove("hidden");
+        document.getElementById("headerTitle").textContent = "EJC BANK • Compras";
+        document.getElementById("userAvatar").textContent = "C";
+
+        configurarAbasPorPerfil();
+      } catch (e) {
+        console.error("ERRO LOGIN COMPRAS:", e);
+        msgErro.textContent = e.message || "Erro de conexão";
         msgErro.classList.remove("hidden");
-        return;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
       }
-
-      ROLE = "COMPRAS";
-      msgErro.classList.add("hidden");
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("appMain").classList.remove("hidden");
-      document.getElementById("headerTitle").textContent = "EJC BANK • Compras";
-      document.getElementById("userAvatar").textContent = "C";
-
-      configurarAbasPorPerfil();
     }
 
     function configurarAbasPorPerfil() {
@@ -496,6 +519,7 @@
         default:           return "EJC";
       }
     }
+    
     function obterNomeTabela(modulo) {
       if (modulo === 'EJC')        return 'caixa_ejc';
       if (modulo === 'FEIJOADA')   return 'feijoada';
@@ -574,6 +598,7 @@
       atualizarModalDinamico();
       document.getElementById("modal").classList.remove("hidden");
     }
+    
     function fecharModal() {
       document.getElementById("modal").classList.add("hidden");
     }
