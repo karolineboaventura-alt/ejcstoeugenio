@@ -44,7 +44,6 @@
 
   <div id="toast-container"></div>
 
-  <!-- LOGIN -->
   <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-roxo-premium">
     <div class="w-full max-w-sm premium-card p-10 animate-elite overflow-hidden">
       <div id="stepProfile">
@@ -87,7 +86,6 @@
     </div>
   </div>
 
-  <!-- APP -->
   <div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
     <header class="nu-header sticky top-0 z-40 px-6 pt-8 text-white">
       <div class="flex justify-between items-center mb-8">
@@ -167,7 +165,6 @@
     </button>
   </div>
 
-  <!-- MODAL META -->
   <div id="modalMeta" class="hidden fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
       <h2 class="text-xl font-black text-slate-800 mb-6 text-center">Nova Meta de Providência</h2>
@@ -183,7 +180,6 @@
     </div>
   </div>
 
-  <!-- MODAL REGISTRO -->
   <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="absolute inset-0" onclick="fecharModal()"></div>
     <div class="relative bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -336,19 +332,24 @@
       container.appendChild(t);
       setTimeout(() => t.remove(), 4000);
     }
+    
+    // CORREÇÃO: REGEX MOEDA
     function parseMoedaBR(valorStr) {
       if (!valorStr) return 0;
-      const limpo = valorStr.replace(/s/g, '').replace(/./g, '').replace(',', '.');
+      const limpo = String(valorStr).replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
       const n = Number(limpo);
       return Number.isFinite(n) ? n : 0;
     }
+    
+    // CORREÇÃO: REGEX TELEFONE
     function normalizarTelefone(tel) {
-      let num = String(tel || '').replace(/D/g, '');
+      let num = String(tel || '').replace(/\D/g, '');
       if (!num) return null;
       if (num.startsWith('0')) num = num.slice(1);
       if (!num.startsWith('55')) num = '55' + num;
       return num;
     }
+    
     function hojeISODate() { return new Date().toISOString().slice(0, 10); }
 
     // ESTADO
@@ -381,52 +382,70 @@
       document.getElementById("formPilotos").reset();
     }
 
+    // CORREÇÃO: FUNÇÃO LOGIN PILOTO COM MENSAGEM EXATA DE ERRO
     async function loginPiloto() {
-      const email = document.getElementById("emailPiloto").value.trim();
+      const email = document.getElementById("emailPiloto").value.trim().toLowerCase();
       const senha = document.getElementById("senhaPiloto").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
+      const btn = document.getElementById("btnPiloto");
+      const original = btn.innerHTML;
+
+      btn.disabled = true;
+      btn.innerHTML = "Entrando...";
 
       const { data, error } = await _supabase.auth.signInWithPassword({
         email,
         password: senha
       });
 
+      console.log("LOGIN PILOTO:", { data, error });
+
+      btn.disabled = false;
+      btn.innerHTML = original;
+
       if (error || !data?.user) {
-        console.error(error);
+        msgErro.textContent = error?.message || "Credenciais inválidas";
         msgErro.classList.remove("hidden");
         return;
       }
 
-      const user = data.user;
-      if (user.email === "compras@ejcbank.com.br") ROLE = "COMPRAS";
-      else ROLE = "ADMIN";
+      ROLE = email === "compras@ejcbank.com.br" ? "COMPRAS" : "ADMIN";
 
       msgErro.classList.add("hidden");
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appMain").classList.remove("hidden");
-      document.getElementById("userAvatar").textContent =
-        (user.email[0] || "U").toUpperCase();
+      document.getElementById("userAvatar").textContent = (email[0] || "U").toUpperCase();
 
       configurarAbasPorPerfil();
     }
 
+    // CORREÇÃO: FUNÇÃO LOGIN COMPRAS COM MENSAGEM EXATA DE ERRO
     async function loginCompras() {
       const senha = document.getElementById("senhaCompras").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
+      const btn = document.getElementById("btnCompras");
+      const original = btn.innerHTML;
+
+      btn.disabled = true;
+      btn.innerHTML = "Entrando...";
 
       const { data, error } = await _supabase.auth.signInWithPassword({
         email: "compras@ejcbank.com.br",
         password: senha
       });
 
+      console.log("LOGIN COMPRAS:", { data, error });
+
+      btn.disabled = false;
+      btn.innerHTML = original;
+
       if (error || !data?.user) {
-        console.error(error);
+        msgErro.textContent = error?.message || "Credenciais inválidas";
         msgErro.classList.remove("hidden");
         return;
       }
 
       ROLE = "COMPRAS";
-
       msgErro.classList.add("hidden");
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appMain").classList.remove("hidden");
