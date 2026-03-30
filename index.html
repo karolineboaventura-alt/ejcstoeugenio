@@ -99,7 +99,6 @@
         <button onclick="sair()" class="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition shadow-sm"><i class="fas fa-power-off"></i></button>
       </div>
       <div class="flex gap-3 overflow-x-auto pb-2">
-        <button id="tab-admin" onclick="mudarAba('ADMIN')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Geral</button>
         <button id="tab-ejc" onclick="mudarAba('EJC')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Caixa EJC</button>
         <button id="tab-mercadinho" onclick="mudarAba('MERCADINHO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Mercadinho</button>
         <button id="tab-feijoada" onclick="mudarAba('FEIJOADA')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Feijoada</button>
@@ -306,6 +305,88 @@
     </div>
   </div>
 
+  <div id="modalExtrato" class="hidden fixed inset-0 z-[125] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-2xl rounded-[32px] p-6 shadow-2xl max-h-[92vh] overflow-hidden flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h3 class="text-lg font-black text-slate-800">Extrato</h3>
+          <p class="text-[11px] text-slate-400">Histórico por pessoa</p>
+        </div>
+        <button onclick="fecharExtrato()" class="text-slate-400 hover:text-slate-700">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="nubank-card p-4 mb-4">
+        <p id="extratoNome" class="text-sm font-black text-slate-800"></p>
+        <p id="extratoEquipe" class="text-[11px] text-slate-500 mt-1"></p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+          <div class="soft-stat roxo">
+            <p class="text-[10px] font-black uppercase tracking-wider text-purple-400">Lançamentos</p>
+            <p id="extratoQtdLanc" class="text-xl font-extrabold text-slate-800 mt-1">0</p>
+          </div>
+          <div class="soft-stat emerald">
+            <p class="text-[10px] font-black uppercase tracking-wider text-emerald-500">Total pago</p>
+            <p id="extratoTotalPago" class="text-xl font-extrabold text-slate-800 mt-1">R$ 0,00</p>
+          </div>
+          <div class="soft-stat rose">
+            <p class="text-[10px] font-black uppercase tracking-wider text-rose-500">Em aberto</p>
+            <p id="extratoTotalAberto" class="text-xl font-extrabold text-rose-600 mt-1">R$ 0,00</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <input
+          id="filtroExtrato"
+          type="text"
+          placeholder="Filtrar por item, status ou módulo..."
+          oninput="renderizarExtrato()"
+          class="vault-input w-full rounded-xl px-4 py-3 font-bold text-sm outline-none text-slate-700"
+        />
+      </div>
+
+      <div id="extratoLista" class="flex-1 overflow-y-auto space-y-4 pr-1"></div>
+
+      <div class="mt-4 border-t border-slate-100 pt-4 grid grid-cols-2 gap-2">
+        <button onclick="copiarExtrato()" class="bg-slate-900 text-white py-3 rounded-xl font-bold text-xs hover:bg-slate-800 transition">
+          Copiar
+        </button>
+        <button onclick="cobrarExtratoWhatsApp()" class="bg-emerald-600 text-white py-3 rounded-xl font-bold text-xs hover:bg-emerald-700 transition">
+          Cobrar
+        </button>
+        <button onclick="abrirModalQuitarTudo()" class="col-span-2 bg-purple-700 text-white py-3 rounded-xl font-bold text-xs hover:bg-purple-800 transition">
+          Quitar tudo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalQuitarTudo" class="hidden fixed inset-0 z-[130] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
+      <h3 class="text-xl font-black text-slate-800 mb-2 text-center">Quitar tudo</h3>
+      <p class="text-xs text-slate-500 text-center mb-6">Vai dar baixa em todos os lançamentos pendentes deste extrato.</p>
+
+      <div class="space-y-4">
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Quem recebeu</label>
+          <input id="quitarTudoRecebidoPor" class="w-full bg-transparent font-bold text-slate-900 outline-none" placeholder="Ex: Karol" />
+        </div>
+
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Data</label>
+          <input id="quitarTudoData" type="date" class="w-full bg-transparent font-bold text-slate-900 outline-none" />
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button onclick="confirmarQuitarTudo()" class="flex-1 bg-purple-700 text-white py-4 rounded-xl font-black hover:bg-purple-800 transition">Confirmar</button>
+        <button onclick="fecharModalQuitarTudo()" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-xl font-black hover:bg-slate-200 transition">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // ============================
@@ -351,10 +432,84 @@
 
     function hojeISODate() { return new Date().toISOString().slice(0, 10); }
 
-    // ESTADO
+    function formatarMoeda(valor) {
+      return "R$ " + Number(valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+    }
+
+    function formatarDataBR(dataStr) {
+      if (!dataStr) return "Sem data";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) {
+        const [ano, mes, dia] = dataStr.split("-");
+        return `${dia}/${mes}/${ano}`;
+      }
+      const d = new Date(dataStr);
+      if (Number.isNaN(d.getTime())) return dataStr;
+      return d.toLocaleDateString("pt-BR");
+    }
+
+    function obterStatusRegistro(reg) {
+      if (reg.status_financeiro) return reg.status_financeiro;
+      if (reg.status) return reg.status;
+      if (reg.tipo === "PENDENTE") return "PENDENTE";
+      if (reg.tipo === "ENTRADA") return "PAGO";
+      if (reg.tipo === "SAIDA") return "PAGO";
+      return "";
+    }
+
+    function obterValorPagoRegistro(reg) {
+      if (typeof reg.valor_pago !== "undefined") return Number(reg.valor_pago || 0);
+      const status = obterStatusRegistro(reg);
+      const valor = Number(reg.valor || reg.valor_total || reg.valor_estimado || 0);
+      return status === "PAGO" ? valor : 0;
+    }
+
+    function obterValorAbertoRegistro(reg) {
+      if (typeof reg.saldo_pendente !== "undefined") return Number(reg.saldo_pendente || 0);
+      const status = obterStatusRegistro(reg);
+      const valor = Number(reg.valor || reg.valor_total || reg.valor_estimado || 0);
+      return status === "PENDENTE" || status === "PARCIAL" ? valor : 0;
+    }
+
+    function obterEquipeResponsavel() {
+      return ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças";
+    }
+
+    function obterNomeResponsavel() {
+      return (
+        document.getElementById("quitarTudoRecebidoPor")?.value?.trim() ||
+        document.getElementById("f_recebido")?.value?.trim() ||
+        "Responsável do EJC"
+      );
+    }
+
+    function montarMensagemWhatsApp({
+      nomePessoa = "",
+      nomeResponsavel = "",
+      equipeResponsavel = "",
+      motivo = "",
+      detalhes = [],
+      pedido = "",
+      fechamento = "Deus abençoe!"
+    }) {
+      const primeiroNome = (nomePessoa || "Tudo bem").trim().split(" ")[0];
+      const linhasDetalhes = detalhes.filter(Boolean).map(item => `• ${item}`).join("\n");
+
+      return (
+        `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\n` +
+        `Quem fala é *${nomeResponsavel}*, da *${equipeResponsavel}* do EJC da Paróquia Santo Eugênio de Mazenod (EJC do Parque).\n\n` +
+        `Estou entrando em contato ${motivo}.\n\n` +
+        (linhasDetalhes ? `Conforme nosso controle:\n${linhasDetalhes}\n\n` : "") +
+        `${pedido}\n\n` +
+        `Se precisar, posso te enviar o detalhamento completo por aqui.\n\n` +
+        `${fechamento}`
+      );
+    }
+
+    // ESTADO GLOBAL
     let ROLE = "";
-    let abaAtiva = "ADMIN";
+    let abaAtiva = "EJC";
     let dadosCache = [];
+    let extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
 
     // LOGIN / PERFIL
     function escolherPerfil(perfil) {
@@ -394,7 +549,7 @@
 
       try {
         if (email === "compras@ejcbank.com.br") {
-          msgErro.textContent = "Compras entra apenas pelo botão de Compras.";
+          msgErro.textContent = "ACESSO NEGADO: O perfil Compras não tem permissão nesta área.";
           msgErro.classList.remove("hidden");
           return;
         }
@@ -403,8 +558,6 @@
           email,
           password: senha
         });
-
-        console.log("LOGIN PILOTO", { data, error });
 
         if (error || !data?.user) {
           msgErro.textContent = error?.message || "Credenciais inválidas";
@@ -421,7 +574,6 @@
 
         configurarAbasPorPerfil();
       } catch (e) {
-        console.error("ERRO LOGIN PILOTO:", e);
         msgErro.textContent = e.message || "Erro de conexão";
         msgErro.classList.remove("hidden");
       } finally {
@@ -446,8 +598,6 @@
           password: senha
         });
 
-        console.log("LOGIN COMPRAS", { data, error });
-
         if (error || !data?.user) {
           msgErro.textContent = error?.message || "Credenciais inválidas";
           msgErro.classList.remove("hidden");
@@ -469,7 +619,6 @@
 
         configurarAbasPorPerfil();
       } catch (e) {
-        console.error("ERRO LOGIN COMPRAS:", e);
         msgErro.textContent = e.message || "Erro de conexão";
         msgErro.classList.remove("hidden");
       } finally {
@@ -481,7 +630,6 @@
     function configurarAbasPorPerfil() {
       const isCompras = (ROLE === "COMPRAS");
 
-      document.getElementById("tab-admin").classList.toggle("hidden", isCompras);
       document.getElementById("tab-ejc").classList.toggle("hidden", isCompras);
 
       document.getElementById("tab-mercadinho").classList.remove("hidden");
@@ -494,16 +642,16 @@
         document.getElementById("blocoModulo").classList.add("hidden");
         mudarAba("MERCADINHO");
       } else {
-        document.getElementById("headerTitle").textContent = "EJC BANK • ADMIN";
+        document.getElementById("headerTitle").textContent = "EJC BANK • PILOTOS";
         document.getElementById("blocoModulo").classList.remove("hidden");
-        mudarAba("ADMIN");
+        mudarAba("EJC");
       }
     }
 
-    function sair() {
+    async function sair() {
       ROLE = "";
-      abaAtiva = "ADMIN";
-      _supabase.auth.signOut();
+      abaAtiva = "EJC";
+      await _supabase.auth.signOut();
       document.getElementById("appMain").classList.add("hidden");
       document.getElementById("loginScreen").classList.remove("hidden");
     }
@@ -521,16 +669,17 @@
     }
     
     function obterNomeTabela(modulo) {
-      if (modulo === 'EJC')        return 'caixa_ejc';
-      if (modulo === 'FEIJOADA')   return 'feijoada';
+      if (modulo === 'EJC') return 'caixa_ejc';
       if (modulo === 'MERCADINHO') return 'mercadinho';
-      if (modulo === 'CAMISETAS')  return 'camisetas';
-      if (modulo === 'DOACAO')     return 'doacao';
+      if (modulo === 'FEIJOADA') return 'feijoada';
+      if (modulo === 'CAMISETAS') return 'camisetas';
+      if (modulo === 'DOACAO') return 'doacao';
       return 'caixa_ejc';
     }
 
     async function mudarAba(aba) {
       const modulosCompras = ["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"];
+
       if (ROLE === "COMPRAS" && !modulosCompras.includes(aba)) {
         showToast("Sem acesso a este módulo.", "error");
         return;
@@ -543,6 +692,7 @@
         btn.classList.remove("bg-white", "text-slate-900");
         btn.classList.add("bg-white/10", "text-white");
       });
+
       const tab = document.getElementById("tab-" + aba.toLowerCase());
       if (tab) {
         tab.classList.add("bg-white", "text-slate-900");
@@ -553,12 +703,14 @@
       document.getElementById("painelFeijoada").classList.add("hidden");
       document.getElementById("blocoAdminDoacao").classList.add("hidden");
 
-      if (aba === "ADMIN" || aba === "EJC") {
+      if (aba === "EJC") {
         document.getElementById("dashAdmin").classList.remove("hidden");
       }
+
       if (["FEIJOADA","MERCADINHO","CAMISETAS","DOACAO"].includes(aba)) {
         document.getElementById("painelFeijoada").classList.remove("hidden");
       }
+
       if (aba === "DOACAO" && ROLE === "ADMIN") {
         document.getElementById("blocoAdminDoacao").classList.remove("hidden");
       }
@@ -659,80 +811,89 @@
     async function salvarRegistro() {
       try {
         const modulo = document.getElementById('f_modulo').value;
-        const base   = montarPayloadBasico();
+        const base = montarPayloadBasico();
 
         let tabela;
         let payload = { ...base };
 
-        switch (modulo) {
-          case 'EJC':
-            tabela = 'caixa_ejc';
-            break;
-          case 'FEIJOADA': {
-            tabela = 'feijoada';
-            const tipoRegistro = document.getElementById('f_tipo_feijoada').value;
-            const equipe       = document.getElementById('f_equipe_merc')?.value || null;
-            const tipoPessoa   = document.getElementById('f_tipo_pessoa')?.value || null;
+        if (modulo === 'EJC') {
+          tabela = 'caixa_ejc';
+        }
 
-            payload = { ...base, tipo_registro: tipoRegistro, equipe, tipo_pessoa: tipoPessoa };
-            break;
-          }
-          case 'MERCADINHO': {
-            tabela = 'mercadinho';
-            const equipe     = document.getElementById('f_equipe_merc').value || null;
-            const tipoPessoa = document.getElementById('f_tipo_pessoa').value || null;
-            payload = { ...base, equipe, tipo_pessoa: tipoPessoa };
-            break;
-          }
-          case 'CAMISETAS': {
-            tabela = 'camisetas';
-            const tamanho = document.getElementById('f_tamanho').value;
-            payload = { ...base, tamanho };
-            break;
-          }
-          case 'DOACAO': {
-            tabela = 'doacao';
-            const item   = document.getElementById('m_item')?.value.trim()
-                        || document.getElementById('f_desc').value.trim();
-            const qtdStr = document.getElementById('m_qtd')?.value || null;
-            const un     = document.getElementById('m_un')?.value || null;
+        else if (modulo === 'MERCADINHO') {
+          tabela = 'mercadinho';
+          payload.equipe = document.getElementById('f_equipe_merc').value || null;
+          payload.tipo_pessoa = document.getElementById('f_tipo_pessoa').value || null;
+        }
 
-            const valorEstimado = base.valor;
-            const qtdNum        = qtdStr ? Number(qtdStr) : null;
+        else if (modulo === 'FEIJOADA') {
+          tabela = 'feijoada';
+          payload.tipo_registro = document.getElementById('f_tipo_feijoada').value;
+          payload.equipe = document.getElementById('f_equipe_merc').value || null;
+          payload.tipo_pessoa = document.getElementById('f_tipo_pessoa').value || null;
+        }
 
-            payload = {
-              tipo: base.tipo,
-              forma: 'FISICO',
-              item,
-              quantidade: qtdNum,
-              unidade: un,
-              valor_estimado: valorEstimado,
-              nome: base.nome,
-              telefone: base.telefone,
-              data_movimento: base.data_movimento,
-              data_previsao: base.data_previsao,
-              responsavel_lanc: base.responsavel_lanc
-            };
-            break;
-          }
-          default:
-            showToast('Módulo inválido', 'error');
-            return;
+        else if (modulo === 'CAMISETAS') {
+          tabela = 'camisetas';
+
+          const valorTotal = base.valor;
+          const valorPago = base.tipo === "ENTRADA" ? valorTotal : 0;
+
+          const saldo = Math.max(0, valorTotal - valorPago);
+
+          let statusFinanceiro = "PENDENTE";
+          if (valorPago > 0 && valorPago < valorTotal) statusFinanceiro = "PARCIAL";
+          if (valorPago >= valorTotal) statusFinanceiro = "PAGO";
+
+          payload = {
+            nome: base.nome,
+            telefone: base.telefone,
+            descricao: base.descricao,
+            tamanho: document.getElementById('f_tamanho').value,
+            quantidade: 1,
+            valor_total: valorTotal,
+            valor_pago: valorPago,
+            saldo_pendente: saldo,
+            status_financeiro: statusFinanceiro,
+            status_pedido: "SOLICITADA",
+            forma: base.forma,
+            data_movimento: base.data_movimento,
+            data_previsao: base.data_previsao,
+            responsavel_lanc: base.responsavel_lanc
+          };
+        }
+
+        else if (modulo === 'DOACAO') {
+          tabela = 'doacao';
+
+          payload = {
+            item: base.descricao,
+            quantidade: null,
+            unidade: null,
+            valor_estimado: base.valor,
+            nome: base.nome,
+            telefone: base.telefone,
+            data_movimento: base.data_movimento,
+            data_previsao: base.data_previsao,
+            responsavel_lanc: base.responsavel_lanc
+          };
         }
 
         const { error } = await _supabase.from(tabela).insert([payload]);
+
         if (error) {
           console.error(error);
-          showToast('Erro ao salvar registro', 'error');
+          showToast("Erro ao salvar", "error");
           return;
         }
 
-        showToast('Registro salvo com sucesso!');
+        showToast("Salvo com sucesso");
         fecharModal();
         carregarRegistros();
+
       } catch (err) {
         console.error(err);
-        showToast('Erro inesperado ao salvar', 'error');
+        showToast("Erro inesperado", "error");
       }
     }
 
@@ -859,35 +1020,375 @@
 
     function renderizar() {
       const corpo = document.getElementById("corpoTabela");
-      if (!corpo) return;
       corpo.innerHTML = "";
 
       const lista = aplicarFiltroEBusca();
 
-      lista.forEach(reg => {
+      lista.forEach((reg) => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50";
-        const valor = (reg.valor ?? reg.valor_estimado) || 0;
-        const desc  = reg.descricao || reg.item || "-";
+
+        const valor = reg.valor ?? reg.valor_total ?? reg.valor_estimado ?? 0;
+        const desc = reg.descricao || reg.item || "-";
+        const telefone = reg.telefone || "";
+        const nome = reg.nome || "";
+        const equipe = reg.equipe || "";
+
+        const statusExtra = reg.status_pedido
+          ? `<div class="text-[10px] text-purple-500 font-bold">${esc(reg.status_pedido)}</div>`
+          : "";
+
+        const btnExtrato = telefone
+          ? `<button
+                class="action-btn bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200 btn-extrato"
+                title="Extrato"
+                data-telefone="${esc(telefone)}"
+                data-nome="${esc(nome)}"
+                data-equipe="${esc(equipe)}">
+                <i class="fas fa-file-invoice"></i>
+             </button>`
+          : "";
 
         tr.innerHTML = `
           <td class="px-4 py-3">
             <div class="font-bold text-slate-800 text-sm">${esc(desc)}</div>
-            <div class="text-[11px] text-slate-500">${esc(reg.nome || '')}</div>
+            <div class="text-[11px] text-slate-500">${esc(nome)}</div>
+            ${statusExtra}
           </td>
+
           <td class="px-4 py-3 text-right whitespace-nowrap">
-            <div class="font-bold ${reg.tipo === 'SAIDA' ? 'text-rose-600' : 'text-emerald-600'}">
+            <div class="font-bold">
               R$ ${Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </div>
-            <div class="text-[11px] text-slate-400">
-              ${esc(reg.tipo || '')} • ${esc(reg.forma || '')}
+            <div class="text-[11px] text-slate-400 mb-2">
+              ${esc(reg.tipo || reg.status_financeiro || "")} • ${esc(reg.forma || "")}
             </div>
-          </td>`;
+            <div class="flex justify-end">${btnExtrato}</div>
+          </td>
+        `;
+
         corpo.appendChild(tr);
+      });
+
+      document.querySelectorAll(".btn-extrato").forEach(btn => {
+        btn.addEventListener("click", () => {
+          abrirExtrato(
+            btn.dataset.telefone || "",
+            btn.dataset.nome || "",
+            btn.dataset.equipe || ""
+          );
+        });
       });
     }
 
+    // FUNÇÕES DE EXTRATO
+    async function abrirExtrato(telefone, nome = "", equipe = "") {
+      const num = normalizarTelefone(telefone);
+      if (!num) return showToast("Telefone inválido.", "error");
+
+      const tabela = obterNomeTabela(obterModuloAtual());
+
+      const { data, error } = await _supabase
+        .from(tabela)
+        .select("*")
+        .eq("telefone", num)
+        .order("data_movimento", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        return showToast("Erro ao carregar extrato.", "error");
+      }
+
+      if (!data || !data.length) {
+        return showToast("Nenhum registro encontrado para este telefone.", "error");
+      }
+
+      extratoAtual = {
+        nome: nome || data[0].nome || "Sem nome",
+        equipe: equipe || data[0].equipe || "",
+        telefone: num,
+        tabela,
+        registros: data,
+        registrosFiltrados: [...data]
+      };
+
+      document.getElementById("extratoNome").textContent = extratoAtual.nome;
+      document.getElementById("extratoEquipe").textContent = extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}` : "";
+      document.getElementById("filtroExtrato").value = "";
+
+      renderizarExtrato();
+
+      const modal = document.getElementById("modalExtrato");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function renderizarExtrato() {
+      const filtro = (document.getElementById("filtroExtrato")?.value || "").toLowerCase().trim();
+
+      let registros = [...extratoAtual.registros];
+
+      if (filtro) {
+        registros = registros.filter(r => {
+          const texto = [
+            r.descricao,
+            r.item,
+            r.nome,
+            r.tipo,
+            r.forma,
+            r.status,
+            r.status_financeiro,
+            r.status_pedido
+          ].join(" ").toLowerCase();
+          return texto.includes(filtro);
+        });
+      }
+
+      extratoAtual.registrosFiltrados = registros;
+
+      const totalPago = registros.reduce((acc, r) => acc + obterValorPagoRegistro(r), 0);
+      const totalAberto = registros.reduce((acc, r) => acc + obterValorAbertoRegistro(r), 0);
+
+      document.getElementById("extratoQtdLanc").textContent = registros.length;
+      document.getElementById("extratoTotalPago").textContent = formatarMoeda(totalPago);
+      document.getElementById("extratoTotalAberto").textContent = formatarMoeda(totalAberto);
+
+      const lista = document.getElementById("extratoLista");
+
+      if (!registros.length) {
+        lista.innerHTML = `<p class="text-sm text-slate-400 text-center py-6">Nenhum lançamento encontrado nesse filtro.</p>`;
+        return;
+      }
+
+      const grupos = {};
+      registros.forEach(r => {
+        const data = formatarDataBR(r.data_movimento || r.created_at || new Date());
+        if (!grupos[data]) grupos[data] = [];
+        grupos[data].push(r);
+      });
+
+      lista.innerHTML = Object.keys(grupos).map(dataKey => `
+        <div>
+          <div class="sticky top-0 bg-white py-2 z-[1]">
+            <p class="text-[11px] font-black uppercase tracking-wider text-slate-400">${dataKey}</p>
+          </div>
+          <div class="space-y-2">
+            ${grupos[dataKey].map(r => {
+              const valor = Number(r.valor || r.valor_total || r.valor_estimado || 0);
+              const status = obterStatusRegistro(r);
+              const desc = r.descricao || r.item || "-";
+              const statusClasse =
+                status === "PENDENTE" ? "text-rose-600" :
+                status === "PARCIAL" ? "text-amber-600" :
+                status === "PAGO" ? "text-emerald-600" : "text-slate-500";
+
+              const bolinha =
+                status === "PENDENTE" ? "bg-rose-500" :
+                status === "PARCIAL" ? "bg-amber-500" :
+                status === "PAGO" ? "bg-emerald-500" : "bg-slate-300";
+
+              return `
+                <div class="extrato-item">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full ${bolinha} inline-block"></span>
+                        <p class="text-sm font-extrabold text-slate-800 truncate">${esc(desc)}</p>
+                      </div>
+                      <p class="text-[11px] text-slate-500 mt-1">
+                        ${esc(r.status_pedido || r.tipo || "")}
+                        ${r.tamanho ? ` • Tam: ${esc(r.tamanho)}` : ""}
+                        ${r.quantidade ? ` • Qtd: ${esc(r.quantidade)}` : ""}
+                      </p>
+                      <p class="text-[11px] ${statusClasse} font-bold mt-1">${esc(status)}</p>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-sm font-extrabold ${statusClasse}">${formatarMoeda(valor)}</p>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function fecharExtrato() {
+      const modal = document.getElementById("modalExtrato");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
+      document.getElementById("filtroExtrato").value = "";
+    }
+
+    async function copiarExtrato() {
+      const registros = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
+      if (!registros.length) return showToast("Extrato vazio.", "error");
+
+      const linhas = registros.map(r => {
+        const data = formatarDataBR(r.data_movimento || r.created_at);
+        const desc = r.descricao || r.item || "-";
+        const valor = formatarMoeda(r.valor || r.valor_total || r.valor_estimado || 0);
+        const status = obterStatusRegistro(r);
+        return `• ${data} — ${desc} — ${valor} — ${status}`;
+      });
+
+      const totalAberto = registros.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+
+      const texto =
+        `Extrato de ${extratoAtual.nome}\n` +
+        `${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}\n` +
+        `${linhas.join("\n")}\n\n` +
+        `Total em aberto: ${formatarMoeda(totalAberto)}`;
+
+      try {
+        await navigator.clipboard.writeText(texto);
+        showToast("Extrato copiado!");
+      } catch {
+        showToast("Não foi possível copiar.", "error");
+      }
+    }
+
+    function cobrarExtratoWhatsApp() {
+      const num = normalizarTelefone(extratoAtual.telefone);
+      if (!num) return showToast("Telefone inválido.", "error");
+
+      const registros = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
+      const totalAberto = registros.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+
+      if (totalAberto <= 0) return showToast("Não há pendência neste extrato.", "success");
+
+      const nomeResponsavel = obterNomeResponsavel();
+      const equipeResponsavel = obterEquipeResponsavel();
+      const moduloAtual = obterModuloAtual();
+
+      let motivo = "para confirmar alguns lançamentos em aberto";
+      let pedido = "Você consegue nos dar um retorno sobre isso, por favor?";
+      const detalhes = [];
+
+      if (moduloAtual === "MERCADINHO") {
+        motivo = "para confirmar um valor pendente no mercadinho";
+        detalhes.push(`Valor pendente: ${formatarMoeda(totalAberto)}`);
+        pedido = "Por gentileza, você consegue nos confirmar esse pagamento?";
+      } else if (moduloAtual === "FEIJOADA") {
+        motivo = "por causa da Feijoada solidária";
+        detalhes.push(`Valor pendente: ${formatarMoeda(totalAberto)}`);
+        pedido = "Você consegue nos confirmar esse pagamento, por favor?";
+      } else if (moduloAtual === "CAMISETAS") {
+        motivo = "sobre sua encomenda de camiseta";
+        detalhes.push(`Valor pendente: ${formatarMoeda(totalAberto)}`);
+        pedido = "Você consegue nos confirmar o pagamento ou a retirada?";
+      } else if (moduloAtual === "DOACAO") {
+        motivo = "para confirmar itens da Providência";
+        detalhes.push(`Registros em aberto: ${registros.length}`);
+        pedido = "Você consegue nos confirmar se a entrega permanece prevista?";
+      } else {
+        motivo = "para confirmar alguns lançamentos financeiros";
+        detalhes.push(`Valor em aberto: ${formatarMoeda(totalAberto)}`);
+        pedido = "Você consegue nos dar um retorno sobre isso, por favor?";
+      }
+
+      const msg = montarMensagemWhatsApp({
+        nomePessoa: extratoAtual.nome,
+        nomeResponsavel,
+        equipeResponsavel,
+        motivo,
+        detalhes,
+        pedido
+      });
+
+      window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    // QUITAR TUDO
+    function abrirModalQuitarTudo() {
+      const pendentes = extratoAtual.registros.filter(r => {
+        const status = obterStatusRegistro(r);
+        return status === "PENDENTE" || status === "PARCIAL";
+      });
+
+      if (!pendentes.length) return showToast("Não há lançamentos em aberto para quitar.", "success");
+
+      document.getElementById("quitarTudoRecebidoPor").value = "";
+      document.getElementById("quitarTudoData").value = hojeISODate();
+
+      const modal = document.getElementById("modalQuitarTudo");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function fecharModalQuitarTudo() {
+      const modal = document.getElementById("modalQuitarTudo");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    async function confirmarQuitarTudo() {
+      const recebidoPor = document.getElementById("quitarTudoRecebidoPor").value.trim();
+      const dataRecebimento = document.getElementById("quitarTudoData").value;
+
+      if (!recebidoPor) return showToast("Informe quem recebeu.", "error");
+      if (!dataRecebimento) return showToast("Informe a data.", "error");
+
+      const pendentes = extratoAtual.registros.filter(r => {
+        const status = obterStatusRegistro(r);
+        return status === "PENDENTE" || status === "PARCIAL";
+      });
+
+      if (!pendentes.length) return showToast("Não há lançamentos em aberto.", "success");
+
+      let erros = 0;
+
+      for (const r of pendentes) {
+        let payload = {};
+
+        if (extratoAtual.tabela === "camisetas") {
+          const valorTotal = Number(r.valor_total || 0);
+          payload = {
+            valor_pago: valorTotal,
+            saldo_pendente: 0,
+            status_financeiro: "PAGO",
+            responsavel_lanc: recebidoPor
+          };
+        } else if (extratoAtual.tabela === "doacao") {
+          payload = {
+            status: "PAGO",
+            data_entrega: dataRecebimento,
+            responsavel_lanc: recebidoPor
+          };
+        } else {
+          payload = {
+            status: "PAGO",
+            responsavel_lanc: recebidoPor
+          };
+        }
+
+        const { error } = await _supabase
+          .from(extratoAtual.tabela)
+          .update(payload)
+          .eq("id", r.id);
+
+        if (error) {
+          console.error(error);
+          erros++;
+        }
+      }
+
+      if (erros > 0) {
+        showToast(`Concluído com ressalvas. ${erros} falharam.`, "error");
+      } else {
+        showToast("Todos os lançamentos foram quitados!");
+      }
+
+      fecharModalQuitarTudo();
+      await abrirExtrato(extratoAtual.telefone, extratoAtual.nome, extratoAtual.equipe);
+      carregarRegistros();
+    }
+
     document.getElementById("campoBusca").addEventListener("keyup", renderizar);
+
   </script>
 </body>
 </html>
+
