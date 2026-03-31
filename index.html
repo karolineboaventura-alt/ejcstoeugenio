@@ -105,8 +105,8 @@
       <div id="painelFeijoada" class="hidden bg-white rounded-[32px] p-6 shadow-sm border border-slate-100">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <div>
-            <p id="tituloPainelModulo" class="text-[10px] font-black uppercase text-slate-400">Painel</p>
-            <h3 class="text-xl font-black text-slate-800">Controle Operacional</h3>
+            <p id="tituloPainelModulo" class="text-[10px] font-black uppercase text-slate-400">Painel Operacional</p>
+            <h3 class="text-xl font-black text-slate-800">Controle de Módulo</h3>
           </div>
           <div id="botoesPainelWrap" class="flex items-center gap-2">
             <div id="pillVoucher" class="pill bg-purple-50 text-purple-700 border border-purple-100 hidden">Voucher: R$ 55,00</div>
@@ -116,7 +116,7 @@
         </div>
 
         <div id="gridMetricasFeijoada" class="grid grid-cols-2 sm:grid-cols-6 gap-3">
-          <div class="soft-stat bg-purple-50 border-purple-100"><p class="text-[10px] font-black uppercase text-purple-400">Total/Vend</p><p id="fjVendidos" class="text-xl font-extrabold text-slate-800">0</p></div>
+          <div class="soft-stat bg-purple-50 border-purple-100"><p class="text-[10px] font-black uppercase">Total/Vend</p><p id="fjVendidos" class="text-xl font-extrabold text-slate-800">0</p></div>
           <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Pagos</p><p id="fjPagos" class="text-xl font-extrabold text-slate-800">0</p></div>
           <div class="soft-stat bg-amber-50 border-amber-100"><p class="text-[10px] font-black uppercase text-amber-500">Pendentes</p><p id="fjPendentes" class="text-xl font-extrabold text-slate-800">0</p></div>
           <div class="soft-stat bg-slate-50 border-slate-200"><p class="text-[10px] font-black uppercase text-slate-500">Logística</p><p id="fjRestantes" class="text-xl font-extrabold text-slate-800">0</p></div>
@@ -181,7 +181,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <div id="blocoAdminDoacao" class="hidden">
@@ -189,6 +188,24 @@
           <i class="fas fa-bullseye"></i> REGISTRAR NECESSIDADE
         </button>
         <div id="listaGerenciarMetas" class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4"></div>
+      </div>
+
+      <div id="blocoMuralDoacao" class="hidden">
+        <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-[10px] font-black uppercase text-slate-400">Mural de Carinho</p>
+              <h3 class="text-lg font-black text-slate-800">Mensagens pendentes</h3>
+            </div>
+            <div id="contadorMensagensPendentes" class="pill bg-amber-50 text-amber-700 border border-amber-100">
+              0 pendentes
+            </div>
+          </div>
+
+          <div id="listaMensagensPendentes" class="space-y-3">
+            <p class="text-sm text-slate-400 text-center py-4">Nenhuma mensagem pendente.</p>
+          </div>
+        </div>
       </div>
 
       <div class="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm mb-20">
@@ -258,7 +275,8 @@
         <div id="blocoTamanhoCamiseta" class="hidden bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-blue-500 uppercase block mb-1">Tamanho Camiseta</label>
           <select id="f_tamanho" class="w-full bg-transparent font-bold outline-none">
-            <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="EXG">EXG</option>
+            <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG (Plus Size + R$ 10,00)</option><option value="EXG">EXG (Plus Size + R$ 10,00)</option>
+            <option value="G1">G1 (Plus Size + R$ 10,00)</option><option value="G2">G2 (Plus Size + R$ 10,00)</option><option value="G3">G3 (Plus Size + R$ 10,00)</option>
           </select>
         </div>
         
@@ -332,7 +350,7 @@
 
         <div class="grid grid-cols-2 gap-4">
           <div class="vault-input rounded-2xl px-4 py-3">
-            <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Status</label>
+            <label id="labelStatusType" class="text-[9px] font-black text-slate-400 uppercase block mb-1">Status Pagamento</label>
             <select id="f_type" class="w-full bg-transparent font-bold outline-none">
               <option value="ENTRADA">Pago ✅</option>
               <option value="PENDENTE">Pendente 🟠</option>
@@ -342,7 +360,10 @@
           <div class="vault-input rounded-2xl px-4 py-3">
             <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Forma</label>
             <select id="f_forma" class="w-full bg-transparent font-bold outline-none">
-              <option value="PIX">PIX</option><option value="DINHEIRO">Dinheiro</option><option value="FISICO">Físico</option>
+              <option value="PIX">PIX</option>
+              <option value="DINHEIRO">Dinheiro</option>
+              <option value="CARTAO_DEBITO">Cartão de débito</option>
+              <option value="CARTAO_CREDITO">Cartão de crédito</option>
             </select>
           </div>
         </div>
@@ -373,14 +394,14 @@
   <div id="modalExtrato" class="hidden fixed inset-0 z-[125] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white w-full max-w-2xl rounded-[32px] p-6 shadow-2xl max-h-[92vh] flex flex-col">
       <div class="flex justify-between items-center mb-4">
-        <div><h3 class="text-lg font-black text-slate-800">Extrato 360º</h3><p class="text-[11px] text-slate-400">Cruzamento de todos os módulos</p></div>
-        <button onclick="fecharExtrato()" class="text-slate-400 hover:text-slate-700"><i class="fas fa-times"></i></button>
+        <div><h3 class="text-lg font-black text-slate-800">Extrato 360º</h3><p class="text-[11px] text-slate-400">Cruzamento de módulos</p></div>
+        <button onclick="fecharExtrato()" class="text-slate-400"><i class="fas fa-times"></i></button>
       </div>
       <div class="nubank-card p-4 mb-4">
         <p id="extratoNome" class="text-sm font-black text-slate-800"></p>
         <p id="extratoEquipe" class="text-[11px] text-slate-500 mt-1"></p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-center">
-          <div class="soft-stat"><p class="text-[10px] font-black uppercase text-purple-400">Lançamentos</p><p id="extratoQtdLanc" class="text-xl font-extrabold">0</p></div>
+          <div class="soft-stat"><p class="text-[10px] font-black uppercase">Lançamentos</p><p id="extratoQtdLanc" class="text-xl font-extrabold">0</p></div>
           <div class="soft-stat"><p class="text-[10px] font-black uppercase text-emerald-500">Total Pago</p><p id="extratoTotalPago" class="text-xl font-extrabold text-emerald-700">R$ 0,00</p></div>
           <div class="soft-stat"><p class="text-[10px] font-black uppercase text-rose-500">Em Aberto</p><p id="extratoTotalAberto" class="text-xl font-extrabold text-rose-600">R$ 0,00</p></div>
         </div>
@@ -423,15 +444,15 @@
   </div>
 
   <div id="modalMeta" class="hidden fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
-      <h2 class="text-xl font-black text-slate-800 mb-6 text-center">Nova Necessidade</h2>
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl text-center">
+      <h2 class="text-xl font-black text-slate-800 mb-6">Nova Necessidade</h2>
       <form id="formMeta" class="space-y-4">
         <input id="m_item" placeholder="Ex: Arroz ou Óleo" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
         <div class="flex gap-2">
           <input id="m_qtd" type="number" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
           <input id="m_un" placeholder="Unid (kg, un)" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
         </div>
-        <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black shadow-lg active:scale-95 transition">REGISTRAR META</button>
+        <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black shadow-lg">REGISTRAR META</button>
         <button type="button" onclick="document.getElementById('modalMeta').classList.add('hidden')" class="w-full py-2 font-bold text-slate-400 mt-2">Cancelar</button>
       </form>
     </div>
@@ -467,6 +488,11 @@
     function parseMoedaBR(v) { if (!v) return 0; const l = String(v).replace(/\s/g, '').replace(/\./g, '').replace(',', '.'); return Number.isFinite(Number(l)) ? Number(l) : 0; }
     function normalizarTelefone(t) { let n = String(t || '').replace(/\D/g, ''); if (!n) return null; if (n.startsWith('0')) n = n.slice(1); if (!n.startsWith('55')) n = '55' + n; return n; }
     
+    function calcularValorCamisetaComPlusSize(valorBase, tamanho) {
+      const plusSizes = ["GG", "EXG", "G1", "G2", "G3"];
+      return plusSizes.includes(String(tamanho || "").toUpperCase()) ? Number(valorBase || 0) + 10 : Number(valorBase || 0);
+    }
+
     function showToast(m, t = "success") {
       const c = document.getElementById("toast-container");
       if (!c) return;
@@ -477,17 +503,19 @@
       setTimeout(() => d.remove(), 4000);
     }
 
+    function obterNomeTabela(modulo) {
+      return { EJC: "caixa_ejc", MERCADINHO: "mercadinho", FEIJOADA: "feijoada", CAMISETAS: "camisetas", DOACAO: "doacao" }[modulo] || "caixa_ejc";
+    }
+
     function obterStatusRegistro(r) {
       if (r.status_pedido === "CANCELADO") return "CANCELADO";
       if (r.status_financeiro === "CANCELADO") return "CANCELADO";
       if (r.status_financeiro) return r.status_financeiro;
-      
       if (r.status) {
         if (r.status === "PROMETIDO") return "PENDENTE";
         if (r.status === "ENTREGUE") return "PAGO";
         return r.status;
       }
-      
       if (r.tipo === "PENDENTE") return "PENDENTE";
       if (r.tipo === "ENTRADA") return "PAGO";
       if (r.tipo === "SAIDA") return "PAGO";
@@ -496,13 +524,13 @@
 
     function obterStatusVisual(r) {
       if (abaAtiva === "DOACAO" || r._modulo === "doacao") {
-        if (r.status === "PROMETIDO") return "PROMETIDO";
-        if (r.status === "ENTREGUE") return "ENTREGUE";
+        if (r.status === "PROMETIDO" || r.status === "PENDENTE") return "PROMETIDO";
+        if (r.status === "ENTREGUE" || r.status === "PAGO") return "ENTREGUE";
         if (r.status === "CANCELADO") return "CANCELADO";
       }
       return obterStatusRegistro(r);
     }
-    
+
     function obterValorPagoRegistro(r) {
       if (r._modulo === "doacao" || abaAtiva === "DOACAO") return 0;
       if (typeof r.valor_pago !== "undefined") return Number(r.valor_pago || 0);
@@ -578,36 +606,27 @@
     function escolherPerfil(p) {
       document.getElementById("stepProfile").classList.add("hidden");
       document.getElementById("stepAuth").classList.remove("hidden");
-      document.getElementById("msgErroLogin").classList.add("hidden");
-      if (p === 'compras') {
-        document.getElementById("formCompras").classList.remove("hidden");
-        document.getElementById("formPilotos").classList.add("hidden");
-      } else {
-        document.getElementById("formCompras").classList.add("hidden");
-        document.getElementById("formPilotos").classList.remove("hidden");
-      }
+      if (p === 'compras') { document.getElementById("formCompras").classList.remove("hidden"); document.getElementById("formPilotos").classList.add("hidden"); }
+      else { document.getElementById("formCompras").classList.add("hidden"); document.getElementById("formPilotos").classList.remove("hidden"); }
     }
-    function voltarParaSelecao() {
-      document.getElementById("stepAuth").classList.add("hidden");
-      document.getElementById("stepProfile").classList.remove("hidden");
-    }
+    function voltarParaSelecao() { document.getElementById("stepAuth").classList.add("hidden"); document.getElementById("stepProfile").classList.remove("hidden"); }
 
     async function loginPiloto() {
       const email = document.getElementById("emailPiloto").value.trim().toLowerCase();
       const senha = document.getElementById("senhaPiloto").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
       const btn = document.getElementById("btnPiloto");
-      if (!btn) { console.error("Botão btnPiloto não encontrado"); return; }
+      if (!btn) return;
       
       const original = btn.innerHTML;
       msgErro.classList.add("hidden"); btn.disabled = true; btn.innerHTML = "Entrando...";
 
       try {
-        if (email === "compras@ejcbank.com.br") { msgErro.textContent = "Compras entra pelo botão de Compras."; msgErro.classList.remove("hidden"); return; }
+        if (email === "compras@ejcbank.com.br") { msgErro.textContent = "Use o botão de Compras."; msgErro.classList.remove("hidden"); return; }
         const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
-        if (error || !data?.user) { msgErro.textContent = error?.message || "Credenciais inválidas"; msgErro.classList.remove("hidden"); return; }
+        if (error || !data?.user) { msgErro.textContent = "Credenciais inválidas."; msgErro.classList.remove("hidden"); return; }
         ROLE = "PILOTOS"; finalizarLogin();
-      } catch (e) { msgErro.textContent = e.message || "Erro"; msgErro.classList.remove("hidden"); } 
+      } catch (e) { msgErro.textContent = "Erro de conexão"; msgErro.classList.remove("hidden"); } 
       finally { btn.disabled = false; btn.innerHTML = original; }
     }
 
@@ -615,25 +634,23 @@
       const senha = document.getElementById("senhaCompras").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
       const btn = document.getElementById("btnCompras");
-      if (!btn) { console.error("Botão btnCompras não encontrado"); return; }
+      if (!btn) return;
       
       const original = btn.innerHTML;
       msgErro.classList.add("hidden"); btn.disabled = true; btn.innerHTML = "Entrando...";
 
       try {
         const { data, error } = await _supabase.auth.signInWithPassword({ email: "compras@ejcbank.com.br", password: senha });
-        if (error || !data?.user) { msgErro.textContent = error?.message || "Credenciais inválidas"; msgErro.classList.remove("hidden"); return; }
-        if ((data.user.email || "").toLowerCase() !== "compras@ejcbank.com.br") { await _supabase.auth.signOut(); msgErro.textContent = "Acesso restrito."; msgErro.classList.remove("hidden"); return; }
+        if (error || !data?.user) { msgErro.textContent = "Senha incorreta."; msgErro.classList.remove("hidden"); return; }
         ROLE = "COMPRAS"; finalizarLogin();
-      } catch (e) { msgErro.textContent = e.message || "Erro"; msgErro.classList.remove("hidden"); } 
+      } catch (e) { msgErro.textContent = "Erro"; msgErro.classList.remove("hidden"); } 
       finally { btn.disabled = false; btn.innerHTML = original; }
     }
 
     function finalizarLogin() {
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appMain").classList.remove("hidden");
-      document.getElementById("headerTitle").textContent = ROLE === "COMPRAS" ? "EJC BANK • COMPRAS" : "EJC BANK • PILOTOS";
-      document.getElementById("userAvatar").textContent = ROLE === "COMPRAS" ? "C" : "P";
+      document.getElementById("headerTitle").textContent = "EJC BANK • " + ROLE;
       configurarAbasPorPerfil();
     }
 
@@ -645,46 +662,80 @@
       mudarAba(isC ? "MERCADINHO" : "EJC");
     }
 
-    async function sair() { ROLE = ""; abaAtiva = "EJC"; await _supabase.auth.signOut(); location.reload(); }
+    async function sair() { await _supabase.auth.signOut(); location.reload(); }
 
-    // ============================
-    // CONTROLE DE EQUIPE
-    // ============================
     function controlarEquipePorTipoPessoa() {
       const tipoPessoa = document.getElementById("f_tipo_pessoa");
       const equipe = document.getElementById("f_equipe_merc");
       const modulo = document.getElementById("f_modulo")?.value;
-
       if (!tipoPessoa || !equipe) return;
-
-      const usaEquipe = ["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"].includes(modulo);
-      if (!usaEquipe) {
-        equipe.disabled = true;
-        equipe.value = "";
-        return;
-      }
-
-      if (tipoPessoa.value === "PAROQUIANO") {
-        equipe.value = "Externo";
-        equipe.disabled = true;
-        equipe.classList.add("opacity-60");
-      } else {
-        if (equipe.value === "Externo") equipe.value = "";
-        equipe.disabled = false;
-        equipe.classList.remove("opacity-60");
-      }
+      if (!["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"].includes(modulo)) { equipe.disabled = true; equipe.value = ""; return; }
+      if (tipoPessoa.value === "PAROQUIANO") { equipe.value = "Externo"; equipe.disabled = true; equipe.classList.add("opacity-60"); } 
+      else { if (equipe.value === "Externo") equipe.value = ""; equipe.disabled = false; equipe.classList.remove("opacity-60"); }
     }
 
-    // ============================
-    // ABAS E NAVEGAÇÃO
-    // ============================
+    // NAVEGAÇÃO E MODAL
+    function atualizarModalDinamico() {
+      const m = document.getElementById("f_modulo").value;
+
+      document.getElementById("blocoTipoFeijoada").classList.toggle("hidden", m !== "FEIJOADA");
+      document.getElementById("blocoTamanhoCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
+      document.getElementById("blocoStatusCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
+      document.getElementById("blocoQtdUnDoacao").classList.toggle("hidden", m !== "DOACAO");
+      document.getElementById("camposMercado").classList.toggle("hidden", !["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"].includes(m));
+
+      const wrapData = document.getElementById("campoDataEntregaWrap");
+      wrapData.classList.toggle("hidden", !["FEIJOADA", "CAMISETAS", "DOACAO"].includes(m));
+
+      const labelData = document.querySelector("#campoDataEntregaWrap label");
+      if (labelData) {
+        if (m === "CAMISETAS") labelData.textContent = "Previsão de entrega";
+        else if (m === "DOACAO") labelData.textContent = "Data de entrega / previsão";
+        else if (m === "FEIJOADA") labelData.textContent = "Data de referência";
+        else labelData.textContent = "Data";
+      }
+
+      const labelStatus = document.getElementById("labelStatusType");
+      if (labelStatus) {
+        labelStatus.textContent = m === "DOACAO" ? "Status da doação" : "Status Pagamento";
+      }
+
+      controlarEquipePorTipoPessoa();
+    }
+
+    function abrirModal() {
+      document.getElementById("formFin").reset();
+      registroEmEdicao = null;
+      document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
+
+      document.getElementById("f_modulo").value = abaAtiva;
+
+      if (ROLE === "COMPRAS") {
+        document.getElementById("blocoModulo").classList.add("hidden");
+      } else {
+        document.getElementById("blocoModulo").classList.remove("hidden");
+      }
+
+      document.getElementById("f_recebido").value = ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças";
+
+      if (document.getElementById("f_qtd_doacao")) document.getElementById("f_qtd_doacao").value = 1;
+      if (document.getElementById("f_un_doacao")) document.getElementById("f_un_doacao").value = "un";
+
+      atualizarModalDinamico();
+      document.getElementById("modal").classList.remove("hidden");
+    }
+
+    function fecharModal() {
+      document.getElementById("modal").classList.add("hidden");
+      document.getElementById("formFin").reset();
+      registroEmEdicao = null;
+      document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
+    }
+
     function obterModuloAtual() { return abaAtiva; }
-    function obterNomeTabela(m) { return { EJC: 'caixa_ejc', MERCADINHO: 'mercadinho', FEIJOADA: 'feijoada', CAMISETAS: 'camisetas', DOACAO: 'doacao' }[m] || 'caixa_ejc'; }
 
     async function mudarAba(aba) {
-      const modulosCompras = ["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"];
-      if (ROLE === "COMPRAS" && !modulosCompras.includes(aba)) { return showToast("Sem acesso.", "error"); }
-      
+      if (ROLE === "COMPRAS" && aba === "EJC") return;
       abaAtiva = aba; dadosCache = [];
       
       document.querySelectorAll(".tab-btn").forEach(b => { b.classList.add("bg-white/10", "text-white"); b.classList.remove("bg-white", "text-slate-900"); });
@@ -698,12 +749,15 @@
       if (aba === "DOACAO") {
         document.getElementById("blocoAdminDoacao").classList.remove("hidden");
         document.getElementById("btnNovaMeta").classList.toggle("hidden", ROLE !== "PILOTOS");
+        document.getElementById("blocoMuralDoacao").classList.toggle("hidden", ROLE !== "PILOTOS");
+        if (ROLE === "PILOTOS") { carregarMensagensPendentesMural(); }
       } else {
         document.getElementById("blocoAdminDoacao").classList.add("hidden");
+        document.getElementById("blocoMuralDoacao").classList.add("hidden");
       }
 
       atualizarPainelFeijoada();
-      carregarRegistros();
+      await carregarRegistros();
     }
 
     function atualizarPainelFeijoada() {
@@ -735,8 +789,8 @@
       else if (abaAtiva === "CAMISETAS") document.getElementById("tituloPainelModulo").textContent = "Produção e Entrega de Camisetas";
       else if (abaAtiva === "DOACAO") document.getElementById("tituloPainelModulo").textContent = "Lista de Providência";
 
+      const labels = document.querySelectorAll("#gridMetricasFeijoada .soft-stat p:first-child");
       if (abaAtiva === "DOACAO") {
-        const labels = document.querySelectorAll("#gridMetricasFeijoada .soft-stat p:first-child");
         if (labels[0]) labels[0].textContent = "Total";
         if (labels[1]) labels[1].textContent = "Entregues";
         if (labels[2]) labels[2].textContent = "Prometidos";
@@ -744,7 +798,6 @@
         if (labels[4]) labels[4].textContent = "Meta R$";
         if (labels[5]) labels[5].textContent = "Controle";
       } else {
-        const labels = document.querySelectorAll("#gridMetricasFeijoada .soft-stat p:first-child");
         if (labels[0]) labels[0].textContent = "Total/Vend";
         if (labels[1]) labels[1].textContent = "Pagos";
         if (labels[2]) labels[2].textContent = "Pendentes";
@@ -814,23 +867,12 @@
       if (abaAtiva === "FEIJOADA") {
         const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
         const vouchers = ativos.filter(r => r.tipo_registro === "VOUCHER");
-
-        const vendidos = vouchers.reduce((a, r) => a + Number(r.quantidade || 1), 0);
-        const pagos = vouchers.filter(r => obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + Number(r.quantidade || 1), 0);
-        const pendentes = vouchers.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; }).reduce((a, r) => a + Number(r.quantidade || 1), 0);
-
-        const custosMercado = ativos.filter(r => r.tipo_registro === "COMPRA_MERCADO").reduce((a, r) => a + Number(r.valor || 0), 0);
-        const outrasSaidas = ativos.filter(r => r.tipo_registro === "OUTRA_SAIDA").reduce((a, r) => a + Number(r.valor || 0), 0);
-        const outrasEntradas = ativos.filter(r => r.tipo_registro === "OUTRA_ENTRADA" && obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + Number(r.valor || 0), 0);
-        const receitaVouchers = vouchers.filter(r => obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + Number(r.valor || 0), 0);
-
-        const custos = custosMercado + outrasSaidas;
-        const receita = receitaVouchers + outrasEntradas;
-
-        document.getElementById("fjVendidos").textContent = vendidos;
-        document.getElementById("fjPagos").textContent = pagos;
-        document.getElementById("fjPendentes").textContent = pendentes;
-        document.getElementById("fjRestantes").textContent = Math.max(0, vendidos - pagos - pendentes);
+        const pagos = vouchers.filter(r => obterStatusRegistro(r) === "PAGO");
+        const custos = ativos.filter(r => r.tipo_registro === "COMPRA_MERCADO" || r.tipo_registro === "OUTRA_SAIDA").reduce((a, r) => a + Number(r.valor || 0), 0);
+        const receita = pagos.reduce((a, r) => a + Number(r.valor || 0), 0);
+        document.getElementById("fjVendidos").textContent = vouchers.length;
+        document.getElementById("fjPagos").textContent = pagos.length;
+        document.getElementById("fjPendentes").textContent = vouchers.length - pagos.length;
         document.getElementById("fjMercado").textContent = formatarMoeda(custos);
         document.getElementById("fjLucro").textContent = formatarMoeda(receita - custos);
       }
@@ -850,89 +892,21 @@
       }
       if (abaAtiva === "CAMISETAS") {
         const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
-        const solicitadas = ativos.filter(r => r.status_pedido === "SOLICITADA").length;
-        const emProducao = ativos.filter(r => r.status_pedido === "EM_PRODUCAO").length;
-        const prontas = ativos.filter(r => r.status_pedido === "PRONTA").length;
-        const entregues = ativos.filter(r => r.status_pedido === "ENTREGUE").length;
-        const pagas = ativos.filter(r => r.status_financeiro === "PAGO").length;
-        const recebido = ativos.reduce((a, r) => a + Number(r.valor_pago || 0), 0);
-
-        const elSolic = document.getElementById("camSolicitadas"); if(elSolic) elSolic.textContent = solicitadas;
-        const elProd = document.getElementById("camEmProducao"); if(elProd) elProd.textContent = emProducao;
-        const elPron = document.getElementById("camProntas"); if(elPron) elPron.textContent = prontas;
-        const elEnt = document.getElementById("camEntregues"); if(elEnt) elEnt.textContent = entregues;
-        const elPagas = document.getElementById("camPagas"); if(elPagas) elPagas.textContent = pagas;
-        const elRec = document.getElementById("camRecebido"); if(elRec) elRec.textContent = formatarMoeda(recebido);
+        document.getElementById("camSolicitadas").textContent = ativos.filter(r => r.status_pedido === "SOLICITADA").length;
+        document.getElementById("camEmProducao").textContent = ativos.filter(r => r.status_pedido === "EM_PRODUCAO").length;
+        document.getElementById("camProntas").textContent = ativos.filter(r => r.status_pedido === "PRONTA").length;
+        document.getElementById("camEntregues").textContent = ativos.filter(r => r.status_pedido === "ENTREGUE").length;
+        document.getElementById("camPagas").textContent = ativos.filter(r => r.status_financeiro === "PAGO").length;
+        document.getElementById("camRecebido").textContent = formatarMoeda(ativos.reduce((a, r) => a + Number(r.valor_pago || 0), 0));
       }
       if (abaAtiva === "DOACAO") {
         const ativos = dadosCache.filter(r => r.status !== "CANCELADO");
-        const prometidos = ativos.filter(r => r.status === "PROMETIDO").length;
-        const entregues = ativos.filter(r => r.status === "ENTREGUE").length;
-        const cancelados = dadosCache.filter(r => r.status === "CANCELADO").length;
-        const totalItens = dadosCache.filter(r => r.status !== "CANCELADO").length;
-
-        document.getElementById("fjVendidos").textContent = totalItens;
-        document.getElementById("fjPagos").textContent = entregues;
-        document.getElementById("fjPendentes").textContent = prometidos;
-        document.getElementById("fjRestantes").textContent = cancelados;
-        document.getElementById("fjMercado").textContent = "-";
-        document.getElementById("fjLucro").textContent = "-";
+        document.getElementById("fjVendidos").textContent = ativos.length;
+        document.getElementById("fjPagos").textContent = ativos.filter(r => r.status === "ENTREGUE" || r.status === "PAGO").length;
+        document.getElementById("fjPendentes").textContent = ativos.filter(r => r.status === "PROMETIDO" || r.status === "PENDENTE").length;
+        document.getElementById("fjRestantes").textContent = dadosCache.filter(r => r.status === "CANCELADO").length;
       }
       atualizarPainelPessoaEquipe();
-    }
-
-    // ============================
-    // MODAL DE REGISTRO E EDIÇÃO
-    // ============================
-    function abrirModal() {
-      document.getElementById("formFin").reset();
-      registroEmEdicao = null;
-      document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
-      
-      if (ROLE === "COMPRAS") {
-        document.getElementById("f_modulo").value = abaAtiva;
-        document.getElementById("blocoModulo").classList.add("hidden");
-      } else {
-        document.getElementById("f_modulo").value = obterModuloAtual();
-        document.getElementById("blocoModulo").classList.remove("hidden");
-      }
-      
-      document.getElementById("f_qtd_doacao").value = 1;
-      document.getElementById("f_un_doacao").value = "un";
-      document.getElementById("f_recebido").value = ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças";
-      
-      const statusCam = document.getElementById("f_status_camiseta");
-      if (statusCam) statusCam.value = "SOLICITADA";
-
-      atualizarModalDinamico();
-      controlarEquipePorTipoPessoa();
-      document.getElementById("modal").classList.remove("hidden");
-    }
-    
-    function fecharModal() {
-      document.getElementById("modal").classList.add("hidden");
-      document.getElementById("formFin").reset();
-      registroEmEdicao = null;
-      document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
-    }
-
-    function atualizarModalDinamico() {
-      const m = document.getElementById("f_modulo").value;
-      document.getElementById("blocoTipoFeijoada").classList.toggle("hidden", m !== "FEIJOADA");
-      document.getElementById("blocoTamanhoCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
-      document.getElementById("blocoStatusCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
-      document.getElementById("blocoQtdUnDoacao").classList.toggle("hidden", m !== "DOACAO");
-      document.getElementById("camposMercado").classList.toggle("hidden", !["MERCADINHO", "FEIJOADA", "DOACAO", "CAMISETAS"].includes(m));
-      
-      const wrapData = document.getElementById("campoDataEntregaWrap");
-      wrapData.classList.toggle("hidden", !["FEIJOADA", "CAMISETAS", "DOACAO"].includes(m));
-      
-      const labelData = document.querySelector("#campoDataEntregaWrap label");
-      if (m === "CAMISETAS") labelData.textContent = "Previsão de entrega";
-      else if (m === "DOACAO") labelData.textContent = "Data de entrega / previsão";
-      else if (m === "FEIJOADA") labelData.textContent = "Data de referência";
-
-      controlarEquipePorTipoPessoa();
     }
 
     // ============================
@@ -963,20 +937,15 @@
       renderizar();
       
       if (abaAtiva === "DOACAO") {
-        await atualizarRecebidoMetasProvidencia();
-        await carregarMetas();
+        if (typeof atualizarRecebidoMetasProvidencia === "function") await atualizarRecebidoMetasProvidencia();
+        if (typeof carregarMetas === "function") await carregarMetas();
       }
     }
-
-    document.getElementById("formFin").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      await salvarRegistro();
-    });
 
     async function salvarRegistro() {
       try {
         const modulo = document.getElementById("f_modulo").value;
-        if (ROLE === "COMPRAS" && modulo === "EJC") return showToast("Compras não pode lançar no Caixa EJC.", "error");
+        const tabela = obterNomeTabela(modulo);
 
         const descricao = document.getElementById("f_desc").value.trim();
         const valor = parseMoedaBR(document.getElementById("f_val").value);
@@ -988,32 +957,29 @@
         const observacao = document.getElementById("f_obs").value.trim() || null;
         const dataEntrega = document.getElementById("f_data_entrega").value || null;
 
+        const registroOriginal = registroEmEdicao ? dadosCache.find(x => String(x.id) === String(registroEmEdicao)) : null;
+
         if (!descricao) return showToast("Informe a descrição.", "error");
         if (!responsavel) return showToast("Informe o responsável.", "error");
 
-        const tabela = obterNomeTabela(modulo);
-        const registroOriginal = registroEmEdicao ? dadosCache.find(x => String(x.id) === String(registroEmEdicao)) : null;
         let payload = null;
 
-        if (modulo === "EJC") {
-          payload = { descricao, tipo, status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO", forma, valor, nome, telefone, data_movimento: registroOriginal?.data_movimento || hojeISODate(), responsavel_lanc: responsavel, observacao };
-        } else if (modulo === "MERCADINHO") {
-          payload = { descricao, tipo, status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO", forma, valor, nome, telefone, equipe: document.getElementById("f_equipe_merc").value || null, tipo_pessoa: document.getElementById("f_tipo_pessoa").value || null, data_movimento: registroOriginal?.data_movimento || hojeISODate(), responsavel_lanc: responsavel, observacao };
-        } else if (modulo === "FEIJOADA") {
-          payload = { descricao, tipo, status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO", tipo_registro: document.getElementById("f_tipo_feijoada").value, forma, valor, quantidade: registroOriginal?.quantidade || 1, nome, telefone, equipe: document.getElementById("f_equipe_merc").value || null, tipo_pessoa: document.getElementById("f_tipo_pessoa").value || null, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, responsavel_lanc: responsavel, observacao };
-        } else if (modulo === "CAMISETAS") {
+        if (modulo === "CAMISETAS") {
           const statusPedidoEscolhido = document.getElementById("f_status_camiseta").value || "SOLICITADA";
           const tipoPessoa = document.getElementById("f_tipo_pessoa")?.value || "PAROQUIANO";
           const equipeSelecionada = tipoPessoa === "SERVO" ? (document.getElementById("f_equipe_merc")?.value || null) : "Externo";
+          const tamanhoSelecionado = document.getElementById("f_tamanho").value;
+
+          const valorFinal = calcularValorCamisetaComPlusSize(valor, tamanhoSelecionado);
 
           const valorPagoAtual = registroOriginal ? Number(registroOriginal.valor_pago || 0) : 0;
           let valorPago = valorPagoAtual;
           
-          if (!registroOriginal && tipo === "ENTRADA") valorPago = valor;
-          if (registroOriginal && tipo === "ENTRADA" && valorPagoAtual === 0) valorPago = valor;
+          if (!registroOriginal && tipo === "ENTRADA") valorPago = valorFinal;
+          if (registroOriginal && tipo === "ENTRADA" && valorPagoAtual === 0) valorPago = valorFinal;
           if (tipo === "PENDENTE" && !registroOriginal) valorPago = 0;
 
-          const saldoPendente = Math.max(0, valor - valorPago);
+          const saldoPendente = Math.max(0, valorFinal - valorPago);
           let statusFinanceiro = "PENDENTE";
           if (saldoPendente <= 0) statusFinanceiro = "PAGO";
           else if (valorPago > 0) statusFinanceiro = "PARCIAL";
@@ -1022,36 +988,120 @@
             statusFinanceiro = "CANCELADO";
           }
 
-          payload = { descricao, tipo, nome, telefone, tipo_pessoa: tipoPessoa, equipe_responsavel: equipeSelecionada, tamanho: document.getElementById("f_tamanho").value, quantidade: registroOriginal?.quantidade || 1, valor_total: valor, valor_pago: valorPago, saldo_pendente: saldoPendente, status_financeiro: statusFinanceiro, status_pedido: statusPedidoEscolhido, forma, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: statusPedidoEscolhido === "ENTREGUE" ? (registroOriginal?.data_entrega || hojeISODate()) : null, responsavel_lanc: responsavel, observacao };
+          payload = { 
+            descricao, 
+            tipo, 
+            nome, 
+            telefone, 
+            tipo_pessoa: tipoPessoa, 
+            equipe_responsavel: equipeSelecionada, 
+            tamanho: tamanhoSelecionado, 
+            quantidade: registroOriginal?.quantidade || 1, 
+            valor: valorFinal,
+            valor_total: valorFinal, 
+            valor_pago: valorPago, 
+            saldo_pendente: saldoPendente, 
+            status_financeiro: statusFinanceiro, 
+            status_pedido: statusPedidoEscolhido, 
+            forma, 
+            data_movimento: registroOriginal?.data_movimento || hojeISODate(), 
+            data_previsao: dataEntrega, 
+            data_entrega: statusPedidoEscolhido === "ENTREGUE" ? (registroOriginal?.data_entrega || hojeISODate()) : null, 
+            responsavel_lanc: responsavel, 
+            observacao 
+          };
         } else if (modulo === "DOACAO") {
           const qtdDoacao = Number(document.getElementById("f_qtd_doacao").value || 1);
           const unDoacao = (document.getElementById("f_un_doacao").value || "un").trim();
           const tipoPessoaDoacao = document.getElementById("f_tipo_pessoa")?.value || "PAROQUIANO";
           const equipeDoacao = tipoPessoaDoacao === "SERVO" ? (document.getElementById("f_equipe_merc")?.value || null) : "Externo";
           
-          const statusDoacao = tipo === "PENDENTE" ? "PROMETIDO" : tipo === "ENTRADA" ? "ENTREGUE" : "CANCELADO";
+          const statusDoacao = tipo === "PENDENTE" ? "PROMETIDO" : tipo === "SAIDA" ? "CANCELADO" : "ENTREGUE";
 
-          payload = { item: descricao, tipo, quantidade: qtdDoacao, unidade: unDoacao, valor_estimado: valor, nome, telefone, equipe: equipeDoacao, tipo_pessoa: tipoPessoaDoacao, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: statusDoacao === "ENTREGUE" ? (registroOriginal?.data_entrega || dataEntrega || hojeISODate()) : null, status: statusDoacao, responsavel_lanc: responsavel, observacao };
-        }
-
-        if (registroEmEdicao) {
-          const { error } = await _supabase.from(tabela).update(payload).eq("id", registroEmEdicao);
-          if (error) throw error;
-          await registrarHistorico("EDICAO", tabela, registroEmEdicao, payload);
-          showToast("Registro atualizado com sucesso!");
+          payload = { 
+            item: descricao, 
+            tipo, 
+            quantidade: qtdDoacao, 
+            unidade: unDoacao, 
+            valor_estimado: valor, 
+            nome, 
+            telefone, 
+            status: statusDoacao, 
+            equipe: equipeDoacao, 
+            tipo_pessoa: tipoPessoaDoacao, 
+            data_movimento: registroOriginal?.data_movimento || hojeISODate(), 
+            data_previsao: dataEntrega, 
+            data_entrega: statusDoacao === "ENTREGUE" ? (registroOriginal?.data_entrega || dataEntrega || hojeISODate()) : null,
+            responsavel_lanc: responsavel, 
+            observacao 
+          };
+        } else if (modulo === "FEIJOADA") {
+          payload = { 
+            descricao, 
+            tipo, 
+            status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO", 
+            tipo_registro: document.getElementById("f_tipo_feijoada").value, 
+            forma, 
+            valor, 
+            quantidade: registroOriginal?.quantidade || 1, 
+            nome, 
+            telefone, 
+            equipe: document.getElementById("f_equipe_merc").value || null, 
+            tipo_pessoa: document.getElementById("f_tipo_pessoa").value || null, 
+            data_movimento: registroOriginal?.data_movimento || hojeISODate(), 
+            data_previsao: dataEntrega, 
+            responsavel_lanc: responsavel, 
+            observacao 
+          };
+        } else if (modulo === "MERCADINHO") {
+          payload = { 
+            descricao, 
+            tipo, 
+            status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO", 
+            forma, 
+            valor, 
+            nome, 
+            telefone, 
+            equipe: document.getElementById("f_equipe_merc").value || null, 
+            tipo_pessoa: document.getElementById("f_tipo_pessoa").value || null, 
+            data_movimento: registroOriginal?.data_movimento || hojeISODate(), 
+            responsavel_lanc: responsavel, 
+            observacao 
+          };
         } else {
-          const { error, data } = await _supabase.from(tabela).insert([payload]).select();
-          if (error) throw error;
-          if (data && data.length > 0) await registrarHistorico("CRIACAO", tabela, data[0].id, payload);
-          showToast("Registro salvo com sucesso!");
+          payload = { 
+            descricao, 
+            tipo, 
+            status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO", 
+            forma, 
+            valor, 
+            nome, 
+            telefone, 
+            data_movimento: registroOriginal?.data_movimento || hojeISODate(), 
+            responsavel_lanc: responsavel, 
+            observacao 
+          };
         }
 
+        let result;
+        if (registroEmEdicao) {
+          result = await _supabase.from(tabela).update(payload).eq("id", registroEmEdicao);
+        } else {
+          result = await _supabase.from(tabela).insert([payload]);
+        }
+
+        if (result.error) {
+          console.error(result.error);
+          return showToast(result.error.message || "Erro ao salvar.", "error");
+        }
+
+        showToast(registroEmEdicao ? "Registro atualizado com sucesso!" : "Registro salvo com sucesso!");
         fecharModal();
         await carregarRegistros();
 
       } catch (err) {
         console.error("ERRO AO SALVAR:", err);
-        showToast(err.message || "Erro ao salvar", "error");
+        showToast("Erro ao salvar", "error");
       }
     }
 
@@ -1064,13 +1114,19 @@
 
       registroEmEdicao = r.id;
       document.getElementById("tituloModalRegistro").textContent = "Editar Registro";
-
-      if (ROLE === "COMPRAS") document.getElementById("blocoModulo").classList.add("hidden");
-      else document.getElementById("blocoModulo").classList.remove("hidden");
-
       document.getElementById("f_modulo").value = abaAtiva;
+
       document.getElementById("f_desc").value = r.descricao || r.item || "";
-      document.getElementById("f_val").value = Number(r.valor || r.valor_total || r.valor_estimado || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+      
+      let valorEdicao = Number(r.valor || r.valor_total || r.valor_estimado || 0);
+      const tamanhoEdicao = String(r.tamanho || "").toUpperCase();
+
+      if (["GG", "EXG", "G1", "G2", "G3"].includes(tamanhoEdicao)) {
+        valorEdicao = Math.max(0, valorEdicao - 10);
+      }
+
+      document.getElementById("f_val").value = valorEdicao.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+      
       document.getElementById("f_nome").value = r.nome || "";
       document.getElementById("f_tel").value = r.telefone || "";
       document.getElementById("f_forma").value = r.forma || "PIX";
@@ -1080,39 +1136,35 @@
 
       if (abaAtiva === "FEIJOADA") {
         document.getElementById("f_tipo_feijoada").value = r.tipo_registro || "VOUCHER";
-        if(document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe || "";
-        if(document.getElementById("f_tipo_pessoa")) document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "SERVO";
-        document.getElementById("f_type").value = r.tipo || (obterStatusRegistro(r) === "PENDENTE" ? "PENDENTE" : "ENTRADA");
       }
-      if (abaAtiva === "MERCADINHO") {
-        if(document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe || "";
-        if(document.getElementById("f_tipo_pessoa")) document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "SERVO";
-        document.getElementById("f_type").value = r.tipo || (obterStatusRegistro(r) === "PENDENTE" ? "PENDENTE" : "ENTRADA");
-      }
+
       if (abaAtiva === "CAMISETAS") {
         document.getElementById("f_tamanho").value = r.tamanho || "M";
         document.getElementById("f_status_camiseta").value = r.status_pedido || "SOLICITADA";
-        if(document.getElementById("f_tipo_pessoa")) document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "PAROQUIANO";
-        if(document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe_responsavel || (r.tipo_pessoa === "PAROQUIANO" ? "Externo" : "");
-        document.getElementById("f_type").value = r.tipo || ((r.status_financeiro === "PENDENTE" || r.status_financeiro === "PARCIAL") ? "PENDENTE" : "ENTRADA");
       }
+
       if (abaAtiva === "DOACAO") {
         document.getElementById("f_qtd_doacao").value = r.quantidade || 1;
         document.getElementById("f_un_doacao").value = r.unidade || "un";
-        if (document.getElementById("f_tipo_pessoa")) document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "PAROQUIANO";
-        if (document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe || "";
-        
-        if (r.status === "PROMETIDO") document.getElementById("f_type").value = "PENDENTE";
-        else if (r.status === "ENTREGUE") document.getElementById("f_type").value = "ENTRADA";
-        else if (r.status === "CANCELADO") document.getElementById("f_type").value = "SAIDA";
-        else document.getElementById("f_type").value = r.tipo || "PENDENTE";
       }
-      if (abaAtiva === "EJC") {
-        document.getElementById("f_type").value = r.tipo || (obterStatusRegistro(r) === "PENDENTE" ? "PENDENTE" : "ENTRADA");
+
+      if (document.getElementById("f_equipe_merc")) {
+        document.getElementById("f_equipe_merc").value = r.equipe || r.equipe_responsavel || "";
+      }
+      if (document.getElementById("f_tipo_pessoa")) {
+        document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "PAROQUIANO";
+      }
+
+      if (abaAtiva === "DOACAO") {
+        document.getElementById("f_type").value =
+          r.status === "PROMETIDO" || r.status === "PENDENTE" ? "PENDENTE" :
+          r.status === "CANCELADO" ? "SAIDA" : "ENTRADA";
+      } else {
+        document.getElementById("f_type").value =
+          r.tipo || (obterStatusRegistro(r) === "PENDENTE" ? "PENDENTE" : "ENTRADA");
       }
 
       atualizarModalDinamico();
-      controlarEquipePorTipoPessoa();
       document.getElementById("modal").classList.remove("hidden");
     }
 
@@ -1143,14 +1195,33 @@
       const r = dadosCache.find(x => String(x.id) === String(id));
       if (!r) return;
 
-      let p = { status: "PAGO", responsavel_lanc: obterNomeResponsavel() };
-      if (tabela === "camisetas") { p = { status_financeiro: "PAGO", valor_pago: Number(r.valor_total || 0), saldo_pendente: 0, data_entrega: r.data_entrega || hojeISODate(), responsavel_lanc: obterNomeResponsavel() }; } 
-      if (tabela === "doacao") { p = { status: "ENTREGUE", data_entrega: hojeISODate(), responsavel_lanc: obterNomeResponsavel() }; } 
+      let payload = {};
 
-      const { error } = await _supabase.from(tabela).update(p).eq("id", id);
-      if (error) { console.error(error); return showToast("Erro na baixa.", "error"); }
+      if (tabela === "camisetas") {
+        const valorTotal = Number(r.valor_total || r.valor || 0);
+        payload = {
+          status_financeiro: "PAGO",
+          valor_pago: valorTotal,
+          saldo_pendente: 0,
+          responsavel_lanc: obterNomeResponsavel()
+        };
+      } else if (tabela === "doacao") {
+        payload = {
+          status: "ENTREGUE",
+          data_entrega: hojeISODate(),
+          responsavel_lanc: obterNomeResponsavel()
+        };
+      } else {
+        payload = {
+          status: "PAGO",
+          responsavel_lanc: obterNomeResponsavel()
+        };
+      }
+
+      const { error } = await _supabase.from(tabela).update(payload).eq("id", id);
+      if (error) { console.error(error); return showToast("Erro ao dar baixa.", "error"); }
       
-      await registrarHistorico("BAIXA_INDIVIDUAL", tabela, id, p);
+      await registrarHistorico("BAIXA_INDIVIDUAL", tabela, id, payload);
       showToast("Baixa realizada com sucesso!");
       
       if (tabela === "doacao") { await atualizarRecebidoMetasProvidencia(); await carregarMetas(); }
@@ -1195,17 +1266,33 @@
     }
 
     function aplicarFiltroEBusca() {
-      const termo = (document.getElementById("campoBusca").value || "").toLowerCase();
+      const termo = (document.getElementById("campoBusca")?.value || "").toLowerCase().trim();
       const dataInicio = document.getElementById("filtroDataInicio")?.value || "";
       const dataFim = document.getElementById("filtroDataFim")?.value || "";
 
       return dadosCache.filter(reg => {
-        const texto = [reg.descricao, reg.nome, reg.tipo, reg.forma, reg.item, reg.status, reg.status_financeiro, reg.status_pedido, reg.equipe_responsavel, reg.equipe, reg.observacao, reg.unidade, reg.tipo_pessoa].join(" ").toLowerCase();
+        const texto = [
+          reg.descricao,
+          reg.item,
+          reg.nome,
+          reg.telefone,
+          reg.tipo,
+          reg.forma,
+          reg.status,
+          reg.status_financeiro,
+          reg.status_pedido,
+          reg.equipe_responsavel,
+          reg.equipe,
+          reg.observacao,
+          reg.unidade,
+          reg.tipo_pessoa
+        ].join(" ").toLowerCase();
+
         const passouBusca = texto.includes(termo);
         const statusAtual = obterStatusRegistro(reg);
         const passouStatus = filtroStatusAtivo === "TODOS" || statusAtual === filtroStatusAtivo;
 
-        const dataBase = (reg.data_movimento || reg.created_at || "").slice(0, 10);
+        const dataBase = String(reg.data_movimento || reg.created_at || "").slice(0, 10);
         const passouInicio = !dataInicio || dataBase >= dataInicio;
         const passouFim = !dataFim || dataBase <= dataFim;
 
@@ -1216,6 +1303,7 @@
     function renderizar() {
       const corpo = document.getElementById("corpoTabela");
       corpo.innerHTML = "";
+
       const lista = aplicarFiltroEBusca();
 
       if (!lista.length) {
@@ -1223,35 +1311,52 @@
         return;
       }
 
-      lista.forEach((reg) => {
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-50 transition-colors";
-
+      lista.forEach(reg => {
         const id = reg.id;
-        const valor = reg.valor ?? reg.valor_total ?? reg.valor_estimado ?? 0;
         const desc = reg.descricao || reg.item || "-";
-        const telefone = reg.telefone || "";
-        const nome = reg.nome || "";
-        const statusAtual = obterStatusRegistro(reg);
-        
-        const detalhesExtras = [];
-        if (reg.tipo_pessoa === "SERVO") { detalhesExtras.push("Servo do EJC"); } 
-        else if (reg.tipo_pessoa === "PAROQUIANO" || !reg.tipo_pessoa) { detalhesExtras.push("Paroquiano"); }
-        
-        if (reg.equipe_responsavel) detalhesExtras.push(reg.equipe_responsavel);
-        else if (reg.equipe) detalhesExtras.push(reg.equipe);
-        
-        if (reg.tamanho) detalhesExtras.push(`Tam: ${reg.tamanho}`);
-        
-        if (abaAtiva === "DOACAO") {
-          if (reg.quantidade) detalhesExtras.push(`Prometido: ${reg.quantidade} ${reg.unidade || ""}`.trim());
-          if (reg.data_previsao) detalhesExtras.push(`Prev.: ${formatarDataBR(reg.data_previsao)}`);
-          if (reg.data_entrega) detalhesExtras.push(`Entregue: ${formatarDataBR(reg.data_entrega)}`);
+        const nome = reg.nome || "Sem nome";
+        const valor = reg.valor ?? reg.valor_total ?? reg.valor_estimado ?? 0;
+        const statusVisual = obterStatusVisual(reg);
+        const statusAtualRegistro = obterStatusRegistro(reg);
+
+        const btnBaixa = ((abaAtiva === "DOACAO" && statusVisual === "PROMETIDO") ||
+                         (abaAtiva !== "DOACAO" && (statusAtualRegistro === "PENDENTE" || statusAtualRegistro === "PARCIAL")))
+          ? `<button class="action-btn bg-emerald-50 text-emerald-600" onclick="darBaixaIndividual('${id}')" title="Dar baixa"><i class="fas fa-check"></i></button>`
+          : "";
+
+        const btnEditar = statusVisual !== "CANCELADO" 
+          ? `<button class="action-btn bg-blue-50 text-blue-600" onclick="editarRegistro('${id}')" title="Editar"><i class="fas fa-pen"></i></button>`
+          : "";
+          
+        const btnCancelar = statusVisual !== "CANCELADO"
+          ? `<button class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100" onclick="cancelarRegistro('${id}')" title="Cancelar"><i class="fas fa-ban"></i></button>`
+          : "";
+          
+        const btnExtrato = reg.telefone 
+          ? `<button class="action-btn bg-slate-100 text-slate-700 hover:bg-slate-200" onclick="abrirExtratoCompleto('${esc(reg.telefone)}', '${esc(nome)}')" title="Extrato"><i class="fas fa-file-invoice"></i></button>` 
+          : "";
+          
+        const btnCobrarDoacao = (abaAtiva === "DOACAO" && statusVisual === "PROMETIDO" && reg.telefone) 
+          ? `<button class="action-btn bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white shadow-md hover:opacity-90" onclick="cobrarWhatsAppDoacao('${id}')" title="Cobrar doação"><i class="fab fa-whatsapp"></i></button>` 
+          : "";
+
+        const detalhes = [];
+        if (reg.tipo_pessoa === "SERVO") detalhes.push("Servo do EJC");
+        else if (reg.tipo_pessoa === "PAROQUIANO" || !reg.tipo_pessoa) detalhes.push("Paroquiano");
+
+        if (reg.equipe_responsavel || reg.equipe) detalhes.push(reg.equipe_responsavel || reg.equipe);
+        if (reg.tamanho) detalhes.push(`Tam: ${reg.tamanho}`);
+        if (reg.quantidade && abaAtiva === "DOACAO") {
+          detalhes.push(`Prometido: ${reg.quantidade} ${reg.unidade || ""}`.trim());
+          if (reg.data_previsao) detalhes.push(`Prev.: ${formatarDataBR(reg.data_previsao)}`);
+          if (reg.data_entrega) detalhes.push(`Entregue: ${formatarDataBR(reg.data_entrega)}`);
+        } else if (reg.quantidade && abaAtiva !== "DOACAO") {
+           detalhes.push(`Qtd: ${reg.quantidade}${reg.unidade ? " " + reg.unidade : ""}`);
         }
         
-        if (reg.tipo_registro && abaAtiva === "FEIJOADA") detalhesExtras.push(reg.tipo_registro);
+        if (reg.tipo_registro && abaAtiva === "FEIJOADA") detalhes.push(reg.tipo_registro);
 
-        const infoExtra = detalhesExtras.length ? `<div class="text-[10px] text-slate-400 mt-1">${esc(detalhesExtras.join(" • "))}</div>` : "";
+        const extras = detalhes.length ? `<div class="text-[10px] text-slate-400 mt-1">${esc(detalhes.join(" • "))}</div>` : "";
 
         let controleCamiseta = "";
         if (abaAtiva === "CAMISETAS") {
@@ -1270,34 +1375,29 @@
            controleCamiseta = `<div class="mt-2">${badgeStatusCamiseta(reg.status_pedido)}</div>`;
         }
 
-        const corStatus = statusAtual === "PAGO" ? "text-emerald-600" : statusAtual === "CANCELADO" ? "text-rose-600" : "text-amber-600";
-        const textoStatus = abaAtiva === "DOACAO" ? (reg.status === "PROMETIDO" ? "PROMETIDO" : reg.status === "ENTREGUE" ? "ENTREGUE" : reg.status === "CANCELADO" ? "CANCELADO" : statusAtual) : statusAtual;
-
         const badgeDoacao = abaAtiva === "DOACAO"
-          ? (statusAtual === "PAGO"
+          ? (statusVisual === "ENTREGUE"
               ? `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-100 mt-2">Entregue</span>`
-              : statusAtual === "CANCELADO"
+              : statusVisual === "CANCELADO"
               ? `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-rose-50 text-rose-700 border border-rose-100 mt-2">Cancelado</span>`
               : `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-100 mt-2">Prometido</span>`)
           : "";
 
-        const btnExtrato = telefone ? `<button class="action-btn bg-slate-100 text-slate-700 hover:bg-slate-200" onclick="abrirExtratoCompleto('${esc(telefone)}', '${esc(nome)}')" title="Extrato"><i class="fas fa-file-invoice"></i></button>` : "";
-        const btnEditar = statusAtual !== "CANCELADO" ? `<button class="action-btn bg-blue-50 text-blue-600 hover:bg-blue-100" onclick="editarRegistro('${id}')" title="Editar"><i class="fas fa-pen"></i></button>` : "";
-        const btnCancelar = statusAtual !== "CANCELADO" ? `<button class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100" onclick="cancelarRegistro('${id}')" title="Cancelar"><i class="fas fa-ban"></i></button>` : "";
-        const btnBaixa = ((abaAtiva === "DOACAO" && statusAtual === "PENDENTE") || (abaAtiva !== "DOACAO" && (statusAtual === "PENDENTE" || statusAtual === "PARCIAL"))) ? `<button class="action-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100" onclick="darBaixaIndividual('${id}')" title="Dar baixa"><i class="fas fa-check"></i></button>` : "";
-        const btnCobrarDoacao = abaAtiva === "DOACAO" && statusAtual === "PENDENTE" && telefone ? `<button class="action-btn bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white shadow-md hover:opacity-90" onclick="cobrarWhatsAppDoacao('${id}')" title="Cobrar doação"><i class="fab fa-whatsapp"></i></button>` : "";
+        const corStatus = statusAtualRegistro === "PAGO" || statusVisual === "ENTREGUE" ? "text-emerald-600" : statusAtualRegistro === "CANCELADO" || statusVisual === "CANCELADO" ? "text-rose-600" : "text-amber-600";
 
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 border-b border-slate-50";
         tr.innerHTML = `
-          <td class="px-4 py-3 align-top">
-            <div class="font-bold text-slate-800 text-sm">${esc(desc)}</div>
-            <div class="text-[11px] text-slate-500">${esc(nome || "Sem nome")}</div>
-            ${infoExtra}
+          <td class="px-4 py-4 align-top">
+            <div class="font-bold text-slate-800">${esc(desc)}</div>
+            <div class="text-[11px] text-slate-500">${esc(nome)}</div>
+            ${extras}
             ${controleCamiseta}
             ${badgeDoacao}
           </td>
-          <td class="px-4 py-3 text-right align-top whitespace-nowrap">
-            <div class="font-bold text-slate-900">${formatarMoeda(valor)}</div>
-            <div class="text-[11px] font-bold mb-2 ${corStatus}">${esc(textoStatus || "-")}</div>
+          <td class="px-4 py-4 text-right align-top">
+            <div class="font-black text-slate-900">${formatarMoeda(valor)}</div>
+            <div class="text-[10px] font-bold uppercase ${corStatus}">${esc(statusVisual)}</div>
             <div class="flex justify-end gap-1 mt-2">
               ${btnBaixa}
               ${btnCobrarDoacao}
@@ -1409,12 +1509,6 @@
       }).join("");
     }
 
-    function fecharExtrato() {
-      document.getElementById("modalExtrato").classList.add("hidden");
-      document.getElementById("modalExtrato").classList.remove("flex");
-      extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
-    }
-
     async function copiarExtrato() {
       const regs = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
       if (!regs.length) return showToast("Extrato vazio.", "error");
@@ -1471,11 +1565,11 @@
     // ============================
     function abrirModalQuitarTudo() {
       const pendentes = extratoAtual.registros.filter(r => { 
-        if (r._modulo === "doacao") return r.status === "PROMETIDO";
+        if (r._modulo === "doacao") return false; 
         const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; 
       });
       
-      if (!pendentes.length) return showToast("Não há lançamentos em aberto.", "success");
+      if (!pendentes.length) return showToast("Não há lançamentos financeiros em aberto.", "success");
       
       document.getElementById("quitarTudoRecebidoPor").value = obterNomeResponsavel();
       document.getElementById("quitarTudoData").value = hojeISODate();
@@ -1495,26 +1589,24 @@
       if (!data) return showToast("Informe a data.", "error");
       
       const pendentes = extratoAtual.registros.filter(r => {
-        if (r._modulo === "doacao") return r.status === "PROMETIDO";
+        if (r._modulo === "doacao") return false;
         const st = obterStatusRegistro(r);
         return st === "PENDENTE" || st === "PARCIAL";
       });
 
       if (!pendentes.length) return showToast("Nada pendente.", "success");
       
-      let erros = 0; let teveDoacao = false;
+      let erros = 0;
 
       for (const r of pendentes) {
         let p = {};
         if (r._modulo === "camisetas") { p = { status_financeiro: "PAGO", valor_pago: Number(r.valor_total || 0), saldo_pendente: 0, data_entrega: r.data_entrega || data, responsavel_lanc: resp }; } 
-        else if (r._modulo === "doacao") { teveDoacao = true; p = { status: "ENTREGUE", data_entrega: data, responsavel_lanc: resp }; } 
         else { p = { status: "PAGO", responsavel_lanc: resp }; }
         
         const { error } = await _supabase.from(r._modulo).update(p).eq("id", r.id);
         if (error) { console.error(error); erros++; } else { await registrarHistorico("QUITAR_TUDO", r._modulo, r.id, p); }
       }
       
-      if (teveDoacao) { await atualizarRecebidoMetasProvidencia(); await carregarMetas(); }
       if (erros > 0) showToast(`Concluído com ressalvas. ${erros} falharam.`, "error");
       else showToast("Todos os lançamentos foram quitados!");
       
@@ -1585,18 +1677,37 @@
     }
 
     // ============================
-    // PROVIDENCIA (METAS)
+    // PROVIDENCIA (METAS E MURAL)
     // ============================
-    document.getElementById("formMeta").addEventListener("submit", async function (e) { e.preventDefault(); await salvarMeta(); });
+    document.getElementById("formMeta")?.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      await salvarMeta();
+    });
 
     async function salvarMeta() {
-      const item = document.getElementById("m_item").value.trim(); const qtd = Number(document.getElementById("m_qtd").value || 0); const un = document.getElementById("m_un").value.trim();
+      const item = document.getElementById("m_item").value.trim();
+      const qtd = Number(document.getElementById("m_qtd").value || 0);
+      const un = document.getElementById("m_un").value.trim();
+
       if (!item || !qtd || !un) return showToast("Preencha a meta corretamente.", "error");
-      
-      const { error } = await _supabase.from("metas_providencia").insert([{ item, unidade: un, quantidade_alvo: qtd, quantidade_recebida: 0, status_meta: "ABERTA" }]);
-      if (error) return showToast(error.message || "Erro ao salvar meta.", "error");
-      
-      showToast("Meta registrada!"); document.getElementById("modalMeta").classList.add("hidden"); document.getElementById("formMeta").reset(); await carregarMetas();
+
+      const { error } = await _supabase.from("metas_providencia").insert([{
+        item,
+        unidade: un,
+        quantidade_alvo: qtd,
+        quantidade_recebida: 0,
+        status_meta: "ABERTA"
+      }]);
+
+      if (error) {
+        console.error(error);
+        return showToast("Erro ao salvar meta.", "error");
+      }
+
+      showToast("Meta registrada!");
+      document.getElementById("modalMeta").classList.add("hidden");
+      document.getElementById("formMeta").reset();
+      await carregarMetas();
     }
 
     async function atualizarRecebidoMetasProvidencia() {
@@ -1622,13 +1733,23 @@
     }
 
     async function carregarMetas() {
-      const { data, error } = await _supabase.from("metas_providencia").select("*").order("created_at", { ascending: false });
-      if (error) { console.error(error); return; }
-      
       const wrap = document.getElementById("listaGerenciarMetas");
       if (!wrap) return;
 
-      if (!data?.length) { wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhuma meta cadastrada.</p>`; return; }
+      const { data, error } = await _supabase
+        .from("metas_providencia")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      if (!data?.length) {
+        wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhuma meta cadastrada.</p>`;
+        return;
+      }
 
       wrap.innerHTML = data.map(meta => {
         const alvo = Number(meta.quantidade_alvo || 0); const recebido = Number(meta.quantidade_recebida || 0); const falta = Math.max(0, alvo - recebido);
@@ -1654,6 +1775,75 @@
           </div>
         `;
       }).join("");
+    }
+
+    async function buscarMensagensPendentesMural() {
+      const { data, error } = await _supabase
+        .from("doacao_mural")
+        .select("*")
+        .eq("status", "PENDENTE")
+        .order("criado_em", { ascending: false });
+
+      if (error) {
+        console.error("Erro ao buscar mensagens:", error);
+        return [];
+      }
+      return data || [];
+    }
+
+    async function carregarMensagensPendentesMural() {
+      const lista = document.getElementById("listaMensagensPendentes");
+      const contador = document.getElementById("contadorMensagensPendentes");
+
+      if (!lista || !contador) return;
+
+      lista.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Carregando...</p>`;
+      const mensagens = await buscarMensagensPendentesMural();
+      contador.textContent = `${mensagens.length} pendente(s)`;
+
+      if (!mensagens.length) {
+        lista.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhuma mensagem pendente.</p>`;
+        return;
+      }
+
+      lista.innerHTML = mensagens.map(m => `
+        <div class="border border-slate-100 rounded-2xl p-4 bg-slate-50">
+          <p class="text-sm font-bold text-slate-800 mb-1">${esc(m.nome || "Anônimo")}</p>
+          <p class="text-sm text-slate-600 mb-3">${esc(m.mensagem)}</p>
+          <div class="flex gap-2 justify-end">
+            <button onclick="aprovarMensagemMural('${m.id}')" 
+              class="px-3 py-2 rounded-xl bg-emerald-100 text-emerald-700 font-bold text-xs hover:opacity-90">
+              Aprovar
+            </button>
+            <button onclick="rejeitarMensagemMural('${m.id}')" 
+              class="px-3 py-2 rounded-xl bg-rose-100 text-rose-700 font-bold text-xs hover:opacity-90">
+              Rejeitar
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function aprovarMensagemMural(id) {
+      const { error } = await _supabase
+        .from("doacao_mural")
+        .update({ status: "APROVADA" })
+        .eq("id", id);
+      if (error) { showToast("Erro ao aprovar mensagem", "error"); return; }
+      showToast("Mensagem aprovada!");
+      carregarMensagensPendentesMural();
+    }
+
+    async function rejeitarMensagemMural(id) {
+      const confirmar = window.confirm("Deseja rejeitar esta mensagem?");
+      if (!confirmar) return;
+      const { error } = await _supabase
+        .from("doacao_mural")
+        .update({ status: "REJEITADA" })
+        .eq("id", id);
+      if (error) { showToast("Erro ao rejeitar mensagem", "error"); return; }
+      showToast("Mensagem rejeitada!");
+      carregarMensagensPendentesMural();
     }
 
     // ============================
@@ -1694,11 +1884,11 @@
       });
     });
 
-    document.getElementById("campoBusca").addEventListener("input", renderizar);
+    document.getElementById("campoBusca")?.addEventListener("input", renderizar);
     document.getElementById("filtroDataInicio")?.addEventListener("input", renderizar);
     document.getElementById("filtroDataFim")?.addEventListener("input", renderizar);
     document.getElementById("f_tipo_pessoa")?.addEventListener("change", controlarEquipePorTipoPessoa);
-    document.getElementById("f_modulo")?.addEventListener("change", controlarEquipePorTipoPessoa);
+    document.getElementById("f_modulo")?.addEventListener("change", atualizarModalDinamico);
 
     window.addEventListener("load", async () => {
       const { data: { session } } = await _supabase.auth.getSession();
