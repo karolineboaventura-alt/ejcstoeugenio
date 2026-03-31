@@ -59,12 +59,12 @@
         <button onclick="voltarParaSelecao()" class="text-slate-400 font-black uppercase text-[10px] mb-8 flex items-center gap-2"><i class="fas fa-chevron-left"></i> Voltar</button>
         <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-6 hidden">
           <input type="password" id="senhaCompras" placeholder="••••" required class="vault-input w-full rounded-xl py-4 text-center text-2xl tracking-[0.5em]" />
-          <button type="submit" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700">ENTRAR</button>
+          <button id="btnCompras" type="submit" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700">ENTRAR</button>
         </form>
         <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
           <input type="email" id="emailPiloto" placeholder="E-mail" required class="vault-input w-full rounded-xl py-4 px-5 font-bold" />
           <input type="password" id="senhaPiloto" placeholder="Senha" required class="vault-input w-full rounded-xl py-4 px-5 font-bold" />
-          <button type="submit" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900">ACESSAR</button>
+          <button id="btnPiloto" type="submit" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900">ACESSAR</button>
         </form>
         <p id="msgErroLogin" class="hidden mt-6 text-rose-600 text-[10px] font-bold text-center uppercase bg-rose-50 py-3 rounded-lg">Credenciais inválidas</p>
       </div>
@@ -454,6 +454,8 @@
       const senha = document.getElementById("senhaPiloto").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
       const btn = document.getElementById("btnPiloto");
+      if (!btn) { console.error("Botão btnPiloto não encontrado"); return; }
+      
       const original = btn.innerHTML;
       msgErro.classList.add("hidden"); btn.disabled = true; btn.innerHTML = "Entrando...";
 
@@ -470,6 +472,8 @@
       const senha = document.getElementById("senhaCompras").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
       const btn = document.getElementById("btnCompras");
+      if (!btn) { console.error("Botão btnCompras não encontrado"); return; }
+      
       const original = btn.innerHTML;
       msgErro.classList.add("hidden"); btn.disabled = true; btn.innerHTML = "Entrando...";
 
@@ -528,7 +532,7 @@
       }
 
       atualizarPainelFeijoada();
-      await carregarRegistros();
+      carregarRegistros();
     }
 
     function atualizarPainelFeijoada() {
@@ -652,8 +656,9 @@
     
     function fecharModal() {
       document.getElementById("modal").classList.add("hidden");
-      registroEmEdicao = null;
       document.getElementById("formFin").reset();
+      registroEmEdicao = null;
+      document.getElementById("tituloModalRegistro").textContent = "Registro";
     }
 
     function atualizarModalDinamico() {
@@ -705,7 +710,10 @@
       }
     }
 
-    document.getElementById("formFin").addEventListener("submit", async function (e) { e.preventDefault(); await salvarRegistro(); });
+    document.getElementById("formFin").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      await salvarRegistro();
+    });
 
     async function salvarRegistro() {
       try {
@@ -767,8 +775,8 @@
         }
 
         fecharModal();
-        await carregarRegistros();
         if (modulo === "DOACAO") { await atualizarRecebidoMetasProvidencia(); await carregarMetas(); }
+        await carregarRegistros();
 
       } catch (err) {
         console.error("ERRO AO SALVAR:", err);
@@ -829,10 +837,13 @@
     }
 
     async function cancelarRegistro(id) {
-      if (!window.confirm("Tem certeza que deseja cancelar este lançamento? O valor será zerado no caixa.")) return;
+      if (!window.confirm("Tem certeza que deseja cancelar este lançamento?")) return;
       const tabela = obterNomeTabela(abaAtiva);
-      const payload = { status: "CANCELADO" };
-      if (abaAtiva === "CAMISETAS") payload.status_financeiro = "CANCELADO";
+      const reg = dadosCache.find(x => String(x.id) === String(id));
+      if (!reg) return showToast("Registro não encontrado.", "error");
+
+      let payload = { status: "CANCELADO", responsavel_lanc: obterNomeResponsavel() };
+      if (tabela === "camisetas") { payload.status_financeiro = "CANCELADO"; } 
 
       const { error } = await _supabase.from(tabela).update(payload).eq("id", id);
       if (error) { console.error(error); return showToast("Erro ao cancelar.", "error"); }
@@ -867,8 +878,8 @@
       const payload = { status_pedido: status };
       if (status === "ENTREGUE") payload.data_entrega = hojeISODate();
       const { error } = await _supabase.from("camisetas").update(payload).eq("id", id);
-      if (error) { console.error(error); return showToast("Erro ao atualizar status da camiseta.", "error"); }
-      showToast("Status da camiseta atualizado!");
+      if (error) { console.error(error); return showToast("Erro ao atualizar status.", "error"); }
+      showToast("Status da produção atualizado!");
       await carregarRegistros();
     }
 
@@ -977,7 +988,7 @@
         if (!error && data?.length) { todos.push(...data.map(item => ({ ...item, _modulo: t }))); }
       }
 
-      if (!todos.length) return showToast("Nenhum registro encontrado para este telefone.", "error");
+      if (!todos.length) return showToast("Nenhum registro encontrado.", "error");
 
       todos.sort((a, b) => {
         const da = new Date(a.created_at || a.data_movimento || 0).getTime();
@@ -1138,7 +1149,8 @@
         else { p = { status: "PAGO", responsavel_lanc: resp }; }
         
         const { error } = await _supabase.from(r._modulo).update(p).eq("id", r.id);
-        if (error) { console.error(error); erros++; } else { await registrarHistorico("QUITAR_TUDO", r._modulo, r.id, p); }
+        if (error) { console.error(error); erros++; }
+        else { await registrarHistorico("QUITAR_TUDO", r._modulo, r.id, p); }
       }
       
       if (teveDoacao) { await atualizarRecebidoMetasProvidencia(); await carregarMetas(); }
@@ -1199,6 +1211,7 @@
 
     function cobrarWhatsApp(tel, nome, quantidade, valor) {
       const num = normalizarTelefone(tel);
+      if (!num) return showToast("Telefone inválido.", "error");
       const primeiroNome = (nome || "Tudo bem").split(" ")[0];
       const msg = encodeURIComponent(
         `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\n` +
