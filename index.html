@@ -45,28 +45,28 @@
           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Escolha seu perfil</p>
         </div>
         <div class="space-y-4">
-          <button onclick="escolherPerfil('compras')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5">
+          <button onclick="escolherPerfil('compras')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5 border border-slate-100 bg-white">
             <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-shopping-cart"></i></div>
             <div class="text-left"><p class="text-lg font-bold text-slate-800">🛍️ COMPRAS</p></div>
           </button>
-          <button onclick="escolherPerfil('pilotos')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5">
+          <button onclick="escolherPerfil('pilotos')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5 border border-slate-100 bg-white">
             <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-user-shield"></i></div>
             <div class="text-left"><p class="text-lg font-bold text-slate-800">✈️ PILOTOS</p></div>
           </button>
         </div>
       </div>
       <div id="stepAuth" class="hidden">
-        <button onclick="voltarParaSelecao()" class="text-slate-400 font-black uppercase text-[10px] mb-8 flex items-center gap-2"><i class="fas fa-chevron-left"></i> Voltar</button>
+        <button onclick="voltarParaSelecao()" class="text-slate-400 hover:text-purple-700 transition text-[10px] font-black uppercase mb-8 flex items-center gap-2"><i class="fas fa-chevron-left"></i> Voltar</button>
         <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-6 hidden">
           <input type="password" id="senhaCompras" placeholder="••••" required class="vault-input w-full rounded-xl py-4 text-center text-2xl tracking-[0.5em]" />
-          <button type="submit" id="btnCompras" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700">ENTRAR</button>
+          <button type="submit" id="btnCompras" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700 shadow-lg">ENTRAR NO SISTEMA</button>
         </form>
         <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
           <input type="email" id="emailPiloto" placeholder="E-mail" required class="vault-input w-full rounded-xl py-4 px-5 font-bold" />
           <input type="password" id="senhaPiloto" placeholder="Senha" required class="vault-input w-full rounded-xl py-4 px-5 font-bold" />
-          <button type="submit" id="btnPiloto" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900">ACESSAR</button>
+          <button type="submit" id="btnPiloto" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900 shadow-xl">ACESSAR PAINEL</button>
         </form>
-        <p id="msgErroLogin" class="hidden mt-6 text-rose-600 text-[10px] font-bold text-center uppercase bg-rose-50 py-3 rounded-lg">Credenciais inválidas</p>
+        <p id="msgErroLogin" class="hidden mt-6 text-rose-600 text-[10px] font-bold text-center uppercase py-3 bg-rose-50 rounded-lg">Credenciais inválidas</p>
       </div>
     </div>
   </div>
@@ -75,7 +75,7 @@
     <header class="nu-header sticky top-0 z-40 px-6 pt-8 text-white">
       <div class="flex justify-between items-center mb-8">
         <div class="flex items-center gap-4">
-          <div id="userAvatar" class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center font-bold text-xl backdrop-blur-sm">P</div>
+          <div id="userAvatar" class="w-12 h-12 bg-white/20 border border-white/30 rounded-xl flex items-center justify-center font-bold text-xl backdrop-blur-sm">P</div>
           <div>
             <p class="text-[10px] font-bold text-white/60 uppercase italic">"A morte não venceu!"</p>
             <h1 id="headerTitle" class="font-extrabold text-xl tracking-tight leading-none uppercase">EJC BANK</h1>
@@ -105,8 +105,8 @@
       <div id="painelFeijoada" class="hidden bg-white rounded-[32px] p-6 shadow-sm border border-slate-100">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <div>
-            <p id="tituloPainelModulo" class="text-[10px] font-black uppercase text-slate-400">Painel</p>
-            <h3 class="text-xl font-black text-slate-800">Controle Operacional</h3>
+            <p id="tituloPainelModulo" class="text-[10px] font-black uppercase text-slate-400">Painel Operacional</p>
+            <h3 class="text-xl font-black text-slate-800">Controle de Módulo</h3>
           </div>
           <div id="botoesPainelWrap" class="flex items-center gap-2">
             <div id="pillVoucher" class="pill bg-purple-50 text-purple-700 border border-purple-100 hidden">Voucher: R$ 55,00</div>
@@ -114,13 +114,13 @@
             <button id="btnCobranca" onclick="abrirFilaFeijoada()" class="action-btn bg-rose-50 text-rose-600 hidden" title="Cobrar"><i class="fas fa-hand-holding-dollar"></i></button>
           </div>
         </div>
-
+        
         <div id="gridMetricasFeijoada" class="grid grid-cols-2 sm:grid-cols-6 gap-3">
-          <div class="soft-stat bg-purple-50 border-purple-100"><p class="text-[10px] font-black uppercase text-purple-400">Total/Vend</p><p id="fjVendidos" class="text-xl font-extrabold text-slate-800">0</p></div>
-          <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Pagos</p><p id="fjPagos" class="text-xl font-extrabold text-slate-800">0</p></div>
-          <div class="soft-stat bg-amber-50 border-amber-100"><p class="text-[10px] font-black uppercase text-amber-500">Pendentes</p><p id="fjPendentes" class="text-xl font-extrabold text-slate-800">0</p></div>
-          <div class="soft-stat bg-slate-50 border-slate-200"><p class="text-[10px] font-black uppercase text-slate-500">Logística</p><p id="fjRestantes" class="text-xl font-extrabold text-slate-800">0</p></div>
-          <div class="soft-stat bg-rose-50 border-rose-100"><p class="text-[10px] font-black uppercase text-rose-500">Custos</p><p id="fjMercado" class="text-xl font-extrabold text-slate-800">R$ 0,00</p></div>
+          <div class="soft-stat bg-purple-50 border-purple-100"><p class="text-[10px] font-black uppercase text-purple-400">Total/Vend</p><p id="fjVendidos" class="text-xl font-extrabold">0</p></div>
+          <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Pagos</p><p id="fjPagos" class="text-xl font-extrabold text-emerald-700">0</p></div>
+          <div class="soft-stat bg-amber-50 border-amber-100"><p class="text-[10px] font-black uppercase text-amber-500">Pendentes</p><p id="fjPendentes" class="text-xl font-extrabold text-amber-600">0</p></div>
+          <div class="soft-stat bg-slate-50 border-slate-200"><p class="text-[10px] font-black uppercase text-slate-500">Logística</p><p id="fjRestantes" class="text-xl font-extrabold text-slate-600">0</p></div>
+          <div class="soft-stat bg-rose-50 border-rose-100"><p class="text-[10px] font-black uppercase text-rose-500">Custos</p><p id="fjMercado" class="text-xl font-extrabold text-rose-600">R$ 0,00</p></div>
           <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Saldo/Lucro</p><p id="fjLucro" class="text-xl font-extrabold text-emerald-700">R$ 0,00</p></div>
         </div>
 
@@ -150,6 +150,38 @@
             <p id="camRecebido" class="text-2xl font-extrabold text-emerald-700 mt-1">R$ 0,00</p>
           </div>
         </div>
+
+        <div id="painelPessoaEquipe" class="hidden mt-4 space-y-4">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+              <p class="text-[10px] font-black uppercase text-indigo-500">Servos</p>
+              <p id="statServos" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+            </div>
+            <div class="rounded-2xl border border-teal-100 bg-teal-50 p-4">
+              <p class="text-[10px] font-black uppercase text-teal-500">Paroquianos</p>
+              <p id="statParoquianos" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+            </div>
+            <div class="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+              <p class="text-[10px] font-black uppercase text-amber-500">Equipes ativas</p>
+              <p id="statEquipesAtivas" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p class="text-[10px] font-black uppercase text-slate-500">Maior equipe</p>
+              <p id="statMaiorEquipe" class="text-base font-extrabold text-slate-800 mt-1 leading-tight">-</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 rounded-2xl border border-slate-100 p-4">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-[10px] font-black uppercase text-slate-400">Resumo por equipe</p>
+              <p id="subResumoEquipe" class="text-[10px] font-bold text-slate-400">Somente servos</p>
+            </div>
+            <div id="listaResumoEquipe" class="space-y-2">
+              <p class="text-sm text-slate-400 text-center py-4">Nenhum dado disponível.</p>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div id="blocoAdminDoacao" class="hidden">
@@ -278,7 +310,22 @@
               <select id="f_equipe_merc" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
                 <option value="">Selecione a equipe...</option>
                 <option value="Externo">Externo / Paroquiano</option>
-                <option>Cozinha</option><option>Patrimônio</option><option>Compras</option><option>Pilotos</option><option>Visitação</option>
+                <option value="Animação">Animação</option>
+                <option value="Apoio ao Patrimônio">Apoio ao Patrimônio</option>
+                <option value="Café">Café</option>
+                <option value="Casal Coordenador Geral">Casal Coordenador Geral</option>
+                <option value="Círculo">Círculo</option>
+                <option value="Cozinha">Cozinha</option>
+                <option value="Compras">Compras</option>
+                <option value="Intercessão">Intercessão</option>
+                <option value="Liturgia">Liturgia</option>
+                <option value="Ordem">Ordem</option>
+                <option value="Piloto">Piloto</option>
+                <option value="Sala">Sala</option>
+                <option value="Secretaria">Secretaria</option>
+                <option value="Som e Iluminação">Som e Iluminação</option>
+                <option value="Trânsito">Trânsito</option>
+                <option value="Visitação">Visitação</option>
               </select>
             </label>
         </div>
@@ -555,6 +602,34 @@
     async function sair() { ROLE = ""; abaAtiva = "EJC"; await _supabase.auth.signOut(); location.reload(); }
 
     // ============================
+    // CONTROLE DE EQUIPE
+    // ============================
+    function controlarEquipePorTipoPessoa() {
+      const tipoPessoa = document.getElementById("f_tipo_pessoa");
+      const equipe = document.getElementById("f_equipe_merc");
+      const modulo = document.getElementById("f_modulo")?.value;
+
+      if (!tipoPessoa || !equipe) return;
+
+      const usaEquipe = ["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"].includes(modulo);
+      if (!usaEquipe) {
+        equipe.disabled = true;
+        equipe.value = "";
+        return;
+      }
+
+      if (tipoPessoa.value === "PAROQUIANO") {
+        equipe.value = "Externo";
+        equipe.disabled = true;
+        equipe.classList.add("opacity-60");
+      } else {
+        if (equipe.value === "Externo") equipe.value = "";
+        equipe.disabled = false;
+        equipe.classList.remove("opacity-60");
+      }
+    }
+
+    // ============================
     // ABAS E NAVEGAÇÃO
     // ============================
     function obterModuloAtual() { return abaAtiva; }
@@ -589,6 +664,7 @@
       const mostrarPainelMetricas = ["FEIJOADA", "MERCADINHO", "CAMISETAS", "DOACAO"].includes(abaAtiva);
       const gridPadrao = document.getElementById("gridMetricasFeijoada");
       const painelCamisetas = document.getElementById("painelCamisetasBonito");
+      const painelPessoaEquipe = document.getElementById("painelPessoaEquipe");
 
       document.getElementById("pillVoucher").classList.toggle("hidden", abaAtiva !== "FEIJOADA");
 
@@ -598,6 +674,10 @@
       } else {
         if(gridPadrao) gridPadrao.classList.toggle("hidden", !mostrarPainelMetricas);
         if(painelCamisetas) painelCamisetas.classList.add("hidden");
+      }
+
+      if (painelPessoaEquipe) {
+        painelPessoaEquipe.classList.toggle("hidden", !["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"].includes(abaAtiva));
       }
 
       const isPilotoEFeijoada = abaAtiva === "FEIJOADA" && ROLE === "PILOTOS";
@@ -611,8 +691,52 @@
     }
 
     // ============================
-    // DASHBOARDS
+    // DASHBOARDS E RESUMO EQUIPE
     // ============================
+    function atualizarPainelPessoaEquipe() {
+      const painel = document.getElementById("painelPessoaEquipe");
+      if (!painel || !["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"].includes(abaAtiva)) return;
+
+      const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
+      const servos = ativos.filter(r => r.tipo_pessoa === "SERVO");
+      const paroquianos = ativos.filter(r => (r.tipo_pessoa || "PAROQUIANO") === "PAROQUIANO");
+
+      const porEquipe = {};
+      servos.forEach(r => {
+        const equipe = (r.equipe_responsavel || r.equipe || "").trim();
+        if (!equipe) return;
+        porEquipe[equipe] = (porEquipe[equipe] || 0) + 1;
+      });
+
+      const ranking = Object.entries(porEquipe).sort((a, b) => b[1] - a[1]);
+      const maiorEquipe = ranking.length ? ranking[0][0] : "-";
+
+      const elServos = document.getElementById("statServos");
+      const elParoquianos = document.getElementById("statParoquianos");
+      const elEquipesAtivas = document.getElementById("statEquipesAtivas");
+      const elMaiorEquipe = document.getElementById("statMaiorEquipe");
+      const listaResumo = document.getElementById("listaResumoEquipe");
+
+      if (elServos) elServos.textContent = servos.length;
+      if (elParoquianos) elParoquianos.textContent = paroquianos.length;
+      if (elEquipesAtivas) elEquipesAtivas.textContent = ranking.length;
+      if (elMaiorEquipe) elMaiorEquipe.textContent = maiorEquipe;
+
+      if (!listaResumo) return;
+
+      if (!ranking.length) {
+        listaResumo.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhum servo com equipe selecionada.</p>`;
+        return;
+      }
+
+      listaResumo.innerHTML = ranking.map(([equipe, qtd]) => `
+        <div class="flex items-center justify-between rounded-xl bg-white border border-slate-100 px-3 py-3">
+          <div><p class="text-sm font-bold text-slate-800">${esc(equipe)}</p></div>
+          <div class="text-sm font-black text-purple-700">${qtd}</div>
+        </div>
+      `).join("");
+    }
+
     function atualizarPaineis() {
       if (abaAtiva === "EJC") {
         const rec = dadosCache.filter(r => obterStatusRegistro(r) === "PAGO" && r.tipo !== "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);
@@ -688,6 +812,7 @@
         document.getElementById("fjMercado").textContent = "-";
         document.getElementById("fjLucro").textContent = "-";
       }
+      atualizarPainelPessoaEquipe();
     }
 
     // ============================
@@ -714,6 +839,7 @@
       if (statusCam) statusCam.value = "SOLICITADA";
 
       atualizarModalDinamico();
+      controlarEquipePorTipoPessoa();
       document.getElementById("modal").classList.remove("hidden");
     }
     
@@ -730,7 +856,7 @@
       document.getElementById("blocoTamanhoCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
       document.getElementById("blocoStatusCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
       document.getElementById("blocoQtdUnDoacao").classList.toggle("hidden", m !== "DOACAO");
-      document.getElementById("camposMercado").classList.toggle("hidden", !["MERCADINHO", "FEIJOADA", "DOACAO"].includes(m));
+      document.getElementById("camposMercado").classList.toggle("hidden", !["MERCADINHO", "FEIJOADA", "DOACAO", "CAMISETAS"].includes(m));
       
       const wrapData = document.getElementById("campoDataEntregaWrap");
       wrapData.classList.toggle("hidden", !["FEIJOADA", "CAMISETAS", "DOACAO"].includes(m));
@@ -739,6 +865,8 @@
       if (m === "CAMISETAS") labelData.textContent = "Previsão de entrega";
       else if (m === "DOACAO") labelData.textContent = "Data de entrega / previsão";
       else if (m === "FEIJOADA") labelData.textContent = "Data de referência";
+
+      controlarEquipePorTipoPessoa();
     }
 
     // ============================
@@ -809,6 +937,9 @@
           payload = { descricao, tipo, status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO", tipo_registro: document.getElementById("f_tipo_feijoada").value, forma, valor, quantidade: registroOriginal?.quantidade || 1, nome, telefone, equipe: document.getElementById("f_equipe_merc").value || null, tipo_pessoa: document.getElementById("f_tipo_pessoa").value || null, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, responsavel_lanc: responsavel, observacao };
         } else if (modulo === "CAMISETAS") {
           const statusPedidoEscolhido = document.getElementById("f_status_camiseta").value || "SOLICITADA";
+          const tipoPessoa = document.getElementById("f_tipo_pessoa")?.value || "PAROQUIANO";
+          const equipeSelecionada = tipoPessoa === "SERVO" ? (document.getElementById("f_equipe_merc")?.value || null) : "Externo";
+
           const valorPagoAtual = registroOriginal ? Number(registroOriginal.valor_pago || 0) : 0;
           let valorPago = valorPagoAtual;
           
@@ -825,7 +956,7 @@
             statusFinanceiro = "CANCELADO";
           }
 
-          payload = { descricao, nome, telefone, equipe: registroOriginal?.equipe || null, tamanho: document.getElementById("f_tamanho").value, quantidade: registroOriginal?.quantidade || 1, valor_total: valor, valor_pago: valorPago, saldo_pendente: saldoPendente, status_financeiro: statusFinanceiro, status_pedido: statusPedidoEscolhido, forma, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: statusPedidoEscolhido === "ENTREGUE" ? (registroOriginal?.data_entrega || hojeISODate()) : null, responsavel_lanc: responsavel, observacao };
+          payload = { descricao, nome, telefone, tipo_pessoa: tipoPessoa, equipe_responsavel: equipeSelecionada, tamanho: document.getElementById("f_tamanho").value, quantidade: registroOriginal?.quantidade || 1, valor_total: valor, valor_pago: valorPago, saldo_pendente: saldoPendente, status_financeiro: statusFinanceiro, status_pedido: statusPedidoEscolhido, forma, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: statusPedidoEscolhido === "ENTREGUE" ? (registroOriginal?.data_entrega || hojeISODate()) : null, responsavel_lanc: responsavel, observacao };
         } else if (modulo === "DOACAO") {
           const qtdDoacao = Number(document.getElementById("f_qtd_doacao").value || 1);
           const unDoacao = (document.getElementById("f_un_doacao").value || "un").trim();
@@ -890,6 +1021,8 @@
       if (abaAtiva === "CAMISETAS") {
         document.getElementById("f_tamanho").value = r.tamanho || "M";
         document.getElementById("f_status_camiseta").value = r.status_pedido || "SOLICITADA";
+        if(document.getElementById("f_tipo_pessoa")) document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "PAROQUIANO";
+        if(document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe_responsavel || (r.tipo_pessoa === "PAROQUIANO" ? "Externo" : "");
         document.getElementById("f_type").value = (r.status_financeiro === "PENDENTE" || r.status_financeiro === "PARCIAL") ? "PENDENTE" : "ENTRADA";
       }
       if (abaAtiva === "DOACAO") {
@@ -903,6 +1036,7 @@
       }
 
       atualizarModalDinamico();
+      controlarEquipePorTipoPessoa();
       document.getElementById("modal").classList.remove("hidden");
     }
 
@@ -934,7 +1068,7 @@
       if (!r) return;
 
       let p = { status: "PAGO", responsavel_lanc: obterNomeResponsavel() };
-      if (tabela === "camisetas") { p = { status_financeiro: "PAGO", valor_pago: Number(r.valor_total || 0), saldo_pendente: 0, responsavel_lanc: obterNomeResponsavel() }; } 
+      if (tabela === "camisetas") { p = { status_financeiro: "PAGO", valor_pago: Number(r.valor_total || 0), saldo_pendente: 0, data_entrega: r.data_entrega || hojeISODate(), responsavel_lanc: obterNomeResponsavel() }; } 
       if (tabela === "doacao") { p = { status: "PAGO", data_entrega: hojeISODate(), responsavel_lanc: obterNomeResponsavel() }; } 
 
       const { error } = await _supabase.from(tabela).update(p).eq("id", id);
@@ -974,10 +1108,7 @@
       }
 
       const { error } = await _supabase.from("camisetas").update(payload).eq("id", id);
-      if (error) {
-        console.error(error);
-        return showToast("Erro ao atualizar status.", "error");
-      }
+      if (error) { console.error(error); return showToast("Erro ao atualizar status.", "error"); }
 
       await registrarHistorico("STATUS_CAMISETA", "camisetas", id, payload);
       showToast("Status da produção atualizado!");
@@ -990,7 +1121,7 @@
       const dataFim = document.getElementById("filtroDataFim")?.value || "";
 
       return dadosCache.filter(reg => {
-        const texto = [reg.descricao, reg.nome, reg.tipo, reg.forma, reg.item, reg.status, reg.status_financeiro, reg.status_pedido, reg.equipe, reg.observacao].join(" ").toLowerCase();
+        const texto = [reg.descricao, reg.nome, reg.tipo, reg.forma, reg.item, reg.status, reg.status_financeiro, reg.status_pedido, reg.equipe_responsavel, reg.equipe, reg.observacao].join(" ").toLowerCase();
         const passouBusca = texto.includes(termo);
         const statusAtual = obterStatusRegistro(reg);
         const passouStatus = filtroStatusAtivo === "TODOS" || statusAtual === filtroStatusAtivo;
@@ -1025,7 +1156,12 @@
         const statusAtual = obterStatusRegistro(reg);
         
         const detalhesExtras = [];
-        if (reg.equipe) detalhesExtras.push(reg.equipe);
+        if (reg.tipo_pessoa === "SERVO") { detalhesExtras.push("Servo do EJC"); } 
+        else if (reg.tipo_pessoa === "PAROQUIANO" || !reg.tipo_pessoa) { detalhesExtras.push("Paroquiano"); }
+        
+        if (reg.equipe_responsavel) detalhesExtras.push(reg.equipe_responsavel);
+        else if (reg.equipe) detalhesExtras.push(reg.equipe);
+        
         if (reg.tamanho) detalhesExtras.push(`Tam: ${reg.tamanho}`);
         if (reg.quantidade && abaAtiva === "DOACAO") detalhesExtras.push(`Qtd: ${reg.quantidade} ${reg.unidade || ""}`.trim());
         if (reg.tipo_registro && abaAtiva === "FEIJOADA") detalhesExtras.push(reg.tipo_registro);
@@ -1102,11 +1238,11 @@
       });
 
       const primeiroComNome = todos.find(x => x.nome);
-      const primeiroComEquipe = todos.find(x => x.equipe);
+      const primeiroComEquipe = todos.find(x => x.equipe_responsavel || x.equipe);
 
       extratoAtual = {
         nome: nome || primeiroComNome?.nome || "Sem nome",
-        equipe: primeiroComEquipe?.equipe || "",
+        equipe: primeiroComEquipe?.equipe_responsavel || primeiroComEquipe?.equipe || "",
         telefone: num,
         tabela: "MULTIPLO",
         registros: todos,
@@ -1127,7 +1263,7 @@
       const filtro = (document.getElementById("filtroExtrato").value || "").toLowerCase().trim();
 
       const regs = extratoAtual.registros.filter(r => {
-        const texto = [r.descricao, r.item, r.nome, r._modulo, r.status, r.status_financeiro, r.status_pedido, r.equipe, r.tamanho].join(" ").toLowerCase();
+        const texto = [r.descricao, r.item, r.nome, r._modulo, r.status, r.status_financeiro, r.status_pedido, r.equipe_responsavel, r.equipe, r.tamanho].join(" ").toLowerCase();
         return texto.includes(filtro);
       });
 
@@ -1153,7 +1289,7 @@
         const detalhes = [formatarDataBR(r.data_movimento || r.created_at || ""), r._modulo || "", status];
         if (r.status_pedido) detalhes.push(r.status_pedido);
         if (r.tamanho) detalhes.push(`Tam: ${r.tamanho}`);
-        if (r.equipe) detalhes.push(`Equipe: ${r.equipe}`);
+        if (r.equipe_responsavel || r.equipe) detalhes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
         if (r.quantidade && r.unidade) detalhes.push(`Qtd: ${r.quantidade} ${r.unidade}`);
         else if (r.quantidade) detalhes.push(`Qtd: ${r.quantidade}`);
 
@@ -1191,7 +1327,7 @@
         const partes = [formatarDataBR(r.data_movimento || r.created_at || ""), r._modulo || "", r.descricao || r.item || "-", formatarMoeda(r.valor || r.valor_total || r.valor_estimado || 0), obterStatusRegistro(r)];
         if (r.status_pedido) partes.push(`Pedido: ${r.status_pedido}`);
         if (r.tamanho) partes.push(`Tam: ${r.tamanho}`);
-        if (r.equipe) partes.push(`Equipe: ${r.equipe}`);
+        if (r.equipe_responsavel || r.equipe) partes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
         if (r.quantidade && r.unidade) partes.push(`Qtd: ${r.quantidade} ${r.unidade}`);
         return `• ${partes.join(" — ")}`;
       });
@@ -1284,12 +1420,12 @@
     }
 
     function abrirFilaFeijoada() {
-      const p = dadosCache.filter(r => r.tipo_registro === "VOUCHER" && obterStatusRegistro(r) === "PENDENTE" && r.telefone);
+      const pendentes = dadosCache.filter(r => r.tipo_registro === "VOUCHER" && obterStatusRegistro(r) === "PENDENTE" && r.telefone);
       const wrap = document.getElementById("filaFeijoadaLista");
 
-      if (!p.length) { wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-6">Sem cobranças pendentes.</p>`; } 
+      if (!pendentes.length) { wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-6">Sem cobranças pendentes.</p>`; } 
       else {
-        wrap.innerHTML = p.map((r, idx) => `
+        wrap.innerHTML = pendentes.map((r, idx) => `
           <div class="flex justify-between p-3 bg-slate-50 rounded-xl items-center">
             <div>
               <p class="font-bold text-slate-800">${esc(r.nome || "Sem nome")}</p>
@@ -1300,7 +1436,7 @@
         `).join("");
         wrap.querySelectorAll(".btn-cobrar-feijoada").forEach(btn => {
           btn.addEventListener("click", () => {
-            const r = p[Number(btn.dataset.idx)];
+            const r = pendentes[Number(btn.dataset.idx)];
             cobrarWhatsApp(r.telefone, r.nome || "", Number(r.quantidade || 1), Number(r.valor || 0));
           });
         });
@@ -1410,7 +1546,7 @@
       
       lista.forEach(r => {
         linhas.push([
-          r.data_movimento || r.created_at || "", abaAtiva, r.descricao || r.item || "", r.nome || "", r.telefone || "", r.equipe || "", r.valor || r.valor_total || r.valor_estimado || "", obterStatusRegistro(r), r.forma || "", r.observacao || ""
+          r.data_movimento || r.created_at || "", abaAtiva, r.descricao || r.item || "", r.nome || "", r.telefone || "", r.equipe_responsavel || r.equipe || "", r.valor || r.valor_total || r.valor_estimado || "", obterStatusRegistro(r), r.forma || "", r.observacao || ""
         ]);
       });
 
@@ -1440,6 +1576,8 @@
     document.getElementById("campoBusca").addEventListener("input", renderizar);
     document.getElementById("filtroDataInicio")?.addEventListener("input", renderizar);
     document.getElementById("filtroDataFim")?.addEventListener("input", renderizar);
+    document.getElementById("f_tipo_pessoa")?.addEventListener("change", controlarEquipePorTipoPessoa);
+    document.getElementById("f_modulo")?.addEventListener("change", controlarEquipePorTipoPessoa);
 
     window.addEventListener("load", async () => {
       const { data: { session } } = await _supabase.auth.getSession();
