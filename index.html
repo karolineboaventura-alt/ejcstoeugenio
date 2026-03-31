@@ -87,7 +87,7 @@
         <button id="tab-ejc" onclick="mudarAba('EJC')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Caixa EJC</button>
         <button id="tab-mercadinho" onclick="mudarAba('MERCADINHO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Mercadinho</button>
         <button id="tab-feijoada" onclick="mudarAba('FEIJOADA')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Feijoada</button>
-        <button id="tab-camisetas" onclick="mudarAba('CAMISETAS')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Camisetas</button>
+        <button id="tab-camisetas" onclick="mudarAba('CAMISETAS')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Lista de Camisetas</button>
         <button id="tab-doacao" onclick="mudarAba('DOACAO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Lista de Providência</button>
       </div>
     </header>
@@ -184,7 +184,7 @@
       </div>
 
       <div id="blocoAdminDoacao" class="hidden">
-        <button id="btnNovaMeta" onclick="document.getElementById('modalMeta').classList.remove('hidden')" class="w-full bg-white text-purple-700 border-2 border-purple-100 py-5 rounded-3xl font-extrabold shadow-sm flex items-center justify-center gap-3 mb-6 transition active:scale-95">
+        <button id="btnNovaMeta" type="button" class="w-full bg-white text-purple-700 border-2 border-purple-100 py-5 rounded-3xl font-extrabold shadow-sm flex items-center justify-center gap-3 mb-6 transition active:scale-95">
           <i class="fas fa-bullseye"></i> REGISTRAR NECESSIDADE
         </button>
         <div id="listaGerenciarMetas" class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4"></div>
@@ -201,7 +201,6 @@
               0 pendentes
             </div>
           </div>
-
           <div id="listaMensagensPendentes" class="space-y-3">
             <p class="text-sm text-slate-400 text-center py-4">Nenhuma mensagem pendente.</p>
           </div>
@@ -249,11 +248,11 @@
       <form id="formMeta" class="space-y-4">
         <input id="m_item" placeholder="Ex: Arroz ou Óleo" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
         <div class="flex gap-2">
-          <input id="m_qtd" type="number" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
+          <input id="m_qtd" type="number" min="1" step="1" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
           <input id="m_un" placeholder="Unid (kg, un)" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
         </div>
-        <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black shadow-lg active:scale-95 transition">REGISTRAR META</button>
-        <button type="button" onclick="document.getElementById('modalMeta').classList.add('hidden')" class="w-full py-2 font-bold text-slate-400 mt-2">Cancelar</button>
+        <button type="submit" id="btnSalvarMeta" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black shadow-lg">REGISTRAR META</button>
+        <button type="button" id="btnCancelarMeta" class="w-full py-2 font-bold text-slate-400 mt-2">Cancelar</button>
       </form>
     </div>
   </div>
@@ -272,13 +271,13 @@
             <option value="EJC">Caixa Fundo Principal</option>
             <option value="MERCADINHO">Mercadinho</option>
             <option value="FEIJOADA">Feijoada</option>
-            <option value="CAMISETAS">Camisetas</option>
+            <option value="CAMISETAS">Lista de Camisetas</option>
             <option value="DOACAO">Lista de Providência</option>
           </select>
         </div>
         
         <div id="blocoTipoFeijoada" class="hidden vault-input rounded-2xl px-4 py-3">
-          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Tipo Registro</label>
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Tipo de Registro</label>
           <select id="f_tipo_feijoada" class="w-full bg-transparent font-bold outline-none">
             <option value="VOUCHER">Voucher</option>
             <option value="COMPRA_MERCADO">Compra de mercado</option>
@@ -290,8 +289,12 @@
         <div id="blocoTamanhoCamiseta" class="hidden bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3">
           <label class="text-[9px] font-black text-blue-500 uppercase block mb-1">Tamanho Camiseta</label>
           <select id="f_tamanho" class="w-full bg-transparent font-bold outline-none">
-            <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG (Plus Size + R$ 10,00)</option><option value="EXG">EXG (Plus Size + R$ 10,00)</option>
-            <option value="G1">G1 (Plus Size + R$ 10,00)</option><option value="G2">G2 (Plus Size + R$ 10,00)</option><option value="G3">G3 (Plus Size + R$ 10,00)</option>
+            <option value="P">P</option><option value="M">M</option><option value="G">G</option>
+            <option value="GG">GG (Plus Size + R$ 10,00)</option>
+            <option value="EXG">EXG (Plus Size + R$ 10,00)</option>
+            <option value="G1">G1 (Plus Size + R$ 10,00)</option>
+            <option value="G2">G2 (Plus Size + R$ 10,00)</option>
+            <option value="G3">G3 (Plus Size + R$ 10,00)</option>
           </select>
         </div>
         
@@ -475,7 +478,7 @@
     let registroEmEdicao = null;
 
     // ============================
-    // UTILITÁRIOS
+    // UTILITÁRIOS E MAPEAMENTO
     // ============================
     function esc(s) { return s ? s.toString().replace(/[&<>'"]/g, t => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"}[t])) : ""; }
     function formatarMoeda(v) { return "R$ " + Number(v || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 }); }
@@ -567,71 +570,32 @@
       return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-slate-50 text-slate-700 border border-slate-200">${esc(status || "-")}</span>`;
     }
 
-    function cobrarWhatsAppDoacao(id) {
-      const registro = dadosCache.find(x => String(x.id) === String(id));
-      if (!registro) return showToast("Registro não encontrado.", "error");
-
-      const num = normalizarTelefone(registro.telefone);
-      if (!num) return showToast("Telefone inválido.", "error");
-
-      const primeiroNome = (registro.nome || "Tudo bem").trim().split(" ")[0];
-      const item = registro.item || registro.descricao || "item";
-      const qtd = Number(registro.quantidade || 0);
-      const unidade = registro.unidade || "un";
-      const equipe = registro.equipe || "Sem equipe";
-
-      const msg = encodeURIComponent(
-        `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\n` +
-        `Quem fala é *${obterNomeResponsavel()}*, da *${obterEquipeResponsavel()}* do EJC da Paróquia Santo Eugênio de Mazenod (EJC do Parque).\n\n` +
-        `Estou entrando em contato para confirmar a sua doação da nossa *Lista de Providência*.\n\n` +
-        `Conforme nosso controle:\n` +
-        `• Item: ${item}\n` +
-        `• Quantidade prometida: ${qtd} ${unidade}\n` +
-        `• Equipe: ${equipe}\n\n` +
-        `Pedimos, por gentileza, que a entrega seja realizada *até o dia 05/07*, na *Missa de Envio*.\n\n` +
-        `Você consegue nos confirmar, por favor? Se houver qualquer dificuldade, pode nos avisar por aqui.\n\n` +
-        `Deus abençoe!`
-      );
-
-      window.open(`https://wa.me/${num}?text=${msg}`);
-    }
-
     // ============================
     // AUTH & PERFIS
     // ============================
     function escolherPerfil(p) {
       document.getElementById("stepProfile").classList.add("hidden");
       document.getElementById("stepAuth").classList.remove("hidden");
-      document.getElementById("msgErroLogin").classList.add("hidden");
-      if (p === 'compras') {
-        document.getElementById("formCompras").classList.remove("hidden");
-        document.getElementById("formPilotos").classList.add("hidden");
-      } else {
-        document.getElementById("formCompras").classList.add("hidden");
-        document.getElementById("formPilotos").classList.remove("hidden");
-      }
+      if (p === 'compras') { document.getElementById("formCompras").classList.remove("hidden"); document.getElementById("formPilotos").classList.add("hidden"); }
+      else { document.getElementById("formCompras").classList.add("hidden"); document.getElementById("formPilotos").classList.remove("hidden"); }
     }
-    function voltarParaSelecao() {
-      document.getElementById("stepAuth").classList.add("hidden");
-      document.getElementById("stepProfile").classList.remove("hidden");
-    }
+    function voltarParaSelecao() { document.getElementById("stepAuth").classList.add("hidden"); document.getElementById("stepProfile").classList.remove("hidden"); }
 
     async function loginPiloto() {
       const email = document.getElementById("emailPiloto").value.trim().toLowerCase();
       const senha = document.getElementById("senhaPiloto").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
       const btn = document.getElementById("btnPiloto");
-      if (!btn) { console.error("Botão btnPiloto não encontrado"); return; }
-      
+      if (!btn) return;
       const original = btn.innerHTML;
       msgErro.classList.add("hidden"); btn.disabled = true; btn.innerHTML = "Entrando...";
 
       try {
-        if (email === "compras@ejcbank.com.br") { msgErro.textContent = "Compras entra pelo botão de Compras."; msgErro.classList.remove("hidden"); return; }
+        if (email === "compras@ejcbank.com.br") { msgErro.textContent = "Use o botão de Compras."; msgErro.classList.remove("hidden"); return; }
         const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
-        if (error || !data?.user) { msgErro.textContent = "Credenciais inválidas"; msgErro.classList.remove("hidden"); return; }
+        if (error || !data?.user) { msgErro.textContent = "Acesso negado."; msgErro.classList.remove("hidden"); return; }
         ROLE = "PILOTOS"; finalizarLogin();
-      } catch (e) { msgErro.textContent = "Erro"; msgErro.classList.remove("hidden"); } 
+      } catch (e) { msgErro.textContent = "Erro de conexão"; msgErro.classList.remove("hidden"); } 
       finally { btn.disabled = false; btn.innerHTML = original; }
     }
 
@@ -639,15 +603,13 @@
       const senha = document.getElementById("senhaCompras").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
       const btn = document.getElementById("btnCompras");
-      if (!btn) { console.error("Botão btnCompras não encontrado"); return; }
-      
+      if (!btn) return;
       const original = btn.innerHTML;
       msgErro.classList.add("hidden"); btn.disabled = true; btn.innerHTML = "Entrando...";
 
       try {
         const { data, error } = await _supabase.auth.signInWithPassword({ email: "compras@ejcbank.com.br", password: senha });
-        if (error || !data?.user) { msgErro.textContent = "Credenciais inválidas"; msgErro.classList.remove("hidden"); return; }
-        if ((data.user.email || "").toLowerCase() !== "compras@ejcbank.com.br") { await _supabase.auth.signOut(); msgErro.textContent = "Acesso restrito."; msgErro.classList.remove("hidden"); return; }
+        if (error || !data?.user) { msgErro.textContent = "Senha incorreta."; msgErro.classList.remove("hidden"); return; }
         ROLE = "COMPRAS"; finalizarLogin();
       } catch (e) { msgErro.textContent = "Erro"; msgErro.classList.remove("hidden"); } 
       finally { btn.disabled = false; btn.innerHTML = original; }
@@ -656,8 +618,7 @@
     function finalizarLogin() {
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appMain").classList.remove("hidden");
-      document.getElementById("headerTitle").textContent = ROLE === "COMPRAS" ? "EJC BANK • COMPRAS" : "EJC BANK • PILOTOS";
-      document.getElementById("userAvatar").textContent = ROLE === "COMPRAS" ? "C" : "P";
+      document.getElementById("headerTitle").textContent = "EJC BANK • " + ROLE;
       configurarAbasPorPerfil();
     }
 
@@ -669,35 +630,20 @@
       mudarAba(isC ? "MERCADINHO" : "EJC");
     }
 
-    async function sair() { ROLE = ""; abaAtiva = "EJC"; await _supabase.auth.signOut(); location.reload(); }
+    async function sair() { await _supabase.auth.signOut(); location.reload(); }
 
-    // ============================
-    // CONTROLE DE EQUIPE E MODAL
-    // ============================
     function controlarEquipePorTipoPessoa() {
       const tipoPessoa = document.getElementById("f_tipo_pessoa");
       const equipe = document.getElementById("f_equipe_merc");
       const modulo = document.getElementById("f_modulo")?.value;
-
       if (!tipoPessoa || !equipe) return;
-
-      const usaEquipe = ["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"].includes(modulo);
-      if (!usaEquipe) {
-        equipe.disabled = true;
-        equipe.value = "";
-        return;
-      }
-
-      if (tipoPessoa.value === "PAROQUIANO") {
-        equipe.value = "Externo";
-        equipe.disabled = true;
-        equipe.classList.add("opacity-60");
-      } else {
-        if (equipe.value === "Externo") equipe.value = "";
-        equipe.disabled = false;
-        equipe.classList.remove("opacity-60");
-      }
+      if (!["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"].includes(modulo)) { equipe.disabled = true; equipe.value = ""; return; }
+      if (tipoPessoa.value === "PAROQUIANO") { equipe.value = "Externo"; equipe.disabled = true; equipe.classList.add("opacity-60"); } 
+      else { if (equipe.value === "Externo") equipe.value = ""; equipe.disabled = false; equipe.classList.remove("opacity-60"); }
     }
+
+    // NAVEGAÇÃO E MODAL UI
+    function obterModuloAtual() { return abaAtiva; }
 
     function atualizarModalDinamico() {
       const m = document.getElementById("f_modulo").value;
@@ -754,15 +700,8 @@
       document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
     }
 
-    // ============================
-    // ABAS E NAVEGAÇÃO
-    // ============================
-    function obterModuloAtual() { return abaAtiva; }
-
     async function mudarAba(aba) {
-      const modulosCompras = ["MERCADINHO", "FEIJOADA", "CAMISETAS", "DOACAO"];
-      if (ROLE === "COMPRAS" && !modulosCompras.includes(aba)) { return showToast("Sem acesso.", "error"); }
-      
+      if (ROLE === "COMPRAS" && aba === "EJC") return;
       abaAtiva = aba; dadosCache = [];
       
       document.querySelectorAll(".tab-btn").forEach(b => { b.classList.add("bg-white/10", "text-white"); b.classList.remove("bg-white", "text-slate-900"); });
@@ -813,7 +752,7 @@
 
       if (abaAtiva === "FEIJOADA") document.getElementById("tituloPainelModulo").textContent = "Feijoada 25/04";
       else if (abaAtiva === "MERCADINHO") document.getElementById("tituloPainelModulo").textContent = "Mercadinho do EJC";
-      else if (abaAtiva === "CAMISETAS") document.getElementById("tituloPainelModulo").textContent = "Produção e Entrega de Camisetas";
+      else if (abaAtiva === "CAMISETAS") document.getElementById("tituloPainelModulo").textContent = "Lista de Camisetas";
       else if (abaAtiva === "DOACAO") document.getElementById("tituloPainelModulo").textContent = "Lista de Providência";
 
       const labels = document.querySelectorAll("#gridMetricasFeijoada .soft-stat p:first-child");
@@ -822,15 +761,11 @@
         if (labels[1]) labels[1].textContent = "Entregues";
         if (labels[2]) labels[2].textContent = "Prometidos";
         if (labels[3]) labels[3].textContent = "Cancelados";
-        if (labels[4]) labels[4].textContent = "Meta R$";
-        if (labels[5]) labels[5].textContent = "Controle";
       } else {
         if (labels[0]) labels[0].textContent = "Total/Vend";
         if (labels[1]) labels[1].textContent = "Pagos";
         if (labels[2]) labels[2].textContent = "Pendentes";
         if (labels[3]) labels[3].textContent = "Logística";
-        if (labels[4]) labels[4].textContent = "Custos";
-        if (labels[5]) labels[5].textContent = "Saldo/Lucro";
       }
     }
 
@@ -855,30 +790,14 @@
       const ranking = Object.entries(porEquipe).sort((a, b) => b[1] - a[1]);
       const maiorEquipe = ranking.length ? ranking[0][0] : "-";
 
-      const elServos = document.getElementById("statServos");
-      const elParoquianos = document.getElementById("statParoquianos");
-      const elEquipesAtivas = document.getElementById("statEquipesAtivas");
-      const elMaiorEquipe = document.getElementById("statMaiorEquipe");
+      document.getElementById("statServos").textContent = servos.length;
+      document.getElementById("statParoquianos").textContent = paroquianos.length;
+      document.getElementById("statEquipesAtivas").textContent = ranking.length;
+      document.getElementById("statMaiorEquipe").textContent = maiorEquipe;
+
       const listaResumo = document.getElementById("listaResumoEquipe");
-
-      if (elServos) elServos.textContent = servos.length;
-      if (elParoquianos) elParoquianos.textContent = paroquianos.length;
-      if (elEquipesAtivas) elEquipesAtivas.textContent = ranking.length;
-      if (elMaiorEquipe) elMaiorEquipe.textContent = maiorEquipe;
-
-      if (!listaResumo) return;
-
-      if (!ranking.length) {
-        listaResumo.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhum servo com equipe selecionada.</p>`;
-        return;
-      }
-
-      listaResumo.innerHTML = ranking.map(([equipe, qtd]) => `
-        <div class="flex items-center justify-between rounded-xl bg-white border border-slate-100 px-3 py-3">
-          <div><p class="text-sm font-bold text-slate-800">${esc(equipe)}</p></div>
-          <div class="text-sm font-black text-purple-700">${qtd}</div>
-        </div>
-      `).join("");
+      if (!ranking.length) { listaResumo.innerHTML = `<p class="text-sm text-slate-400 py-4">Sem dados.</p>`; return; }
+      listaResumo.innerHTML = ranking.map(([equipe, qtd]) => `<div class="flex justify-between p-3 bg-white border border-slate-100 rounded-xl"><span>${esc(equipe)}</span><span class="font-black text-purple-700">${qtd}</span></div>`).join("");
     }
 
     function atualizarPaineis() {
@@ -894,23 +813,12 @@
       if (abaAtiva === "FEIJOADA") {
         const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
         const vouchers = ativos.filter(r => r.tipo_registro === "VOUCHER");
-
-        const vendidos = vouchers.reduce((a, r) => a + Number(r.quantidade || 1), 0);
-        const pagos = vouchers.filter(r => obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + Number(r.quantidade || 1), 0);
-        const pendentes = vouchers.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; }).reduce((a, r) => a + Number(r.quantidade || 1), 0);
-
-        const custosMercado = ativos.filter(r => r.tipo_registro === "COMPRA_MERCADO").reduce((a, r) => a + Number(r.valor || 0), 0);
-        const outrasSaidas = ativos.filter(r => r.tipo_registro === "OUTRA_SAIDA").reduce((a, r) => a + Number(r.valor || 0), 0);
-        const outrasEntradas = ativos.filter(r => r.tipo_registro === "OUTRA_ENTRADA" && obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + Number(r.valor || 0), 0);
-        const receitaVouchers = vouchers.filter(r => obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + Number(r.valor || 0), 0);
-
-        const custos = custosMercado + outrasSaidas;
-        const receita = receitaVouchers + outrasEntradas;
-
-        document.getElementById("fjVendidos").textContent = vendidos;
-        document.getElementById("fjPagos").textContent = pagos;
-        document.getElementById("fjPendentes").textContent = pendentes;
-        document.getElementById("fjRestantes").textContent = Math.max(0, vendidos - pagos - pendentes);
+        const pagos = vouchers.filter(r => obterStatusRegistro(r) === "PAGO");
+        const custos = ativos.filter(r => r.tipo_registro === "COMPRA_MERCADO" || r.tipo_registro === "OUTRA_SAIDA").reduce((a, r) => a + Number(r.valor || 0), 0);
+        const receita = pagos.reduce((a, r) => a + Number(r.valor || 0), 0);
+        document.getElementById("fjVendidos").textContent = vouchers.length;
+        document.getElementById("fjPagos").textContent = pagos.length;
+        document.getElementById("fjPendentes").textContent = vouchers.length - pagos.length;
         document.getElementById("fjMercado").textContent = formatarMoeda(custos);
         document.getElementById("fjLucro").textContent = formatarMoeda(receita - custos);
       }
@@ -930,33 +838,19 @@
       }
       if (abaAtiva === "CAMISETAS") {
         const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
-        const solicitadas = ativos.filter(r => r.status_pedido === "SOLICITADA").length;
-        const emProducao = ativos.filter(r => r.status_pedido === "EM_PRODUCAO").length;
-        const prontas = ativos.filter(r => r.status_pedido === "PRONTA").length;
-        const entregues = ativos.filter(r => r.status_pedido === "ENTREGUE").length;
-        const pagas = ativos.filter(r => r.status_financeiro === "PAGO").length;
-        const recebido = ativos.reduce((a, r) => a + Number(r.valor_pago || 0), 0);
-
-        const elSolic = document.getElementById("camSolicitadas"); if(elSolic) elSolic.textContent = solicitadas;
-        const elProd = document.getElementById("camEmProducao"); if(elProd) elProd.textContent = emProducao;
-        const elPron = document.getElementById("camProntas"); if(elPron) elPron.textContent = prontas;
-        const elEnt = document.getElementById("camEntregues"); if(elEnt) elEnt.textContent = entregues;
-        const elPagas = document.getElementById("camPagas"); if(elPagas) elPagas.textContent = pagas;
-        const elRec = document.getElementById("camRecebido"); if(elRec) elRec.textContent = formatarMoeda(recebido);
+        document.getElementById("camSolicitadas").textContent = ativos.filter(r => r.status_pedido === "SOLICITADA").length;
+        document.getElementById("camEmProducao").textContent = ativos.filter(r => r.status_pedido === "EM_PRODUCAO").length;
+        document.getElementById("camProntas").textContent = ativos.filter(r => r.status_pedido === "PRONTA").length;
+        document.getElementById("camEntregues").textContent = ativos.filter(r => r.status_pedido === "ENTREGUE").length;
+        document.getElementById("camPagas").textContent = ativos.filter(r => r.status_financeiro === "PAGO").length;
+        document.getElementById("camRecebido").textContent = formatarMoeda(ativos.reduce((a, r) => a + Number(r.valor_pago || 0), 0));
       }
       if (abaAtiva === "DOACAO") {
         const ativos = dadosCache.filter(r => r.status !== "CANCELADO");
-        const prometidos = ativos.filter(r => r.status === "PENDENTE" || r.status === "PROMETIDO").length;
-        const entregues = ativos.filter(r => r.status === "PAGO" || r.status === "ENTREGUE").length;
-        const cancelados = dadosCache.filter(r => r.status === "CANCELADO").length;
-        const totalItens = ativos.length;
-
-        document.getElementById("fjVendidos").textContent = totalItens;
-        document.getElementById("fjPagos").textContent = entregues;
-        document.getElementById("fjPendentes").textContent = prometidos;
-        document.getElementById("fjRestantes").textContent = cancelados;
-        document.getElementById("fjMercado").textContent = "-";
-        document.getElementById("fjLucro").textContent = "-";
+        document.getElementById("fjVendidos").textContent = ativos.length;
+        document.getElementById("fjPagos").textContent = ativos.filter(r => r.status === "ENTREGUE" || r.status === "PAGO").length;
+        document.getElementById("fjPendentes").textContent = ativos.filter(r => r.status === "PROMETIDO" || r.status === "PENDENTE").length;
+        document.getElementById("fjRestantes").textContent = dadosCache.filter(r => r.status === "CANCELADO").length;
       }
       atualizarPainelPessoaEquipe();
     }
@@ -1569,6 +1463,12 @@
       }).join("");
     }
 
+    function fecharExtrato() {
+      document.getElementById("modalExtrato").classList.add("hidden");
+      document.getElementById("modalExtrato").classList.remove("flex");
+      extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
+    }
+
     async function copiarExtrato() {
       const regs = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
       if (!regs.length) return showToast("Extrato vazio.", "error");
@@ -1770,6 +1670,158 @@
     }
 
     // ============================
+    // PROVIDENCIA METAS
+    // ============================
+    function abrirModalMeta() {
+      const modal = document.getElementById("modalMeta");
+      if (!modal) return;
+      modal.classList.remove("hidden");
+    }
+
+    function fecharModalMeta() {
+      const modal = document.getElementById("modalMeta");
+      const form = document.getElementById("formMeta");
+      if (modal) modal.classList.add("hidden");
+      if (form) form.reset();
+    }
+
+    async function salvarMeta() {
+      const itemEl = document.getElementById("m_item");
+      const qtdEl = document.getElementById("m_qtd");
+      const unEl = document.getElementById("m_un");
+      const btn = document.querySelector("#formMeta button[type='submit']");
+
+      if (!itemEl || !qtdEl || !unEl) {
+        showToast("Campos da meta não encontrados.", "error");
+        return;
+      }
+
+      const item = itemEl.value.trim();
+      const qtd = Number(qtdEl.value || 0);
+      const un = unEl.value.trim();
+
+      if (!item || qtd <= 0 || !un) {
+        showToast("Preencha item, quantidade e unidade corretamente.", "error");
+        return;
+      }
+
+      const originalText = btn ? btn.innerHTML : "";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = "Salvando...";
+      }
+
+      try {
+        const payload = {
+          item,
+          unidade: un,
+          quantidade_alvo: qtd,
+          quantidade_recebida: 0,
+          status_meta: "ABERTA"
+        };
+
+        const { error } = await _supabase.from("metas_providencia").insert([payload]);
+
+        if (error) {
+          console.error("Erro ao salvar meta:", error);
+          showToast(error.message || "Erro ao salvar necessidade.", "error");
+          return;
+        }
+
+        showToast("Necessidade registrada com sucesso!");
+        fecharModalMeta();
+        await carregarMetas();
+      } catch (err) {
+        console.error("Falha inesperada ao salvar meta:", err);
+        showToast("Erro inesperado ao registrar necessidade.", "error");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = originalText || "REGISTRAR META";
+        }
+      }
+    }
+
+    async function atualizarRecebidoMetasProvidencia() {
+      const { data: metas, error: erroMetas } = await _supabase.from("metas_providencia").select("*");
+      if (erroMetas || !metas?.length) return;
+
+      const { data: doacoes, error: erroDoacoes } = await _supabase.from("doacao").select("*").eq("status", "ENTREGUE");
+      if (erroDoacoes) return;
+
+      for (const meta of metas) {
+        const itemMeta = String(meta.item || "").trim().toLowerCase(); 
+        const unMeta = String(meta.unidade || "").trim().toLowerCase();
+        
+        const recebidas = (doacoes || []).filter(d => {
+          return String(d.item || "").trim().toLowerCase() === itemMeta && String(d.unidade || "").trim().toLowerCase() === unMeta;
+        });
+
+        const totalRecebido = recebidas.reduce((acc, d) => acc + Number(d.quantidade || 0), 0);
+        let statusMeta = "ABERTA";
+        if (totalRecebido >= Number(meta.quantidade_alvo || 0)) statusMeta = "CONCLUIDA";
+        else if (totalRecebido > 0) statusMeta = "PARCIAL";
+
+        await _supabase.from("metas_providencia").update({ quantidade_recebida: totalRecebido, status_meta: statusMeta }).eq("id", meta.id);
+      }
+    }
+
+    async function carregarMetas() {
+      const wrap = document.getElementById("listaGerenciarMetas");
+      if (!wrap) return;
+
+      wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Carregando...</p>`;
+
+      let query = _supabase.from("metas_providencia").select("*");
+      let { data, error } = await query.order("created_at", { ascending: false });
+
+      if (error) {
+        console.warn("Falha com created_at nas metas, tentando criado_em...", error.message);
+        const tentativa = await _supabase.from("metas_providencia").select("*").order("criado_em", { ascending: false });
+        data = tentativa.data;
+        error = tentativa.error;
+      }
+
+      if (error) {
+        console.error("Erro ao carregar metas:", error);
+        wrap.innerHTML = `<p class="text-sm text-rose-500 text-center py-4">Erro ao carregar necessidades.</p>`;
+        return;
+      }
+
+      if (!data || !data.length) {
+        wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhuma necessidade cadastrada.</p>`;
+        return;
+      }
+
+      wrap.innerHTML = data.map(meta => {
+        const alvo = Number(meta.quantidade_alvo || 0); 
+        const recebido = Number(meta.quantidade_recebida || 0); 
+        const falta = Math.max(0, alvo - recebido);
+        const percentual = alvo > 0 ? Math.min(100, (recebido / alvo) * 100) : 0;
+        
+        let corStatus = "text-rose-600";
+        if (meta.status_meta === "CONCLUIDA") corStatus = "text-emerald-600";
+        else if (meta.status_meta === "PARCIAL") corStatus = "text-amber-600";
+
+        return `
+          <div class="bg-slate-50 rounded-2xl px-4 py-4 border border-slate-100">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="font-bold text-slate-800">${esc(meta.item)}</p>
+                <p class="text-[11px] text-slate-500">Alvo: ${alvo} ${esc(meta.unidade || "")} • Recebido: ${recebido} • Falta: ${falta}</p>
+                <p class="text-[11px] font-bold mt-1 ${corStatus}">${esc(meta.status_meta || "ABERTA")}</p>
+              </div>
+              <div class="text-right text-xs font-bold text-slate-500">${percentual.toFixed(0)}%</div>
+            </div>
+            <div class="mt-3 w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div class="h-full bg-purple-600 rounded-full" style="width:${percentual}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ============================
     // MURAL DE CARINHO PENDENTES
     // ============================
     async function buscarMensagensPendentesMural() {
@@ -1859,35 +1911,46 @@
     // ============================
     // EVENT LISTENERS E INICIALIZAÇÃO
     // ============================
-    document.getElementById("formFin").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      await salvarRegistro();
-    });
-
-    document.getElementById("campoBusca")?.addEventListener("input", renderizar);
-    document.getElementById("filtroDataInicio")?.addEventListener("input", renderizar);
-    document.getElementById("filtroDataFim")?.addEventListener("input", renderizar);
-
-    document.querySelectorAll(".btn-filtro-status").forEach(btn => {
-      btn.addEventListener("click", () => {
-        filtroStatusAtivo = btn.dataset.status || "TODOS";
-        document.querySelectorAll(".btn-filtro-status").forEach(b => b.classList.remove("ring-2", "ring-slate-900"));
-        btn.classList.add("ring-2", "ring-slate-900");
-        renderizar();
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("formFin")?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await salvarRegistro();
       });
-    });
 
-    document.getElementById("f_tipo_pessoa")?.addEventListener("change", controlarEquipePorTipoPessoa);
-    document.getElementById("f_modulo")?.addEventListener("change", atualizarModalDinamico);
+      document.getElementById("btnNovaMeta")?.addEventListener("click", abrirModalMeta);
+      document.getElementById("btnCancelarMeta")?.addEventListener("click", fecharModalMeta);
+      
+      document.getElementById("formMeta")?.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        await salvarMeta();
+      });
 
-    document.getElementById("formMeta")?.addEventListener("submit", async function (e) {
-      e.preventDefault();
-      await salvarMeta();
+      const modalMeta = document.getElementById("modalMeta");
+      if (modalMeta) {
+        modalMeta.addEventListener("click", (e) => {
+          if (e.target === modalMeta) fecharModalMeta();
+        });
+      }
+
+      document.getElementById("campoBusca")?.addEventListener("input", renderizar);
+      document.getElementById("filtroDataInicio")?.addEventListener("input", renderizar);
+      document.getElementById("filtroDataFim")?.addEventListener("input", renderizar);
+
+      document.querySelectorAll(".btn-filtro-status").forEach(btn => {
+        btn.addEventListener("click", () => {
+          filtroStatusAtivo = btn.dataset.status || "TODOS";
+          document.querySelectorAll(".btn-filtro-status").forEach(b => b.classList.remove("ring-2", "ring-slate-900"));
+          btn.classList.add("ring-2", "ring-slate-900");
+          renderizar();
+        });
+      });
+
+      document.getElementById("f_tipo_pessoa")?.addEventListener("change", controlarEquipePorTipoPessoa);
+      document.getElementById("f_modulo")?.addEventListener("change", atualizarModalDinamico);
     });
 
     window.addEventListener("load", async () => {
       const { data: { session } } = await _supabase.auth.getSession();
-
       if (session?.user) {
         ROLE = session.user.email === "compras@ejcbank.com.br" ? "COMPRAS" : "PILOTOS";
         document.getElementById("loginScreen").classList.add("hidden");
