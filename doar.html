@@ -272,10 +272,6 @@
         <p class="text-[10px] font-black uppercase tracking-[0.28em] text-white/80 mb-2">EJC • Paróquia Santo Eugênio de Mazenod</p>
         <h1 class="text-2xl font-black leading-tight">Lista de Providência</h1>
         
-        <p class="text-sm font-extrabold text-white/90 mt-3 leading-snug">
-          “A MORTE NÃO VENCEU. <br /> O TEU AMOR ME SALVOU!”
-        </p>
-        
         <div class="mt-5 px-4 py-3 rounded-2xl bg-white/10 border border-white/15">
           <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/75 mb-3">Contagem regressiva</p>
           <div class="grid grid-cols-4 gap-2">
@@ -305,6 +301,16 @@
             </p>
           </div>
         </div>
+      </div>
+      
+      <div class="mt-4 p-4 rounded-2xl bg-purple-50 border border-purple-100 text-center">
+        <p class="text-[10px] uppercase tracking-[0.25em] font-black text-purple-500 mb-2">
+          Tema do EJC
+        </p>
+        <p class="text-[13px] font-black text-purple-700 leading-snug">
+          “A MORTE NÃO VENCEU.<br>
+          O TEU AMOR ME SALVOU!”
+        </p>
       </div>
     </div>
 
@@ -661,7 +667,7 @@
         .filter(i => detectarCategoria(i.item) === "COMPLEMENTO")
         .sort((a, b) => a.disponivel - b.disponivel);
 
-      const urgentes = importantes.slice(0, 5);
+      const urgentes = importantes;
 
       if (!criticos.length) {
         criticosWrap.innerHTML = `
@@ -917,14 +923,24 @@
         return showToast("Erro ao registrar doação.", "error");
       }
 
+      await carregarDados();
+
+      const totalItens = payload.length;
+
+      carrinhoDoacao = [];
+      atualizarListaCarrinho();
+
       document.getElementById('areaForm').classList.add('hidden');
       document.getElementById('resumoSelecao').classList.add('hidden');
+      document.getElementById('itemEscolhidoBox').classList.add('hidden');
       document.getElementById('agradecimentoDoacao').classList.remove('hidden');
       document.getElementById('agradecimentoTexto').innerText =
-        `Sua providência foi registrada com sucesso com ${carrinhoDoacao.length} item(ns). Deus lhe pague!`;
+        `Sua providência foi registrada com sucesso com ${totalItens} item(ns). Deus lhe pague!`;
+
+      btn.disabled = false;
+      btn.innerText = "Confirmar doação";
 
       showToast("Doação registrada com sucesso! 💜");
-      await carregarDados();
     }
 
     function novaDoacao() {
