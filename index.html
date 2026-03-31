@@ -88,7 +88,7 @@
         <button id="tab-mercadinho" onclick="mudarAba('MERCADINHO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Mercadinho</button>
         <button id="tab-feijoada" onclick="mudarAba('FEIJOADA')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Feijoada</button>
         <button id="tab-camisetas" onclick="mudarAba('CAMISETAS')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Camisetas</button>
-        <button id="tab-doacao" onclick="mudarAba('DOACAO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Providência</button>
+        <button id="tab-doacao" onclick="mudarAba('DOACAO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Lista de Providência</button>
       </div>
     </header>
 
@@ -105,8 +105,8 @@
       <div id="painelFeijoada" class="hidden bg-white rounded-[32px] p-6 shadow-sm border border-slate-100">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <div>
-            <p id="tituloPainelModulo" class="text-[10px] font-black uppercase text-slate-400">Painel Operacional</p>
-            <h3 class="text-xl font-black text-slate-800">Controle de Módulo</h3>
+            <p id="tituloPainelModulo" class="text-[10px] font-black uppercase text-slate-400">Painel</p>
+            <h3 class="text-xl font-black text-slate-800">Controle Operacional</h3>
           </div>
           <div id="botoesPainelWrap" class="flex items-center gap-2">
             <div id="pillVoucher" class="pill bg-purple-50 text-purple-700 border border-purple-100 hidden">Voucher: R$ 55,00</div>
@@ -114,13 +114,13 @@
             <button id="btnCobranca" onclick="abrirFilaFeijoada()" class="action-btn bg-rose-50 text-rose-600 hidden" title="Cobrar"><i class="fas fa-hand-holding-dollar"></i></button>
           </div>
         </div>
-        
+
         <div id="gridMetricasFeijoada" class="grid grid-cols-2 sm:grid-cols-6 gap-3">
-          <div class="soft-stat bg-purple-50 border-purple-100"><p class="text-[10px] font-black uppercase text-purple-400">Total/Vend</p><p id="fjVendidos" class="text-xl font-extrabold">0</p></div>
-          <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Pagos</p><p id="fjPagos" class="text-xl font-extrabold text-emerald-700">0</p></div>
-          <div class="soft-stat bg-amber-50 border-amber-100"><p class="text-[10px] font-black uppercase text-amber-500">Pendentes</p><p id="fjPendentes" class="text-xl font-extrabold text-amber-600">0</p></div>
-          <div class="soft-stat bg-slate-50 border-slate-200"><p class="text-[10px] font-black uppercase text-slate-500">Logística</p><p id="fjRestantes" class="text-xl font-extrabold text-slate-600">0</p></div>
-          <div class="soft-stat bg-rose-50 border-rose-100"><p class="text-[10px] font-black uppercase text-rose-500">Custos</p><p id="fjMercado" class="text-xl font-extrabold text-rose-600">R$ 0,00</p></div>
+          <div class="soft-stat bg-purple-50 border-purple-100"><p class="text-[10px] font-black uppercase text-purple-400">Total/Vend</p><p id="fjVendidos" class="text-xl font-extrabold text-slate-800">0</p></div>
+          <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Pagos</p><p id="fjPagos" class="text-xl font-extrabold text-slate-800">0</p></div>
+          <div class="soft-stat bg-amber-50 border-amber-100"><p class="text-[10px] font-black uppercase text-amber-500">Pendentes</p><p id="fjPendentes" class="text-xl font-extrabold text-slate-800">0</p></div>
+          <div class="soft-stat bg-slate-50 border-slate-200"><p class="text-[10px] font-black uppercase text-slate-500">Logística</p><p id="fjRestantes" class="text-xl font-extrabold text-slate-800">0</p></div>
+          <div class="soft-stat bg-rose-50 border-rose-100"><p class="text-[10px] font-black uppercase text-rose-500">Custos</p><p id="fjMercado" class="text-xl font-extrabold text-slate-800">R$ 0,00</p></div>
           <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Saldo/Lucro</p><p id="fjLucro" class="text-xl font-extrabold text-emerald-700">R$ 0,00</p></div>
         </div>
 
@@ -241,7 +241,7 @@
             <option value="MERCADINHO">Mercadinho</option>
             <option value="FEIJOADA">Feijoada</option>
             <option value="CAMISETAS">Camisetas</option>
-            <option value="DOACAO">Providência Física</option>
+            <option value="DOACAO">Lista de Providência</option>
           </select>
         </div>
         
@@ -481,19 +481,36 @@
       if (r.status_pedido === "CANCELADO") return "CANCELADO";
       if (r.status_financeiro === "CANCELADO") return "CANCELADO";
       if (r.status_financeiro) return r.status_financeiro;
-      if (r.status) return r.status;
+      
+      if (r.status) {
+        if (r.status === "PROMETIDO") return "PENDENTE";
+        if (r.status === "ENTREGUE") return "PAGO";
+        return r.status;
+      }
+      
       if (r.tipo === "PENDENTE") return "PENDENTE";
       if (r.tipo === "ENTRADA") return "PAGO";
       if (r.tipo === "SAIDA") return "PAGO";
       return "";
     }
+
+    function obterStatusVisual(r) {
+      if (abaAtiva === "DOACAO" || r._modulo === "doacao") {
+        if (r.status === "PROMETIDO") return "PROMETIDO";
+        if (r.status === "ENTREGUE") return "ENTREGUE";
+        if (r.status === "CANCELADO") return "CANCELADO";
+      }
+      return obterStatusRegistro(r);
+    }
     
     function obterValorPagoRegistro(r) {
+      if (r._modulo === "doacao" || abaAtiva === "DOACAO") return 0;
       if (typeof r.valor_pago !== "undefined") return Number(r.valor_pago || 0);
       return obterStatusRegistro(r) === "PAGO" ? Number(r.valor || r.valor_total || r.valor_estimado || 0) : 0;
     }
-    
+
     function obterValorAbertoRegistro(r) {
+      if (r._modulo === "doacao" || abaAtiva === "DOACAO") return 0;
       if (typeof r.saldo_pendente !== "undefined") return Number(r.saldo_pendente || 0);
       const s = obterStatusRegistro(r);
       return (s === "PENDENTE" || s === "PARCIAL") ? Number(r.valor || r.valor_total || r.valor_estimado || 0) : 0;
@@ -524,6 +541,35 @@
       if (s === "ENTREGUE") return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-100">Entregue</span>`;
       if (s === "CANCELADO") return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-rose-50 text-rose-700 border border-rose-100">Cancelado</span>`;
       return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-slate-50 text-slate-700 border border-slate-200">${esc(status || "-")}</span>`;
+    }
+
+    function cobrarWhatsAppDoacao(id) {
+      const registro = dadosCache.find(x => String(x.id) === String(id));
+      if (!registro) return showToast("Registro não encontrado.", "error");
+
+      const num = normalizarTelefone(registro.telefone);
+      if (!num) return showToast("Telefone inválido.", "error");
+
+      const primeiroNome = (registro.nome || "Tudo bem").trim().split(" ")[0];
+      const item = registro.item || registro.descricao || "item";
+      const qtd = Number(registro.quantidade || 0);
+      const unidade = registro.unidade || "un";
+      const equipe = registro.equipe || "Sem equipe";
+
+      const msg = encodeURIComponent(
+        `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\n` +
+        `Quem fala é *${obterNomeResponsavel()}*, da *${obterEquipeResponsavel()}* do EJC da Paróquia Santo Eugênio de Mazenod (EJC do Parque).\n\n` +
+        `Estou entrando em contato para confirmar a sua doação da nossa *Lista de Providência*.\n\n` +
+        `Conforme nosso controle:\n` +
+        `• Item: ${item}\n` +
+        `• Quantidade prometida: ${qtd} ${unidade}\n` +
+        `• Equipe: ${equipe}\n\n` +
+        `Pedimos, por gentileza, que a entrega seja realizada *até o dia 05/07*, na *Missa de Envio*.\n\n` +
+        `Você consegue nos confirmar, por favor? Se houver qualquer dificuldade, pode nos avisar por aqui.\n\n` +
+        `Deus abençoe!`
+      );
+
+      window.open(`https://wa.me/${num}?text=${msg}`);
     }
 
     // ============================
@@ -687,7 +733,25 @@
       if (abaAtiva === "FEIJOADA") document.getElementById("tituloPainelModulo").textContent = "Feijoada 25/04";
       else if (abaAtiva === "MERCADINHO") document.getElementById("tituloPainelModulo").textContent = "Mercadinho do EJC";
       else if (abaAtiva === "CAMISETAS") document.getElementById("tituloPainelModulo").textContent = "Produção e Entrega de Camisetas";
-      else if (abaAtiva === "DOACAO") document.getElementById("tituloPainelModulo").textContent = "Providência Física";
+      else if (abaAtiva === "DOACAO") document.getElementById("tituloPainelModulo").textContent = "Lista de Providência";
+
+      if (abaAtiva === "DOACAO") {
+        const labels = document.querySelectorAll("#gridMetricasFeijoada .soft-stat p:first-child");
+        if (labels[0]) labels[0].textContent = "Total";
+        if (labels[1]) labels[1].textContent = "Entregues";
+        if (labels[2]) labels[2].textContent = "Prometidos";
+        if (labels[3]) labels[3].textContent = "Cancelados";
+        if (labels[4]) labels[4].textContent = "Meta R$";
+        if (labels[5]) labels[5].textContent = "Controle";
+      } else {
+        const labels = document.querySelectorAll("#gridMetricasFeijoada .soft-stat p:first-child");
+        if (labels[0]) labels[0].textContent = "Total/Vend";
+        if (labels[1]) labels[1].textContent = "Pagos";
+        if (labels[2]) labels[2].textContent = "Pendentes";
+        if (labels[3]) labels[3].textContent = "Logística";
+        if (labels[4]) labels[4].textContent = "Custos";
+        if (labels[5]) labels[5].textContent = "Saldo/Lucro";
+      }
     }
 
     // ============================
@@ -801,14 +865,16 @@
         const elRec = document.getElementById("camRecebido"); if(elRec) elRec.textContent = formatarMoeda(recebido);
       }
       if (abaAtiva === "DOACAO") {
-        const prometido = dadosCache.filter(r => r.status === "PENDENTE").length;
-        const entregue = dadosCache.filter(r => r.status === "PAGO").length;
-        const cancelado = dadosCache.filter(r => r.status === "CANCELADO").length;
+        const ativos = dadosCache.filter(r => r.status !== "CANCELADO");
+        const prometidos = ativos.filter(r => r.status === "PROMETIDO").length;
+        const entregues = ativos.filter(r => r.status === "ENTREGUE").length;
+        const cancelados = dadosCache.filter(r => r.status === "CANCELADO").length;
+        const totalItens = dadosCache.filter(r => r.status !== "CANCELADO").length;
 
-        document.getElementById("fjVendidos").textContent = prometido;
-        document.getElementById("fjPagos").textContent = entregue;
-        document.getElementById("fjPendentes").textContent = cancelado;
-        document.getElementById("fjRestantes").textContent = "-";
+        document.getElementById("fjVendidos").textContent = totalItens;
+        document.getElementById("fjPagos").textContent = entregues;
+        document.getElementById("fjPendentes").textContent = prometidos;
+        document.getElementById("fjRestantes").textContent = cancelados;
         document.getElementById("fjMercado").textContent = "-";
         document.getElementById("fjLucro").textContent = "-";
       }
@@ -956,11 +1022,16 @@
             statusFinanceiro = "CANCELADO";
           }
 
-          payload = { descricao, nome, telefone, tipo_pessoa: tipoPessoa, equipe_responsavel: equipeSelecionada, tamanho: document.getElementById("f_tamanho").value, quantidade: registroOriginal?.quantidade || 1, valor_total: valor, valor_pago: valorPago, saldo_pendente: saldoPendente, status_financeiro: statusFinanceiro, status_pedido: statusPedidoEscolhido, forma, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: statusPedidoEscolhido === "ENTREGUE" ? (registroOriginal?.data_entrega || hojeISODate()) : null, responsavel_lanc: responsavel, observacao };
+          payload = { descricao, tipo, nome, telefone, tipo_pessoa: tipoPessoa, equipe_responsavel: equipeSelecionada, tamanho: document.getElementById("f_tamanho").value, quantidade: registroOriginal?.quantidade || 1, valor_total: valor, valor_pago: valorPago, saldo_pendente: saldoPendente, status_financeiro: statusFinanceiro, status_pedido: statusPedidoEscolhido, forma, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: statusPedidoEscolhido === "ENTREGUE" ? (registroOriginal?.data_entrega || hojeISODate()) : null, responsavel_lanc: responsavel, observacao };
         } else if (modulo === "DOACAO") {
           const qtdDoacao = Number(document.getElementById("f_qtd_doacao").value || 1);
           const unDoacao = (document.getElementById("f_un_doacao").value || "un").trim();
-          payload = { item: descricao, quantidade: qtdDoacao, unidade: unDoacao, valor_estimado: valor, nome, telefone, equipe: document.getElementById("f_equipe_merc")?.value || null, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: tipo === "ENTRADA" ? (registroOriginal?.data_entrega || dataEntrega || hojeISODate()) : null, status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO", responsavel_lanc: responsavel, observacao };
+          const tipoPessoaDoacao = document.getElementById("f_tipo_pessoa")?.value || "PAROQUIANO";
+          const equipeDoacao = tipoPessoaDoacao === "SERVO" ? (document.getElementById("f_equipe_merc")?.value || null) : "Externo";
+          
+          const statusDoacao = tipo === "PENDENTE" ? "PROMETIDO" : tipo === "ENTRADA" ? "ENTREGUE" : "CANCELADO";
+
+          payload = { item: descricao, tipo, quantidade: qtdDoacao, unidade: unDoacao, valor_estimado: valor, nome, telefone, equipe: equipeDoacao, tipo_pessoa: tipoPessoaDoacao, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: statusDoacao === "ENTREGUE" ? (registroOriginal?.data_entrega || dataEntrega || hojeISODate()) : null, status: statusDoacao, responsavel_lanc: responsavel, observacao };
         }
 
         if (registroEmEdicao) {
@@ -1023,13 +1094,18 @@
         document.getElementById("f_status_camiseta").value = r.status_pedido || "SOLICITADA";
         if(document.getElementById("f_tipo_pessoa")) document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "PAROQUIANO";
         if(document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe_responsavel || (r.tipo_pessoa === "PAROQUIANO" ? "Externo" : "");
-        document.getElementById("f_type").value = (r.status_financeiro === "PENDENTE" || r.status_financeiro === "PARCIAL") ? "PENDENTE" : "ENTRADA";
+        document.getElementById("f_type").value = r.tipo || ((r.status_financeiro === "PENDENTE" || r.status_financeiro === "PARCIAL") ? "PENDENTE" : "ENTRADA");
       }
       if (abaAtiva === "DOACAO") {
         document.getElementById("f_qtd_doacao").value = r.quantidade || 1;
         document.getElementById("f_un_doacao").value = r.unidade || "un";
-        if(document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe || "";
-        document.getElementById("f_type").value = r.status === "PENDENTE" ? "PENDENTE" : "ENTRADA";
+        if (document.getElementById("f_tipo_pessoa")) document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "PAROQUIANO";
+        if (document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe || "";
+        
+        if (r.status === "PROMETIDO") document.getElementById("f_type").value = "PENDENTE";
+        else if (r.status === "ENTREGUE") document.getElementById("f_type").value = "ENTRADA";
+        else if (r.status === "CANCELADO") document.getElementById("f_type").value = "SAIDA";
+        else document.getElementById("f_type").value = r.tipo || "PENDENTE";
       }
       if (abaAtiva === "EJC") {
         document.getElementById("f_type").value = r.tipo || (obterStatusRegistro(r) === "PENDENTE" ? "PENDENTE" : "ENTRADA");
@@ -1069,7 +1145,7 @@
 
       let p = { status: "PAGO", responsavel_lanc: obterNomeResponsavel() };
       if (tabela === "camisetas") { p = { status_financeiro: "PAGO", valor_pago: Number(r.valor_total || 0), saldo_pendente: 0, data_entrega: r.data_entrega || hojeISODate(), responsavel_lanc: obterNomeResponsavel() }; } 
-      if (tabela === "doacao") { p = { status: "PAGO", data_entrega: hojeISODate(), responsavel_lanc: obterNomeResponsavel() }; } 
+      if (tabela === "doacao") { p = { status: "ENTREGUE", data_entrega: hojeISODate(), responsavel_lanc: obterNomeResponsavel() }; } 
 
       const { error } = await _supabase.from(tabela).update(p).eq("id", id);
       if (error) { console.error(error); return showToast("Erro na baixa.", "error"); }
@@ -1108,7 +1184,10 @@
       }
 
       const { error } = await _supabase.from("camisetas").update(payload).eq("id", id);
-      if (error) { console.error(error); return showToast("Erro ao atualizar status.", "error"); }
+      if (error) {
+        console.error(error);
+        return showToast("Erro ao atualizar status.", "error");
+      }
 
       await registrarHistorico("STATUS_CAMISETA", "camisetas", id, payload);
       showToast("Status da produção atualizado!");
@@ -1121,7 +1200,7 @@
       const dataFim = document.getElementById("filtroDataFim")?.value || "";
 
       return dadosCache.filter(reg => {
-        const texto = [reg.descricao, reg.nome, reg.tipo, reg.forma, reg.item, reg.status, reg.status_financeiro, reg.status_pedido, reg.equipe_responsavel, reg.equipe, reg.observacao].join(" ").toLowerCase();
+        const texto = [reg.descricao, reg.nome, reg.tipo, reg.forma, reg.item, reg.status, reg.status_financeiro, reg.status_pedido, reg.equipe_responsavel, reg.equipe, reg.observacao, reg.unidade, reg.tipo_pessoa].join(" ").toLowerCase();
         const passouBusca = texto.includes(termo);
         const statusAtual = obterStatusRegistro(reg);
         const passouStatus = filtroStatusAtivo === "TODOS" || statusAtual === filtroStatusAtivo;
@@ -1163,7 +1242,13 @@
         else if (reg.equipe) detalhesExtras.push(reg.equipe);
         
         if (reg.tamanho) detalhesExtras.push(`Tam: ${reg.tamanho}`);
-        if (reg.quantidade && abaAtiva === "DOACAO") detalhesExtras.push(`Qtd: ${reg.quantidade} ${reg.unidade || ""}`.trim());
+        
+        if (abaAtiva === "DOACAO") {
+          if (reg.quantidade) detalhesExtras.push(`Prometido: ${reg.quantidade} ${reg.unidade || ""}`.trim());
+          if (reg.data_previsao) detalhesExtras.push(`Prev.: ${formatarDataBR(reg.data_previsao)}`);
+          if (reg.data_entrega) detalhesExtras.push(`Entregue: ${formatarDataBR(reg.data_entrega)}`);
+        }
+        
         if (reg.tipo_registro && abaAtiva === "FEIJOADA") detalhesExtras.push(reg.tipo_registro);
 
         const infoExtra = detalhesExtras.length ? `<div class="text-[10px] text-slate-400 mt-1">${esc(detalhesExtras.join(" • "))}</div>` : "";
@@ -1186,11 +1271,21 @@
         }
 
         const corStatus = statusAtual === "PAGO" ? "text-emerald-600" : statusAtual === "CANCELADO" ? "text-rose-600" : "text-amber-600";
+        const textoStatus = abaAtiva === "DOACAO" ? (reg.status === "PROMETIDO" ? "PROMETIDO" : reg.status === "ENTREGUE" ? "ENTREGUE" : reg.status === "CANCELADO" ? "CANCELADO" : statusAtual) : statusAtual;
+
+        const badgeDoacao = abaAtiva === "DOACAO"
+          ? (statusAtual === "PAGO"
+              ? `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-100 mt-2">Entregue</span>`
+              : statusAtual === "CANCELADO"
+              ? `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-rose-50 text-rose-700 border border-rose-100 mt-2">Cancelado</span>`
+              : `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-100 mt-2">Prometido</span>`)
+          : "";
 
         const btnExtrato = telefone ? `<button class="action-btn bg-slate-100 text-slate-700 hover:bg-slate-200" onclick="abrirExtratoCompleto('${esc(telefone)}', '${esc(nome)}')" title="Extrato"><i class="fas fa-file-invoice"></i></button>` : "";
         const btnEditar = statusAtual !== "CANCELADO" ? `<button class="action-btn bg-blue-50 text-blue-600 hover:bg-blue-100" onclick="editarRegistro('${id}')" title="Editar"><i class="fas fa-pen"></i></button>` : "";
         const btnCancelar = statusAtual !== "CANCELADO" ? `<button class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100" onclick="cancelarRegistro('${id}')" title="Cancelar"><i class="fas fa-ban"></i></button>` : "";
-        const btnBaixa = (statusAtual === "PENDENTE" || statusAtual === "PARCIAL") ? `<button class="action-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100" onclick="darBaixaIndividual('${id}')" title="Dar baixa"><i class="fas fa-check"></i></button>` : "";
+        const btnBaixa = ((abaAtiva === "DOACAO" && statusAtual === "PENDENTE") || (abaAtiva !== "DOACAO" && (statusAtual === "PENDENTE" || statusAtual === "PARCIAL"))) ? `<button class="action-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100" onclick="darBaixaIndividual('${id}')" title="Dar baixa"><i class="fas fa-check"></i></button>` : "";
+        const btnCobrarDoacao = abaAtiva === "DOACAO" && statusAtual === "PENDENTE" && telefone ? `<button class="action-btn bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white shadow-md hover:opacity-90" onclick="cobrarWhatsAppDoacao('${id}')" title="Cobrar doação"><i class="fab fa-whatsapp"></i></button>` : "";
 
         tr.innerHTML = `
           <td class="px-4 py-3 align-top">
@@ -1198,12 +1293,14 @@
             <div class="text-[11px] text-slate-500">${esc(nome || "Sem nome")}</div>
             ${infoExtra}
             ${controleCamiseta}
+            ${badgeDoacao}
           </td>
           <td class="px-4 py-3 text-right align-top whitespace-nowrap">
             <div class="font-bold text-slate-900">${formatarMoeda(valor)}</div>
-            <div class="text-[11px] font-bold mb-2 ${corStatus}">${esc(statusAtual || "-")}</div>
+            <div class="text-[11px] font-bold mb-2 ${corStatus}">${esc(textoStatus || "-")}</div>
             <div class="flex justify-end gap-1 mt-2">
               ${btnBaixa}
+              ${btnCobrarDoacao}
               ${btnEditar}
               ${btnCancelar}
               ${btnExtrato}
@@ -1283,10 +1380,12 @@
 
       lista.innerHTML = regs.map(r => {
         const valor = r.valor || r.valor_total || r.valor_estimado || 0;
-        const status = obterStatusRegistro(r);
-        const statusClasse = status === "PAGO" ? "text-emerald-600" : status === "CANCELADO" ? "text-rose-600" : "text-amber-600";
+        const status = obterStatusVisual(r);
+        const statusClasse = status === "PAGO" || status === "ENTREGUE" ? "text-emerald-600" : status === "CANCELADO" ? "text-rose-600" : "text-amber-600";
 
-        const detalhes = [formatarDataBR(r.data_movimento || r.created_at || ""), r._modulo || "", status];
+        const nomeModuloVisual = (r._modulo === "doacao") ? "LISTA DE PROVIDÊNCIA" : (r._modulo || "");
+        const detalhes = [formatarDataBR(r.data_movimento || r.created_at || ""), nomeModuloVisual, status];
+        
         if (r.status_pedido) detalhes.push(r.status_pedido);
         if (r.tamanho) detalhes.push(`Tam: ${r.tamanho}`);
         if (r.equipe_responsavel || r.equipe) detalhes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
@@ -1324,23 +1423,36 @@
       const totalAberto = regs.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
 
       const linhas = regs.map(r => {
-        const partes = [formatarDataBR(r.data_movimento || r.created_at || ""), r._modulo || "", r.descricao || r.item || "-", formatarMoeda(r.valor || r.valor_total || r.valor_estimado || 0), obterStatusRegistro(r)];
+        const moduloVisual = r._modulo === "doacao" ? "LISTA DE PROVIDÊNCIA" : (r._modulo || "");
+        const partes = [
+          formatarDataBR(r.data_movimento || r.created_at || ""),
+          moduloVisual,
+          r.descricao || r.item || "-",
+          formatarMoeda(r.valor || r.valor_total || r.valor_estimado || 0),
+          obterStatusVisual(r)
+        ];
+
         if (r.status_pedido) partes.push(`Pedido: ${r.status_pedido}`);
         if (r.tamanho) partes.push(`Tam: ${r.tamanho}`);
         if (r.equipe_responsavel || r.equipe) partes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
         if (r.quantidade && r.unidade) partes.push(`Qtd: ${r.quantidade} ${r.unidade}`);
+
         return `• ${partes.join(" — ")}`;
       });
 
-      const texto = `Extrato de ${extratoAtual.nome}\n` + 
-                    `${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}` + 
-                    `Telefone: ${extratoAtual.telefone || "-"}\n\n` + 
-                    `${linhas.join("\n")}\n\n` + 
-                    `Total pago: ${formatarMoeda(totalPago)}\n` + 
+      const texto = `Extrato de ${extratoAtual.nome}\n` +
+                    `${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}` +
+                    `Telefone: ${extratoAtual.telefone || "-"}\n\n` +
+                    `${linhas.join("\n")}\n\n` +
+                    `Total pago: ${formatarMoeda(totalPago)}\n` +
                     `Total em aberto: ${formatarMoeda(totalAberto)}`;
 
-      try { await navigator.clipboard.writeText(texto); showToast("Extrato copiado!"); } 
-      catch { showToast("Não foi possível copiar.", "error"); }
+      try {
+        await navigator.clipboard.writeText(texto);
+        showToast("Extrato copiado!");
+      } catch {
+        showToast("Não foi possível copiar.", "error");
+      }
     }
 
     function cobrarExtratoWhatsApp() {
@@ -1358,7 +1470,11 @@
     // QUITAR TUDO
     // ============================
     function abrirModalQuitarTudo() {
-      const pendentes = extratoAtual.registros.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; });
+      const pendentes = extratoAtual.registros.filter(r => { 
+        if (r._modulo === "doacao") return r.status === "PROMETIDO";
+        const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; 
+      });
+      
       if (!pendentes.length) return showToast("Não há lançamentos em aberto.", "success");
       
       document.getElementById("quitarTudoRecebidoPor").value = obterNomeResponsavel();
@@ -1378,7 +1494,12 @@
       if (!resp) return showToast("Quem recebeu?", "error");
       if (!data) return showToast("Informe a data.", "error");
       
-      const pendentes = extratoAtual.registros.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; });
+      const pendentes = extratoAtual.registros.filter(r => {
+        if (r._modulo === "doacao") return r.status === "PROMETIDO";
+        const st = obterStatusRegistro(r);
+        return st === "PENDENTE" || st === "PARCIAL";
+      });
+
       if (!pendentes.length) return showToast("Nada pendente.", "success");
       
       let erros = 0; let teveDoacao = false;
@@ -1386,7 +1507,7 @@
       for (const r of pendentes) {
         let p = {};
         if (r._modulo === "camisetas") { p = { status_financeiro: "PAGO", valor_pago: Number(r.valor_total || 0), saldo_pendente: 0, data_entrega: r.data_entrega || data, responsavel_lanc: resp }; } 
-        else if (r._modulo === "doacao") { teveDoacao = true; p = { status: "PAGO", data_entrega: data, responsavel_lanc: resp }; } 
+        else if (r._modulo === "doacao") { teveDoacao = true; p = { status: "ENTREGUE", data_entrega: data, responsavel_lanc: resp }; } 
         else { p = { status: "PAGO", responsavel_lanc: resp }; }
         
         const { error } = await _supabase.from(r._modulo).update(p).eq("id", r.id);
@@ -1482,7 +1603,7 @@
       const { data: metas, error: erroMetas } = await _supabase.from("metas_providencia").select("*");
       if (erroMetas || !metas?.length) return;
 
-      const { data: doacoes, error: erroDoacoes } = await _supabase.from("doacao").select("*").eq("status", "PAGO");
+      const { data: doacoes, error: erroDoacoes } = await _supabase.from("doacao").select("*").eq("status", "ENTREGUE");
       if (erroDoacoes) return;
 
       for (const meta of metas) {
@@ -1546,7 +1667,7 @@
       
       lista.forEach(r => {
         linhas.push([
-          r.data_movimento || r.created_at || "", abaAtiva, r.descricao || r.item || "", r.nome || "", r.telefone || "", r.equipe_responsavel || r.equipe || "", r.valor || r.valor_total || r.valor_estimado || "", obterStatusRegistro(r), r.forma || "", r.observacao || ""
+          r.data_movimento || r.created_at || "", abaAtiva, r.descricao || r.item || "", r.nome || "", r.telefone || "", r.equipe_responsavel || r.equipe || "", r.valor || r.valor_total || r.valor_estimado || "", obterStatusVisual(r), r.forma || "", r.observacao || ""
         ]);
       });
 
