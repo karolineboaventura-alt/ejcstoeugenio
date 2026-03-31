@@ -59,12 +59,12 @@
         <button onclick="voltarParaSelecao()" class="text-slate-400 font-black uppercase text-[10px] mb-8 flex items-center gap-2"><i class="fas fa-chevron-left"></i> Voltar</button>
         <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-6 hidden">
           <input type="password" id="senhaCompras" placeholder="••••" required class="vault-input w-full rounded-xl py-4 text-center text-2xl tracking-[0.5em]" />
-          <button id="btnCompras" type="submit" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700">ENTRAR</button>
+          <button type="submit" id="btnCompras" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700">ENTRAR</button>
         </form>
         <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
           <input type="email" id="emailPiloto" placeholder="E-mail" required class="vault-input w-full rounded-xl py-4 px-5 font-bold" />
           <input type="password" id="senhaPiloto" placeholder="Senha" required class="vault-input w-full rounded-xl py-4 px-5 font-bold" />
-          <button id="btnPiloto" type="submit" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900">ACESSAR</button>
+          <button type="submit" id="btnPiloto" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900">ACESSAR</button>
         </form>
         <p id="msgErroLogin" class="hidden mt-6 text-rose-600 text-[10px] font-bold text-center uppercase bg-rose-50 py-3 rounded-lg">Credenciais inválidas</p>
       </div>
@@ -114,6 +114,7 @@
             <button id="btnCobranca" onclick="abrirFilaFeijoada()" class="action-btn bg-rose-50 text-rose-600 hidden" title="Cobrar"><i class="fas fa-hand-holding-dollar"></i></button>
           </div>
         </div>
+
         <div id="gridMetricasFeijoada" class="grid grid-cols-2 sm:grid-cols-6 gap-3">
           <div class="soft-stat bg-purple-50 border-purple-100"><p class="text-[10px] font-black uppercase text-purple-400">Total/Vend</p><p id="fjVendidos" class="text-xl font-extrabold text-slate-800">0</p></div>
           <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Pagos</p><p id="fjPagos" class="text-xl font-extrabold text-slate-800">0</p></div>
@@ -121,6 +122,33 @@
           <div class="soft-stat bg-slate-50 border-slate-200"><p class="text-[10px] font-black uppercase text-slate-500">Logística</p><p id="fjRestantes" class="text-xl font-extrabold text-slate-800">0</p></div>
           <div class="soft-stat bg-rose-50 border-rose-100"><p class="text-[10px] font-black uppercase text-rose-500">Custos</p><p id="fjMercado" class="text-xl font-extrabold text-slate-800">R$ 0,00</p></div>
           <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Saldo/Lucro</p><p id="fjLucro" class="text-xl font-extrabold text-emerald-700">R$ 0,00</p></div>
+        </div>
+
+        <div id="painelCamisetasBonito" class="hidden grid grid-cols-2 lg:grid-cols-3 gap-3">
+          <div class="rounded-2xl border border-violet-100 bg-violet-50 p-4">
+            <p class="text-[10px] font-black uppercase text-violet-500">Solicitadas</p>
+            <p id="camSolicitadas" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+          </div>
+          <div class="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+            <p class="text-[10px] font-black uppercase text-blue-500">Em produção</p>
+            <p id="camEmProducao" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+          </div>
+          <div class="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+            <p class="text-[10px] font-black uppercase text-amber-500">Prontas</p>
+            <p id="camProntas" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+          </div>
+          <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+            <p class="text-[10px] font-black uppercase text-emerald-500">Entregues</p>
+            <p id="camEntregues" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+          </div>
+          <div class="rounded-2xl border border-fuchsia-100 bg-fuchsia-50 p-4">
+            <p class="text-[10px] font-black uppercase text-fuchsia-500">Pagas</p>
+            <p id="camPagas" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-[10px] font-black uppercase text-slate-500">Recebido R$</p>
+            <p id="camRecebido" class="text-2xl font-extrabold text-emerald-700 mt-1">R$ 0,00</p>
+          </div>
         </div>
       </div>
 
@@ -354,15 +382,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // ============================
-    // SUPABASE CONFIG
+    // SUPABASE CONFIG E ESTADO
     // ============================
     const SUPABASE_URL = 'https://ilzgmueeblxeyieumpyk.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ============================
-    // ESTADO GLOBAL
-    // ============================
     let ROLE = "";
     let abaAtiva = "EJC";
     let dadosCache = [];
@@ -395,6 +420,8 @@
     }
 
     function obterStatusRegistro(r) {
+      if (r.status_pedido === "CANCELADO") return "CANCELADO";
+      if (r.status_financeiro === "CANCELADO") return "CANCELADO";
       if (r.status_financeiro) return r.status_financeiro;
       if (r.status) return r.status;
       if (r.tipo === "PENDENTE") return "PENDENTE";
@@ -402,10 +429,12 @@
       if (r.tipo === "SAIDA") return "PAGO";
       return "";
     }
+    
     function obterValorPagoRegistro(r) {
       if (typeof r.valor_pago !== "undefined") return Number(r.valor_pago || 0);
       return obterStatusRegistro(r) === "PAGO" ? Number(r.valor || r.valor_total || r.valor_estimado || 0) : 0;
     }
+    
     function obterValorAbertoRegistro(r) {
       if (typeof r.saldo_pendente !== "undefined") return Number(r.saldo_pendente || 0);
       const s = obterStatusRegistro(r);
@@ -427,6 +456,16 @@
               `Estou entrando em contato ${motivo}.\n\n` + 
               (linhas ? `Conforme nosso controle:\n${linhas}\n\n` : "") + 
               `${pedido}\n\n` + `Se precisar, posso te enviar o detalhamento completo por aqui.\n\n` + `Deus abençoe!`);
+    }
+
+    function badgeStatusCamiseta(status) {
+      const s = String(status || "").toUpperCase();
+      if (s === "SOLICITADA") return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-violet-50 text-violet-700 border border-violet-100">Solicitada</span>`;
+      if (s === "EM_PRODUCAO") return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-blue-50 text-blue-700 border border-blue-100">Em produção</span>`;
+      if (s === "PRONTA") return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-100">Pronta</span>`;
+      if (s === "ENTREGUE") return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-100">Entregue</span>`;
+      if (s === "CANCELADO") return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-rose-50 text-rose-700 border border-rose-100">Cancelado</span>`;
+      return `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase bg-slate-50 text-slate-700 border border-slate-200">${esc(status || "-")}</span>`;
     }
 
     // ============================
@@ -537,8 +576,18 @@
 
     function atualizarPainelFeijoada() {
       const mostrarPainelMetricas = ["FEIJOADA", "MERCADINHO", "CAMISETAS", "DOACAO"].includes(abaAtiva);
+      const gridPadrao = document.getElementById("gridMetricasFeijoada");
+      const painelCamisetas = document.getElementById("painelCamisetasBonito");
+
       document.getElementById("pillVoucher").classList.toggle("hidden", abaAtiva !== "FEIJOADA");
-      document.getElementById("gridMetricasFeijoada").classList.toggle("hidden", !mostrarPainelMetricas);
+
+      if (abaAtiva === "CAMISETAS") {
+        if(gridPadrao) gridPadrao.classList.add("hidden");
+        if(painelCamisetas) painelCamisetas.classList.remove("hidden");
+      } else {
+        if(gridPadrao) gridPadrao.classList.toggle("hidden", !mostrarPainelMetricas);
+        if(painelCamisetas) painelCamisetas.classList.add("hidden");
+      }
 
       const isPilotoEFeijoada = abaAtiva === "FEIJOADA" && ROLE === "PILOTOS";
       document.getElementById("btnRanking").classList.toggle("hidden", !isPilotoEFeijoada);
@@ -546,7 +595,7 @@
 
       if (abaAtiva === "FEIJOADA") document.getElementById("tituloPainelModulo").textContent = "Feijoada 25/04";
       else if (abaAtiva === "MERCADINHO") document.getElementById("tituloPainelModulo").textContent = "Mercadinho do EJC";
-      else if (abaAtiva === "CAMISETAS") document.getElementById("tituloPainelModulo").textContent = "Camisetas EJC";
+      else if (abaAtiva === "CAMISETAS") document.getElementById("tituloPainelModulo").textContent = "Produção e Entrega de Camisetas";
       else if (abaAtiva === "DOACAO") document.getElementById("tituloPainelModulo").textContent = "Providência Física";
     }
 
@@ -604,18 +653,17 @@
         const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
         const solicitadas = ativos.filter(r => r.status_pedido === "SOLICITADA").length;
         const emProducao = ativos.filter(r => r.status_pedido === "EM_PRODUCAO").length;
-        const prontasOuEntregues = ativos.filter(r => r.status_pedido === "PRONTA" || r.status_pedido === "ENTREGUE").length;
+        const prontas = ativos.filter(r => r.status_pedido === "PRONTA").length;
+        const entregues = ativos.filter(r => r.status_pedido === "ENTREGUE").length;
         const pagas = ativos.filter(r => r.status_financeiro === "PAGO").length;
-        const pendentes = ativos.filter(r => r.status_financeiro === "PENDENTE" || r.status_financeiro === "PARCIAL").length;
-        const total = ativos.reduce((a, r) => a + Number(r.valor_total || 0), 0);
         const recebido = ativos.reduce((a, r) => a + Number(r.valor_pago || 0), 0);
 
-        document.getElementById("fjVendidos").textContent = solicitadas + emProducao + prontasOuEntregues;
-        document.getElementById("fjPagos").textContent = pagas;
-        document.getElementById("fjPendentes").textContent = pendentes;
-        document.getElementById("fjRestantes").textContent = prontasOuEntregues;
-        document.getElementById("fjMercado").textContent = formatarMoeda(total);
-        document.getElementById("fjLucro").textContent = formatarMoeda(recebido);
+        const elSolic = document.getElementById("camSolicitadas"); if(elSolic) elSolic.textContent = solicitadas;
+        const elProd = document.getElementById("camEmProducao"); if(elProd) elProd.textContent = emProducao;
+        const elPron = document.getElementById("camProntas"); if(elPron) elPron.textContent = prontas;
+        const elEnt = document.getElementById("camEntregues"); if(elEnt) elEnt.textContent = entregues;
+        const elPagas = document.getElementById("camPagas"); if(elPagas) elPagas.textContent = pagas;
+        const elRec = document.getElementById("camRecebido"); if(elRec) elRec.textContent = formatarMoeda(recebido);
       }
       if (abaAtiva === "DOACAO") {
         const prometido = dadosCache.filter(r => r.status === "PENDENTE").length;
@@ -658,7 +706,7 @@
       document.getElementById("modal").classList.add("hidden");
       document.getElementById("formFin").reset();
       registroEmEdicao = null;
-      document.getElementById("tituloModalRegistro").textContent = "Registro";
+      document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
     }
 
     function atualizarModalDinamico() {
@@ -775,7 +823,6 @@
         }
 
         fecharModal();
-        if (modulo === "DOACAO") { await atualizarRecebidoMetasProvidencia(); await carregarMetas(); }
         await carregarRegistros();
 
       } catch (err) {
@@ -803,19 +850,19 @@
       document.getElementById("f_nome").value = r.nome || "";
       document.getElementById("f_tel").value = r.telefone || "";
       document.getElementById("f_forma").value = r.forma || "PIX";
-      document.getElementById("f_recebido").value = r.responsavel_lanc || "";
+      document.getElementById("f_recebido").value = r.responsavel_lanc || obterNomeResponsavel();
       document.getElementById("f_obs").value = r.observacao || "";
       document.getElementById("f_data_entrega").value = r.data_previsao || r.data_entrega || "";
 
       if (abaAtiva === "FEIJOADA") {
         document.getElementById("f_tipo_feijoada").value = r.tipo_registro || "VOUCHER";
-        document.getElementById("f_equipe_merc").value = r.equipe || "";
-        document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "SERVO";
+        if(document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe || "";
+        if(document.getElementById("f_tipo_pessoa")) document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "SERVO";
         document.getElementById("f_type").value = r.tipo || (obterStatusRegistro(r) === "PENDENTE" ? "PENDENTE" : "ENTRADA");
       }
       if (abaAtiva === "MERCADINHO") {
-        document.getElementById("f_equipe_merc").value = r.equipe || "";
-        document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "SERVO";
+        if(document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe || "";
+        if(document.getElementById("f_tipo_pessoa")) document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "SERVO";
         document.getElementById("f_type").value = r.tipo || (obterStatusRegistro(r) === "PENDENTE" ? "PENDENTE" : "ENTRADA");
       }
       if (abaAtiva === "CAMISETAS") {
@@ -825,7 +872,7 @@
       if (abaAtiva === "DOACAO") {
         document.getElementById("f_qtd_doacao").value = r.quantidade || 1;
         document.getElementById("f_un_doacao").value = r.unidade || "un";
-        document.getElementById("f_equipe_merc").value = r.equipe || "";
+        if(document.getElementById("f_equipe_merc")) document.getElementById("f_equipe_merc").value = r.equipe || "";
         document.getElementById("f_type").value = r.status === "PENDENTE" ? "PENDENTE" : "ENTRADA";
       }
       if (abaAtiva === "EJC") {
@@ -837,13 +884,16 @@
     }
 
     async function cancelarRegistro(id) {
-      if (!window.confirm("Tem certeza que deseja cancelar este lançamento?")) return;
+      if (!window.confirm("Tem certeza que deseja cancelar este lançamento? Ele será desconsiderado nos controles e no caixa.")) return;
       const tabela = obterNomeTabela(abaAtiva);
-      const reg = dadosCache.find(x => String(x.id) === String(id));
-      if (!reg) return showToast("Registro não encontrado.", "error");
+      let payload = { responsavel_lanc: obterNomeResponsavel() };
 
-      let payload = { status: "CANCELADO", responsavel_lanc: obterNomeResponsavel() };
-      if (tabela === "camisetas") { payload.status_financeiro = "CANCELADO"; } 
+      if (abaAtiva === "CAMISETAS") {
+        payload.status_financeiro = "CANCELADO";
+        payload.status_pedido = "CANCELADO";
+      } else {
+        payload.status = "CANCELADO";
+      }
 
       const { error } = await _supabase.from(tabela).update(payload).eq("id", id);
       if (error) { console.error(error); return showToast("Erro ao cancelar.", "error"); }
@@ -875,10 +925,38 @@
     }
 
     async function atualizarStatusCamiseta(id, status) {
-      const payload = { status_pedido: status };
-      if (status === "ENTREGUE") payload.data_entrega = hojeISODate();
+      const atual = dadosCache.find(x => String(x.id) === String(id));
+      if (!atual) return showToast("Registro não encontrado.", "error");
+
+      let payload = { status_pedido: status };
+
+      if (status === "ENTREGUE") {
+        payload.data_entrega = hojeISODate();
+      } else if (atual.data_entrega) {
+        payload.data_entrega = null; 
+      }
+
+      if (status === "CANCELADO") {
+        payload.status_financeiro = "CANCELADO";
+      }
+
+      if (status !== "CANCELADO" && atual.status_financeiro === "CANCELADO") {
+        if (Number(atual.valor_pago || 0) >= Number(atual.valor_total || 0)) {
+          payload.status_financeiro = "PAGO";
+        } else if (Number(atual.valor_pago || 0) > 0) {
+          payload.status_financeiro = "PARCIAL";
+        } else {
+          payload.status_financeiro = "PENDENTE";
+        }
+      }
+
       const { error } = await _supabase.from("camisetas").update(payload).eq("id", id);
-      if (error) { console.error(error); return showToast("Erro ao atualizar status.", "error"); }
+      if (error) {
+        console.error(error);
+        return showToast("Erro ao atualizar status.", "error");
+      }
+
+      await registrarHistorico("STATUS_CAMISETA", "camisetas", id, payload);
       showToast("Status da produção atualizado!");
       await carregarRegistros();
     }
@@ -934,14 +1012,18 @@
         let controleCamiseta = "";
         if (abaAtiva === "CAMISETAS") {
           controleCamiseta = `
-            <select onchange="atualizarStatusCamiseta('${id}', this.value)" class="text-[10px] font-bold border border-slate-200 rounded-lg px-2 py-1 mt-1 bg-white text-purple-700 outline-none">
-              <option value="SOLICITADA" ${reg.status_pedido === "SOLICITADA" ? "selected" : ""}>Solicitada</option>
-              <option value="EM_PRODUCAO" ${reg.status_pedido === "EM_PRODUCAO" ? "selected" : ""}>Em produção</option>
-              <option value="PRONTA" ${reg.status_pedido === "PRONTA" ? "selected" : ""}>Pronta</option>
-              <option value="ENTREGUE" ${reg.status_pedido === "ENTREGUE" ? "selected" : ""}>Entregue</option>
-            </select>`;
+            <div class="mt-2 flex flex-col items-start gap-2">
+              ${badgeStatusCamiseta(reg.status_pedido)}
+              <select onchange="atualizarStatusCamiseta('${id}', this.value)" class="text-[10px] font-bold border border-slate-200 rounded-lg px-2 py-1 bg-white text-purple-700 outline-none">
+                <option value="SOLICITADA" ${reg.status_pedido === "SOLICITADA" ? "selected" : ""}>Solicitada</option>
+                <option value="EM_PRODUCAO" ${reg.status_pedido === "EM_PRODUCAO" ? "selected" : ""}>Em produção</option>
+                <option value="PRONTA" ${reg.status_pedido === "PRONTA" ? "selected" : ""}>Pronta</option>
+                <option value="ENTREGUE" ${reg.status_pedido === "ENTREGUE" ? "selected" : ""}>Entregue</option>
+                <option value="CANCELADO" ${reg.status_pedido === "CANCELADO" ? "selected" : ""}>Cancelado</option>
+              </select>
+            </div>`;
         } else if (reg.status_pedido) {
-           controleCamiseta = `<div class="text-[10px] text-purple-500 font-bold mt-1">${esc(reg.status_pedido)}</div>`;
+           controleCamiseta = `<div class="mt-2">${badgeStatusCamiseta(reg.status_pedido)}</div>`;
         }
 
         const corStatus = statusAtual === "PAGO" ? "text-emerald-600" : statusAtual === "CANCELADO" ? "text-rose-600" : "text-amber-600";
@@ -988,7 +1070,7 @@
         if (!error && data?.length) { todos.push(...data.map(item => ({ ...item, _modulo: t }))); }
       }
 
-      if (!todos.length) return showToast("Nenhum registro encontrado.", "error");
+      if (!todos.length) return showToast("Nenhum registro encontrado para este telefone.", "error");
 
       todos.sort((a, b) => {
         const da = new Date(a.created_at || a.data_movimento || 0).getTime();
@@ -1149,8 +1231,7 @@
         else { p = { status: "PAGO", responsavel_lanc: resp }; }
         
         const { error } = await _supabase.from(r._modulo).update(p).eq("id", r.id);
-        if (error) { console.error(error); erros++; }
-        else { await registrarHistorico("QUITAR_TUDO", r._modulo, r.id, p); }
+        if (error) { console.error(error); erros++; } else { await registrarHistorico("QUITAR_TUDO", r._modulo, r.id, p); }
       }
       
       if (teveDoacao) { await atualizarRecebidoMetasProvidencia(); await carregarMetas(); }
