@@ -229,6 +229,17 @@
             <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="EXG">EXG</option>
           </select>
         </div>
+        
+        <div id="blocoStatusCamiseta" class="hidden bg-violet-50 border border-violet-100 rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-violet-500 uppercase block mb-1">Status da Camiseta</label>
+          <select id="f_status_camiseta" class="w-full bg-transparent font-bold outline-none">
+            <option value="SOLICITADA">Solicitada</option>
+            <option value="EM_PRODUCAO">Em produção</option>
+            <option value="PRONTA">Pronta</option>
+            <option value="ENTREGUE">Entregue</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="vault-input rounded-2xl px-4 py-3">
@@ -698,6 +709,10 @@
       document.getElementById("f_qtd_doacao").value = 1;
       document.getElementById("f_un_doacao").value = "un";
       document.getElementById("f_recebido").value = ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças";
+      
+      const statusCam = document.getElementById("f_status_camiseta");
+      if (statusCam) statusCam.value = "SOLICITADA";
+
       atualizarModalDinamico();
       document.getElementById("modal").classList.remove("hidden");
     }
@@ -713,6 +728,7 @@
       const m = document.getElementById("f_modulo").value;
       document.getElementById("blocoTipoFeijoada").classList.toggle("hidden", m !== "FEIJOADA");
       document.getElementById("blocoTamanhoCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
+      document.getElementById("blocoStatusCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
       document.getElementById("blocoQtdUnDoacao").classList.toggle("hidden", m !== "DOACAO");
       document.getElementById("camposMercado").classList.toggle("hidden", !["MERCADINHO", "FEIJOADA", "DOACAO"].includes(m));
       
@@ -792,8 +808,10 @@
         } else if (modulo === "FEIJOADA") {
           payload = { descricao, tipo, status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO", tipo_registro: document.getElementById("f_tipo_feijoada").value, forma, valor, quantidade: registroOriginal?.quantidade || 1, nome, telefone, equipe: document.getElementById("f_equipe_merc").value || null, tipo_pessoa: document.getElementById("f_tipo_pessoa").value || null, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, responsavel_lanc: responsavel, observacao };
         } else if (modulo === "CAMISETAS") {
+          const statusPedidoEscolhido = document.getElementById("f_status_camiseta").value || "SOLICITADA";
           const valorPagoAtual = registroOriginal ? Number(registroOriginal.valor_pago || 0) : 0;
           let valorPago = valorPagoAtual;
+          
           if (!registroOriginal && tipo === "ENTRADA") valorPago = valor;
           if (registroOriginal && tipo === "ENTRADA" && valorPagoAtual === 0) valorPago = valor;
           if (tipo === "PENDENTE" && !registroOriginal) valorPago = 0;
@@ -803,7 +821,11 @@
           if (saldoPendente <= 0) statusFinanceiro = "PAGO";
           else if (valorPago > 0) statusFinanceiro = "PARCIAL";
 
-          payload = { descricao, nome, telefone, equipe: registroOriginal?.equipe || null, tamanho: document.getElementById("f_tamanho").value, quantidade: registroOriginal?.quantidade || 1, valor_total: valor, valor_pago: valorPago, saldo_pendente: saldoPendente, status_financeiro: statusFinanceiro, status_pedido: registroOriginal?.status_pedido || "SOLICITADA", forma, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: registroOriginal?.data_entrega || null, responsavel_lanc: responsavel, observacao };
+          if (statusPedidoEscolhido === "CANCELADO") {
+            statusFinanceiro = "CANCELADO";
+          }
+
+          payload = { descricao, nome, telefone, equipe: registroOriginal?.equipe || null, tamanho: document.getElementById("f_tamanho").value, quantidade: registroOriginal?.quantidade || 1, valor_total: valor, valor_pago: valorPago, saldo_pendente: saldoPendente, status_financeiro: statusFinanceiro, status_pedido: statusPedidoEscolhido, forma, data_movimento: registroOriginal?.data_movimento || hojeISODate(), data_previsao: dataEntrega, data_entrega: statusPedidoEscolhido === "ENTREGUE" ? (registroOriginal?.data_entrega || hojeISODate()) : null, responsavel_lanc: responsavel, observacao };
         } else if (modulo === "DOACAO") {
           const qtdDoacao = Number(document.getElementById("f_qtd_doacao").value || 1);
           const unDoacao = (document.getElementById("f_un_doacao").value || "un").trim();
@@ -867,6 +889,7 @@
       }
       if (abaAtiva === "CAMISETAS") {
         document.getElementById("f_tamanho").value = r.tamanho || "M";
+        document.getElementById("f_status_camiseta").value = r.status_pedido || "SOLICITADA";
         document.getElementById("f_type").value = (r.status_financeiro === "PENDENTE" || r.status_financeiro === "PARCIAL") ? "PENDENTE" : "ENTRADA";
       }
       if (abaAtiva === "DOACAO") {
@@ -933,7 +956,7 @@
       if (status === "ENTREGUE") {
         payload.data_entrega = hojeISODate();
       } else if (atual.data_entrega) {
-        payload.data_entrega = null; 
+        payload.data_entrega = null;
       }
 
       if (status === "CANCELADO") {
