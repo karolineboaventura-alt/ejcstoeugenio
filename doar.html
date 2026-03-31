@@ -272,6 +272,10 @@
         <p class="text-[10px] font-black uppercase tracking-[0.28em] text-white/80 mb-2">EJC • Paróquia Santo Eugênio de Mazenod</p>
         <h1 class="text-2xl font-black leading-tight">Lista de Providência</h1>
         
+        <p class="text-sm font-extrabold text-white/90 mt-3 leading-snug">
+          “A MORTE NÃO VENCEU. <br /> O TEU AMOR ME SALVOU!”
+        </p>
+        
         <div class="mt-5 px-4 py-3 rounded-2xl bg-white/10 border border-white/15">
           <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/75 mb-3">Contagem regressiva</p>
           <div class="grid grid-cols-4 gap-2">
@@ -286,10 +290,20 @@
 
     <div class="soft-panel p-4 mb-5">
       <div class="flex items-start gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-white text-[var(--brand)] flex items-center justify-center shadow-sm text-lg"><i class="fas fa-heart"></i></div>
-        <div>
-          <p class="text-sm font-extrabold text-slate-800">Como ser providência neste EJC? ✨</p>
-          <p class="text-xs text-slate-600 mt-1 leading-relaxed">Escolha o item que o seu coração sentir de doar, coloque a quantidade e preencha os seus dados. É rápido e simples!💜</p>
+        <div class="w-10 h-10 rounded-2xl bg-white text-[var(--brand)] flex items-center justify-center shadow-sm text-lg">
+          <i class="fas fa-heart"></i>
+        </div>
+        <div class="w-full">
+          <p class="text-sm font-extrabold text-slate-800 mb-2">Como ser providência neste EJC? ✨</p>
+          <div class="space-y-2 text-xs text-slate-600 leading-relaxed">
+            <p><strong>1.</strong> Escolha um ou mais itens da lista.</p>
+            <p><strong>2.</strong> Informe a quantidade que você consegue doar.</p>
+            <p><strong>3.</strong> Preencha seu nome, WhatsApp, equipe e a data prevista de entrega.</p>
+            <p><strong>4.</strong> Clique em <strong>Confirmar doação</strong>.</p>
+            <p class="pt-1 text-slate-700 font-semibold">
+              Sua doação ficará registrada no sistema para a equipe acompanhar o que foi prometido e o que já foi entregue. 💜
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -304,8 +318,17 @@
       </div>
     </div>
 
+    <div class="mb-6">
+      <h2 class="text-xs font-black uppercase tracking-widest text-rose-600 mb-4 px-2">
+        Itens críticos para o EJC funcionar
+      </h2>
+      <div id="listaCriticos" class="space-y-3">
+        <p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens críticos...</p>
+      </div>
+    </div>
+
     <div class="priority-shell mb-6">
-      <h2 class="text-xs font-black uppercase tracking-widest text-slate-800 mb-4 px-2">Itens Prioritários</h2>
+      <h2 class="text-xs font-black uppercase tracking-widest text-slate-800 mb-4 px-2">Itens Importantes</h2>
       <div id="listaUrgentes" class="space-y-3">
         <p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens...</p>
       </div>
@@ -346,15 +369,24 @@
             <option>Visitação</option>
           </select>
         </div>
+        
         <div class="grid grid-cols-2 gap-4">
-          <select id="d_item" required class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white" onchange="atualizarTextoSelecao()">
+          <select id="d_item" class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white" onchange="atualizarTextoSelecao()">
             <option value="">O que vai doar?</option>
           </select>
-          <input id="d_qtd" type="number" min="1" value="1" required class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
+          <input id="d_qtd" type="number" min="1" value="1" class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
         </div>
+
+        <button type="button" onclick="adicionarItemDoacao()" class="w-full bg-slate-100 text-slate-800 py-4 rounded-2xl font-black uppercase tracking-widest text-xs">
+          Adicionar item
+        </button>
+
         <div id="itemEscolhidoBox" class="hidden bg-purple-50 border border-purple-100 rounded-2xl px-4 py-3">
-            <p id="itemEscolhidoTexto" class="text-xs font-bold text-purple-700"></p>
+          <p id="itemEscolhidoTexto" class="text-xs font-bold text-purple-700"></p>
         </div>
+
+        <div id="listaItensSelecionados" class="space-y-3 hidden"></div>
+
         <div class="space-y-1">
           <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Previsão de entrega</label>
           <input id="d_data" type="date" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
@@ -392,6 +424,75 @@
 
     let disponibilidadeItens = {};
     let itensRenderizados = [];
+    let carrinhoDoacao = [];
+
+    const categoriasFixas = {
+      CRITICO: [
+        "Arroz",
+        "Feijão",
+        "Carne bovina",
+        "Frango",
+        "Linguiça",
+        "Óleo",
+        "Sal",
+        "Alho",
+        "Cebola",
+        "Água",
+        "Detergente",
+        "Esponjas",
+        "Sacos de lixo (100L e 50L)"
+      ],
+      IMPORTANTE: [
+        "Farinha de mandioca",
+        "Bacon",
+        "Batata",
+        "Cenoura",
+        "Tomate",
+        "Repolho",
+        "Cheiro-verde",
+        "Refrigerante",
+        "Café",
+        "Açúcar",
+        "Leite"
+      ],
+      COMPLEMENTO: [
+        "Pratinhos descartáveis",
+        "Talheres (garfo/faca)",
+        "Copos descartáveis",
+        "Ketchup (sachê)",
+        "Mostarda (sachê)",
+        "Maionese (sachê)",
+        "Papel alumínio",
+        "Plástico filme",
+        "Desinfetante",
+        "Água sanitária",
+        "Papel higiênico",
+        "Papel toalha",
+        "Rodo",
+        "Vassoura",
+        "Balde",
+        "Pano de chão",
+        "Sulfite A4",
+        "Fita adesiva (durex)"
+      ]
+    };
+
+    function detectarCategoria(item) {
+      const itemNorm = String(item || "").trim().toLowerCase();
+
+      for (const nome of categoriasFixas.CRITICO) {
+        if (itemNorm === nome.toLowerCase()) return "CRITICO";
+      }
+      for (const nome of categoriasFixas.IMPORTANTE) {
+        if (itemNorm === nome.toLowerCase()) return "IMPORTANTE";
+      }
+      for (const nome of categoriasFixas.COMPLEMENTO) {
+        if (itemNorm === nome.toLowerCase()) return "COMPLEMENTO";
+      }
+
+      if (itemNorm.includes("agua") || itemNorm.includes("água")) return "CRITICO";
+      return "COMPLEMENTO";
+    }
 
     const esc = (str) =>
       str
@@ -462,9 +563,11 @@
     }
 
     async function carregarDados() {
+      const listaCriticos = document.getElementById('listaCriticos');
       const listaUrgentes = document.getElementById('listaUrgentes');
       const select = document.getElementById('d_item');
 
+      listaCriticos.innerHTML = `<p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens...</p>`;
       listaUrgentes.innerHTML = `<p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens...</p>`;
       select.innerHTML = `<option value="">O que vai doar?</option>`;
 
@@ -540,25 +643,60 @@
     }
 
     function renderizarListas() {
+      const criticosWrap = document.getElementById('listaCriticos');
       const urgentesWrap = document.getElementById('listaUrgentes');
       const categoriasWrap = document.getElementById('categoriasNecessidades');
 
-      const pendentes = itensRenderizados
-        .filter(i => i.disponivel > 0)
+      const pendentes = itensRenderizados.filter(i => i.disponivel > 0);
+
+      const criticos = pendentes
+        .filter(i => detectarCategoria(i.item) === "CRITICO")
         .sort((a, b) => a.disponivel - b.disponivel);
 
-      const urgentes = pendentes.slice(0, 5);
+      const importantes = pendentes
+        .filter(i => detectarCategoria(i.item) === "IMPORTANTE")
+        .sort((a, b) => a.disponivel - b.disponivel);
+
+      const complementos = pendentes
+        .filter(i => detectarCategoria(i.item) === "COMPLEMENTO")
+        .sort((a, b) => a.disponivel - b.disponivel);
+
+      const urgentes = importantes.slice(0, 5);
+
+      if (!criticos.length) {
+        criticosWrap.innerHTML = `
+          <div class="section-card p-4 text-center">
+            <p class="text-sm font-extrabold text-slate-700">Nenhum item crítico pendente no momento 💜</p>
+          </div>
+        `;
+      } else {
+        criticosWrap.innerHTML = criticos.map(i => `
+          <div class="section-card p-4 flex items-center justify-between gap-4 border border-rose-100 bg-rose-50/40"
+               onclick='selecionarItem(${JSON.stringify(i.item)})'>
+            <div class="flex-1">
+              <p class="text-sm font-extrabold text-slate-800">${esc(i.item)}</p>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="ifood-badge danger">Faltam ${i.disponivel} ${esc(i.unidade)}</span>
+                <div class="flex-1 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div class="bg-rose-500 h-full" style="width:${i.perc}%"></div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="choose-btn secondary">Escolher</button>
+          </div>
+        `).join('');
+      }
 
       if (!urgentes.length) {
         urgentesWrap.innerHTML = `
           <div class="section-card p-4 text-center">
-            <p class="text-sm font-extrabold text-slate-700">Todas as metas já foram preenchidas 💜</p>
-            <p class="text-xs text-slate-500 mt-1">Deus abençoe por toda providência!</p>
+            <p class="text-sm font-extrabold text-slate-700">Nenhum item importante pendente no momento 💜</p>
           </div>
         `;
       } else {
         urgentesWrap.innerHTML = urgentes.map(i => `
-          <div class="section-card p-4 flex items-center justify-between gap-4" onclick='selecionarItem(${JSON.stringify(i.item)})'>
+          <div class="section-card p-4 flex items-center justify-between gap-4"
+               onclick='selecionarItem(${JSON.stringify(i.item)})'>
             <div class="flex-1">
               <p class="text-sm font-extrabold text-slate-800">${esc(i.item)}</p>
               <div class="flex items-center gap-2 mt-2">
@@ -575,24 +713,65 @@
         `).join('');
       }
 
-      if (!pendentes.length) {
+      const todosOrdenados = [...criticos, ...importantes, ...complementos];
+
+      if (!todosOrdenados.length) {
         categoriasWrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhuma necessidade pendente.</p>`;
         return;
       }
 
-      categoriasWrap.innerHTML = pendentes.map(i => `
-        <div class="flex items-center justify-between p-3 border-b border-slate-50 last:border-b-0">
-          <div>
-            <p class="text-xs font-bold text-slate-700">${esc(i.item)}</p>
-            <p class="text-[10px] text-slate-400 mt-1">
-              Falta ${i.disponivel} ${esc(i.unidade)} • Entregue ${i.entregue}/${i.alvo}
-            </p>
+      categoriasWrap.innerHTML = `
+        <div class="mb-4">
+          <p class="text-[10px] font-black uppercase tracking-widest text-rose-600 mb-2">Crítico</p>
+          <div class="space-y-2">
+            ${criticos.length ? criticos.map(i => `
+              <div class="flex items-center justify-between p-3 border border-rose-100 bg-rose-50/40 rounded-xl">
+                <div>
+                  <p class="text-xs font-bold text-slate-700">${esc(i.item)}</p>
+                  <p class="text-[10px] text-slate-400 mt-1">Falta ${i.disponivel} ${esc(i.unidade)} • Entregue ${i.entregue}/${i.alvo}</p>
+                </div>
+                <button type="button" onclick='selecionarItem(${JSON.stringify(i.item)})' class="text-[10px] font-black text-purple-600 uppercase">
+                  Escolher
+                </button>
+              </div>
+            `).join('') : `<p class="text-xs text-slate-400">Nenhum item crítico pendente.</p>`}
           </div>
-          <button type="button" onclick='selecionarItem(${JSON.stringify(i.item)})' class="text-[10px] font-black text-purple-600 uppercase">
-            Escolher
-          </button>
         </div>
-      `).join('');
+
+        <div class="mb-4">
+          <p class="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-2">Importante</p>
+          <div class="space-y-2">
+            ${importantes.length ? importantes.map(i => `
+              <div class="flex items-center justify-between p-3 border border-amber-100 bg-amber-50/30 rounded-xl">
+                <div>
+                  <p class="text-xs font-bold text-slate-700">${esc(i.item)}</p>
+                  <p class="text-[10px] text-slate-400 mt-1">Falta ${i.disponivel} ${esc(i.unidade)} • Entregue ${i.entregue}/${i.alvo}</p>
+                </div>
+                <button type="button" onclick='selecionarItem(${JSON.stringify(i.item)})' class="text-[10px] font-black text-purple-600 uppercase">
+                  Escolher
+                </button>
+              </div>
+            `).join('') : `<p class="text-xs text-slate-400">Nenhum item importante pendente.</p>`}
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Complemento</p>
+          <div class="space-y-2">
+            ${complementos.length ? complementos.map(i => `
+              <div class="flex items-center justify-between p-3 border border-slate-100 bg-white rounded-xl">
+                <div>
+                  <p class="text-xs font-bold text-slate-700">${esc(i.item)}</p>
+                  <p class="text-[10px] text-slate-400 mt-1">Falta ${i.disponivel} ${esc(i.unidade)} • Entregue ${i.entregue}/${i.alvo}</p>
+                </div>
+                <button type="button" onclick='selecionarItem(${JSON.stringify(i.item)})' class="text-[10px] font-black text-purple-600 uppercase">
+                  Escolher
+                </button>
+              </div>
+            `).join('') : `<p class="text-xs text-slate-400">Nenhum item complementar pendente.</p>`}
+          </div>
+        </div>
+      `;
     }
 
     function selecionarItem(item) {
@@ -636,24 +815,76 @@
         : "fas fa-chevron-up text-slate-400";
     }
 
-    async function submeterDoacao() {
-      const btn = document.getElementById('btnEnviar');
+    function atualizarListaCarrinho() {
+      const wrap = document.getElementById('listaItensSelecionados');
+
+      if (!carrinhoDoacao.length) {
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+
+      wrap.classList.remove('hidden');
+      wrap.innerHTML = carrinhoDoacao.map((item, index) => `
+        <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3">
+          <div>
+            <p class="text-sm font-extrabold text-slate-800">${esc(item.item)}</p>
+            <p class="text-[11px] text-slate-500">${item.quantidade} ${esc(item.unidade)}</p>
+          </div>
+          <button type="button" onclick="removerItemDoacao(${index})" class="text-rose-600 text-xs font-black uppercase">
+            Remover
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function adicionarItemDoacao() {
       const item = document.getElementById('d_item').value;
       const qtd = parseInt(document.getElementById('d_qtd').value, 10);
+
+      if (!item || !disponibilidadeItens[item]) return showToast("Selecione um item.", "error");
+      if (!qtd || qtd <= 0) return showToast("Informe uma quantidade válida.", "error");
+
+      const jaNoCarrinho = carrinhoDoacao
+        .filter(i => i.item === item)
+        .reduce((acc, i) => acc + i.quantidade, 0);
+
+      if (qtd + jaNoCarrinho > disponibilidadeItens[item].disponivel) {
+        return showToast(`Para ${item}, o máximo disponível é ${disponibilidadeItens[item].disponivel}.`, "error");
+      }
+
+      carrinhoDoacao.push({
+        item,
+        quantidade: qtd,
+        unidade: disponibilidadeItens[item].unidade || "un"
+      });
+
+      document.getElementById('d_item').value = "";
+      document.getElementById('d_qtd').value = 1;
+      document.getElementById('itemEscolhidoBox').classList.add('hidden');
+      document.getElementById('resumoSelecao').classList.add('hidden');
+
+      atualizarListaCarrinho();
+      showToast("Item adicionado! 💜");
+    }
+
+    function removerItemDoacao(index) {
+      carrinhoDoacao.splice(index, 1);
+      atualizarListaCarrinho();
+    }
+
+    async function submeterDoacao() {
+      const btn = document.getElementById('btnEnviar');
       const nome = document.getElementById('d_nome').value.trim();
       const telefone = normalizarTelefone(document.getElementById('d_tel').value);
       const equipe = document.getElementById('d_equipe').value;
       const dataEntrega = document.getElementById('d_data').value;
 
-      if (!item || !disponibilidadeItens[item]) return showToast("Selecione um item.", "error");
       if (!nome) return showToast("Informe seu nome.", "error");
       if (!telefone) return showToast("Informe um WhatsApp válido.", "error");
       if (!equipe) return showToast("Selecione sua equipe.", "error");
       if (!dataEntrega) return showToast("Informe a data de entrega.", "error");
-      if (!qtd || qtd <= 0) return showToast("Informe uma quantidade válida.", "error");
-      if (qtd > disponibilidadeItens[item].disponivel) {
-        return showToast(`A quantidade máxima para esse item é ${disponibilidadeItens[item].disponivel}.`, "error");
-      }
+      if (!carrinhoDoacao.length) return showToast("Adicione pelo menos um item.", "error");
 
       btn.disabled = true;
       btn.innerText = "Enviando...";
@@ -661,10 +892,10 @@
       const equipeNormalizada = equipe === "Externo" ? "Externo" : equipe;
       const tipoPessoa = equipeNormalizada === "Externo" ? "PAROQUIANO" : "SERVO";
 
-      const payload = {
-        item,
-        quantidade: qtd,
-        unidade: disponibilidadeItens[item].unidade || "un",
+      const payload = carrinhoDoacao.map(reg => ({
+        item: reg.item,
+        quantidade: reg.quantidade,
+        unidade: reg.unidade,
         valor_estimado: 0,
         nome,
         telefone,
@@ -675,9 +906,9 @@
         status: "PROMETIDO",
         responsavel_lanc: "Lista Pública",
         observacao: "Registro realizado pela página pública de providência."
-      };
+      }));
 
-      const { error } = await _supabase.from('doacao').insert([payload]);
+      const { error } = await _supabase.from('doacao').insert(payload);
 
       if (error) {
         console.error(error);
@@ -690,20 +921,20 @@
       document.getElementById('resumoSelecao').classList.add('hidden');
       document.getElementById('agradecimentoDoacao').classList.remove('hidden');
       document.getElementById('agradecimentoTexto').innerText =
-        `Sua doação de ${qtd} ${disponibilidadeItens[item].unidade} de ${item} foi registrada com sucesso. Deus lhe pague!`;
+        `Sua providência foi registrada com sucesso com ${carrinhoDoacao.length} item(ns). Deus lhe pague!`;
 
       showToast("Doação registrada com sucesso! 💜");
       await carregarDados();
     }
 
     function novaDoacao() {
+      carrinhoDoacao = [];
       document.getElementById('formDoacao').reset();
       document.getElementById('areaForm').classList.remove('hidden');
       document.getElementById('agradecimentoDoacao').classList.add('hidden');
       document.getElementById('itemEscolhidoBox').classList.add('hidden');
       document.getElementById('resumoSelecao').classList.add('hidden');
 
-      // Reativando o botão
       const btn = document.getElementById('btnEnviar');
       btn.disabled = false;
       btn.innerText = "Confirmar doação";
@@ -711,6 +942,7 @@
       const hoje = new Date().toISOString().split('T')[0];
       document.getElementById('d_data').setAttribute('min', hoje);
 
+      atualizarListaCarrinho();
       window.scrollTo({ top: 0, behavior: 'smooth' });
       carregarDados();
     }
@@ -764,7 +996,6 @@
         status: 'PENDENTE'
       }]);
 
-      // Reativando o botão
       btn.disabled = false;
       btn.innerText = "Enviar mensagem";
 
