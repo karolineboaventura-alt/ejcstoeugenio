@@ -298,12 +298,22 @@
             </button>
           </div>
 
+          <div class="grid grid-cols-2 gap-2 mt-5">
+            <button type="button" onclick="enviarComprovanteAngela()" class="pix-btn bg-white text-purple-700 rounded-2xl py-3 px-3 font-black text-[10px] uppercase tracking-widest">
+              Enviar para Angela
+            </button>
+
+            <button type="button" onclick="enviarComprovanteRafael()" class="pix-btn bg-white text-purple-700 rounded-2xl py-3 px-3 font-black text-[10px] uppercase tracking-widest">
+              Enviar para Rafael
+            </button>
+          </div>
+
           <div class="mt-5 pt-4 border-t border-white/10">
             <p class="text-[10px] leading-relaxed text-white/75">
               Toda contribuição será destinada à compra de proteínas, alimentação e estrutura do encontro.
             </p>
             <p class="text-[10px] leading-relaxed text-white/75 mt-2">
-              Envie o comprovante para Angela: 11 99401-1319 ou Rafael: 11 98933-5186.
+              Após o PIX, envie o comprovante para Angela ou Rafael pelos botões acima.
             </p>
           </div>
         </div>
@@ -393,7 +403,6 @@
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const CHAVE_PIX = "ejcstoeugenio2019@gmail.com";
-  const CONTATO_COMPROVANTE = "Angela: 11 99401-1319\nRafael: 11 98933-5186";
 
   let carrinho = [];
 
@@ -417,28 +426,41 @@
       .catch(() => showToast("Chave PIX: " + CHAVE_PIX));
   }
 
+  function abrirWhatsApp(numero, mensagem) {
+    const telefone = String(numero || "").replace(/\D/g, "");
+    const texto = encodeURIComponent(mensagem);
+    window.open(`https://wa.me/55${telefone}?text=${texto}`, "_blank");
+  }
+
+  function mensagemComprovante() {
+    return `Olá! Tudo bem? 💜\n\nAcabei de realizar uma contribuição via PIX para o EJC da Paróquia Santo Eugênio de Mazenod.\n\nSegue meu comprovante 🙏✨`;
+  }
+
+  function enviarComprovanteAngela() {
+    abrirWhatsApp("11994011319", mensagemComprovante());
+  }
+
+  function enviarComprovanteRafael() {
+    abrirWhatsApp("11989335186", mensagemComprovante());
+  }
+
   function selecionarCotaPix(valor) {
     copiarPix();
     setTimeout(() => {
-      alert(
-        "💜 DOAÇÃO EM COTA\n\n" +
-        "Valor selecionado: R$ " + valor + "\n" +
-        "Finalidade: compra de proteína/carne\n\n" +
-        "Chave PIX:\n" + CHAVE_PIX + "\n\n" +
-        "Enviar o comprovante para:\n" + CONTATO_COMPROVANTE
+      const abrir = confirm(
+        `💜 DOAÇÃO EM COTA\n\nValor selecionado: R$ ${valor}\nFinalidade: compra de proteína/carne\n\nA chave PIX foi copiada.\n\nDeseja abrir o WhatsApp para enviar o comprovante?`
       );
+      if (abrir) enviarComprovanteAngela();
     }, 250);
   }
 
   function selecionarOutroValor() {
     copiarPix();
     setTimeout(() => {
-      alert(
-        "💜 DOAÇÃO VIA PIX\n\n" +
-        "Você pode contribuir com qualquer valor.\n\n" +
-        "Chave PIX:\n" + CHAVE_PIX + "\n\n" +
-        "Enviar o comprovante para:\n" + CONTATO_COMPROVANTE
+      const abrir = confirm(
+        `💜 DOAÇÃO VIA PIX\n\nVocê pode contribuir com qualquer valor.\n\nA chave PIX foi copiada.\n\nDeseja abrir o WhatsApp para enviar o comprovante?`
       );
+      if (abrir) enviarComprovanteAngela();
     }, 250);
   }
 
