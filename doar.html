@@ -16,24 +16,12 @@
       --brand: #820ad1;
       --brand-dark: #4b0082;
       --bg: #f8fafc;
-      --line: #ece7f6;
       --text: #1f2937;
-      --muted: #64748b;
-      --danger: #ef4444;
-      --warn: #f59e0b;
-      --ok: #10b981;
-      --ifood: #ea1d2c;
-      --ifood-soft: #fff1f2;
     }
-
-    * { box-sizing: border-box; }
 
     body {
       font-family: "Plus Jakarta Sans", sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(130, 10, 209, 0.09), transparent 30%),
-        radial-gradient(circle at top left, rgba(234, 29, 44, 0.05), transparent 24%),
-        var(--bg);
+      background: radial-gradient(circle at top right, rgba(130, 10, 209, 0.09), transparent 30%), var(--bg);
       color: var(--text);
       -webkit-tap-highlight-color: transparent;
     }
@@ -47,20 +35,10 @@
     }
 
     .hero-top {
-      background:
-        linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
+      background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%);
       border-radius: 30px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 20px 40px -24px rgba(75, 0, 130, 0.45);
-    }
-
-    .hero-top::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
-      opacity: 0.08;
     }
 
     .vault-input {
@@ -72,36 +50,9 @@
 
     .vault-input:focus {
       outline: none;
-      background: white;
       border-color: var(--brand);
+      background: white;
       box-shadow: 0 0 0 4px rgba(130, 10, 209, 0.10);
-    }
-
-    .soft-panel {
-      background: linear-gradient(180deg, #fcfaff 0%, #f8f2ff 100%);
-      border: 1px solid #efe6fb;
-      border-radius: 24px;
-    }
-
-    .section-card {
-      background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
-      border: 1px solid #efe7fb;
-      border-radius: 24px;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 8px;
-      border-radius: 999px;
-      background: #eceff3;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #820ad1, #a855f7);
-      transition: width .5s ease;
     }
 
     .count-card {
@@ -110,76 +61,14 @@
       border-radius: 20px;
       padding: 10px 8px;
       text-align: center;
-      min-width: 66px;
       backdrop-filter: blur(8px);
     }
 
-    .accordion-btn {
-      width: 100%;
-      text-align: left;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      font-weight: 800;
-      color: #334155;
-    }
-
-    .accordion-content {
-      padding: 0 16px 16px 16px;
-    }
-
-    .hidden-soft { display: none; }
-
-    .toast-wrap {
-      position: fixed;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      width: 92%;
-      max-width: 400px;
-    }
-
-    .toast {
-      border-radius: 18px;
-      padding: 14px 16px;
-      color: white;
-      font-weight: 800;
-      margin-bottom: 8px;
-      box-shadow: 0 18px 30px -18px rgba(0,0,0,0.45);
-      animation: fadeInUp .35s ease;
-    }
-
-    .toast.success { background: #0f172a; }
-    .toast.warn { background: #f59e0b; }
-    .toast.error { background: #e11d48; }
-
-    .animate-fade-in {
-      animation: fadeInUp .5s ease forwards;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .ifood-card {
-      position: relative;
-      border-radius: 22px;
-      padding: 14px;
+    .section-card {
       background: white;
-      border: 1px solid #f1f5f9;
-      box-shadow: 0 10px 24px -22px rgba(0,0,0,0.28);
-      transition: .22s ease;
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    .ifood-card.selected {
-      border-color: var(--brand);
-      box-shadow: 0 0 0 4px rgba(130,10,209,.10);
+      border: 1px solid #efe7fb;
+      border-radius: 24px;
+      transition: transform 0.2s;
     }
 
     .ifood-badge {
@@ -188,7 +77,6 @@
       gap: 6px;
       font-size: 10px;
       font-weight: 800;
-      letter-spacing: .06em;
       text-transform: uppercase;
       border-radius: 999px;
       padding: 6px 10px;
@@ -198,151 +86,79 @@
     .ifood-badge.warn { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
     .ifood-badge.ok { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
 
-    .mini-stat {
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      padding: 16px;
       border-radius: 16px;
-      padding: 10px;
-      border: 1px solid #edf2f7;
-      background: #fafafa;
-      text-align: center;
-    }
-
-    .choose-btn {
-      border-radius: 14px;
-      padding: 10px 12px;
+      color: white;
       font-weight: 800;
-      font-size: 12px;
-      transition: .2s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
-
-    .choose-btn.primary { background: var(--brand); color: white; border: none; }
-    .choose-btn.secondary { background: #fff; color: var(--brand); border: 1px solid #efe6fb; }
 
     .marquee-container {
-      max-height: 380px;
+      max-height: 300px;
       overflow: hidden;
-      position: relative;
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
-      mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+    }
+
+    @keyframes scroll-v {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
     }
 
     .marquee-content {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      animation: scroll-vertical 40s linear infinite;
-    }
-
-    .marquee-content:hover { animation-play-state: paused; }
-
-    @keyframes scroll-vertical {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-50%); }
-    }
-
-    .sticky-summary {
-      position: sticky;
-      top: 10px;
-      z-index: 20;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(8px);
-      border: 1px solid #f1f5f9;
-      border-radius: 20px;
-      padding: 12px;
-      box-shadow: 0 12px 30px -24px rgba(0,0,0,0.25);
-    }
-
-    .msg-card {
-      background: white;
-      border: 1px solid #f1f5f9;
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: 0 10px 24px -22px rgba(0,0,0,0.28);
+      animation: scroll-v 30s linear infinite;
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4 py-8">
 
-  <div id="toast-container" class="toast-wrap"></div>
+  <div id="toast-container"></div>
 
-  <div class="w-full max-w-md page-shell p-5 sm:p-6 animate-fade-in">
-
-    <div class="hero-top p-6 text-white mb-6">
-      <div class="relative z-10 text-center">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-white/15 border border-white/20 rounded-2xl mb-5 text-3xl shadow-inner">✝️</div>
-        <p class="text-[10px] font-black uppercase tracking-[0.28em] text-white/80 mb-2">EJC • Paróquia Santo Eugênio de Mazenod</p>
-        <h1 class="text-2xl font-black leading-tight">Lista de Providência</h1>
-        
-        <div class="mt-5 px-4 py-3 rounded-2xl bg-white/10 border border-white/15">
-          <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/75 mb-3">Contagem regressiva</p>
-          <div class="grid grid-cols-4 gap-2">
-            <div class="count-card"><div id="cdDias" class="text-xl font-black">--</div><div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Dias</div></div>
-            <div class="count-card"><div id="cdHoras" class="text-xl font-black">--</div><div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Horas</div></div>
-            <div class="count-card"><div id="cdMin" class="text-xl font-black">--</div><div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Min</div></div>
-            <div class="count-card"><div id="cdSeg" class="text-xl font-black">--</div><div class="text-[9px] uppercase tracking-widest font-bold text-white/75 mt-1">Seg</div></div>
-          </div>
-        </div>
+  <div class="w-full max-w-md page-shell p-5 sm:p-6">
+    
+    <div class="hero-top p-6 text-white mb-6 text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-white/15 rounded-2xl mb-4 text-3xl">✝️</div>
+      <p class="text-[10px] font-black uppercase tracking-widest text-white/70">EJC Santo Eugênio de Mazenod</p>
+      <h1 class="text-2xl font-black">Lista de Providência</h1>
+      
+      <div class="mt-5 grid grid-cols-4 gap-2">
+        <div class="count-card"><div id="cdDias" class="text-xl font-black">--</div><div class="text-[8px] uppercase font-bold">Dias</div></div>
+        <div class="count-card"><div id="cdHoras" class="text-xl font-black">--</div><div class="text-[8px] uppercase font-bold">Horas</div></div>
+        <div class="count-card"><div id="cdMin" class="text-xl font-black">--</div><div class="text-[8px] uppercase font-bold">Min</div></div>
+        <div class="count-card"><div id="cdSeg" class="text-xl font-black">--</div><div class="text-[8px] uppercase font-bold">Seg</div></div>
       </div>
     </div>
 
-    <div class="soft-panel p-4 mb-5">
-      <div class="flex items-start gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-white text-[var(--brand)] flex items-center justify-center shadow-sm text-lg">
-          <i class="fas fa-heart"></i>
-        </div>
-        <div class="w-full">
-          <p class="text-sm font-extrabold text-slate-800 mb-2">Como ser providência neste EJC? ✨</p>
-          <div class="space-y-2 text-xs text-slate-600 leading-relaxed">
-            <p><strong>1.</strong> Escolha um ou mais itens da lista.</p>
-            <p><strong>2.</strong> Informe a quantidade que você consegue doar.</p>
-            <p><strong>3.</strong> Preencha seu nome, WhatsApp, equipe e a data prevista de entrega.</p>
-            <p><strong>4.</strong> Clique em <strong>Confirmar doação</strong>.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="resumoSelecao" class="sticky-summary mb-5 hidden">
-      <div class="flex items-center justify-between gap-3">
-        <div>
-          <p class="text-[10px] uppercase tracking-widest font-black text-slate-400">Item selecionado</p>
-          <p id="resumoItemNome" class="text-sm font-extrabold text-slate-800 mt-1"></p>
-        </div>
-        <button type="button" onclick="focarFormulario()" class="choose-btn primary">Continuar</button>
+    <div class="bg-purple-50 border border-purple-100 p-4 rounded-3xl mb-6">
+      <p class="text-sm font-extrabold text-purple-900 mb-2">Como ser providência? ✨</p>
+      <div class="text-xs text-purple-700 space-y-1">
+        <p>1. Escolha o item e a quantidade.</p>
+        <p>2. Clique em "Adicionar item" (pode escolher vários).</p>
+        <p>3. Preencha seus dados e confirme a doação.</p>
       </div>
     </div>
 
     <div class="mb-6">
-      <h2 class="text-xs font-black uppercase tracking-widest text-rose-600 mb-4 px-2">
-        Itens críticos para o EJC funcionar
-      </h2>
-      <div id="listaCriticos" class="space-y-3">
-        <p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens críticos...</p>
-      </div>
-    </div>
-
-    <div class="priority-shell mb-6">
-      <h2 class="text-xs font-black uppercase tracking-widest text-slate-800 mb-4 px-2">Itens Importantes</h2>
-      <div id="listaUrgentes" class="space-y-3">
-        <p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens...</p>
-      </div>
-    </div>
-
-    <div class="section-card mb-8">
-      <button type="button" class="accordion-btn" onclick="toggleTodasNecessidades()">
-        <span class="text-sm uppercase tracking-widest">Ver todas as necessidades</span>
-        <i id="iconToggleTodas" class="fas fa-chevron-down text-slate-400"></i>
-      </button>
-      <div id="todasNecessidadesWrap" class="accordion-content hidden-soft space-y-3">
-        <div id="categoriasNecessidades" class="space-y-3"></div>
-      </div>
+      <h2 class="text-xs font-black uppercase tracking-widest text-rose-600 mb-4 px-2">Itens Urgentes 🚨</h2>
+      <div id="listaCriticos" class="space-y-3"></div>
     </div>
 
     <div id="areaForm" class="bg-white rounded-[32px] p-6 border border-slate-100 shadow-sm">
-      <form id="formDoacao" onsubmit="event.preventDefault(); submeterDoacao();" class="space-y-5">
-        <input id="d_nome" placeholder="Seu nome completo" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
-        <div class="grid grid-cols-2 gap-4">
-          <input id="d_tel" type="tel" placeholder="WhatsApp (DDD)" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
-          <select id="d_equipe" required class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white">
+      <form id="formDoacao" onsubmit="event.preventDefault(); submeterDoacao();" class="space-y-4">
+        
+        <input id="d_nome" placeholder="Seu nome completo" required class="vault-input rounded-2xl py-4 px-5 font-bold" />
+        
+        <div class="grid grid-cols-2 gap-3">
+          <input id="d_tel" type="tel" placeholder="WhatsApp (DDD)" required class="vault-input rounded-2xl py-4 px-5 font-bold" />
+          <select id="d_equipe" required class="vault-input rounded-2xl py-4 px-4 font-bold bg-white">
             <option value="">Sua Equipe...</option>
             <option value="Externo">Paroquiano / Visitante</option>
             <option>Animação</option>
@@ -362,666 +178,208 @@
             <option>Visitação</option>
           </select>
         </div>
-        
-        <div class="grid grid-cols-2 gap-4">
-          <select id="d_item" class="vault-input rounded-2xl py-4 px-4 font-bold text-slate-700 bg-white" onchange="atualizarTextoSelecao()">
-            <option value="">O que vai doar?</option>
-          </select>
-          <input id="d_qtd" type="number" min="1" value="1" class="vault-input rounded-2xl py-4 px-5 font-bold text-center text-slate-800" />
+
+        <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100 space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <select id="d_item" class="vault-input rounded-xl py-3 px-3 font-bold bg-white text-sm">
+              <option value="">O que doar?</option>
+            </select>
+            <input id="d_qtd" type="number" min="1" value="1" class="vault-input rounded-xl py-3 px-3 font-bold text-center" />
+          </div>
+          <button type="button" onclick="adicionarAoCarrinho()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest">
+            + Adicionar à minha lista
+          </button>
         </div>
 
-        <button type="button" onclick="adicionarItemDoacao()" class="w-full bg-slate-100 text-slate-800 py-4 rounded-2xl font-black uppercase tracking-widest text-xs">
-          Adicionar item
-        </button>
-
-        <div id="itemEscolhidoBox" class="hidden bg-purple-50 border border-purple-100 rounded-2xl px-4 py-3">
-          <p id="itemEscolhidoTexto" class="text-xs font-bold text-purple-700"></p>
-        </div>
-
-        <div id="listaItensSelecionados" class="space-y-3 hidden"></div>
+        <div id="listaCarrinho" class="space-y-2 hidden"></div>
 
         <div class="space-y-1">
-          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Previsão de entrega</label>
-          <input id="d_data" type="date" required class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700" />
+          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Previsão de Entrega</label>
+          <input id="d_data" type="date" required class="vault-input rounded-2xl py-4 px-5 font-bold" />
         </div>
-        <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl hover:bg-purple-800 active:scale-95 transition-all mt-4 uppercase tracking-widest text-sm">Confirmar doação</button>
+
+        <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl uppercase tracking-widest text-sm active:scale-95 transition-all">
+          Confirmar Doação 💜
+        </button>
       </form>
     </div>
 
-    <div id="agradecimentoDoacao" class="hidden mt-6 text-center p-8 bg-emerald-50 rounded-[32px] border border-emerald-100 animate-fade-in">
-        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mb-4 mx-auto"><i class="fas fa-check"></i></div>
-        <h3 id="agradecimentoTitulo" class="text-xl font-black text-slate-800 mb-2">Deus lhe pague!</h3>
-        <p id="agradecimentoTexto" class="text-sm text-slate-600 leading-relaxed mb-6"></p>
-        <button onclick="novaDoacao()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold active:scale-95 transition-all uppercase tracking-widest text-xs">Fazer outra doação</button>
+    <div id="sucesso" class="hidden text-center p-8 bg-emerald-50 rounded-[32px] border border-emerald-100">
+      <div class="text-4xl mb-4">🙏</div>
+      <h3 class="text-xl font-black text-slate-800">Deus lhe pague!</h3>
+      <p class="text-sm text-slate-600 mt-2 mb-6">Sua providência foi registrada. Nos vemos no EJC!</p>
+      <button onclick="location.reload()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold uppercase text-xs">Fazer outra doação</button>
     </div>
 
     <div class="mt-12">
-      <h3 class="text-sm font-black uppercase tracking-widest text-slate-700 mb-4 px-2">Mural de Carinho</h3>
+      <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-4 px-2">Mural de Carinho</h3>
       <div class="space-y-3 mb-6">
-        <input id="m_nome" placeholder="Seu nome (opcional)" class="vault-input rounded-2xl py-3 px-5 font-bold text-slate-700 w-full" />
-        <textarea id="m_msg" rows="2" placeholder="Deixe uma mensagem para o EJC..." class="vault-input rounded-2xl py-4 px-5 font-bold text-slate-700 resize-none"></textarea>
-        <button id="btnMsg" onclick="enviarMensagem()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs">Enviar mensagem</button>
+        <textarea id="m_msg" rows="2" placeholder="Deixe uma mensagem para o EJC..." class="vault-input rounded-2xl py-4 px-5 font-bold resize-none"></textarea>
+        <button onclick="enviarMensagem()" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-black uppercase text-[10px]">Enviar ao Mural</button>
       </div>
-      <div id="listaMensagens" class="min-h-[100px]"></div>
+      <div id="listaMensagens"></div>
     </div>
 
-    <div class="mt-12 text-center border-t border-slate-100 pt-8">
-      <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] italic">"Seja forte e corajoso"</p>
-    </div>
   </div>
 
   <script>
+    // CONFIGURAÇÃO SUPABASE
     const SUPABASE_URL = 'https://ilzgmueeblxeyieumpyk.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let disponibilidadeItens = {};
-    let itensRenderizados = [];
-    let carrinhoDoacao = [];
+    let itensMetas = [];
+    let carrinho = [];
 
-    const categoriasFixas = {
-      CRITICO: [
-        "Arroz",
-        "Feijão",
-        "Carne bovina",
-        "Frango",
-        "Linguiça",
-        "Óleo",
-        "Sal",
-        "Alho",
-        "Cebola",
-        "Água",
-        "Detergente",
-        "Esponjas",
-        "Sacos de lixo (100L e 50L)"
-      ],
-      IMPORTANTE: [
-        "Farinha de mandioca",
-        "Bacon",
-        "Batata",
-        "Cenoura",
-        "Tomate",
-        "Repolho",
-        "Cheiro-verde",
-        "Refrigerante",
-        "Café",
-        "Açúcar",
-        "Leite"
-      ],
-      COMPLEMENTO: [
-        "Pratinhos descartáveis",
-        "Talheres (garfo/faca)",
-        "Copos descartáveis",
-        "Ketchup (sachê)",
-        "Mostarda (sachê)",
-        "Maionese (sachê)",
-        "Papel alumínio",
-        "Plástico filme",
-        "Desinfetante",
-        "Água sanitária",
-        "Papel higiênico",
-        "Papel toalha",
-        "Rodo",
-        "Vassoura",
-        "Balde",
-        "Pano de chão",
-        "Sulfite A4",
-        "Fita adesiva (durex)"
-      ]
-    };
-
-    function detectarCategoria(item) {
-      const itemNorm = String(item || "").trim().toLowerCase();
-
-      for (const nome of categoriasFixas.CRITICO) {
-        if (itemNorm === nome.toLowerCase()) return "CRITICO";
-      }
-      for (const nome of categoriasFixas.IMPORTANTE) {
-        if (itemNorm === nome.toLowerCase()) return "IMPORTANTE";
-      }
-      for (const nome of categoriasFixas.COMPLEMENTO) {
-        if (itemNorm === nome.toLowerCase()) return "COMPLEMENTO";
-      }
-
-      if (itemNorm.includes("agua") || itemNorm.includes("água")) return "CRITICO";
-      return "COMPLEMENTO";
-    }
-
-    const esc = (str) =>
-      str
-        ? String(str).replace(/[&<>'"]/g, t => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            "'": '&#39;',
-            '"': '&quot;'
-          }[t]))
-        : "";
-
-    function showToast(msg, type = "success") {
+    // TOAST
+    function showToast(m, type="success"){
       const t = document.createElement("div");
-      t.className = "toast " + (type === "error" ? "error" : type === "warn" ? "warn" : "success");
-      t.innerText = msg;
-      document.getElementById("toast-container").appendChild(t);
-      setTimeout(() => t.remove(), 4000);
+      t.className = `toast ${type === 'error' ? 'bg-rose-600' : 'bg-slate-900'}`;
+      t.innerText = m;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
     }
 
-    function normalizarTelefone(t) {
-      let n = String(t || '').replace(/\D/g, '');
-      if (!n) return null;
-      if (n.startsWith('0')) n = n.slice(1);
-      if (!n.startsWith('55')) n = '55' + n;
-      return n;
+    // CONTADOR
+    function initTimer(){
+      const target = new Date('2026-07-11T00:00:00-03:00').getTime();
+      setInterval(() => {
+        const now = new Date().getTime();
+        const diff = target - now;
+        if(diff < 0) return;
+        document.getElementById('cdDias').innerText = Math.floor(diff / (1000*60*60*24));
+        document.getElementById('cdHoras').innerText = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+        document.getElementById('cdMin').innerText = Math.floor((diff % (1000*60*60)) / (1000*60));
+        document.getElementById('cdSeg').innerText = Math.floor((diff % (1000*60)) / 1000);
+      }, 1000);
     }
 
-    function formatarDataBR(data) {
-      if (!data) return "";
-      if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
-        const [ano, mes, dia] = data.split("-");
-        return `${dia}/${mes}/${ano}`;
-      }
-      const d = new Date(data);
-      if (Number.isNaN(d.getTime())) return data;
-      return d.toLocaleDateString("pt-BR");
-    }
-
-    function iniciarContador() {
-      const destino = new Date('2026-07-11T00:00:00-03:00').getTime();
-
-      const atualizar = () => {
-        const agora = new Date().getTime();
-        const diff = destino - agora;
-
-        if (diff <= 0) {
-          document.getElementById('cdDias').innerText = '00';
-          document.getElementById('cdHoras').innerText = '00';
-          document.getElementById('cdMin').innerText = '00';
-          document.getElementById('cdSeg').innerText = '00';
-          return;
-        }
-
-        const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutos = Math.floor((diff / (1000 * 60)) % 60);
-        const segundos = Math.floor((diff / 1000) % 60);
-
-        document.getElementById('cdDias').innerText = String(dias).padStart(2, '0');
-        document.getElementById('cdHoras').innerText = String(horas).padStart(2, '0');
-        document.getElementById('cdMin').innerText = String(minutos).padStart(2, '0');
-        document.getElementById('cdSeg').innerText = String(segundos).padStart(2, '0');
-      };
-
-      atualizar();
-      setInterval(atualizar, 1000);
-    }
-
-    async function carregarDados() {
-      const listaCriticos = document.getElementById('listaCriticos');
-      const listaUrgentes = document.getElementById('listaUrgentes');
-      const select = document.getElementById('d_item');
-
-      listaCriticos.innerHTML = `<p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens...</p>`;
-      listaUrgentes.innerHTML = `<p class="text-center text-xs text-slate-300 animate-pulse">Carregando itens...</p>`;
-      select.innerHTML = `<option value="">O que vai doar?</option>`;
-
-      const { data: metas, error: erroMetas } = await _supabase
-        .from('metas_providencia')
-        .select('*')
-        .order('item', { ascending: true });
-
-      const { data: doacoes, error: erroDoacoes } = await _supabase
-        .from('doacao')
-        .select('*');
-
-      if (erroMetas || erroDoacoes) {
-        console.error(erroMetas || erroDoacoes);
-        listaUrgentes.innerHTML = `<p class="text-center text-xs text-rose-400">Erro ao carregar itens.</p>`;
-        return;
-      }
+    // CARREGAR DADOS
+    async function carregarDados(){
+      const { data: metas } = await _supabase.from('metas_providencia').select('*');
+      const { data: doacoes } = await _supabase.from('doacao').select('item, quantidade').in('status', ['PROMETIDO', 'ENTREGUE']);
 
       const mapa = {};
-      (doacoes || []).forEach(d => {
-        const item = String(d.item || "").trim();
-        if (!item) return;
-
-        if (!mapa[item]) mapa[item] = { prometido: 0, entregue: 0 };
-
-        if (d.status === 'PROMETIDO') mapa[item].prometido += Number(d.quantidade || 0);
-        if (d.status === 'ENTREGUE') mapa[item].entregue += Number(d.quantidade || 0);
+      doacoes?.forEach(d => {
+        mapa[d.item] = (mapa[d.item] || 0) + Number(d.quantidade);
       });
 
-      disponibilidadeItens = {};
-      itensRenderizados = [];
+      const select = document.getElementById('d_item');
+      const listaC = document.getElementById('listaCriticos');
+      listaC.innerHTML = "";
+      select.innerHTML = '<option value="">O que doar?</option>';
 
-      (metas || []).forEach(m => {
-        const item = String(m.item || "").trim();
-        const unidade = m.unidade || "un";
-        const alvo = Number(m.quantidade_alvo || 0);
-
-        const d = mapa[item] || { prometido: 0, entregue: 0 };
-        const disponivel = Math.max(0, alvo - d.prometido - d.entregue);
-        const perc = alvo > 0 ? Math.min(100, Math.round((d.entregue / alvo) * 100)) : 0;
-
-        disponibilidadeItens[item] = {
-          ...m,
-          item,
-          unidade,
-          alvo,
-          prometido: d.prometido,
-          entregue: d.entregue,
-          disponivel,
-          perc
-        };
-
-        itensRenderizados.push({
-          ...m,
-          item,
-          unidade,
-          alvo,
-          prometido: d.prometido,
-          entregue: d.entregue,
-          disponivel,
-          perc
-        });
-
-        if (disponivel > 0) {
+      itensMetas = metas || [];
+      
+      itensMetas.forEach(m => {
+        const jaDoados = mapa[m.item] || 0;
+        const falta = Math.max(0, m.quantidade_alvo - jaDoados);
+        
+        if(falta > 0){
+          // Adiciona ao select
           const opt = document.createElement('option');
-          opt.value = item;
-          opt.innerText = `${item} (${disponivel} ${unidade})`;
+          opt.value = m.item;
+          opt.innerText = `${m.item} (Faltam ${falta} ${m.unidade})`;
           select.appendChild(opt);
+
+          // Se for crítico (exemplo: arroz, feijao, oleo), mostra no topo
+          if(falta > 0) {
+            const perc = Math.min(100, Math.round((jaDoados / m.quantidade_alvo) * 100));
+            listaC.innerHTML += `
+              <div class="section-card p-4 flex items-center justify-between gap-3" onclick="document.getElementById('d_item').value='${m.item}'">
+                <div class="flex-1">
+                  <p class="text-sm font-black text-slate-800">${m.item}</p>
+                  <div class="flex items-center gap-2 mt-2">
+                    <span class="ifood-badge danger">Faltam ${falta} ${m.unidade}</span>
+                    <div class="flex-1 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                      <div class="bg-rose-500 h-full" style="width:${perc}%"></div>
+                    </div>
+                  </div>
+                </div>
+                <i class="fas fa-chevron-right text-slate-300"></i>
+              </div>
+            `;
+          }
         }
       });
-
-      renderizarListas();
     }
 
-    function renderizarListas() {
-      const criticosWrap = document.getElementById('listaCriticos');
-      const urgentesWrap = document.getElementById('listaUrgentes');
-      const categoriasWrap = document.getElementById('categoriasNecessidades');
+    // CARRINHO
+    function adicionarAoCarrinho(){
+      const item = document.getElementById('d_item').value;
+      const qtd = parseInt(document.getElementById('d_qtd').value);
+      if(!item || qtd <= 0) return showToast("Escolha o item e a quantidade.", "error");
 
-      const pendentes = itensRenderizados.filter(i => i.disponivel > 0);
-
-      const criticos = pendentes
-        .filter(i => detectarCategoria(i.item) === "CRITICO")
-        .sort((a, b) => a.disponivel - b.disponivel);
-
-      const importantes = pendentes
-        .filter(i => detectarCategoria(i.item) === "IMPORTANTE")
-        .sort((a, b) => a.disponivel - b.disponivel);
-
-      const complementos = pendentes
-        .filter(i => detectarCategoria(i.item) === "COMPLEMENTO")
-        .sort((a, b) => a.disponivel - b.disponivel);
-
-      const urgentes = importantes;
-
-      if (!criticos.length) {
-        criticosWrap.innerHTML = `
-          <div class="section-card p-4 text-center">
-            <p class="text-sm font-extrabold text-slate-700">Nenhum item crítico pendente no momento 💜</p>
-          </div>
-        `;
-      } else {
-        criticosWrap.innerHTML = criticos.map(i => `
-          <div class="section-card p-4 flex items-center justify-between gap-4 border border-rose-100 bg-rose-50/40"
-               onclick='selecionarItem(${JSON.stringify(i.item)})'>
-            <div class="flex-1">
-              <p class="text-sm font-extrabold text-slate-800">${esc(i.item)}</p>
-              <div class="flex items-center gap-2 mt-2">
-                <span class="ifood-badge danger">Faltam ${i.disponivel} ${esc(i.unidade)}</span>
-                <div class="flex-1 bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div class="bg-rose-500 h-full" style="width:${i.perc}%"></div>
-                </div>
-              </div>
-            </div>
-            <button type="button" class="choose-btn secondary">Escolher</button>
-          </div>
-        `).join('');
-      }
-
-      if (!urgentes.length) {
-        urgentesWrap.innerHTML = `
-          <div class="section-card p-4 text-center">
-            <p class="text-sm font-extrabold text-slate-700">Nenhum item importante pendente no momento 💜</p>
-          </div>
-        `;
-      } else {
-        urgentesWrap.innerHTML = urgentes.map(i => `
-          <div class="section-card p-4 flex items-center justify-between gap-4"
-               onclick='selecionarItem(${JSON.stringify(i.item)})'>
-            <div class="flex-1">
-              <p class="text-sm font-extrabold text-slate-800">${esc(i.item)}</p>
-              <div class="flex items-center gap-2 mt-2">
-                <span class="ifood-badge ${i.disponivel <= 3 ? 'danger' : i.disponivel <= 8 ? 'warn' : 'ok'}">
-                  Faltam ${i.disponivel} ${esc(i.unidade)}
-                </span>
-                <div class="flex-1 bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div class="bg-purple-600 h-full" style="width:${i.perc}%"></div>
-                </div>
-              </div>
-            </div>
-            <button type="button" class="choose-btn secondary">Escolher</button>
-          </div>
-        `).join('');
-      }
-
-      const todosOrdenados = [...criticos, ...importantes, ...complementos];
-
-      if (!todosOrdenados.length) {
-        categoriasWrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhuma necessidade pendente.</p>`;
-        return;
-      }
-
-      categoriasWrap.innerHTML = `
-        <div class="mb-4">
-          <p class="text-[10px] font-black uppercase tracking-widest text-rose-600 mb-2">Crítico</p>
-          <div class="space-y-2">
-            ${criticos.length ? criticos.map(i => `
-              <div class="flex items-center justify-between p-3 border border-rose-100 bg-rose-50/40 rounded-xl">
-                <div>
-                  <p class="text-xs font-bold text-slate-700">${esc(i.item)}</p>
-                  <p class="text-[10px] text-slate-400 mt-1">Falta ${i.disponivel} ${esc(i.unidade)} • Entregue ${i.entregue}/${i.alvo}</p>
-                </div>
-                <button type="button" onclick='selecionarItem(${JSON.stringify(i.item)})' class="text-[10px] font-black text-purple-600 uppercase">
-                  Escolher
-                </button>
-              </div>
-            `).join('') : `<p class="text-xs text-slate-400">Nenhum item crítico pendente.</p>`}
-          </div>
-        </div>
-
-        <div class="mb-4">
-          <p class="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-2">Importante</p>
-          <div class="space-y-2">
-            ${importantes.length ? importantes.map(i => `
-              <div class="flex items-center justify-between p-3 border border-amber-100 bg-amber-50/30 rounded-xl">
-                <div>
-                  <p class="text-xs font-bold text-slate-700">${esc(i.item)}</p>
-                  <p class="text-[10px] text-slate-400 mt-1">Falta ${i.disponivel} ${esc(i.unidade)} • Entregue ${i.entregue}/${i.alvo}</p>
-                </div>
-                <button type="button" onclick='selecionarItem(${JSON.stringify(i.item)})' class="text-[10px] font-black text-purple-600 uppercase">
-                  Escolher
-                </button>
-              </div>
-            `).join('') : `<p class="text-xs text-slate-400">Nenhum item importante pendente.</p>`}
-          </div>
-        </div>
-
-        <div>
-          <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Complemento</p>
-          <div class="space-y-2">
-            ${complementos.length ? complementos.map(i => `
-              <div class="flex items-center justify-between p-3 border border-slate-100 bg-white rounded-xl">
-                <div>
-                  <p class="text-xs font-bold text-slate-700">${esc(i.item)}</p>
-                  <p class="text-[10px] text-slate-400 mt-1">Falta ${i.disponivel} ${esc(i.unidade)} • Entregue ${i.entregue}/${i.alvo}</p>
-                </div>
-                <button type="button" onclick='selecionarItem(${JSON.stringify(i.item)})' class="text-[10px] font-black text-purple-600 uppercase">
-                  Escolher
-                </button>
-              </div>
-            `).join('') : `<p class="text-xs text-slate-400">Nenhum item complementar pendente.</p>`}
-          </div>
-        </div>
-      `;
+      carrinho.push({ item, quantidade: qtd });
+      renderCarrinho();
+      document.getElementById('d_item').value = "";
     }
 
-    function selecionarItem(item) {
-      document.getElementById('d_item').value = item;
-      document.getElementById('d_qtd').value = 1;
-      atualizarTextoSelecao();
-      focarFormulario();
-    }
-
-    function atualizarTextoSelecao() {
-      const val = document.getElementById('d_item').value;
-      const box = document.getElementById('itemEscolhidoBox');
-      const resumo = document.getElementById('resumoSelecao');
-
-      if (!val || !disponibilidadeItens[val]) {
-        box.classList.add('hidden');
-        resumo.classList.add('hidden');
-        return;
-      }
-
-      const item = disponibilidadeItens[val];
-      box.classList.remove('hidden');
-      resumo.classList.remove('hidden');
-
-      document.getElementById('itemEscolhidoTexto').innerText =
-        `Selecionado: ${item.item} • disponível: ${item.disponivel} ${item.unidade}`;
-
-      document.getElementById('resumoItemNome').innerText = item.item;
-    }
-
-    function focarFormulario() {
-      document.getElementById('areaForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function toggleTodasNecessidades() {
-      const wrap = document.getElementById('todasNecessidadesWrap');
-      const icon = document.getElementById('iconToggleTodas');
-      wrap.classList.toggle('hidden-soft');
-      icon.className = wrap.classList.contains('hidden-soft')
-        ? "fas fa-chevron-down text-slate-400"
-        : "fas fa-chevron-up text-slate-400";
-    }
-
-    function atualizarListaCarrinho() {
-      const wrap = document.getElementById('listaItensSelecionados');
-
-      if (!carrinhoDoacao.length) {
-        wrap.classList.add('hidden');
-        wrap.innerHTML = '';
-        return;
-      }
-
+    function renderCarrinho(){
+      const wrap = document.getElementById('listaCarrinho');
+      if(carrinho.length === 0) { wrap.classList.add('hidden'); return; }
       wrap.classList.remove('hidden');
-      wrap.innerHTML = carrinhoDoacao.map((item, index) => `
-        <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3">
-          <div>
-            <p class="text-sm font-extrabold text-slate-800">${esc(item.item)}</p>
-            <p class="text-[11px] text-slate-500">${item.quantidade} ${esc(item.unidade)}</p>
-          </div>
-          <button type="button" onclick="removerItemDoacao(${index})" class="text-rose-600 text-xs font-black uppercase">
-            Remover
-          </button>
+      wrap.innerHTML = carrinho.map((c, i) => `
+        <div class="flex justify-between items-center bg-purple-50 p-3 rounded-2xl border border-purple-100">
+          <span class="text-xs font-bold text-purple-900">${c.quantidade}x ${c.item}</span>
+          <button onclick="carrinho.splice(${i},1);renderCarrinho()" class="text-rose-500 text-xs font-black">Remover</button>
         </div>
       `).join('');
     }
 
-    function adicionarItemDoacao() {
-      const item = document.getElementById('d_item').value;
-      const qtd = parseInt(document.getElementById('d_qtd').value, 10);
-
-      if (!item || !disponibilidadeItens[item]) return showToast("Selecione um item.", "error");
-      if (!qtd || qtd <= 0) return showToast("Informe uma quantidade válida.", "error");
-
-      const jaNoCarrinho = carrinhoDoacao
-        .filter(i => i.item === item)
-        .reduce((acc, i) => acc + i.quantidade, 0);
-
-      if (qtd + jaNoCarrinho > disponibilidadeItens[item].disponivel) {
-        return showToast(`Para ${item}, o máximo disponível é ${disponibilidadeItens[item].disponivel}.`, "error");
-      }
-
-      carrinhoDoacao.push({
-        item,
-        quantidade: qtd,
-        unidade: disponibilidadeItens[item].unidade || "un"
-      });
-
-      document.getElementById('d_item').value = "";
-      document.getElementById('d_qtd').value = 1;
-      document.getElementById('itemEscolhidoBox').classList.add('hidden');
-      document.getElementById('resumoSelecao').classList.add('hidden');
-
-      atualizarListaCarrinho();
-      showToast("Item adicionado! 💜");
-    }
-
-    function removerItemDoacao(index) {
-      carrinhoDoacao.splice(index, 1);
-      atualizarListaCarrinho();
-    }
-
-    async function submeterDoacao() {
+    // SUBMETER
+    async function submeterDoacao(){
+      if(carrinho.length === 0) return showToast("Sua lista está vazia!", "error");
       const btn = document.getElementById('btnEnviar');
-      const nome = document.getElementById('d_nome').value.trim();
-      const telefone = normalizarTelefone(document.getElementById('d_tel').value);
+      const nome = document.getElementById('d_nome').value;
+      const tel = document.getElementById('d_tel').value;
       const equipe = document.getElementById('d_equipe').value;
-      const dataEntrega = document.getElementById('d_data').value;
-
-      if (!nome) return showToast("Informe seu nome.", "error");
-      if (!telefone) return showToast("Informe um WhatsApp válido.", "error");
-      if (!equipe) return showToast("Selecione sua equipe.", "error");
-      if (!dataEntrega) return showToast("Informe a data de entrega.", "error");
-      if (!carrinhoDoacao.length) return showToast("Adicione pelo menos um item.", "error");
+      const dataP = document.getElementById('d_data').value;
 
       btn.disabled = true;
-      btn.innerText = "Enviando...";
+      btn.innerText = "Registrando...";
 
-      const equipeNormalizada = equipe === "Externo" ? "Externo" : equipe;
-      const tipoPessoa = equipeNormalizada === "Externo" ? "PAROQUIANO" : "SERVO";
-
-      const payload = carrinhoDoacao.map(reg => ({
-        item: reg.item,
-        quantidade: reg.quantidade,
-        unidade: reg.unidade,
-        valor_estimado: 0,
-        nome,
-        telefone,
-        equipe: equipeNormalizada,
-        tipo_pessoa: tipoPessoa,
-        data_movimento: new Date().toISOString().slice(0, 10),
-        data_previsao: dataEntrega,
-        status: "PROMETIDO",
-        responsavel_lanc: "Lista Pública",
-        observacao: "Registro realizado pela página pública de providência."
+      const doacoes = carrinho.map(c => ({
+        nome, telefone: tel, equipe, item: c.item, quantidade: c.quantidade,
+        data_previsao: dataP, status: "PROMETIDO", tipo_pessoa: equipe === "Externo" ? "PAROQUIANO" : "SERVO",
+        data_movimento: new Date().toISOString().split('T')[0]
       }));
 
-      const { error } = await _supabase.from('doacao').insert(payload);
+      const { error } = await _supabase.from('doacao').insert(doacoes);
 
-      if (error) {
-        console.error(error);
+      if(error) {
+        showToast("Erro ao salvar.", "error");
         btn.disabled = false;
-        btn.innerText = "Confirmar doação";
-        return showToast("Erro ao registrar doação.", "error");
+        btn.innerText = "Confirmar Doação";
+      } else {
+        document.getElementById('areaForm').classList.add('hidden');
+        document.getElementById('sucesso').classList.remove('hidden');
+        window.scrollTo(0,0);
       }
-
-      await carregarDados();
-
-      const totalItens = payload.length;
-
-      carrinhoDoacao = [];
-      atualizarListaCarrinho();
-
-      document.getElementById('areaForm').classList.add('hidden');
-      document.getElementById('resumoSelecao').classList.add('hidden');
-      document.getElementById('itemEscolhidoBox').classList.add('hidden');
-      document.getElementById('agradecimentoDoacao').classList.remove('hidden');
-      document.getElementById('agradecimentoTexto').innerText =
-        `Sua providência foi registrada com sucesso com ${totalItens} item(ns). Deus lhe pague!`;
-
-      btn.disabled = false;
-      btn.innerText = "Confirmar doação";
-
-      showToast("Doação registrada com sucesso! 💜");
     }
 
-    function novaDoacao() {
-      carrinhoDoacao = [];
-      document.getElementById('formDoacao').reset();
-      document.getElementById('areaForm').classList.remove('hidden');
-      document.getElementById('agradecimentoDoacao').classList.add('hidden');
-      document.getElementById('itemEscolhidoBox').classList.add('hidden');
-      document.getElementById('resumoSelecao').classList.add('hidden');
-
-      const btn = document.getElementById('btnEnviar');
-      btn.disabled = false;
-      btn.innerText = "Confirmar doação";
-
-      const hoje = new Date().toISOString().split('T')[0];
-      document.getElementById('d_data').setAttribute('min', hoje);
-
-      atualizarListaCarrinho();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      carregarDados();
-    }
-
-    async function carregarMensagens() {
-      const wrap = document.getElementById('listaMensagens');
-
-      const { data, error } = await _supabase
-        .from('doacao_mural')
-        .select('*')
-        .eq('status', 'APROVADA')
-        .order('criado_em', { ascending: false })
-        .limit(15);
-
-      if (error) {
-        console.error(error);
-        wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Não foi possível carregar o mural.</p>`;
-        return;
-      }
-
-      if (!data || !data.length) {
-        wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Ainda não há mensagens aprovadas.</p>`;
-        return;
-      }
-
-      const html = data.map(m => `
-        <div class="msg-card">
-          <p class="text-[10px] font-black text-purple-600 uppercase mb-1">${esc(m.nome || "Anônimo")}</p>
-          <p class="text-xs text-slate-600 font-medium leading-relaxed">${esc(m.mensagem)}</p>
-        </div>
-      `).join('');
-
-      wrap.innerHTML = `<div class="marquee-container"><div class="marquee-content">${html}${html}</div></div>`;
-    }
-
-    async function enviarMensagem() {
-      const btn = document.getElementById('btnMsg');
-      const nome = document.getElementById('m_nome').value.trim() || "Anônimo";
-      const mensagem = document.getElementById('m_msg').value.trim();
-
-      if (!mensagem) return showToast("Escreva uma mensagem.", "error");
-      if (mensagem.length < 3) return showToast("Mensagem muito curta.", "error");
-      if (mensagem.length > 250) return showToast("Mensagem muito longa.", "error");
-
-      btn.disabled = true;
-      btn.innerText = "Enviando...";
-
-      const { error } = await _supabase.from('doacao_mural').insert([{
-        nome,
-        mensagem,
-        status: 'PENDENTE'
-      }]);
-
-      btn.disabled = false;
-      btn.innerText = "Enviar mensagem";
-
-      if (error) {
-        console.error(error);
-        return showToast("Erro ao enviar mensagem.", "error");
-      }
-
-      document.getElementById('m_nome').value = "";
+    // MURAL
+    async function enviarMensagem(){
+      const msg = document.getElementById('m_msg').value;
+      if(!msg) return;
+      await _supabase.from('doacao_mural').insert([{ mensagem: msg, status: 'PENDENTE' }]);
       document.getElementById('m_msg').value = "";
-      showToast("Mensagem enviada para aprovação! 💜");
+      showToast("Mensagem enviada para moderação!");
     }
 
-    window.onload = async () => {
-      iniciarContador();
+    async function carregarMural(){
+      const { data } = await _supabase.from('doacao_mural').select('*').eq('status', 'APROVADA').limit(10).order('id', {ascending: false});
+      if(!data || data.length === 0) return;
+      const msgs = data.map(m => `<div class="bg-white p-4 rounded-2xl border border-slate-100 text-xs font-medium text-slate-600 shadow-sm">${m.mensagem}</div>`).join('');
+      document.getElementById('listaMensagens').innerHTML = `<div class="marquee-container"><div class="marquee-content">${msgs}${msgs}</div></div>`;
+    }
 
+    window.onload = () => {
+      initTimer();
+      carregarDados();
+      carregarMural();
       const hoje = new Date().toISOString().split('T')[0];
       document.getElementById('d_data').setAttribute('min', hoje);
-
-      document.getElementById('d_item').addEventListener('change', atualizarTextoSelecao);
-
-      await carregarDados();
-      await carregarMensagens();
     };
   </script>
 </body>
