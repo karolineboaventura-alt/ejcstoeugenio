@@ -237,7 +237,7 @@
       t.className = `toast ${type === 'error' ? 'bg-rose-600' : 'bg-slate-900'}`;
       t.innerText = m;
       document.body.appendChild(t);
-      setTimeout(() => t.remove(), 3000);
+      setTimeout(() => t.remove(), 4000);
     }
 
     // CONTADOR
@@ -282,7 +282,7 @@
           opt.innerText = `${m.item} (Faltam ${falta} ${m.unidade})`;
           select.appendChild(opt);
 
-          // Se for crítico (exemplo: arroz, feijao, oleo), mostra no topo
+          // Se for crítico, mostra no topo
           if(falta > 0) {
             const perc = Math.min(100, Math.round((jaDoados / m.quantidade_alvo) * 100));
             listaC.innerHTML += `
@@ -310,9 +310,14 @@
       const qtd = parseInt(document.getElementById('d_qtd').value);
       if(!item || qtd <= 0) return showToast("Escolha o item e a quantidade.", "error");
 
-      carrinho.push({ item, quantidade: qtd });
+      // Buscar a unidade (kg, un) do item para salvar e mostrar
+      const metaItem = itensMetas.find(m => m.item === item);
+      const unidade = metaItem ? metaItem.unidade : 'un';
+
+      carrinho.push({ item, quantidade: qtd, unidade });
       renderCarrinho();
       document.getElementById('d_item').value = "";
+      document.getElementById('d_qtd').value = 1;
     }
 
     function renderCarrinho(){
@@ -321,13 +326,13 @@
       wrap.classList.remove('hidden');
       wrap.innerHTML = carrinho.map((c, i) => `
         <div class="flex justify-between items-center bg-purple-50 p-3 rounded-2xl border border-purple-100">
-          <span class="text-xs font-bold text-purple-900">${c.quantidade}x ${c.item}</span>
-          <button onclick="carrinho.splice(${i},1);renderCarrinho()" class="text-rose-500 text-xs font-black">Remover</button>
+          <span class="text-xs font-bold text-purple-900">${c.quantidade} ${c.unidade} de ${c.item}</span>
+          <button type="button" onclick="carrinho.splice(${i},1);renderCarrinho()" class="text-rose-500 text-xs font-black">Remover</button>
         </div>
       `).join('');
     }
 
-    // SUBMETER
+    // SUBMETER DOAÇÃO
     async function submeterDoacao(){
       if(carrinho.length === 0) return showToast("Sua lista está vazia!", "error");
       const btn = document.getElementById('btnEnviar');
@@ -339,16 +344,29 @@
       btn.disabled = true;
       btn.innerText = "Registrando...";
 
+      // Mapeamento idêntico ao que o EJC BANK espera
       const doacoes = carrinho.map(c => ({
-        nome, telefone: tel, equipe, item: c.item, quantidade: c.quantidade,
-        data_previsao: dataP, status: "PROMETIDO", tipo_pessoa: equipe === "Externo" ? "PAROQUIANO" : "SERVO",
-        data_movimento: new Date().toISOString().split('T')[0]
+        nome: nome,
+        telefone: tel,
+        equipe: equipe === "Externo" ? "Externo" : equipe,
+        item: c.item,
+        quantidade: c.quantidade,
+        unidade: c.unidade,
+        valor_estimado: 0,
+        data_previsao: dataP,
+        status: "PROMETIDO",
+        tipo: "PENDENTE",
+        tipo_pessoa: equipe === "Externo" ? "PAROQUIANO" : "SERVO",
+        data_movimento: new Date().toISOString().split('T')[0],
+        responsavel_lanc: "Lista Pública",
+        observacao: "Registro realizado pela página pública."
       }));
 
       const { error } = await _supabase.from('doacao').insert(doacoes);
 
       if(error) {
-        showToast("Erro ao salvar.", "error");
+        console.error(error);
+        showToast("Erro ao salvar. Verifique sua conexão.", "error");
         btn.disabled = false;
         btn.innerText = "Confirmar Doação 💜";
       } else {
@@ -358,7 +376,7 @@
       }
     }
 
-    // MURAL (Sem moderação - vai direto para APROVADA)
+    // MURAL
     async function enviarMensagem(){
       const msg = document.getElementById('m_msg').value;
       if(!msg) return;
@@ -372,8 +390,6 @@
 
       document.getElementById('m_msg').value = "";
       showToast("Mensagem enviada com sucesso! 💜");
-      
-      // Atualiza o mural na mesma hora
       carregarMural();
     }
 
