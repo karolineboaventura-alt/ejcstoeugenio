@@ -1,4 +1,3 @@
-<!-- PARTE 1 -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -331,9 +330,6 @@
       </div>
     </div>
   </div>
-  <!-- PARTE 2 -->
-
-  <!-- APP PRINCIPAL -->
   <div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
 
     <header class="nu-header sticky top-0 z-40 px-6 pt-8 text-white">
@@ -801,10 +797,7 @@
     </button>
 
   </div>
-  <!-- PARTE 3 -->
-
-  <!-- MODAL NOVO / EDITAR REGISTRO -->
-  <div
+    <div
     id="modal"
     class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm"
   >
@@ -1167,9 +1160,7 @@
     </div>
 
   </div>
-  <!-- PARTE 4 -->
-
-  <!-- MODAL EXTRATO -->
+ MODAL EXTRATO
   <div
     id="modalExtrato"
     class="hidden fixed inset-0 z-[125] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
@@ -1647,9 +1638,7 @@
 
       }[modulo] || "caixa_ejc";
     }
-    <!-- PARTE 5 -->
-
-    // ============================
+      // ============================
     // STATUS
     // ============================
 
@@ -2148,9 +2137,7 @@
 
       mudarAba("DOACAO");
         }
-    <!-- PARTE 6 -->
-
-    // ============================
+       // ============================
     // MODAL DINÂMICO
     // ============================
 
@@ -2305,8 +2292,7 @@
             <option value="ENTRADA">Pago ✅</option>
             <option value="PENDENTE">Pendente 🟠</option>
             <option value="SAIDA">Gasto 🔴</option
-            <!-- PARTE 7 -->
-
+          
     function atualizarPainelPessoaEquipe(){
 
       const painel =
@@ -2833,8 +2819,7 @@
 
       atualizarPainelPessoaEquipe();
     }
-    <!-- PARTE 8 -->
-
+   
     // ============================
     // HISTÓRICO
     // ============================
@@ -3257,8 +3242,7 @@
               registroOriginal?.quantidade || 1,
 
             valor
-            <!-- PARTE 9 -->
-
+        
         // ============================
         // DOAÇÃO / PROVIDÊNCIA
         // ============================
@@ -3719,7 +3703,7 @@
         .getElementById("modal")
         ?.classList.remove("hidden");
     }
-    <!-- PARTE 10 -->
+    
 
     // ============================
     // CANCELAR / DAR BAIXA / STATUS
@@ -4109,7 +4093,6 @@
 
         return;
     }
-    <!-- PARTE 11 -->
 
       lista.forEach(reg => {
 
@@ -4384,8 +4367,7 @@
         corpo.appendChild(tr);
       });
                   }
-      <!-- PARTE 12 -->
-
+     
     // ============================
     // EXTRATO 360°
     // ============================
@@ -4759,8 +4741,7 @@
           `;
         }).join("");
     }
-      <!-- PARTE 13 -->
-
+      
     function fecharExtrato(){
 
       document
@@ -5090,9 +5071,7 @@ Total em aberto: ${formatarMoeda(totalAberto)}
         .getElementById("modalQuitarTudo")
         ?.classList.remove("flex");
     }
-      <!-- PARTE 14 -->
-
-    async function confirmarQuitarTudo(){
+        async function confirmarQuitarTudo(){
 
       const resp =
         document
@@ -5422,8 +5401,7 @@ Deus abençoe 🙏`;
         mensagem
       );
         }
-      <!-- PARTE 15 -->
-
+     
     // ============================
     // PROVIDENCIA (METAS)
     // ============================
@@ -5792,8 +5770,7 @@ Nenhuma necessidade cadastrada.
             prio:obterPrioridade(meta.item)
           };
         });
-      <!-- PARTE 16 -->
-
+      
       metasProcessadas.sort((a,b) => {
 
         const aConcluido =
@@ -5963,8 +5940,7 @@ Nenhuma necessidade cadastrada.
 
       `;
     }
-      <!-- PARTE 17 FINAL -->
-
+     
     // ============================
     // MURAL DE CARINHO
     // ============================
