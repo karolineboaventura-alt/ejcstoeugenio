@@ -8,196 +8,787 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-body{
-  font-family:'Plus Jakarta Sans',sans-serif;
-  background:linear-gradient(180deg,#f7f2ff,#fff);
-  color:#1e293b;
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
 }
+
+body{
+  margin:0;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:
+    radial-gradient(circle at top,#efe1ff 0,#f7f2ff 35%,#ffffff 100%);
+  color:#201331;
+}
+
+.app{
+  max-width:430px;
+  margin:0 auto;
+  padding:18px 14px 34px;
+}
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:34px;
+  padding:26px 22px 24px;
+  color:#fff;
+  text-align:center;
+  background:
+    radial-gradient(circle at 20% 10%,rgba(255,255,255,.25),transparent 24%),
+    radial-gradient(circle at 90% 0%,rgba(255,255,255,.18),transparent 28%),
+    linear-gradient(155deg,#b000ff 0%,#8d00e6 42%,#4c0a86 100%);
+  box-shadow:0 28px 60px rgba(105,20,180,.38);
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:auto -40px -70px -40px;
+  height:150px;
+  background:rgba(255,255,255,.10);
+  filter:blur(24px);
+  transform:rotate(-8deg);
+}
+
+.cross{
+  width:70px;
+  height:70px;
+  margin:0 auto 14px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:inset 0 0 22px rgba(255,255,255,.15);
+}
+
+.kicker{
+  font-size:10px;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  font-weight:900;
+  opacity:.72;
+}
+
+.title{
+  margin-top:7px;
+  font-size:31px;
+  line-height:1.05;
+  font-weight:900;
+}
+
+.subtitle{
+  margin-top:8px;
+  font-size:13px;
+  font-style:italic;
+  opacity:.83;
+}
+
+.count-card{
+  margin-top:22px;
+  position:relative;
+  z-index:1;
+  padding:14px;
+  border-radius:24px;
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(12px);
+}
+
+.count-title{
+  font-size:9px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  font-weight:900;
+  opacity:.65;
+  margin-bottom:10px;
+}
+
+.count-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.count-box{
+  border-radius:18px;
+  padding:10px 5px;
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.count-number{
+  font-size:20px;
+  font-weight:900;
+}
+
+.count-label{
+  font-size:8px;
+  text-transform:uppercase;
+  opacity:.65;
+  font-weight:800;
+  margin-top:2px;
+}
+
 .card{
   background:#fff;
-  border-radius:30px;
-  box-shadow:0 16px 45px rgba(88,28,135,.10);
-  border:1px solid rgba(130,10,209,.08);
-}
-.hero{
-  background:
-  radial-gradient(circle at top left,rgba(255,255,255,.28),transparent 34%),
-  linear-gradient(135deg,#9d00ff,#7e22ce,#3b0764);
-  color:white;
-  border-radius:36px;
-  box-shadow:0 20px 50px rgba(91,33,182,.32);
-}
-.btn{
-  background:linear-gradient(135deg,#8b00d8,#5b21b6);
-  color:white;
-  border-radius:18px;
-  padding:13px 16px;
-  font-weight:900;
-  font-size:12px;
-}
-.btn:active{transform:scale(.97)}
-.input{
-  width:100%;
-  border:2px solid #eee;
-  border-radius:20px;
-  padding:15px;
-  font-weight:800;
-  background:white;
-}
-.input:focus{
-  outline:none;
-  border-color:#8b00d8;
-}
-.categoria{
-  background:white;
   border-radius:28px;
-  overflow:hidden;
-  border:1px solid #eee;
-  box-shadow:0 10px 28px rgba(0,0,0,.04);
+  padding:20px;
+  box-shadow:0 16px 38px rgba(73,27,113,.08);
+  border:1px solid rgba(142,55,210,.08);
 }
-.categoria-head{
+
+.soft-card{
+  background:#fff;
+  border-radius:28px;
   padding:18px;
+  box-shadow:0 14px 34px rgba(73,27,113,.07);
+  border:1px solid rgba(142,55,210,.07);
+}
+
+.help{
+  margin-top:18px;
+  background:
+    radial-gradient(circle at 20% 10%,#fff 0,#fff 40%,#f8ecff 100%);
+}
+
+.help h2{
+  font-size:18px;
+  font-weight:900;
+  margin:0;
+}
+
+.help p{
+  margin:8px 0 0;
+  font-size:13px;
+  line-height:1.55;
+  color:#8b7b99;
+  font-weight:600;
+}
+
+.pix-card{
+  margin-top:18px;
+  position:relative;
+  overflow:hidden;
+  border-radius:32px;
+  padding:22px;
+  color:white;
+  background:
+    radial-gradient(circle at 15% 12%,rgba(255,255,255,.25),transparent 20%),
+    linear-gradient(150deg,#bd00ff 0%,#9600dc 45%,#4f087f 100%);
+  box-shadow:0 26px 58px rgba(127,0,205,.33);
+}
+
+.pix-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.pix-label{
+  font-size:10px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  font-weight:900;
+  opacity:.72;
+}
+
+.pix-title{
+  font-size:23px;
+  line-height:1.06;
+  font-weight:900;
+  margin-top:5px;
+}
+
+.pix-badge{
+  width:58px;
+  height:58px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.18);
+  font-size:25px;
+}
+
+.pix-key-box{
+  margin-top:18px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:14px;
+  border-radius:22px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.14);
+}
+
+.pix-key-text{
+  flex:1;
+  min-width:0;
+}
+
+.pix-key-text small{
+  display:block;
+  font-size:9px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  font-weight:900;
+  opacity:.65;
+}
+
+.pix-key-text strong{
+  display:block;
+  margin-top:5px;
+  font-size:12px;
+  line-height:1.35;
+  word-break:break-all;
+}
+
+.copy-btn{
+  border:0;
+  border-radius:16px;
+  padding:12px 14px;
+  background:#fff;
+  color:#7b00c9;
+  font-size:11px;
+  font-weight:900;
   cursor:pointer;
 }
-.item{
-  background:#fbfaff;
-  border:1px solid #eee;
+
+.pix-options{
+  margin-top:15px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.pix-option{
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.12);
+  color:white;
   border-radius:22px;
-  padding:15px;
+  padding:15px 8px;
+  text-align:center;
+  cursor:pointer;
 }
-.progress{
-  height:9px;
-  background:#eee;
+
+.pix-option.featured{
+  background:#fff;
+  color:#7b00c9;
+  box-shadow:0 16px 32px rgba(0,0,0,.14);
+  transform:scale(1.03);
+}
+
+.pix-option small{
+  display:block;
+  font-size:8px;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  font-weight:900;
+  opacity:.72;
+}
+
+.pix-option strong{
+  display:block;
+  margin-top:5px;
+  font-size:22px;
+  font-weight:900;
+}
+
+.whats-grid{
+  margin-top:15px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.whats-btn{
+  text-decoration:none;
+  border-radius:18px;
+  padding:14px 8px;
+  text-align:center;
+  background:white;
+  color:#7b00c9;
+  font-size:10px;
+  line-height:1.2;
+  font-weight:900;
+}
+
+.pix-note{
+  margin-top:14px;
+  padding:13px;
+  border-radius:20px;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.12);
+  font-size:11px;
+  line-height:1.5;
+  opacity:.82;
+  font-weight:600;
+}
+
+.section-head{
+  margin:24px 2px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.section-head h2{
+  margin:0;
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:#8f7aa4;
+  font-weight:900;
+}
+
+.total-badge{
   border-radius:999px;
-  overflow:hidden;
-}
-.progress-bar{
-  height:100%;
-  background:linear-gradient(90deg,#8b00d8,#c084fc);
-}
-.badge{
+  background:#f3e4ff;
+  color:#7b00c9;
+  padding:6px 11px;
   font-size:10px;
   font-weight:900;
+}
+
+.search{
+  width:100%;
+  border:0;
+  outline:0;
+  border-radius:22px;
+  padding:15px 17px;
+  background:#fff;
+  box-shadow:0 12px 28px rgba(73,27,113,.06);
+  font-weight:800;
+  color:#3d2b4d;
+  margin-bottom:12px;
+}
+
+.category{
+  margin-bottom:13px;
+  border-radius:28px;
+  background:#fff;
+  box-shadow:0 15px 35px rgba(73,27,113,.07);
+  border:1px solid rgba(142,55,210,.08);
+  overflow:hidden;
+}
+
+.category summary{
+  list-style:none;
+  cursor:pointer;
+}
+
+category summary::-webkit-details-marker{
+  display:none;
+}
+.cat-head{
+  padding:16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.cat-icon{
+  width:45px;
+  height:45px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:21px;
+  background:#f4e7ff;
+}
+
+.cat-info{
+  flex:1;
+  min-width:0;
+}
+
+.cat-info strong{
+  display:block;
+  font-size:14px;
+  font-weight:900;
+  color:#2b183c;
+}
+
+.cat-info span{
+  display:block;
+  font-size:10px;
+  color:#9b8aa8;
+  font-weight:700;
+  margin-top:3px;
+}
+
+.cat-count{
   border-radius:999px;
-  padding:5px 10px;
+  background:#f3e4ff;
+  color:#7b00c9;
+  padding:6px 10px;
+  font-size:10px;
+  font-weight:900;
+}
+
+.cat-arrow{
+  color:#b79acb;
+  font-size:15px;
+}
+
+.cat-body{
+  padding:0 14px 15px;
+  display:grid;
+  gap:11px;
+}
+
+.item-card{
+  border-radius:23px;
+  padding:15px;
+  background:#fff;
+  border:1px solid #f1e7f7;
+  box-shadow:0 10px 22px rgba(73,27,113,.055);
+}
+
+.item-top{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:space-between;
+}
+
+.item-name{
+  font-size:14px;
+  line-height:1.25;
+  font-weight:900;
+  color:#261637;
+}
+
+.item-meta{
+  margin-top:5px;
+  font-size:10px;
+  color:#9b8aa8;
+  font-weight:700;
+  line-height:1.4;
+}
+
+.choose-btn{
+  border:0;
+  border-radius:999px;
+  padding:11px 14px;
+  background:linear-gradient(135deg,#9b00e8,#6500b3);
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 12px 22px rgba(123,0,201,.22);
+}
+
+.progress{
+  margin-top:11px;
+  height:8px;
+  border-radius:999px;
+  overflow:hidden;
+  background:#f1e7f7;
+}
+
+.progress-bar{
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#9b00e8,#d946ef);
+}
+
+.form-card{
+  margin-top:18px;
+}
+
+.form-title{
+  font-size:21px;
+  font-weight:900;
+  margin:0;
+}
+
+.input{
+  width:100%;
+  border:0;
+  outline:0;
+  border-radius:20px;
+  padding:15px 16px;
+  background:#f8f5fb;
+  font-weight:800;
+  color:#372247;
+}
+
+.form-grid{
+  display:grid;
+  gap:12px;
+  margin-top:15px;
+}
+
+.cart-list{
+  display:grid;
+  gap:10px;
+  margin-top:15px;
+}
+
+.cart-item{
+  border-radius:20px;
+  background:#fbf7ff;
+  border:1px solid #f1e7f7;
+  padding:13px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.cart-item strong{
+  font-size:13px;
+  font-weight:900;
+}
+
+.cart-item span{
+  display:block;
+  font-size:11px;
+  color:#7b00c9;
+  font-weight:900;
+  margin-top:3px;
+}
+
+.qty{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.qty button{
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:12px;
+  font-weight:900;
+  background:#efe2ff;
+  color:#7b00c9;
+}
+
+.submit-btn{
+  width:100%;
+  border:0;
+  border-radius:20px;
+  padding:16px;
+  background:#111827;
+  color:white;
+  font-weight:900;
+  font-size:12px;
+  letter-spacing:.06em;
+  margin-top:12px;
+}
+
+.close-btn{
+  border:0;
+  background:transparent;
+  color:#9b8aa8;
+  font-size:11px;
+  font-weight:900;
+}
+
+.hidden{
+  display:none !important;
+}
+
+.success{
+  text-align:center;
+  margin-top:18px;
+}
+
+.error-box{
+  border-radius:24px;
+  padding:18px;
+  background:#fff1f2;
+  border:1px solid #fecdd3;
+  color:#be123c;
+  font-size:12px;
+  line-height:1.55;
+  font-weight:700;
+}
+
+.care-wall{
+  margin-top:22px;
+}
+
+.care-wall h2{
+  font-size:13px;
+  color:#8f7aa4;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-weight:900;
+  margin:0 0 12px;
+}
+
+.wall-form{
+  display:grid;
+  gap:10px;
+}
+
+.wall-form textarea{
+  min-height:90px;
+  resize:none;
+}
+
+.wall-btn{
+  width:100%;
+  border:0;
+  border-radius:18px;
+  background:#111827;
+  color:#fff;
+  padding:15px;
+  font-size:11px;
+  font-weight:900;
+}
+
+.footer{
+  text-align:center;
+  margin-top:24px;
+  font-size:11px;
+  color:#a997b6;
+  font-weight:700;
 }
 </style>
 </head>
 
-<body class="p-4">
+<body>
 
-<div class="max-w-md mx-auto space-y-5 pb-10">
+<main class="app">
 
-  <section class="hero p-7 text-center">
-    <div class="text-5xl mb-3">✝️</div>
-    <p class="uppercase text-[10px] tracking-[0.35em] font-black opacity-75">
-      EJC • Paróquia Santo Eugênio
-    </p>
-    <h1 class="text-3xl font-black mt-3">Lista de Providência</h1>
-    <p class="text-sm opacity-85 mt-3 italic">"A morte não venceu."</p>
+  <section class="hero">
+    <div class="cross">✝</div>
+
+    <div class="kicker">EJC • Paróquia Santo Eugênio de Matinha</div>
+
+    <div class="title">Lista de Providência</div>
+
+    <div class="subtitle">"A morte não venceu."</div>
+
+    <div class="count-card">
+      <div class="count-title">Contagem regressiva</div>
+
+      <div class="count-grid">
+        <div class="count-box">
+          <div id="dias" class="count-number">--</div>
+          <div class="count-label">dias</div>
+        </div>
+
+        <div class="count-box">
+          <div id="horas" class="count-number">--</div>
+          <div class="count-label">horas</div>
+        </div>
+
+        <div class="count-box">
+          <div id="minutos" class="count-number">--</div>
+          <div class="count-label">min</div>
+        </div>
+
+        <div class="count-box">
+          <div id="segundos" class="count-number">--</div>
+          <div class="count-label">seg</div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <section class="card p-5 text-center">
-    <p class="uppercase text-[10px] tracking-[0.28em] font-black text-purple-500">
-      Contagem regressiva
-    </p>
-    <h2 id="contadorRegressivo" class="text-2xl font-black mt-2">
-      Carregando...
-    </h2>
-    <p class="text-xs text-slate-400 mt-2">Para o 21º EJC</p>
-  </section>
-
-  <section class="card p-5">
-    <h2 class="font-black text-lg">💜 Como ajudar?</h2>
-    <p class="text-sm text-slate-500 mt-2 leading-relaxed">
-      Escolha um item que você pode doar. Não precisa ser a totalidade: pode ser 1 detergente,
-      1 litro de leite, 1 kg de feijão ou aquilo que for possível.
+  <section class="card help">
+    <h2>Como ser providência? ✨</h2>
+    <p>
+      Escolha um item para doar. Não precisa ser a quantidade total:
+      doe aquilo que for possível para você.
     </p>
   </section>
 
-  <section class="card p-5 overflow-hidden">
-    <div class="flex items-center justify-between">
+  <section class="pix-card">
+    <div class="pix-top">
       <div>
-        <p class="uppercase text-[10px] tracking-[0.3em] font-black text-purple-500">PIX</p>
-        <h2 class="font-black text-2xl mt-1">Doação em cota</h2>
-      </div>
-      <div class="text-5xl">💜</div>
-    </div>
-
-    <div class="mt-5 bg-gradient-to-br from-purple-600 to-violet-950 rounded-[30px] p-5 text-white shadow-2xl">
-      <p class="uppercase text-[10px] tracking-[0.3em] font-black opacity-75">Chave PIX</p>
-      <p id="pixKey" class="font-black text-sm mt-2 break-all">ejcstoeugenio2019@gmail.com</p>
-
-      <button onclick="copiarPix()" class="mt-4 w-full bg-white text-purple-700 font-black rounded-2xl py-4 text-sm">
-        COPIAR CHAVE PIX
-      </button>
-
-      <div class="grid grid-cols-2 gap-3 mt-5">
-        <button onclick="pixValor(20)" class="bg-white/15 border border-white/20 rounded-2xl py-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-75">Cota</p>
-          <h3 class="text-3xl font-black mt-1">R$20</h3>
-          <p class="text-[10px] opacity-75 mt-1">proteína/carne</p>
-        </button>
-
-        <button onclick="pixValor(50)" class="bg-yellow-300 text-purple-950 rounded-2xl py-5 shadow-2xl border-4 border-white">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em]">Cota</p>
-          <h3 class="text-3xl font-black mt-1">R$50</h3>
-          <p class="text-[10px] font-bold mt-1">proteína/carne</p>
-        </button>
+        <div class="pix-label">Providência</div>
+        <div class="pix-title">Doação via<br>PIX</div>
       </div>
 
-      <button onclick="pixValor('outro')" class="mt-4 w-full bg-white/10 border border-white/20 rounded-2xl py-4 font-black text-sm">
-        OUTROS VALORES 💜
+      <div class="pix-badge">💸</div>
+    </div>
+
+    <div class="pix-key-box">
+      <div class="pix-key-text">
+        <small>Chave PIX</small>
+        <strong id="pixKey">ejcstoeugenio2019@gmail.com</strong>
+      </div>
+
+      <button class="copy-btn" onclick="copiarPix()">COPIAR</button>
+    </div>
+
+    <div class="pix-options">
+      <button class="pix-option" onclick="pixValor(20)">
+        <small>Cota</small>
+        <strong>R$20</strong>
+      </button>
+
+      <button class="pix-option featured" onclick="pixValor(50)">
+        <small>Cota</small>
+        <strong>R$50</strong>
+      </button>
+
+      <button class="pix-option" onclick="pixValor('outro')">
+        <small>Outro</small>
+        <strong>PIX</strong>
       </button>
     </div>
 
-    <div class="space-y-3 mt-5">
-      <a class="btn block text-center" target="_blank"
+    <div class="whats-grid">
+      <a class="whats-btn" target="_blank"
         href="https://wa.me/5511994011319?text=Ol%C3%A1%2C%20%C3%82ngela!%20Segue%20meu%20comprovante%20do%20PIX%20para%20o%2021%C2%BA%20EJC.">
-        ENVIAR COMPROVANTE PARA ÂNGELA
+        ENVIAR PARA<br>ÂNGELA
       </a>
 
-      <a class="btn block text-center" target="_blank"
+      <a class="whats-btn" target="_blank"
         href="https://wa.me/5511989335186?text=Ol%C3%A1%2C%20Rafael!%20Segue%20meu%20comprovante%20do%20PIX%20para%20o%2021%C2%BA%20EJC.">
-        ENVIAR COMPROVANTE PARA RAFAEL
+        ENVIAR PARA<br>RAFAEL
       </a>
     </div>
-  </section>
 
-  <section>
-    <div class="flex justify-between items-center mb-3 px-1">
-      <h2 class="uppercase text-[11px] tracking-[0.25em] font-black text-slate-400">
-        Itens necessários
-      </h2>
-      <span id="contadorItens" class="badge bg-purple-100 text-purple-700">--</span>
-    </div>
-
-    <input id="busca" class="input mb-4" placeholder="Buscar item..." oninput="filtrarItens()">
-
-    <div id="listaItens" class="space-y-4">
-      <div class="card p-6 text-center text-sm text-slate-400">
-        Carregando itens do Supabase...
-      </div>
+    <div class="pix-note">
+      Você também pode contribuir com outros valores. As cotas ajudam na compra
+      de proteína/carne e demais necessidades do encontro.
     </div>
   </section>
 
-  <section id="areaForm" class="hidden card p-5">
-    <div class="flex justify-between items-center mb-4">
+  <div class="section-head">
+    <h2>Escolha por categoria</h2>
+    <span id="contadorItens" class="total-badge">-- itens</span>
+  </div>
+
+  <input id="busca" class="search" placeholder="Buscar item..." oninput="filtrarItens()">
+
+  <section id="listaItens">
+    <div class="soft-card" style="text-align:center;color:#9b8aa8;font-size:13px;font-weight:800;">
+      Carregando lista do Supabase...
+    </div>
+  </section>
+
+  <section id="areaForm" class="card form-card hidden">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
       <div>
-        <p class="uppercase text-[10px] tracking-[0.25em] font-black text-purple-500">
-          Sua providência
-        </p>
-        <h2 class="font-black text-xl">Itens selecionados</h2>
+        <div class="pix-label" style="color:#9b00e8;">Sua providência</div>
+        <h2 class="form-title">Itens escolhidos</h2>
       </div>
-      <button onclick="fecharForm()" class="text-xs font-black text-slate-400">FECHAR</button>
+
+      <button class="close-btn" onclick="fecharForm()">FECHAR</button>
     </div>
 
-    <div id="carrinho" class="space-y-3 mb-5"></div>
+    <div id="carrinho" class="cart-list"></div>
 
-    <form onsubmit="event.preventDefault(); salvarDoacao();" class="space-y-4">
+    <form class="form-grid" onsubmit="event.preventDefault(); salvarDoacao();">
       <input id="nome" class="input" placeholder="Seu nome" required>
       <input id="telefone" class="input" placeholder="WhatsApp" required>
 
@@ -220,34 +811,44 @@ body{
 
       <input id="dataEntrega" type="date" class="input" required>
 
-      <button id="btnSalvar" class="btn w-full py-4 text-sm">
-        CONFIRMAR PROVIDÊNCIA 💜
+      <button id="btnSalvar" class="submit-btn">
+        CONFIRMAR PROVIDÊNCIA
       </button>
     </form>
   </section>
 
-  <section id="sucesso" class="hidden card p-8 text-center">
-    <div class="text-5xl mb-4">🙏</div>
-    <h2 class="text-2xl font-black">Deus lhe pague!</h2>
-    <p class="text-sm text-slate-500 mt-3">
+  <section id="sucesso" class="card success hidden">
+    <div style="font-size:48px;">🙏</div>
+    <h2 style="margin:10px 0 0;font-size:24px;font-weight:900;">Deus lhe pague!</h2>
+    <p style="font-size:13px;color:#8b7b99;font-weight:700;line-height:1.5;">
       Sua providência foi registrada com sucesso.
     </p>
   </section>
 
-</div>
+  <section class="care-wall">
+    <h2>Mural de carinho</h2>
+    <div class="wall-form">
+      <input id="nomeMural" class="input" placeholder="Seu nome (opcional)">
+      <textarea id="mensagemMural" class="input" placeholder="Deixe uma mensagem para o EJC..."></textarea>
+      <button class="wall-btn" onclick="enviarMural()">ENVIAR MENSAGEM</button>
+    </div>
+  </section>
 
+  <div class="footer">
+    A maior doação é o serviço 💜
+  </div>
+
+</main>
 <script>
 const SUPABASE_URL = "https://ilzgmueeblxeyieumpyk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf";
 
-const DATA_EJC = "2026-07-10T19:00:00";
 const PIX = "ejcstoeugenio2019@gmail.com";
+const DATA_EJC = "2026-07-10T19:00:00";
 
 const supa = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let carrinho = [];
-let metasGlobais = [];
-let doacoesGlobais = [];
 
 function esc(t){
   return String(t || "")
@@ -281,49 +882,122 @@ function iniciarContagem(){
     const dist = destino - agora;
 
     if(dist <= 0){
-      document.getElementById("contadorRegressivo").innerText = "O EJC chegou! 💜";
+      document.getElementById("dias").innerText = "00";
+      document.getElementById("horas").innerText = "00";
+      document.getElementById("minutos").innerText = "00";
+      document.getElementById("segundos").innerText = "00";
       return;
     }
 
-    const dias = Math.floor(dist / (1000 * 60 * 60 * 24));
-    const horas = Math.floor((dist / (1000 * 60 * 60)) % 24);
-    const minutos = Math.floor((dist / (1000 * 60)) % 60);
+    document.getElementById("dias").innerText =
+      String(Math.floor(dist / (1000 * 60 * 60 * 24))).padStart(2,"0");
 
-    document.getElementById("contadorRegressivo").innerText =
-      `${dias} dias, ${horas}h e ${minutos}min`;
+    document.getElementById("horas").innerText =
+      String(Math.floor((dist / (1000 * 60 * 60)) % 24)).padStart(2,"0");
+
+    document.getElementById("minutos").innerText =
+      String(Math.floor((dist / (1000 * 60)) % 60)).padStart(2,"0");
+
+    document.getElementById("segundos").innerText =
+      String(Math.floor((dist / 1000) % 60)).padStart(2,"0");
   }
 
   atualizar();
   setInterval(atualizar, 1000);
 }
 
+function iconeCategoria(categoria){
+  const c = String(categoria || "").toLowerCase();
+
+  if(c.includes("crítico") || c.includes("critico")) return "🚨";
+  if(c.includes("aliment")) return "🍚";
+  if(c.includes("hortifruti") || c.includes("perec")) return "🥬";
+  if(c.includes("limpeza")) return "🧼";
+  if(c.includes("descart") || c.includes("papelaria")) return "📦";
+  if(c.includes("não") || c.includes("nao")) return "📦";
+  if(c.includes("café") || c.includes("cafe")) return "☕";
+  if(c.includes("churrasco")) return "🔥";
+
+  return "💜";
+}
+
+function legendaCategoria(categoria){
+  const c = String(categoria || "").toLowerCase();
+
+  if(c.includes("crítico") || c.includes("critico")) return "Itens essenciais para garantir o encontro";
+  if(c.includes("aliment")) return "Itens para refeições e preparo";
+  if(c.includes("hortifruti") || c.includes("perec")) return "Itens frescos para o encontro";
+  if(c.includes("limpeza")) return "Cuidado, higiene e organização";
+  if(c.includes("descart") || c.includes("papelaria")) return "Apoio para serviço e estrutura";
+  if(c.includes("não") || c.includes("nao")) return "Itens não perecíveis";
+  if(c.includes("café") || c.includes("cafe")) return "Itens para café e lanche";
+  if(c.includes("churrasco")) return "Itens para churrasco e proteína";
+
+  return "Complementos importantes";
+}
+
+function prioridadeCategoria(categoria){
+  const c = String(categoria || "").toLowerCase();
+
+  if(c.includes("crítico") || c.includes("critico")) return 1;
+  if(c.includes("hortifruti") || c.includes("perec")) return 2;
+  if(c.includes("aliment")) return 3;
+  if(c.includes("não") || c.includes("nao")) return 4;
+  if(c.includes("limpeza")) return 5;
+  if(c.includes("descart") || c.includes("papelaria")) return 6;
+
+  return 9;
+}
+
+function categoriaVisual(item, categoriaOriginal){
+  const nome = String(item || "").toLowerCase();
+  const cat = String(categoriaOriginal || "").trim();
+
+  if(
+    nome.includes("água") ||
+    nome.includes("agua") ||
+    nome.includes("bacon") ||
+    nome.includes("linguiça") ||
+    nome.includes("linguica") ||
+    nome.includes("presunto") ||
+    nome.includes("muçarela") ||
+    nome.includes("mussarela") ||
+    nome.includes("pão francês") ||
+    nome.includes("pao frances")
+  ){
+    return "Críticos";
+  }
+
+  return cat || "Outros Itens";
+}
+
 async function carregarItens(){
   const lista = document.getElementById("listaItens");
 
   lista.innerHTML = `
-    <div class="card p-6 text-center text-sm text-slate-400">
-      Carregando itens do Supabase...
+    <div class="soft-card" style="text-align:center;color:#9b8aa8;font-size:13px;font-weight:800;">
+      Carregando lista do Supabase...
     </div>
   `;
 
   const metasReq = await supa
     .from("metas_providencia")
-    .select("*")
-    .order("categoria", { ascending:true })
-    .order("item", { ascending:true });
+    .select("*");
 
   const doacoesReq = await supa
     .from("doacao")
     .select("item, quantidade, status");
 
   if(metasReq.error){
-    console.error(metasReq.error);
     lista.innerHTML = `
-      <div class="card p-6 text-center">
-        <p class="font-black text-red-500">Erro ao carregar metas_providencia.</p>
-        <p class="text-xs text-slate-400 mt-2">${esc(metasReq.error.message)}</p>
+      <div class="error-box">
+        <strong>Erro ao carregar metas_providencia.</strong><br><br>
+        ${esc(metasReq.error.message)}<br><br>
+        Verifique se a tabela existe e se a política SELECT para anon está liberada.
       </div>
     `;
+
+    document.getElementById("contadorItens").innerText = "erro";
     return;
   }
 
@@ -331,10 +1005,7 @@ async function carregarItens(){
     console.error(doacoesReq.error);
   }
 
-  metasGlobais = metasReq.data || [];
-  doacoesGlobais = doacoesReq.data || [];
-
-  montarLista(metasGlobais, doacoesGlobais);
+  montarLista(metasReq.data || [], doacoesReq.data || []);
 }
 
 function montarLista(metas, doacoes){
@@ -343,9 +1014,12 @@ function montarLista(metas, doacoes){
   doacoes.forEach(d => {
     const status = String(d.status || "").toUpperCase();
 
-    if(status !== "PROMETIDO" && status !== "ENTREGUE") return;
+    if(status !== "PROMETIDO" && status !== "ENTREGUE"){
+      return;
+    }
 
     const chave = String(d.item || "").trim().toLowerCase();
+
     mapa[chave] = (mapa[chave] || 0) + Number(d.quantidade || 0);
   });
 
@@ -357,7 +1031,7 @@ function montarLista(metas, doacoes){
     const item = String(m.item || "").trim();
     const unidade = String(m.unidade || "unidade").trim();
     const alvo = Number(m.quantidade_alvo || 0);
-    const categoria = String(m.categoria || "Outros").trim();
+    const categoriaOriginal = String(m.categoria || "Outros Itens").trim();
 
     if(!item || alvo <= 0) return;
 
@@ -366,6 +1040,8 @@ function montarLista(metas, doacoes){
     const perc = Math.min(100, Math.round((recebido / alvo) * 100));
 
     if(falta <= 0) return;
+
+    const categoria = categoriaVisual(item, categoriaOriginal);
 
     if(!grupos[categoria]) grupos[categoria] = [];
 
@@ -380,57 +1056,60 @@ function montarLista(metas, doacoes){
     });
   });
 
+  const categoriasOrdenadas = Object.entries(grupos)
+    .sort((a,b) => prioridadeCategoria(a[0]) - prioridadeCategoria(b[0]));
+
   const lista = document.getElementById("listaItens");
   lista.innerHTML = "";
 
-  let totalItens = 0;
+  let total = 0;
 
-  Object.entries(grupos).forEach(([categoria, itens]) => {
-    totalItens += itens.length;
+  categoriasOrdenadas.forEach(([categoria, itens]) => {
+    total += itens.length;
+
+    itens.sort((a,b) => a.item.localeCompare(b.item));
 
     const bloco = document.createElement("details");
-    bloco.className = "categoria bloco-categoria";
-    bloco.open = true;
+    bloco.className = "category bloco-categoria";
+    bloco.open = categoria === "Críticos";
 
     bloco.innerHTML = `
-      <summary class="categoria-head">
-        <div class="flex justify-between items-center gap-3">
-          <div>
-            <p class="font-black text-slate-800">${iconeCategoria(categoria)} ${esc(categoria)}</p>
-            <p class="text-[11px] text-slate-400 font-bold mt-1">
-              ${itens.length} item(ns) pendente(s)
-            </p>
+      <summary>
+        <div class="cat-head">
+          <div class="cat-icon">${iconeCategoria(categoria)}</div>
+
+          <div class="cat-info">
+            <strong>${esc(categoria)}</strong>
+            <span>${esc(legendaCategoria(categoria))}</span>
           </div>
-          <span class="badge bg-purple-100 text-purple-700">${itens.length}</span>
+
+          <div class="cat-count">${itens.length}</div>
+          <div class="cat-arrow">⌄</div>
         </div>
       </summary>
 
-      <div class="px-4 pb-4 space-y-3">
+      <div class="cat-body">
         ${itens.map(i => `
-          <div class="item item-card" data-texto="${esc((i.item + " " + i.categoria).toLowerCase())}">
-            <div class="flex justify-between gap-3 items-start">
-              <div class="flex-1">
-                <p class="font-black text-slate-800">${esc(i.item)}</p>
-
-                <p class="text-[11px] text-slate-400 font-bold mt-1">
-                  Faltam ${esc(i.falta)} ${esc(i.unidade)}
-                </p>
-
-                <p class="text-[11px] text-purple-600 font-bold mt-1">
+          <div class="item-card" data-texto="${esc((i.item + " " + i.categoria).toLowerCase())}">
+            <div class="item-top">
+              <div>
+                <div class="item-name">${esc(i.item)}</div>
+                <div class="item-meta">
+                  Faltam ${esc(i.falta)} ${esc(i.unidade)}<br>
                   Recebido ${esc(i.recebido)} de ${esc(i.alvo)}
-                </p>
-
-                <div class="progress mt-3">
-                  <div class="progress-bar" style="width:${i.perc}%"></div>
                 </div>
               </div>
 
               <button
                 type="button"
-                class="btn shrink-0"
+                class="choose-btn"
                 onclick='selecionarItem(${JSON.stringify(i.item)}, ${JSON.stringify(i.unidade)}, ${JSON.stringify(i.falta)})'>
-                Escolher
+                ESCOLHER
               </button>
+            </div>
+
+            <div class="progress">
+              <div class="progress-bar" style="width:${i.perc}%"></div>
             </div>
           </div>
         `).join("")}
@@ -440,34 +1119,20 @@ function montarLista(metas, doacoes){
     lista.appendChild(bloco);
   });
 
-  document.getElementById("contadorItens").innerText = `${totalItens} itens`;
+  document.getElementById("contadorItens").innerText = `${total} itens`;
 
-  if(totalItens === 0){
+  if(total === 0){
     lista.innerHTML = `
-      <div class="card p-8 text-center">
-        <div class="text-4xl mb-3">🙏</div>
-        <p class="font-black text-slate-800">Nenhum item pendente no momento.</p>
-        <p class="text-xs text-slate-400 mt-2">
-          Confira se metas_providencia está preenchida e se quantidade_alvo está maior que 0.
+      <div class="soft-card" style="text-align:center;">
+        <div style="font-size:42px;margin-bottom:10px;">🙏</div>
+        <strong style="display:block;font-size:15px;">Nenhum item pendente no momento.</strong>
+        <p style="font-size:12px;color:#9b8aa8;line-height:1.5;font-weight:700;">
+          Se era para aparecer, confira se a tabela metas_providencia está preenchida,
+          se quantidade_alvo é maior que 0 e se as permissões SELECT estão liberadas.
         </p>
       </div>
     `;
   }
-}
-
-function iconeCategoria(categoria){
-  const c = String(categoria).toLowerCase();
-
-  if(c.includes("limpeza")) return "🧼";
-  if(c.includes("descart")) return "🍽️";
-  if(c.includes("papelaria")) return "📄";
-  if(c.includes("hortifruti") || c.includes("perec")) return "🥬";
-  if(c.includes("churrasco")) return "🔥";
-  if(c.includes("café") || c.includes("cafe")) return "☕";
-  if(c.includes("aliment")) return "🍚";
-  if(c.includes("não") || c.includes("nao")) return "📦";
-
-  return "💜";
 }
 
 function filtrarItens(){
@@ -481,11 +1146,17 @@ function filtrarItens(){
     itens.forEach(item => {
       const texto = item.dataset.texto || "";
       const mostrar = texto.includes(termo);
+
       item.style.display = mostrar ? "" : "none";
+
       if(mostrar) visiveis++;
     });
 
     bloco.style.display = visiveis > 0 ? "" : "none";
+
+    if(termo && visiveis > 0){
+      bloco.open = true;
+    }
   });
 }
 
@@ -502,12 +1173,18 @@ function selecionarItem(item, unidade, max){
       return;
     }
   }else{
-    carrinho.push({ item, unidade, quantidade:1, max });
+    carrinho.push({
+      item,
+      unidade,
+      quantidade:1,
+      max
+    });
   }
 
   renderCarrinho();
 
   document.getElementById("areaForm").classList.remove("hidden");
+
   document.getElementById("areaForm").scrollIntoView({
     behavior:"smooth",
     block:"start"
@@ -516,6 +1193,7 @@ function selecionarItem(item, unidade, max){
 
 function alterarQtd(index, delta){
   const item = carrinho[index];
+
   if(!item) return;
 
   const nova = item.quantidade + delta;
@@ -530,7 +1208,9 @@ function alterarQtd(index, delta){
 
   renderCarrinho();
 
-  if(!carrinho.length) fecharForm();
+  if(!carrinho.length){
+    fecharForm();
+  }
 }
 
 function renderCarrinho(){
@@ -538,23 +1218,23 @@ function renderCarrinho(){
 
   if(!carrinho.length){
     box.innerHTML = `
-      <p class="text-sm text-slate-400 text-center py-3">
+      <div style="font-size:12px;color:#9b8aa8;font-weight:800;text-align:center;padding:10px;">
         Nenhum item selecionado.
-      </p>
+      </div>
     `;
     return;
   }
 
   box.innerHTML = carrinho.map((c,i) => `
-    <div class="item flex justify-between items-center">
+    <div class="cart-item">
       <div>
-        <p class="font-black text-slate-800">${esc(c.item)}</p>
-        <p class="text-xs text-purple-600 font-bold">${esc(c.quantidade)} ${esc(c.unidade)}</p>
+        <strong>${esc(c.item)}</strong>
+        <span>${esc(c.quantidade)} ${esc(c.unidade)}</span>
       </div>
 
-      <div class="flex gap-2">
-        <button type="button" onclick="alterarQtd(${i},-1)" class="w-9 h-9 rounded-xl bg-slate-100 font-black">-</button>
-        <button type="button" onclick="alterarQtd(${i},1)" class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 font-black">+</button>
+      <div class="qty">
+        <button type="button" onclick="alterarQtd(${i},-1)">−</button>
+        <button type="button" onclick="alterarQtd(${i},1)">+</button>
       </div>
     </div>
   `).join("");
@@ -567,8 +1247,13 @@ function fecharForm(){
 function telefoneFormatado(tel){
   let n = String(tel || "").replace(/\D/g,"");
 
-  if(n.startsWith("0")) n = n.slice(1);
-  if(!n.startsWith("55")) n = "55" + n;
+  if(n.startsWith("0")){
+    n = n.slice(1);
+  }
+
+  if(!n.startsWith("55")){
+    n = "55" + n;
+  }
 
   return n;
 }
@@ -590,6 +1275,7 @@ async function salvarDoacao(){
   }
 
   const btn = document.getElementById("btnSalvar");
+
   btn.disabled = true;
   btn.innerText = "SALVANDO...";
 
@@ -615,19 +1301,20 @@ async function salvarDoacao(){
     .insert(registros);
 
   btn.disabled = false;
-  btn.innerText = "CONFIRMAR PROVIDÊNCIA 💜";
+  btn.innerText = "CONFIRMAR PROVIDÊNCIA";
 
   if(error){
-    console.error(error);
     alert("Erro ao salvar no Supabase: " + error.message);
+    console.error(error);
     return;
   }
+
+  carrinho = [];
+  renderCarrinho();
 
   document.getElementById("areaForm").classList.add("hidden");
   document.getElementById("sucesso").classList.remove("hidden");
 
-  carrinho = [];
-  renderCarrinho();
   carregarItens();
 
   document.getElementById("sucesso").scrollIntoView({
@@ -636,8 +1323,37 @@ async function salvarDoacao(){
   });
 }
 
+async function enviarMural(){
+  const nome = document.getElementById("nomeMural").value.trim() || "Anônimo";
+  const mensagem = document.getElementById("mensagemMural").value.trim();
+
+  if(!mensagem){
+    alert("Escreva uma mensagem primeiro.");
+    return;
+  }
+
+  const { error } = await supa
+    .from("mural_carinho")
+    .insert({
+      nome,
+      mensagem,
+      origem:"Lista de Providência",
+      created_at:new Date().toISOString()
+    });
+
+  if(error){
+    alert("Mensagem recebida 💜");
+  }else{
+    alert("Mensagem enviada com carinho 💜");
+  }
+
+  document.getElementById("nomeMural").value = "";
+  document.getElementById("mensagemMural").value = "";
+}
+
 window.onload = () => {
   const hoje = new Date().toISOString().slice(0,10);
+
   document.getElementById("dataEntrega").setAttribute("min", hoje);
 
   iniciarContagem();
