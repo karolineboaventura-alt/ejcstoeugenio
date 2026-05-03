@@ -116,33 +116,6 @@
           <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Saldo/Lucro</p><p id="fjLucro" class="text-xl font-extrabold text-emerald-700">R$ 0,00</p></div>
         </div>
 
-        <div id="painelCamisetasBonito" class="hidden grid grid-cols-2 lg:grid-cols-3 gap-3">
-          <div class="rounded-2xl border border-violet-100 bg-violet-50 p-4">
-            <p class="text-[10px] font-black uppercase text-violet-500">Solicitadas</p>
-            <p id="camSolicitadas" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-            <p class="text-[10px] font-black uppercase text-blue-500">Em produção</p>
-            <p id="camEmProducao" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="rounded-2xl border border-amber-100 bg-amber-50 p-4">
-            <p class="text-[10px] font-black uppercase text-amber-500">Prontas</p>
-            <p id="camProntas" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-            <p class="text-[10px] font-black uppercase text-emerald-500">Entregues</p>
-            <p id="camEntregues" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="rounded-2xl border border-fuchsia-100 bg-fuchsia-50 p-4">
-            <p class="text-[10px] font-black uppercase text-fuchsia-500">Pagas</p>
-            <p id="camPagas" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
-          </div>
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p class="text-[10px] font-black uppercase text-slate-500">Recebido R$</p>
-            <p id="camRecebido" class="text-2xl font-extrabold text-emerald-700 mt-1">R$ 0,00</p>
-          </div>
-        </div>
-
         <div id="painelPessoaEquipe" class="hidden mt-4 space-y-4">
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
@@ -162,15 +135,6 @@
               <p id="statMaiorEquipe" class="text-base font-extrabold text-slate-800 mt-1 leading-tight">-</p>
             </div>
           </div>
-          <div class="bg-slate-50 rounded-2xl border border-slate-100 p-4">
-            <div class="flex items-center justify-between mb-3">
-              <p class="text-[10px] font-black uppercase text-slate-400">Resumo por equipe</p>
-              <p id="subResumoEquipe" class="text-[10px] font-bold text-slate-400">Somente servos</p>
-            </div>
-            <div id="listaResumoEquipe" class="space-y-2">
-              <p class="text-sm text-slate-400 text-center py-4">Nenhum dado disponível.</p>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -178,7 +142,7 @@
         <button id="btnNovaMeta" type="button" class="w-full bg-white text-purple-700 border-2 border-purple-100 py-5 rounded-3xl font-extrabold shadow-sm flex items-center justify-center gap-3 mb-6 transition active:scale-95">
           <i class="fas fa-bullseye"></i> REGISTRAR NECESSIDADE
         </button>
-        <div id="listaGerenciarMetas" class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4"></div>
+        <div id="listaGerenciarMetas" class="space-y-4"></div>
       </div>
 
       <div id="blocoMuralDoacao" class="hidden">
@@ -223,11 +187,11 @@
         </div>
       </div>
     </main>
-
     <button id="fabNovoRegistro" onclick="abrirModal()" class="fixed bottom-8 right-8 w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition z-50">
       <i class="fas fa-plus"></i>
     </button>
   </div>
+
   <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="absolute inset-0" onclick="fecharModal()"></div>
     <div class="relative bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -423,7 +387,6 @@
       </form>
     </div>
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // ============================
@@ -474,8 +437,6 @@
         DOACAO: "doacao"
       }[modulo] || "caixa_ejc";
     }
-    
-    // CORREÇÃO DOS STATUS (PENDENTE/PROMETIDO E PAGO/ENTREGUE)
     function obterStatusRegistro(r) {
       if (r.status_pedido === "CANCELADO") return "CANCELADO";
       if (r.status_financeiro === "CANCELADO") return "CANCELADO";
@@ -488,27 +449,22 @@
       }
 
       if (r.status_financeiro) return r.status_financeiro;
-
       if (r.status) {
         if (r.status === "PROMETIDO") return "PENDENTE";
         if (r.status === "ENTREGUE") return "PAGO";
         return r.status;
       }
-
       if (r.tipo === "PENDENTE") return "PENDENTE";
       if (r.tipo === "ENTRADA") return "PAGO";
       if (r.tipo === "SAIDA") return "PAGO";
-
       return "";
     }
-
     function obterStatusVisual(r) {
       if (abaAtiva === "DOACAO" || r._modulo === "doacao") {
         return obterStatusRegistro(r);
       }
       return obterStatusRegistro(r);
     }
-
     function obterValorPagoRegistro(r) {
       if (r._modulo === "doacao" || abaAtiva === "DOACAO") return 0;
       if (typeof r.valor_pago !== "undefined") return Number(r.valor_pago || 0);
@@ -575,19 +531,17 @@
       document.getElementById("headerTitle").textContent = "EJC BANK • " + ROLE;
       configurarAbasPorPerfil();
     }
+    
     function configurarAbasPorPerfil() {
       const isC = (ROLE === "COMPRAS");
-      
       document.getElementById("tab-ejc")?.classList.toggle("hidden", isC);
       
       ["tab-mercadinho", "tab-camisetas", "tab-doacao"].forEach(id => {
         document.getElementById(id)?.classList.remove("hidden");
       });
-      
       document.getElementById("tab-feijoada")?.classList.add("hidden");
       document.getElementById("blocoModulo")?.classList.toggle("hidden", isC);
       
-      // Conforme o seu pedido, forçando cair na doação
       mudarAba(isC ? "DOACAO" : "DOACAO");
     }
     
@@ -627,7 +581,6 @@
       document.getElementById("camposMercado")?.classList.toggle("hidden", !["MERCADINHO", "CAMISETAS", "DOACAO"].includes(m));
       document.getElementById("campoDataEntregaWrap")?.classList.toggle("hidden", !["CAMISETAS", "DOACAO"].includes(m));
 
-      // Deixa o Valor e Forma visíveis para caso a doação seja PIX/Dinheiro
       document.getElementById("blocoValor")?.classList.remove("hidden");
       document.getElementById("blocoForma")?.classList.remove("hidden");
 
@@ -667,7 +620,6 @@
       if (labelDesc) {
         labelDesc.textContent = m === "DOACAO" ? "Item / Doação" : "Descrição / Item";
       }
-
       if (m === "DOACAO") {
         document.getElementById("f_val").value = "";
       }
@@ -707,17 +659,9 @@
     async function mudarAba(aba) {
       if (ROLE === "COMPRAS" && aba === "EJC") return;
       abaAtiva = aba; dadosCache = [];
-      
-      document.querySelectorAll(".tab-btn").forEach(b => { 
-        b.classList.add("bg-white/10", "text-white"); 
-        b.classList.remove("bg-white", "text-slate-900"); 
-      });
+      document.querySelectorAll(".tab-btn").forEach(b => { b.classList.add("bg-white/10", "text-white"); b.classList.remove("bg-white", "text-slate-900"); });
       const t = document.getElementById("tab-" + aba.toLowerCase());
-      if (t) { 
-        t.classList.remove("bg-white/10", "text-white"); 
-        t.classList.add("bg-white", "text-slate-900"); 
-      }
-      
+      if (t) { t.classList.remove("bg-white/10", "text-white"); t.classList.add("bg-white", "text-slate-900"); }
       document.getElementById("dashAdmin")?.classList.toggle("hidden", aba !== "EJC");
       
       const isModuloOperacional = ["MERCADINHO", "CAMISETAS", "DOACAO"].includes(aba);
@@ -727,7 +671,6 @@
       if (aba === "DOACAO") {
         document.getElementById("blocoAdminDoacao")?.classList.remove("hidden");
         document.getElementById("btnNovaMeta")?.classList.toggle("hidden", ROLE !== "PILOTOS");
-        
         if (blocoMural) {
           blocoMural.classList.toggle("hidden", ROLE !== "PILOTOS");
           if (ROLE === "PILOTOS") await carregarMensagensPendentesMural();
@@ -736,7 +679,6 @@
         document.getElementById("blocoAdminDoacao")?.classList.add("hidden");
         document.getElementById("blocoMuralDoacao")?.classList.add("hidden");
       }
-      
       atualizarPainelFeijoada();
       await carregarRegistros();
     }
@@ -759,20 +701,21 @@
       }
       
       const tituloPainel = document.getElementById("tituloPainelModulo");
-      if (tituloPainel) {
+      if(tituloPainel) {
           if (abaAtiva === "MERCADINHO") tituloPainel.textContent = "Mercadinho do EJC";
           else if (abaAtiva === "CAMISETAS") tituloPainel.textContent = "Produção e Entrega de Camisetas";
           else if (abaAtiva === "DOACAO") tituloPainel.textContent = "Lista de Providência";
       }
       
       const statBoxes = document.querySelectorAll("#gridMetricasFeijoada .soft-stat");
+      const btnPen = document.querySelector('[data-status="PENDENTE"]');
+      const btnPag = document.querySelector('[data-status="PAGO"]');
+
       if (abaAtiva === "DOACAO") {
         if(statBoxes[0]) statBoxes[0].querySelector("p:first-child").textContent = "Total Itens";
         if(statBoxes[1]) statBoxes[1].querySelector("p:first-child").textContent = "Entregues";
         if(statBoxes[2]) statBoxes[2].querySelector("p:first-child").textContent = "Prometidos";
         if(statBoxes[3]) statBoxes[3].querySelector("p:first-child").textContent = "Cancelados";
-        
-        // Ativa a doação em dinheiro na caixa verde
         if(statBoxes[4]) {
           statBoxes[4].classList.remove("hidden");
           statBoxes[4].querySelector("p:first-child").textContent = "Doações em R$";
@@ -780,13 +723,14 @@
           statBoxes[4].querySelector("p:last-child").className = "text-xl font-extrabold text-emerald-700";
         }
         if(statBoxes[5]) statBoxes[5].classList.add("hidden");
+
+        if(btnPen) btnPen.textContent = "Prometidos";
+        if(btnPag) btnPag.textContent = "Entregues";
       } else {
         if(statBoxes[0]) statBoxes[0].querySelector("p:first-child").textContent = "Total/Vend";
         if(statBoxes[1]) statBoxes[1].querySelector("p:first-child").textContent = "Pagos";
         if(statBoxes[2]) statBoxes[2].querySelector("p:first-child").textContent = "Pendentes";
         if(statBoxes[3]) statBoxes[3].querySelector("p:first-child").textContent = "Logística";
-        
-        // Volta o vermelho do Custo para os demais
         if(statBoxes[4]) {
           statBoxes[4].classList.remove("hidden");
           statBoxes[4].querySelector("p:first-child").textContent = "Custos";
@@ -794,12 +738,12 @@
           statBoxes[4].querySelector("p:last-child").className = "text-xl font-extrabold text-slate-800";
         }
         if(statBoxes[5]) statBoxes[5].classList.remove("hidden");
+
+        if(btnPen) btnPen.textContent = "Pendentes";
+        if(btnPag) btnPag.textContent = "Pagos";
       }
     }
 
-    // ============================
-    // DASHBOARDS E RESUMO EQUIPE
-    // ============================
     function atualizarPainelPessoaEquipe() {
       const painel = document.getElementById("painelPessoaEquipe");
       if (!painel || !["MERCADINHO", "CAMISETAS", "DOACAO"].includes(abaAtiva)) return;
@@ -881,7 +825,6 @@
         const cancelados = dadosCache.filter(r => r.status === "CANCELADO").length;
         const totalItens = ativos.length;
 
-        // Soma as doações em dinheiro
         const totalDinheiroDoados = ativos
           .filter(r => r.status === "PAGO" || r.status === "ENTREGUE")
           .reduce((a, r) => a + Number(r.valor_estimado || r.valor || 0), 0);
@@ -896,9 +839,6 @@
       atualizarPainelPessoaEquipe();
     }
 
-    // ============================
-    // HISTÓRICO DE AUDITORIA
-    // ============================
     async function registrarHistorico(acao, tabela, registro_id, dados = {}) {
       try {
         await _supabase.from("historico_financeiro").insert([{
@@ -1218,7 +1158,14 @@
         const texto = [ reg.descricao, reg.item, reg.nome, reg.telefone, reg.tipo, reg.forma, reg.status, reg.status_financeiro, reg.status_pedido, reg.equipe, reg.equipe_responsavel, reg.tipo_pessoa, reg.observacao, reg.unidade ].join(" ").toLowerCase();
         const passouBusca = texto.includes(termo);
         const statusAtual = obterStatusRegistro(reg);
-        const passouStatus = filtroStatusAtivo === "TODOS" || statusAtual === filtroStatusAtivo;
+        
+        let statusParaFiltro = statusAtual;
+        if (abaAtiva === "DOACAO") {
+            if (statusAtual === "PROMETIDO") statusParaFiltro = "PENDENTE";
+            if (statusAtual === "ENTREGUE") statusParaFiltro = "PAGO";
+        }
+
+        const passouStatus = filtroStatusAtivo === "TODOS" || statusParaFiltro === filtroStatusAtivo;
         const dataBase = String(reg.data_movimento || reg.criado_em || reg.created_at || "").slice(0, 10);
         const passouInicio = !dataInicio || dataBase >= dataInicio;
         const passouFim = !dataFim || dataBase <= dataFim;
@@ -1503,7 +1450,7 @@
     }
 
     // ============================
-    // COBRANÇA DOAÇÃO C/ IA SIMPLES DE DATAS (DIA 10/07)
+    // COBRANÇA DOAÇÃO C/ IA SIMPLES DE DATAS (DIA 10/07 para os perecíveis da lista)
     // ============================
     function cobrarWhatsAppDoacao(id) {
       const registro = dadosCache.find(x => String(x.id) === String(id));
@@ -1517,6 +1464,7 @@
       const qtd = Number(registro.quantidade || 0);
       const unidade = registro.unidade || "un";
 
+      // Palavras de itens "Sexta-feira" ou "Perecíveis" baseados na sua imagem do PDF
       const palavrasPereciveis = [
         'requeijão', 'requeijao', 'banana', 'laranja', 'limão', 'limao', 
         'maçã', 'maca', 'mamão', 'mamao', 'melancia', 'melão', 'melao', 
@@ -1567,10 +1515,10 @@
     }
 
     // ============================
-    // PROVIDENCIA (METAS)
+    // PROVIDENCIA (METAS) COM IA DE PRIORIDADES
     // ============================
-    function abrirModalMeta() { const modal = document.getElementById("modalMeta"); if (!modal) return; modal.classList.remove("hidden"); }
-    function fecharModalMeta() { const modal = document.getElementById("modalMeta"); const form = document.getElementById("formMeta"); if (modal) modal.classList.add("hidden"); if (form) form.reset(); }
+    function abrirModalMeta() { document.getElementById("modalMeta")?.classList.remove("hidden"); }
+    function fecharModalMeta() { document.getElementById("modalMeta")?.classList.add("hidden"); document.getElementById("formMeta")?.reset(); }
     
     async function salvarMeta() {
       const itemEl = document.getElementById("m_item");
@@ -1597,9 +1545,9 @@
     async function carregarMetas() {
       const wrap = document.getElementById("listaGerenciarMetas");
       if (!wrap) return;
-      wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Carregando...</p>`;
+      wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Carregando prioridades...</p>`;
 
-      const { data: metas, error: erroMetas } = await _supabase.from("metas_providencia").select("*").order("created_at", { ascending: false });
+      const { data: metas, error: erroMetas } = await _supabase.from("metas_providencia").select("*");
       if (erroMetas) {
         wrap.innerHTML = `<p class="text-sm text-rose-500 text-center py-4">Erro ao carregar necessidades.</p>`;
         return;
@@ -1619,39 +1567,68 @@
         return;
       }
 
-      wrap.innerHTML = await Promise.all(metas.map(async (meta) => {
+      // IA SIMPLES DE PRIORIZAÇÃO
+      function obterPrioridade(nomeItem) {
+        const n = nomeItem.toLowerCase();
+        const criticos = ['água', 'agua', 'carne', 'frango', 'linguiça', 'bacon', 'arroz', 'feijão', 'feijao', 'óleo', 'oleo', 'leite', 'pão', 'pao', 'papel higiênico', 'mussarela', 'presunto'];
+        if (criticos.some(p => n.includes(p))) return { nivel: 1, label: '🔴 CRÍTICO', cor: 'bg-rose-100 text-rose-700 border-rose-200' };
+        const importantes = ['café', 'cafe', 'açúcar', 'acucar', 'limpeza', 'detergente', 'desinfetante', 'sabão', 'sabao', 'cândida', 'candida', 'copo', 'carvão', 'carvao', 'margarina', 'requeijão', 'requeijao', 'saco de lixo', 'alumínio'];
+        if (importantes.some(p => n.includes(p))) return { nivel: 2, label: '🟠 IMPORTANTE', cor: 'bg-orange-100 text-orange-700 border-orange-200' };
+        return { nivel: 3, label: '🟢 DE BOA', cor: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
+      }
+
+      const metasProcessadas = metas.map(meta => {
         const key = `${String(meta.item).trim().toLowerCase()}_${String(meta.unidade).trim().toLowerCase()}`;
         const recebido = mapaRecebidos[key] || 0;
         const alvo = Number(meta.quantidade_alvo || 0);
         const falta = Math.max(0, alvo - recebido);
         const percentual = alvo > 0 ? Math.min(100, (recebido / alvo) * 100) : 0;
-        
         let statusMeta = "ABERTA";
         if (recebido >= alvo) statusMeta = "CONCLUIDA";
         else if (recebido > 0) statusMeta = "PARCIAL";
 
-        if (Number(meta.quantidade_recebida) !== recebido || meta.status_meta !== statusMeta) {
-            await _supabase.from("metas_providencia").update({ quantidade_recebida: recebido, status_meta: statusMeta }).eq("id", meta.id);
-        }
+        return { ...meta, recebido, alvo, falta, percentual, statusMeta, prio: obterPrioridade(meta.item) };
+      });
 
-        let corStatus = statusMeta === "CONCLUIDA" ? "text-emerald-600" : (statusMeta === "PARCIAL" ? "text-amber-600" : "text-rose-600");
+      metasProcessadas.forEach(async (m) => {
+        if (Number(m.quantidade_recebida) !== m.recebido || m.status_meta !== m.statusMeta) {
+            await _supabase.from("metas_providencia").update({ quantidade_recebida: m.recebido, status_meta: m.statusMeta }).eq("id", m.id);
+        }
+      });
+
+      // ORDENAÇÃO INTELIGENTE
+      metasProcessadas.sort((a, b) => {
+        const aConcluido = a.statusMeta === "CONCLUIDA" ? 1 : 0;
+        const bConcluido = b.statusMeta === "CONCLUIDA" ? 1 : 0;
+        if (aConcluido !== bConcluido) return aConcluido - bConcluido;
+        if (a.prio.nivel !== b.prio.nivel) return a.prio.nivel - b.prio.nivel;
+        return a.item.localeCompare(b.item);
+      });
+
+      wrap.innerHTML = metasProcessadas.map(meta => {
+        let corStatus = meta.statusMeta === "CONCLUIDA" ? "text-emerald-600" : (meta.statusMeta === "PARCIAL" ? "text-amber-600" : "text-slate-400");
+        let corBarra = meta.statusMeta === "CONCLUIDA" ? "bg-emerald-500" : (meta.prio.nivel === 1 ? 'bg-rose-500' : (meta.prio.nivel === 2 ? 'bg-orange-400' : 'bg-emerald-400'));
 
         return `
-          <div class="bg-slate-50 rounded-2xl px-4 py-4 border border-slate-100">
-            <div class="flex items-start justify-between gap-3">
+          <div class="bg-white rounded-2xl px-4 py-4 border border-slate-100 shadow-sm relative overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 ${corBarra}"></div>
+            <div class="flex items-start justify-between gap-3 pl-2">
               <div>
-                <p class="font-bold text-slate-800">${esc(meta.item)}</p>
-                <p class="text-[11px] text-slate-500">Alvo: ${alvo} ${esc(meta.unidade || "")} • Recebido: ${recebido} • Falta: ${falta}</p>
-                <p class="text-[11px] font-bold mt-1 ${corStatus}">${esc(statusMeta)}</p>
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  <p class="font-black text-slate-800 text-sm leading-tight">${esc(meta.item)}</p>
+                  <span class="text-[8px] font-black px-2 py-0.5 rounded-full border uppercase ${meta.prio.cor}">${meta.prio.label}</span>
+                </div>
+                <p class="text-[11px] font-semibold text-slate-500 mt-1">Meta: ${meta.alvo} ${esc(meta.unidade || "")} • Arrecadado: <span class="text-slate-800">${meta.recebido}</span></p>
+                <p class="text-[10px] font-black mt-1 uppercase ${corStatus}">${meta.statusMeta === "CONCLUIDA" ? "META ATINGIDA 🎉" : `FALTAM ${meta.falta}`}</p>
               </div>
-              <div class="text-right text-xs font-bold text-slate-500">${percentual.toFixed(0)}%</div>
+              <div class="text-right text-xs font-black ${meta.percentual >= 100 ? 'text-emerald-600' : 'text-slate-400'}">${meta.percentual.toFixed(0)}%</div>
             </div>
-            <div class="mt-3 w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-              <div class="h-full bg-purple-600 rounded-full" style="width:${percentual}%"></div>
+            <div class="mt-3 ml-2 w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-500 ${corBarra}" style="width:${meta.percentual}%"></div>
             </div>
           </div>
         `;
-      })).then(html => html.join(""));
+      }).join("");
     }
 
     // ============================
@@ -1732,14 +1709,15 @@
       const { data: { session } } = await _supabase.auth.getSession();
       if (session?.user) {
         ROLE = session.user.email === "compras@ejcbank.com.br" ? "COMPRAS" : "PILOTOS";
-        document.getElementById("loginScreen").classList.add("hidden");
-        document.getElementById("appMain").classList.remove("hidden");
-        document.getElementById("headerTitle").textContent = ROLE === "COMPRAS" ? "EJC BANK • COMPRAS" : "EJC BANK • PILOTOS";
-        document.getElementById("userAvatar").textContent = ROLE === "COMPRAS" ? "C" : "P";
+        document.getElementById("loginScreen")?.classList.add("hidden");
+        document.getElementById("appMain")?.classList.remove("hidden");
+        const headerTitle = document.getElementById("headerTitle");
+        if(headerTitle) headerTitle.textContent = ROLE === "COMPRAS" ? "EJC BANK • COMPRAS" : "EJC BANK • PILOTOS";
+        const userAvatar = document.getElementById("userAvatar");
+        if(userAvatar) userAvatar.textContent = ROLE === "COMPRAS" ? "C" : "P";
         configurarAbasPorPerfil();
       }
     });
   </script>
 </body>
 </html>
-
