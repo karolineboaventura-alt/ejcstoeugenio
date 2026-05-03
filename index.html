@@ -181,11 +181,26 @@
         <div id="listaGerenciarMetas" class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4"></div>
       </div>
 
+      <div id="blocoMuralDoacao" class="hidden">
+        <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-[10px] font-black uppercase text-slate-400">Mural de Carinho</p>
+              <h3 class="text-lg font-black text-slate-800">Mensagens pendentes</h3>
+            </div>
+            <div id="contadorMensagensPendentes" class="pill bg-amber-50 text-amber-700 border border-amber-100">0 pendentes</div>
+          </div>
+          <div id="listaMensagensPendentes" class="space-y-3">
+            <p class="text-sm text-slate-400 text-center py-4">Nenhuma mensagem pendente.</p>
+          </div>
+        </div>
+      </div>
+
       <div class="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm mb-20">
         <div class="px-6 pt-6 flex flex-wrap gap-2" id="filtrosStatusWrap">
           <button class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white btn-filtro-status" data-status="TODOS">Todos</button>
           <button class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 btn-filtro-status" data-status="PENDENTE">Pendentes</button>
-          <button class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 btn-filtro-status" data-status="PAGO">Pagos</button>
+          <button class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 btn-filtro-status" data-status="ENTREGUE">Entregues</button>
           <button class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 btn-filtro-status" data-status="CANCELADO">Cancelados</button>
         </div>
         
@@ -459,28 +474,41 @@
         DOACAO: "doacao"
       }[modulo] || "caixa_ejc";
     }
+    
+    // CORREÇÃO DOS STATUS (PENDENTE/PROMETIDO E PAGO/ENTREGUE)
     function obterStatusRegistro(r) {
       if (r.status_pedido === "CANCELADO") return "CANCELADO";
       if (r.status_financeiro === "CANCELADO") return "CANCELADO";
+
+      if (abaAtiva === "DOACAO" || r._modulo === "doacao") {
+        if (r.status === "PROMETIDO" || r.status === "PENDENTE") return "PROMETIDO";
+        if (r.status === "ENTREGUE" || r.status === "PAGO") return "ENTREGUE";
+        if (r.status === "CANCELADO") return "CANCELADO";
+        return r.status || "";
+      }
+
       if (r.status_financeiro) return r.status_financeiro;
+
       if (r.status) {
         if (r.status === "PROMETIDO") return "PENDENTE";
         if (r.status === "ENTREGUE") return "PAGO";
         return r.status;
       }
+
       if (r.tipo === "PENDENTE") return "PENDENTE";
       if (r.tipo === "ENTRADA") return "PAGO";
       if (r.tipo === "SAIDA") return "PAGO";
+
       return "";
     }
+
     function obterStatusVisual(r) {
       if (abaAtiva === "DOACAO" || r._modulo === "doacao") {
-        if (r.status === "PENDENTE" || r.status === "PROMETIDO") return "PROMETIDO";
-        if (r.status === "PAGO" || r.status === "ENTREGUE") return "ENTREGUE";
-        if (r.status === "CANCELADO") return "CANCELADO";
+        return obterStatusRegistro(r);
       }
       return obterStatusRegistro(r);
     }
+
     function obterValorPagoRegistro(r) {
       if (r._modulo === "doacao" || abaAtiva === "DOACAO") return 0;
       if (typeof r.valor_pago !== "undefined") return Number(r.valor_pago || 0);
@@ -547,19 +575,24 @@
       document.getElementById("headerTitle").textContent = "EJC BANK • " + ROLE;
       configurarAbasPorPerfil();
     }
-    
     function configurarAbasPorPerfil() {
       const isC = (ROLE === "COMPRAS");
-      document.getElementById("tab-ejc").classList.toggle("hidden", isC);
+      
+      document.getElementById("tab-ejc")?.classList.toggle("hidden", isC);
+      
       ["tab-mercadinho", "tab-camisetas", "tab-doacao"].forEach(id => {
-        document.getElementById(id).classList.remove("hidden");
+        document.getElementById(id)?.classList.remove("hidden");
       });
-      document.getElementById("tab-feijoada").classList.add("hidden");
-      document.getElementById("blocoModulo").classList.toggle("hidden", isC);
-      mudarAba(isC ? "DOACAO" : "EJC");
+      
+      document.getElementById("tab-feijoada")?.classList.add("hidden");
+      document.getElementById("blocoModulo")?.classList.toggle("hidden", isC);
+      
+      // Conforme o seu pedido, forçando cair na doação
+      mudarAba(isC ? "DOACAO" : "DOACAO");
     }
     
     async function sair() { await _supabase.auth.signOut(); location.reload(); }
+
     // ============================
     // CONTROLE DE EQUIPE E MODAL UI
     // ============================
@@ -588,11 +621,11 @@
     function atualizarModalDinamico() {
       const m = document.getElementById("f_modulo").value;
 
-      document.getElementById("blocoTamanhoCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
-      document.getElementById("blocoStatusCamiseta").classList.toggle("hidden", m !== "CAMISETAS");
-      document.getElementById("blocoQtdUnDoacao").classList.toggle("hidden", m !== "DOACAO");
-      document.getElementById("camposMercado").classList.toggle("hidden", !["MERCADINHO", "CAMISETAS", "DOACAO"].includes(m));
-      document.getElementById("campoDataEntregaWrap").classList.toggle("hidden", !["CAMISETAS", "DOACAO"].includes(m));
+      document.getElementById("blocoTamanhoCamiseta")?.classList.toggle("hidden", m !== "CAMISETAS");
+      document.getElementById("blocoStatusCamiseta")?.classList.toggle("hidden", m !== "CAMISETAS");
+      document.getElementById("blocoQtdUnDoacao")?.classList.toggle("hidden", m !== "DOACAO");
+      document.getElementById("camposMercado")?.classList.toggle("hidden", !["MERCADINHO", "CAMISETAS", "DOACAO"].includes(m));
+      document.getElementById("campoDataEntregaWrap")?.classList.toggle("hidden", !["CAMISETAS", "DOACAO"].includes(m));
 
       // Deixa o Valor e Forma visíveis para caso a doação seja PIX/Dinheiro
       document.getElementById("blocoValor")?.classList.remove("hidden");
@@ -635,6 +668,10 @@
         labelDesc.textContent = m === "DOACAO" ? "Item / Doação" : "Descrição / Item";
       }
 
+      if (m === "DOACAO") {
+        document.getElementById("f_val").value = "";
+      }
+
       controlarEquipePorTipoPessoa();
     }
     
@@ -644,19 +681,19 @@
       document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
       document.getElementById("f_modulo").value = abaAtiva;
       if (ROLE === "COMPRAS") {
-        document.getElementById("blocoModulo").classList.add("hidden");
+        document.getElementById("blocoModulo")?.classList.add("hidden");
       } else {
-        document.getElementById("blocoModulo").classList.remove("hidden");
+        document.getElementById("blocoModulo")?.classList.remove("hidden");
       }
       document.getElementById("f_recebido").value = ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças";
       if (document.getElementById("f_qtd_doacao")) document.getElementById("f_qtd_doacao").value = 1;
       if (document.getElementById("f_un_doacao")) document.getElementById("f_un_doacao").value = "un";
       atualizarModalDinamico();
-      document.getElementById("modal").classList.remove("hidden");
+      document.getElementById("modal")?.classList.remove("hidden");
     }
     
     function fecharModal() {
-      document.getElementById("modal").classList.add("hidden");
+      document.getElementById("modal")?.classList.add("hidden");
       document.getElementById("formFin").reset();
       registroEmEdicao = null;
       document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
@@ -670,22 +707,36 @@
     async function mudarAba(aba) {
       if (ROLE === "COMPRAS" && aba === "EJC") return;
       abaAtiva = aba; dadosCache = [];
-      document.querySelectorAll(".tab-btn").forEach(b => { b.classList.add("bg-white/10", "text-white"); b.classList.remove("bg-white", "text-slate-900"); });
-      const t = document.getElementById("tab-" + aba.toLowerCase());
-      if (t) { t.classList.remove("bg-white/10", "text-white"); t.classList.add("bg-white", "text-slate-900"); }
-      document.getElementById("dashAdmin").classList.toggle("hidden", aba !== "EJC");
-      const isModuloOperacional = ["MERCADINHO", "CAMISETAS", "DOACAO"].includes(aba);
-      document.getElementById("painelFeijoada").classList.toggle("hidden", !isModuloOperacional);
       
-      if (aba === "DOACAO") {
-        document.getElementById("blocoAdminDoacao").classList.remove("hidden");
-        document.getElementById("btnNovaMeta").classList.toggle("hidden", ROLE !== "PILOTOS");
-        document.getElementById("blocoMuralDoacao").classList.toggle("hidden", ROLE !== "PILOTOS");
-        if (ROLE === "PILOTOS") { await carregarMensagensPendentesMural(); }
-      } else {
-        document.getElementById("blocoAdminDoacao").classList.add("hidden");
-        document.getElementById("blocoMuralDoacao").classList.add("hidden");
+      document.querySelectorAll(".tab-btn").forEach(b => { 
+        b.classList.add("bg-white/10", "text-white"); 
+        b.classList.remove("bg-white", "text-slate-900"); 
+      });
+      const t = document.getElementById("tab-" + aba.toLowerCase());
+      if (t) { 
+        t.classList.remove("bg-white/10", "text-white"); 
+        t.classList.add("bg-white", "text-slate-900"); 
       }
+      
+      document.getElementById("dashAdmin")?.classList.toggle("hidden", aba !== "EJC");
+      
+      const isModuloOperacional = ["MERCADINHO", "CAMISETAS", "DOACAO"].includes(aba);
+      document.getElementById("painelFeijoada")?.classList.toggle("hidden", !isModuloOperacional);
+      
+      const blocoMural = document.getElementById("blocoMuralDoacao");
+      if (aba === "DOACAO") {
+        document.getElementById("blocoAdminDoacao")?.classList.remove("hidden");
+        document.getElementById("btnNovaMeta")?.classList.toggle("hidden", ROLE !== "PILOTOS");
+        
+        if (blocoMural) {
+          blocoMural.classList.toggle("hidden", ROLE !== "PILOTOS");
+          if (ROLE === "PILOTOS") await carregarMensagensPendentesMural();
+        }
+      } else {
+        document.getElementById("blocoAdminDoacao")?.classList.add("hidden");
+        document.getElementById("blocoMuralDoacao")?.classList.add("hidden");
+      }
+      
       atualizarPainelFeijoada();
       await carregarRegistros();
     }
@@ -707,9 +758,12 @@
         painelPessoaEquipe.classList.toggle("hidden", !["MERCADINHO", "CAMISETAS", "DOACAO"].includes(abaAtiva));
       }
       
-      if (abaAtiva === "MERCADINHO") document.getElementById("tituloPainelModulo").textContent = "Mercadinho do EJC";
-      else if (abaAtiva === "CAMISETAS") document.getElementById("tituloPainelModulo").textContent = "Produção e Entrega de Camisetas";
-      else if (abaAtiva === "DOACAO") document.getElementById("tituloPainelModulo").textContent = "Lista de Providência";
+      const tituloPainel = document.getElementById("tituloPainelModulo");
+      if (tituloPainel) {
+          if (abaAtiva === "MERCADINHO") tituloPainel.textContent = "Mercadinho do EJC";
+          else if (abaAtiva === "CAMISETAS") tituloPainel.textContent = "Produção e Entrega de Camisetas";
+          else if (abaAtiva === "DOACAO") tituloPainel.textContent = "Lista de Providência";
+      }
       
       const statBoxes = document.querySelectorAll("#gridMetricasFeijoada .soft-stat");
       if (abaAtiva === "DOACAO") {
@@ -787,10 +841,10 @@
         const rec = dadosCache.filter(r => obterStatusRegistro(r) === "PAGO" && r.tipo !== "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);
         const pen = dadosCache.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; }).reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
         const sai = dadosCache.filter(r => r.tipo === "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);
-        document.getElementById("totalRecebido").textContent = formatarMoeda(rec);
-        document.getElementById("totalPendente").textContent = formatarMoeda(pen);
-        document.getElementById("totalSaidas").textContent = formatarMoeda(sai);
-        document.getElementById("totalLiquido").textContent = formatarMoeda(rec - sai);
+        const elRec = document.getElementById("totalRecebido"); if(elRec) elRec.textContent = formatarMoeda(rec);
+        const elPen = document.getElementById("totalPendente"); if(elPen) elPen.textContent = formatarMoeda(pen);
+        const elSai = document.getElementById("totalSaidas"); if(elSai) elSai.textContent = formatarMoeda(sai);
+        const elLiq = document.getElementById("totalLiquido"); if(elLiq) elLiq.textContent = formatarMoeda(rec - sai);
       }
       if (abaAtiva === "MERCADINHO") {
         const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
@@ -798,12 +852,12 @@
         const pago = ativos.filter(r => obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + Number(r.valor || 0), 0);
         const pend = ativos.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; }).reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
         const gastos = ativos.filter(r => r.tipo === "SAIDA").reduce((a, r) => a + Number(r.valor || 0), 0);
-        document.getElementById("fjVendidos").textContent = formatarMoeda(total);
-        document.getElementById("fjPagos").textContent = formatarMoeda(pago);
-        document.getElementById("fjPendentes").textContent = formatarMoeda(pend);
-        document.getElementById("fjRestantes").textContent = "-";
-        document.getElementById("fjMercado").textContent = formatarMoeda(gastos);
-        document.getElementById("fjLucro").textContent = formatarMoeda(pago - gastos);
+        const elVend = document.getElementById("fjVendidos"); if(elVend) elVend.textContent = formatarMoeda(total);
+        const elPag = document.getElementById("fjPagos"); if(elPag) elPag.textContent = formatarMoeda(pago);
+        const elPen = document.getElementById("fjPendentes"); if(elPen) elPen.textContent = formatarMoeda(pend);
+        const elRes = document.getElementById("fjRestantes"); if(elRes) elRes.textContent = "-";
+        const elMer = document.getElementById("fjMercado"); if(elMer) elMer.textContent = formatarMoeda(gastos);
+        const elLuc = document.getElementById("fjLucro"); if(elLuc) elLuc.textContent = formatarMoeda(pago - gastos);
       }
       if (abaAtiva === "CAMISETAS") {
         const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
@@ -832,12 +886,12 @@
           .filter(r => r.status === "PAGO" || r.status === "ENTREGUE")
           .reduce((a, r) => a + Number(r.valor_estimado || r.valor || 0), 0);
 
-        document.getElementById("fjVendidos").textContent = totalItens;
-        document.getElementById("fjPagos").textContent = entregues;
-        document.getElementById("fjPendentes").textContent = prometidos;
-        document.getElementById("fjRestantes").textContent = cancelados;
-        document.getElementById("fjMercado").textContent = formatarMoeda(totalDinheiroDoados);
-        document.getElementById("fjLucro").textContent = "-";
+        const elVend = document.getElementById("fjVendidos"); if(elVend) elVend.textContent = totalItens;
+        const elPag = document.getElementById("fjPagos"); if(elPag) elPag.textContent = entregues;
+        const elPen = document.getElementById("fjPendentes"); if(elPen) elPen.textContent = prometidos;
+        const elRes = document.getElementById("fjRestantes"); if(elRes) elRes.textContent = cancelados;
+        const elMer = document.getElementById("fjMercado"); if(elMer) elMer.textContent = formatarMoeda(totalDinheiroDoados);
+        const elLuc = document.getElementById("fjLucro"); if(elLuc) elLuc.textContent = "-";
       }
       atualizarPainelPessoaEquipe();
     }
@@ -857,7 +911,8 @@
     // ============================
     async function carregarRegistros() {
       const tabela = obterNomeTabela(abaAtiva);
-      document.getElementById("loading").classList.remove("hidden");
+      const loading = document.getElementById("loading");
+      if(loading) loading.classList.remove("hidden");
       let data = null;
       let error = null;
       let tentativa = await _supabase.from(tabela).select("*").order("created_at", { ascending: false });
@@ -881,7 +936,7 @@
         data = tentativa.data;
         error = tentativa.error;
       }
-      document.getElementById("loading").classList.add("hidden");
+      if(loading) loading.classList.add("hidden");
       if (error) {
         console.error(`Erro ao carregar ${tabela}:`, error);
         showToast(`Erro ao carregar ${abaAtiva}.`, "error");
@@ -907,7 +962,7 @@
         const tipo = document.getElementById("f_type").value;
         const responsavel = document.getElementById("f_recebido").value.trim();
         const observacao = document.getElementById("f_obs").value.trim() || null;
-        const dataEntrega = document.getElementById("f_data_entrega").value || null;
+        const dataEntrega = document.getElementById("f_data_entrega")?.value || null;
         const registroOriginal = registroEmEdicao ? dadosCache.find(x => String(x.id) === String(registroEmEdicao)) : null;
         
         const tipoPessoa = document.getElementById("f_tipo_pessoa")?.value;
@@ -965,8 +1020,8 @@
 
         } else if (modulo === "DOACAO") {
           const itemFormatado = descricao.trim().toLowerCase();
-          const unidadeFormatada = (document.getElementById("f_un_doacao").value || "un").trim().toLowerCase();
-          const qtdDoacao = Number(document.getElementById("f_qtd_doacao").value || 0);
+          const unidadeFormatada = (document.getElementById("f_un_doacao")?.value || "un").trim().toLowerCase();
+          const qtdDoacao = Number(document.getElementById("f_qtd_doacao")?.value || 0);
           const tipoPessoaDoacao = document.getElementById("f_tipo_pessoa")?.value || "PAROQUIANO";
           const equipeDoacao = tipoPessoaDoacao === "SERVO" ? (document.getElementById("f_equipe_merc")?.value || null) : "Externo";
           const statusDoacao = tipo === "PENDENTE" ? "PROMETIDO" : tipo === "SAIDA" ? "CANCELADO" : "ENTREGUE";
@@ -1047,9 +1102,9 @@
       document.getElementById("tituloModalRegistro").textContent = "Editar Registro";
       document.getElementById("f_modulo").value = abaAtiva;
       if (ROLE === "COMPRAS") {
-        document.getElementById("blocoModulo").classList.add("hidden");
+        document.getElementById("blocoModulo")?.classList.add("hidden");
       } else {
-        document.getElementById("blocoModulo").classList.remove("hidden");
+        document.getElementById("blocoModulo")?.classList.remove("hidden");
       }
       document.getElementById("f_desc").value = r.descricao || r.item || "";
       let valorEdicao = Number(r.valor || r.valor_total || r.valor_estimado || 0);
@@ -1060,18 +1115,18 @@
       document.getElementById("f_val").value = valorEdicao.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
       document.getElementById("f_nome").value = r.nome || "";
       document.getElementById("f_tel").value = r.telefone || "";
-      document.getElementById("f_forma").value = r.forma || "PIX";
+      if (document.getElementById("f_forma")) document.getElementById("f_forma").value = r.forma || "PIX";
       document.getElementById("f_recebido").value = r.responsavel_lanc || obterNomeResponsavel();
       document.getElementById("f_obs").value = r.observacao || "";
-      document.getElementById("f_data_entrega").value = r.data_previsao || r.data_entrega || "";
+      if (document.getElementById("f_data_entrega")) document.getElementById("f_data_entrega").value = r.data_previsao || r.data_entrega || "";
       
       if (abaAtiva === "CAMISETAS") {
-        document.getElementById("f_tamanho").value = r.tamanho || "M";
-        document.getElementById("f_status_camiseta").value = r.status_pedido || "SOLICITADA";
+        if (document.getElementById("f_tamanho")) document.getElementById("f_tamanho").value = r.tamanho || "M";
+        if (document.getElementById("f_status_camiseta")) document.getElementById("f_status_camiseta").value = r.status_pedido || "SOLICITADA";
       }
       if (abaAtiva === "DOACAO") {
-        document.getElementById("f_qtd_doacao").value = r.quantidade || 1;
-        document.getElementById("f_un_doacao").value = r.unidade || "un";
+        if (document.getElementById("f_qtd_doacao")) document.getElementById("f_qtd_doacao").value = r.quantidade || 1;
+        if (document.getElementById("f_un_doacao")) document.getElementById("f_un_doacao").value = r.unidade || "un";
       }
       if (document.getElementById("f_equipe_merc")) {
         document.getElementById("f_equipe_merc").value = r.equipe || r.equipe_responsavel || "";
@@ -1085,7 +1140,7 @@
         document.getElementById("f_type").value = r.tipo || (obterStatusRegistro(r) === "PENDENTE" ? "PENDENTE" : "ENTRADA");
       }
       atualizarModalDinamico();
-      document.getElementById("modal").classList.remove("hidden");
+      document.getElementById("modal")?.classList.remove("hidden");
     }
 
     async function cancelarRegistro(id) {
@@ -1173,6 +1228,7 @@
 
     function renderizar() {
       const corpo = document.getElementById("corpoTabela");
+      if(!corpo) return;
       corpo.innerHTML = "";
       const lista = aplicarFiltroEBusca();
       if (!lista.length) {
@@ -1226,7 +1282,6 @@
             </div>`;
         }
 
-        // MÁGICA: Dinheiro ou Quantidade
         let infoDireita = `<div class="font-black text-slate-900">${formatarMoeda(valor)}</div>`;
         if (abaAtiva === "DOACAO") {
           if (valor > 0) {
@@ -1295,8 +1350,8 @@
       document.getElementById("extratoEquipe").textContent = extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}` : "";
       document.getElementById("filtroExtrato").value = "";
       renderizarExtrato();
-      document.getElementById("modalExtrato").classList.remove("hidden");
-      document.getElementById("modalExtrato").classList.add("flex");
+      document.getElementById("modalExtrato")?.classList.remove("hidden");
+      document.getElementById("modalExtrato")?.classList.add("flex");
     }
     
     function renderizarExtrato() {
@@ -1354,8 +1409,8 @@
     }
     
     function fecharExtrato() {
-      document.getElementById("modalExtrato").classList.add("hidden");
-      document.getElementById("modalExtrato").classList.remove("flex");
+      document.getElementById("modalExtrato")?.classList.add("hidden");
+      document.getElementById("modalExtrato")?.classList.remove("flex");
       extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
     }
     
@@ -1403,13 +1458,13 @@
       if (!pendentes.length) return showToast("Não há lançamentos financeiros em aberto.", "success");
       document.getElementById("quitarTudoRecebidoPor").value = obterNomeResponsavel();
       document.getElementById("quitarTudoData").value = hojeISODate();
-      document.getElementById("modalQuitarTudo").classList.remove("hidden");
-      document.getElementById("modalQuitarTudo").classList.add("flex");
+      document.getElementById("modalQuitarTudo")?.classList.remove("hidden");
+      document.getElementById("modalQuitarTudo")?.classList.add("flex");
     }
     
     function fecharModalQuitarTudo() {
-      document.getElementById("modalQuitarTudo").classList.add("hidden");
-      document.getElementById("modalQuitarTudo").classList.remove("flex");
+      document.getElementById("modalQuitarTudo")?.classList.add("hidden");
+      document.getElementById("modalQuitarTudo")?.classList.remove("flex");
     }
     
     async function confirmarQuitarTudo() {
@@ -1448,7 +1503,7 @@
     }
 
     // ============================
-    // COBRANÇA DOAÇÃO C/ IA SIMPLES DE DATAS (DIA 10/07 para os perecíveis da lista)
+    // COBRANÇA DOAÇÃO C/ IA SIMPLES DE DATAS (DIA 10/07)
     // ============================
     function cobrarWhatsAppDoacao(id) {
       const registro = dadosCache.find(x => String(x.id) === String(id));
@@ -1462,7 +1517,6 @@
       const qtd = Number(registro.quantidade || 0);
       const unidade = registro.unidade || "un";
 
-      // Palavras de itens "Sexta-feira" ou "Perecíveis" baseados na sua imagem do PDF
       const palavrasPereciveis = [
         'requeijão', 'requeijao', 'banana', 'laranja', 'limão', 'limao', 
         'maçã', 'maca', 'mamão', 'mamao', 'melancia', 'melão', 'melao', 
@@ -1688,3 +1742,4 @@
   </script>
 </body>
 </html>
+
