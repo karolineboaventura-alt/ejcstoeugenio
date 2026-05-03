@@ -141,7 +141,7 @@
       <p class="text-sm font-extrabold text-purple-900 mb-2">Como ser providência? ✨</p>
       <div class="text-xs text-purple-700 space-y-1">
         <p>1. Escolha o item e a quantidade.</p>
-        <p>2. Clique em "Adicionar item" (pode escolher vários).</p>
+        <p>2. Clique em "Adicionar à minha lista" (pode escolher vários).</p>
         <p>3. Preencha seus dados e confirme a doação.</p>
       </div>
     </div>
@@ -350,7 +350,7 @@
       if(error) {
         showToast("Erro ao salvar.", "error");
         btn.disabled = false;
-        btn.innerText = "Confirmar Doação";
+        btn.innerText = "Confirmar Doação 💜";
       } else {
         document.getElementById('areaForm').classList.add('hidden');
         document.getElementById('sucesso').classList.remove('hidden');
@@ -358,13 +358,23 @@
       }
     }
 
-    // MURAL
+    // MURAL (Sem moderação - vai direto para APROVADA)
     async function enviarMensagem(){
       const msg = document.getElementById('m_msg').value;
       if(!msg) return;
-      await _supabase.from('doacao_mural').insert([{ mensagem: msg, status: 'PENDENTE' }]);
+
+      const { error } = await _supabase.from('doacao_mural').insert([{ mensagem: msg, status: 'APROVADA' }]);
+      
+      if(error) {
+        showToast("Erro ao enviar mensagem.", "error");
+        return;
+      }
+
       document.getElementById('m_msg').value = "";
-      showToast("Mensagem enviada para moderação!");
+      showToast("Mensagem enviada com sucesso! 💜");
+      
+      // Atualiza o mural na mesma hora
+      carregarMural();
     }
 
     async function carregarMural(){
