@@ -4,28 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#820ad1" />
+
   <title>EJC • Lista de Providência</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800;900&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    :root { --brand:#820ad1; --brand-dark:#4b0082; --bg:#f8fafc; --text:#1f2937; }
-    * { box-sizing:border-box; }
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
-    body {
-      font-family:"Plus Jakarta Sans", sans-serif;
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&display=swap"
+    rel="stylesheet"/>
+
+  <style>
+    :root{
+      --brand:#820ad1;
+      --brand-dark:#4b0082;
+      --bg:#f8fafc;
+      --text:#1f2937;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:"Plus Jakarta Sans",sans-serif;
       background:
         radial-gradient(circle at top right, rgba(130,10,209,.12), transparent 32%),
         radial-gradient(circle at top left, rgba(168,85,247,.08), transparent 26%),
         var(--bg);
+
       color:var(--text);
       -webkit-tap-highlight-color:transparent;
     }
 
-    .page-shell {
+    .page-shell{
       background:rgba(255,255,255,.97);
       border-radius:36px;
       box-shadow:0 24px 60px -24px rgba(15,23,42,.22);
@@ -33,15 +48,16 @@
       backdrop-filter:blur(10px);
     }
 
-    .hero-top {
+    .hero-top{
       background:linear-gradient(135deg,#820ad1 0%,#4b0082 100%);
       border-radius:30px;
-      position:relative;
       overflow:hidden;
+      position:relative;
       box-shadow:0 22px 42px -26px rgba(75,0,130,.55);
     }
 
-    .hero-top::before, .pix-card::before {
+    .hero-top::before,
+    .pix-card::before{
       content:"";
       position:absolute;
       inset:0;
@@ -49,7 +65,7 @@
       opacity:.08;
     }
 
-    .count-card {
+    .count-card{
       background:rgba(255,255,255,.12);
       border:1px solid rgba(255,255,255,.18);
       border-radius:18px;
@@ -57,32 +73,32 @@
       backdrop-filter:blur(8px);
     }
 
-    .vault-input {
+    .vault-input{
       width:100%;
       background:#f8fafc;
       border:2px solid #eef2f7;
-      transition:.25s ease;
       border-radius:18px;
       padding:15px 18px;
       font-weight:800;
       color:#334155;
+      transition:.25s ease;
     }
 
-    .vault-input:focus {
+    .vault-input:focus{
       outline:none;
       border-color:var(--brand);
       background:white;
       box-shadow:0 0 0 4px rgba(130,10,209,.10);
     }
 
-    .info-card {
+    .info-card{
       background:linear-gradient(180deg,#faf5ff 0%,#f5edff 100%);
       border:1px solid #eadcff;
       border-radius:26px;
       box-shadow:0 14px 32px -28px rgba(130,10,209,.6);
     }
 
-    .category-premium {
+    .category-premium{
       border-radius:28px;
       overflow:hidden;
       background:linear-gradient(180deg,#fff 0%,#fbf8ff 100%);
@@ -90,19 +106,24 @@
       box-shadow:0 18px 45px -34px rgba(15,23,42,.45);
     }
 
-    details summary::-webkit-details-marker { display:none; }
-    summary { list-style:none; }
+    details summary::-webkit-details-marker{
+      display:none;
+    }
 
-    .category-head {
+    summary{
+      list-style:none;
+    }
+
+    .category-head{
       padding:18px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      cursor:pointer;
       gap:12px;
+      cursor:pointer;
     }
 
-    .category-icon {
+    .category-icon{
       width:44px;
       height:44px;
       border-radius:17px;
@@ -114,7 +135,7 @@
       flex-shrink:0;
     }
 
-    .item-premium {
+    .item-premium{
       margin:0 14px 12px;
       padding:14px;
       border-radius:21px;
@@ -123,7 +144,7 @@
       box-shadow:0 10px 25px -22px rgba(0,0,0,.35);
     }
 
-    .progress-track {
+    .progress-track{
       width:100%;
       height:7px;
       background:#eef2f7;
@@ -131,13 +152,13 @@
       overflow:hidden;
     }
 
-    .progress-fill {
+    .progress-fill{
       height:100%;
       border-radius:999px;
       background:linear-gradient(90deg,#820ad1,#a855f7);
     }
 
-    .choose-mini {
+    .choose-mini{
       background:#820ad1;
       color:white;
       border-radius:15px;
@@ -150,16 +171,14 @@
       transition:.18s ease;
     }
 
-    .choose-mini:active { transform:scale(.96); }
-
-    .cart-box {
+    .cart-box{
       background:linear-gradient(180deg,#fff 0%,#faf5ff 100%);
       border:2px solid #eadcff;
       border-radius:32px;
       box-shadow:0 20px 45px -30px rgba(130,10,209,.55);
     }
 
-    .pix-card {
+    .pix-card{
       background:linear-gradient(135deg,#7e22ce 0%,#9333ea 50%,#6b21a8 100%);
       position:relative;
       overflow:hidden;
@@ -167,16 +186,13 @@
       box-shadow:0 24px 50px -28px rgba(126,34,206,.8);
     }
 
-    .glass {
+    .glass{
       background:rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.12);
       backdrop-filter:blur(8px);
     }
 
-    .pix-btn { transition:.2s ease; }
-    .pix-btn:active { transform:scale(.96); }
-
-    .toast {
+    .toast{
       position:fixed;
       top:18px;
       left:50%;
@@ -189,26 +205,20 @@
       color:white;
       font-weight:900;
       box-shadow:0 16px 32px -18px rgba(0,0,0,.45);
-      animation:toastIn .25s ease;
     }
 
-    @keyframes toastIn {
-      from { opacity:0; transform:translate(-50%, -8px); }
-      to { opacity:1; transform:translate(-50%, 0); }
-    }
-
-    .marquee-container {
+    .marquee-container{
       max-height:280px;
       overflow:hidden;
       mask-image:linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
     }
 
-    @keyframes scroll-v {
-      0% { transform:translateY(0); }
-      100% { transform:translateY(-50%); }
+    @keyframes scroll-v{
+      0%{transform:translateY(0)}
+      100%{transform:translateY(-50%)}
     }
 
-    .marquee-content {
+    .marquee-content{
       display:flex;
       flex-direction:column;
       gap:12px;
@@ -218,629 +228,685 @@
 </head>
 
 <body class="min-h-screen flex flex-col items-center p-4 py-8">
-  <div class="w-full max-w-md page-shell p-5 sm:p-6">
 
-    <div class="hero-top p-6 text-white mb-6">
-      <div class="relative z-10 text-center">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-white/15 border border-white/20 rounded-2xl mb-5 text-3xl shadow-inner">✝️</div>
-        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-white/75 mb-2">EJC • Paróquia Santo Eugênio de Mazenod</p>
-        <h1 class="text-2xl font-black leading-tight">Lista de Providência</h1>
-        <p class="text-xs font-bold text-white/75 mt-2 italic">"A morte não venceu!"</p>
+<div class="w-full max-w-md page-shell p-5 sm:p-6">
 
-        <div class="mt-5 px-4 py-3 rounded-2xl bg-white/10 border border-white/15">
-          <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/70 mb-3">Contagem regressiva</p>
-          <div class="grid grid-cols-4 gap-2">
-            <div class="count-card"><div id="cdDias" class="text-xl font-black">--</div><div class="text-[8px] uppercase font-bold text-white/70">Dias</div></div>
-            <div class="count-card"><div id="cdHoras" class="text-xl font-black">--</div><div class="text-[8px] uppercase font-bold text-white/70">Horas</div></div>
-            <div class="count-card"><div id="cdMin" class="text-xl font-black">--</div><div class="text-[8px] uppercase font-bold text-white/70">Min</div></div>
-            <div class="count-card"><div id="cdSeg" class="text-xl font-black">--</div><div class="text-[8px] uppercase font-bold text-white/70">Seg</div></div>
+  <div class="hero-top p-6 text-white mb-6">
+    <div class="relative z-10 text-center">
+
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-white/15 border border-white/20 rounded-2xl mb-5 text-3xl shadow-inner">
+        ✝️
+      </div>
+
+      <p class="text-[10px] font-black uppercase tracking-[0.24em] text-white/75 mb-2">
+        EJC • Paróquia Santo Eugênio de Mazenod
+      </p>
+
+      <h1 class="text-2xl font-black leading-tight">
+        Lista de Providência
+      </h1>
+
+      <p class="text-xs font-bold text-white/75 mt-2 italic">
+        "A morte não venceu!"
+      </p>
+
+      <div class="mt-5 px-4 py-3 rounded-2xl bg-white/10 border border-white/15">
+
+        <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/70 mb-3">
+          Contagem regressiva
+        </p>
+
+        <div class="grid grid-cols-4 gap-2">
+
+          <div class="count-card">
+            <div id="cdDias" class="text-xl font-black">--</div>
+            <div class="text-[8px] uppercase font-bold text-white/70">Dias</div>
           </div>
+
+          <div class="count-card">
+            <div id="cdHoras" class="text-xl font-black">--</div>
+            <div class="text-[8px] uppercase font-bold text-white/70">Horas</div>
+          </div>
+
+          <div class="count-card">
+            <div id="cdMin" class="text-xl font-black">--</div>
+            <div class="text-[8px] uppercase font-bold text-white/70">Min</div>
+          </div>
+
+          <div class="count-card">
+            <div id="cdSeg" class="text-xl font-black">--</div>
+            <div class="text-[8px] uppercase font-bold text-white/70">Seg</div>
+          </div>
+
         </div>
       </div>
     </div>
-
-    <div class="info-card p-4 mb-6">
-      <div class="flex gap-3 items-start">
-        <div class="w-10 h-10 rounded-2xl bg-white text-purple-700 flex items-center justify-center shadow-sm">
-          <i class="fas fa-heart"></i>
-        </div>
-        <div>
-          <p class="text-sm font-black text-purple-950 mb-1">Como ser providência? ✨</p>
-          <p class="text-xs text-purple-800 leading-relaxed">Escolha um ou mais itens por categoria, preencha seus dados e confirme sua doação.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="pix-card p-5 text-white mb-6">
-      <div class="relative z-10">
-        <div class="flex items-center justify-between mb-5">
-          <div class="flex items-center gap-3">
-            <div class="w-14 h-14 rounded-2xl glass flex items-center justify-center text-2xl">💸</div>
-            <div>
-              <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/65">Providência</p>
-              <h3 class="text-xl font-black">Doação via PIX</h3>
-            </div>
-          </div>
-          <div class="glass rounded-2xl px-3 py-2 text-center">
-            <p class="text-[9px] uppercase font-black text-white/60">Ajude o</p>
-            <p class="text-sm font-black">EJC</p>
-          </div>
-        </div>
-
-        <div class="glass rounded-3xl p-4">
-          <div class="flex justify-between items-start gap-3">
-            <div>
-              <p class="text-[10px] uppercase tracking-[0.18em] font-black text-white/60 mb-1">Chave PIX</p>
-              <p class="text-sm font-black break-all">ejcstoeugenio2019@gmail.com</p>
-            </div>
-            <button type="button" onclick="copiarPix()" class="pix-btn bg-white text-purple-700 px-4 py-3 rounded-2xl text-[10px] uppercase tracking-widest font-black shadow-xl">
-              Copiar
-            </button>
-          </div>
-
-          <div class="grid grid-cols-3 gap-2 mt-5">
-            <button type="button" onclick="selecionarCotaPix(20)" class="pix-btn glass rounded-2xl p-3">
-              <p class="text-[9px] uppercase font-black text-white/60">Cota</p>
-              <p class="text-xl font-black mt-1">R$20</p>
-              <p class="text-[9px] text-white/70 mt-1">proteína</p>
-            </button>
-
-            <button type="button" onclick="selecionarCotaPix(50)" class="pix-btn glass rounded-2xl p-3">
-              <p class="text-[9px] uppercase font-black text-white/60">Cota</p>
-              <p class="text-xl font-black mt-1">R$50</p>
-              <p class="text-[9px] text-white/70 mt-1">proteína</p>
-            </button>
-
-            <button type="button" onclick="selecionarOutroValor()" class="pix-btn glass rounded-2xl p-3">
-              <p class="text-[9px] uppercase font-black text-white/60">Outro</p>
-              <p class="text-xl font-black mt-1">PIX</p>
-              <p class="text-[9px] text-white/70 mt-1">livre</p>
-            </button>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 mt-5">
-            <button type="button" onclick="enviarComprovanteAngela()" class="pix-btn bg-white text-purple-700 rounded-2xl py-3 px-3 font-black text-[10px] uppercase tracking-widest">
-              Enviar para Angela
-            </button>
-
-            <button type="button" onclick="enviarComprovanteRafael()" class="pix-btn bg-white text-purple-700 rounded-2xl py-3 px-3 font-black text-[10px] uppercase tracking-widest">
-              Enviar para Rafael
-            </button>
-          </div>
-
-          <div class="mt-5 pt-4 border-t border-white/10">
-            <p class="text-[10px] leading-relaxed text-white/75">
-              Toda contribuição será destinada à compra de proteínas, alimentação e estrutura do encontro.
-            </p>
-            <p class="text-[10px] leading-relaxed text-white/75 mt-2">
-              Após o PIX, envie o comprovante para Angela ou Rafael pelos botões acima.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="listaWrap" class="mb-8">
-      <div class="flex items-center justify-between mb-4 px-2">
-        <h2 class="text-xs font-black uppercase tracking-widest text-slate-500">Escolha por categoria</h2>
-        <span id="totalPendentes" class="text-[10px] font-black text-purple-700 bg-purple-50 px-3 py-1 rounded-full">-- itens</span>
+  </div>
+  <div class="info-card p-4 mb-6">
+    <div class="flex gap-3 items-start">
+      <div class="w-10 h-10 rounded-2xl bg-white text-purple-700 flex items-center justify-center shadow-sm">
+        <i class="fas fa-heart"></i>
       </div>
 
-      <div id="areaItens" class="space-y-4">
-        <p class="text-center text-slate-400 text-xs py-10">Buscando necessidades...</p>
+      <div>
+        <p class="text-sm font-black text-purple-950 mb-1">
+          Como ser providência? ✨
+        </p>
+
+        <p class="text-xs text-purple-800 leading-relaxed">
+          Escolha um ou mais itens por categoria, preencha seus dados e confirme sua doação.
+        </p>
       </div>
-    </div>
-
-    <div id="areaForm" class="hidden cart-box p-6 mb-8">
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <p class="text-[10px] font-black uppercase tracking-widest text-purple-500">Sua seleção</p>
-          <h2 class="font-black text-slate-800 text-lg">Minha lista</h2>
-        </div>
-        <button type="button" onclick="fecharForm()" class="text-[10px] font-black uppercase text-slate-400">Voltar</button>
-      </div>
-
-      <div id="itensSelecionados" class="space-y-2 mb-6"></div>
-
-      <form id="formDoacao" onsubmit="event.preventDefault(); submeterDoacao();" class="space-y-4">
-        <input id="d_nome" placeholder="Seu nome completo" required class="vault-input" />
-        <input id="d_tel" type="tel" placeholder="WhatsApp com DDD" required class="vault-input" />
-
-        <select id="d_equipe" required class="vault-input bg-white">
-          <option value="">Sua Equipe...</option>
-          <option value="Externo">Paroquiano / Visitante</option>
-          <option>Animação</option>
-          <option>Apoio ao Patrimônio</option>
-          <option>Café</option>
-          <option>Círculo</option>
-          <option>Compras</option>
-          <option>Cozinha</option>
-          <option>Intercessão</option>
-          <option>Liturgia</option>
-          <option>Ordem</option>
-          <option>Piloto</option>
-          <option>Sala</option>
-          <option>Secretaria</option>
-          <option>Som e Iluminação</option>
-          <option>Trânsito</option>
-          <option>Visitação</option>
-        </select>
-
-        <div>
-          <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Previsão de entrega</label>
-          <input id="d_data" type="date" required class="vault-input mt-1" />
-        </div>
-
-        <button type="submit" id="btnEnviar" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl uppercase tracking-widest text-sm active:scale-95 transition-all">
-          Confirmar Providência 💜
-        </button>
-      </form>
-    </div>
-
-    <div id="sucesso" class="hidden text-center p-8 bg-emerald-50 rounded-[32px] border border-emerald-100">
-      <div class="text-4xl mb-4">🙏</div>
-      <h3 class="text-xl font-black text-slate-800">Deus lhe pague!</h3>
-      <p class="text-sm text-slate-600 mt-2">Sua providência foi registrada com sucesso.</p>
-      <button onclick="location.reload()" class="mt-6 bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold uppercase text-xs">Fazer outra doação</button>
-    </div>
-
-    <div class="mt-12">
-      <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-4 px-2">Mural de Carinho</h3>
-      <div class="space-y-3 mb-6">
-        <input id="m_nome" placeholder="Seu nome (opcional)" class="vault-input" />
-        <textarea id="m_msg" rows="2" placeholder="Deixe uma mensagem para o EJC..." class="vault-input resize-none"></textarea>
-        <button onclick="enviarMensagem()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">
-          Enviar mensagem
-        </button>
-      </div>
-      <div id="listaMensagens"></div>
     </div>
   </div>
 
-<script>
-  const SUPABASE_URL = 'https://ilzgmueeblxeyieumpyk.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
-  const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  <div id="listaWrap" class="mb-8">
 
-  const CHAVE_PIX = "ejcstoeugenio2019@gmail.com";
+    <div class="flex items-center justify-between mb-4 px-2">
+      <h2 class="text-xs font-black uppercase tracking-widest text-slate-500">
+        Escolha por prioridade
+      </h2>
 
-  let carrinho = [];
+      <span id="totalPendentes"
+        class="text-[10px] font-black text-purple-700 bg-purple-50 px-3 py-1 rounded-full">
+        --
+      </span>
+    </div>
 
-  function esc(s) {
-    return s ? String(s).replace(/[&<>'"]/g, t => ({
-      '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'
-    }[t])) : "";
-  }
+    <div id="areaItens" class="space-y-4">
+      <p class="text-center text-slate-400 text-xs py-10">
+        Buscando necessidades...
+      </p>
+    </div>
+  </div>
 
-  function showToast(m, type="success") {
-    const t = document.createElement("div");
-    t.className = `toast ${type === "error" ? "bg-rose-600" : "bg-slate-900"}`;
-    t.innerText = m;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 3500);
-  }
+  <div id="areaForm" class="hidden cart-box p-6 mb-8">
 
-  function copiarPix() {
-    navigator.clipboard.writeText(CHAVE_PIX)
-      .then(() => showToast("Chave PIX copiada 💜"))
-      .catch(() => showToast("Chave PIX: " + CHAVE_PIX));
-  }
+    <div class="flex justify-between items-center mb-4">
 
-  function abrirWhatsApp(numero, mensagem) {
-    const telefone = String(numero || "").replace(/\D/g, "");
-    const texto = encodeURIComponent(mensagem);
-    window.open(`https://wa.me/55${telefone}?text=${texto}`, "_blank");
-  }
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest text-purple-500">
+          Sua seleção
+        </p>
 
-  function mensagemComprovante() {
-    return `Olá! Tudo bem? 💜\n\nAcabei de realizar uma contribuição via PIX para o EJC da Paróquia Santo Eugênio de Mazenod.\n\nSegue meu comprovante 🙏✨`;
-  }
-
-  function enviarComprovanteAngela() {
-    abrirWhatsApp("11994011319", mensagemComprovante());
-  }
-
-  function enviarComprovanteRafael() {
-    abrirWhatsApp("11989335186", mensagemComprovante());
-  }
-
-  function selecionarCotaPix(valor) {
-    copiarPix();
-    setTimeout(() => {
-      const abrir = confirm(
-        `💜 DOAÇÃO EM COTA\n\nValor selecionado: R$ ${valor}\nFinalidade: compra de proteína/carne\n\nA chave PIX foi copiada.\n\nDeseja abrir o WhatsApp para enviar o comprovante?`
-      );
-      if (abrir) enviarComprovanteAngela();
-    }, 250);
-  }
-
-  function selecionarOutroValor() {
-    copiarPix();
-    setTimeout(() => {
-      const abrir = confirm(
-        `💜 DOAÇÃO VIA PIX\n\nVocê pode contribuir com qualquer valor.\n\nA chave PIX foi copiada.\n\nDeseja abrir o WhatsApp para enviar o comprovante?`
-      );
-      if (abrir) enviarComprovanteAngela();
-    }, 250);
-  }
-
-  function normalizarTelefone(t) {
-    let n = String(t || "").replace(/\D/g, "");
-    if (!n) return "";
-    if (n.startsWith("0")) n = n.slice(1);
-    if (!n.startsWith("55")) n = "55" + n;
-    return n;
-  }
-
-  function initTimer() {
-    const target = new Date("2026-07-11T00:00:00-03:00").getTime();
-
-    function update() {
-      const diff = target - new Date().getTime();
-      if (diff <= 0) return;
-
-      document.getElementById("cdDias").innerText = Math.floor(diff / (1000*60*60*24));
-      document.getElementById("cdHoras").innerText = Math.floor((diff / (1000*60*60)) % 24);
-      document.getElementById("cdMin").innerText = Math.floor((diff / (1000*60)) % 60);
-      document.getElementById("cdSeg").innerText = Math.floor((diff / 1000) % 60);
-    }
-
-    update();
-    setInterval(update, 1000);
-  }
-
-  function categorizar(item) {
-    const n = String(item || "").toLowerCase();
-
-    if (["água","agua","carne","frango","linguiça","bacon","mussarela","presunto"].some(x => n.includes(x))) return "🚨 Críticos";
-    if (["arroz","feijão","feijao","óleo","oleo","leite","café","cafe","açúcar","acucar","sal","farinha"].some(x => n.includes(x))) return "🍚 Alimentação";
-    if (["batata","cebola","alho","cenoura","tomate","limão","limao","banana","maçã","maca","fruta","repolho"].some(x => n.includes(x))) return "🥬 Hortifruti";
-    if (["detergente","desinfetante","sabão","sabao","cândida","candida","papel higiênico","papel higienico","esponja","pano"].some(x => n.includes(x))) return "🧼 Limpeza e higiene";
-    if (["copo","prato","talher","guardanapo","alumínio","aluminio","sulfite","saco de lixo","fita"].some(x => n.includes(x))) return "📦 Descartáveis e papelaria";
-
-    return "💜 Outros itens";
-  }
-
-  function categoriaInfo(titulo) {
-    if (titulo.includes("Críticos")) return { icon:"🚨", sub:"Itens essenciais para o EJC funcionar" };
-    if (titulo.includes("Alimentação")) return { icon:"🍚", sub:"Base das refeições e preparos" };
-    if (titulo.includes("Hortifruti")) return { icon:"🥬", sub:"Itens frescos e perecíveis" };
-    if (titulo.includes("Limpeza")) return { icon:"🧼", sub:"Cuidado, higiene e organização" };
-    if (titulo.includes("Descartáveis")) return { icon:"📦", sub:"Apoio para serviço e estrutura" };
-    return { icon:"💜", sub:"Complementos importantes" };
-  }
-
-  async function carregarDados() {
-    const wrap = document.getElementById("areaItens");
-    wrap.innerHTML = `<p class="text-center text-slate-400 text-xs py-10">Buscando necessidades...</p>`;
-
-    const { data: metas, error: erroMetas } = await _supabase.from("metas_providencia").select("*");
-    const { data: doacoes, error: erroDoacoes } = await _supabase
-      .from("doacao")
-      .select("item, quantidade, status")
-      .in("status", ["PROMETIDO", "ENTREGUE"]);
-
-    if (erroMetas || erroDoacoes) {
-      console.error(erroMetas || erroDoacoes);
-      wrap.innerHTML = `<p class="text-center text-rose-500 text-xs py-10">Erro ao carregar a lista.</p>`;
-      return;
-    }
-
-    const mapa = {};
-    (doacoes || []).forEach(d => {
-      const key = String(d.item || "").trim().toLowerCase();
-      mapa[key] = (mapa[key] || 0) + Number(d.quantidade || 0);
-    });
-
-    const grupos = {
-      "🚨 Críticos": [],
-      "🍚 Alimentação": [],
-      "🥬 Hortifruti": [],
-      "🧼 Limpeza e higiene": [],
-      "📦 Descartáveis e papelaria": [],
-      "💜 Outros itens": []
-    };
-
-    (metas || []).forEach(m => {
-      const item = String(m.item || "").trim();
-      const key = item.toLowerCase();
-      const alvo = Number(m.quantidade_alvo || 0);
-      const recebido = mapa[key] || 0;
-      const falta = Math.max(0, alvo - recebido);
-      const perc = alvo > 0 ? Math.min(100, Math.round((recebido / alvo) * 100)) : 0;
-
-      if (falta <= 0) return;
-
-      grupos[categorizar(item)].push({
-        item,
-        unidade: m.unidade || "un",
-        alvo,
-        recebido,
-        falta,
-        perc
-      });
-    });
-
-    wrap.innerHTML = "";
-    let total = 0;
-
-    Object.entries(grupos).forEach(([titulo, itens]) => {
-      if (!itens.length) return;
-
-      total += itens.length;
-      const info = categoriaInfo(titulo);
-
-      const details = document.createElement("details");
-      details.className = "category-premium";
-      details.open = titulo.includes("Críticos");
-
-      const summary = document.createElement("summary");
-      summary.className = "category-head";
-      summary.innerHTML = `
-        <div class="flex items-center gap-3">
-          <div class="category-icon">${info.icon}</div>
-          <div>
-            <p class="text-sm font-black text-slate-800">${titulo}</p>
-            <p class="text-[10px] font-bold text-slate-400">${info.sub}</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-[10px] font-black text-purple-700 bg-purple-50 px-2 py-1 rounded-lg">${itens.length}</span>
-          <i class="fas fa-chevron-down text-slate-300"></i>
-        </div>
-      `;
-
-      const content = document.createElement("div");
-      content.className = "pb-2";
-      content.innerHTML = itens.map(m => `
-        <div class="item-premium">
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex-1">
-              <p class="text-sm font-black text-slate-800">${esc(m.item)}</p>
-              <p class="text-[10px] font-bold text-slate-400 mt-1">
-                Faltam ${m.falta} ${esc(m.unidade)} • Recebido ${m.recebido}/${m.alvo}
-              </p>
-              <div class="progress-track mt-3">
-                <div class="progress-fill" style="width:${m.perc}%"></div>
-              </div>
-            </div>
-            <button type="button" class="choose-mini"
-              onclick='selecionarItemPremium(${JSON.stringify(m.item)}, ${JSON.stringify(m.unidade)}, ${m.falta})'>
-              Escolher
-            </button>
-          </div>
-        </div>
-      `).join("");
-
-      details.appendChild(summary);
-      details.appendChild(content);
-      wrap.appendChild(details);
-    });
-
-    document.getElementById("totalPendentes").innerText = `${total} itens`;
-
-    if (total === 0) {
-      wrap.innerHTML = `
-        <div class="text-center bg-emerald-50 border border-emerald-100 rounded-3xl p-8">
-          <div class="text-4xl mb-3">🙏</div>
-          <p class="text-sm font-black text-slate-800">Tudo foi arrecadado!</p>
-          <p class="text-xs text-slate-500 mt-1">Deus seja louvado.</p>
-        </div>
-      `;
-    }
-  }
-
-  function selecionarItemPremium(item, unidade, max) {
-    const existe = carrinho.find(c => c.item === item);
-
-    if (existe) {
-      if (existe.quantidade < max) existe.quantidade += 1;
-      else return showToast("Esse item já atingiu a quantidade disponível.", "error");
-    } else {
-      carrinho.push({ item, quantidade: 1, unidade, max });
-    }
-
-    abrirForm();
-    showToast(`${item} adicionado à sua lista 💜`);
-  }
-
-  function abrirForm() {
-    document.getElementById("areaForm").classList.remove("hidden");
-    renderCarrinho();
-    document.getElementById("areaForm").scrollIntoView({ behavior:"smooth", block:"start" });
-  }
-
-  function fecharForm() {
-    document.getElementById("areaForm").classList.add("hidden");
-  }
-
-  function alterarQtd(index, delta) {
-    const item = carrinho[index];
-    if (!item) return;
-
-    const nova = item.quantidade + delta;
-    if (nova <= 0) carrinho.splice(index, 1);
-    else if (nova <= item.max) item.quantidade = nova;
-    else showToast("Quantidade maior que o disponível.", "error");
-
-    renderCarrinho();
-    if (!carrinho.length) fecharForm();
-  }
-
-  function renderCarrinho() {
-    const list = document.getElementById("itensSelecionados");
-
-    if (!carrinho.length) {
-      list.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">Nenhum item selecionado.</p>`;
-      return;
-    }
-
-    list.innerHTML = carrinho.map((c, i) => `
-      <div class="flex items-center justify-between bg-white border border-purple-100 rounded-2xl p-3">
-        <div>
-          <p class="text-sm font-black text-slate-800">${esc(c.item)}</p>
-          <p class="text-[10px] font-bold text-purple-600">${c.quantidade} ${esc(c.unidade)}</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="alterarQtd(${i}, -1)" class="w-8 h-8 rounded-xl bg-slate-100 font-black">-</button>
-          <button type="button" onclick="alterarQtd(${i}, 1)" class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 font-black">+</button>
-        </div>
+        <h2 class="font-black text-slate-800 text-lg">
+          Minha lista
+        </h2>
       </div>
-    `).join("");
+
+      <button type="button"
+        onclick="fecharForm()"
+        class="text-[10px] font-black uppercase text-slate-400">
+        Voltar
+      </button>
+
+    </div>
+
+    <div id="itensSelecionados" class="space-y-2 mb-6"></div>
+
+    <form id="formDoacao"
+      onsubmit="event.preventDefault(); submeterDoacao();"
+      class="space-y-4">
+
+      <input id="d_nome"
+        placeholder="Seu nome completo"
+        required
+        class="vault-input"/>
+
+      <input id="d_tel"
+        type="tel"
+        placeholder="WhatsApp com DDD"
+        required
+        class="vault-input"/>
+
+      <select id="d_equipe"
+        required
+        class="vault-input bg-white">
+
+        <option value="">Sua Equipe...</option>
+        <option value="Externo">Paroquiano / Visitante</option>
+
+        <option>Animação</option>
+        <option>Apoio ao Patrimônio</option>
+        <option>Café</option>
+        <option>Círculo</option>
+        <option>Compras</option>
+        <option>Cozinha</option>
+        <option>Intercessão</option>
+        <option>Liturgia</option>
+        <option>Ordem</option>
+        <option>Piloto</option>
+        <option>Sala</option>
+        <option>Secretaria</option>
+        <option>Som e Iluminação</option>
+        <option>Trânsito</option>
+        <option>Visitação</option>
+
+      </select>
+
+      <div>
+        <label class="text-[9px] font-black text-slate-400 uppercase ml-1">
+          Previsão de entrega
+        </label>
+
+        <input id="d_data"
+          type="date"
+          required
+          class="vault-input mt-1"/>
+      </div>
+
+      <button type="submit"
+        id="btnEnviar"
+        class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl uppercase tracking-widest text-sm">
+
+        Confirmar Providência 💜
+
+      </button>
+
+    </form>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://ilzgmueeblxeyieumpyk.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
+
+const _supabase = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let carrinho = [];
+
+function esc(s){
+  return s
+    ? String(s).replace(/[&<>'"]/g, t => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      "'":'&#39;',
+      '"':'&quot;'
+    }[t]))
+    : "";
+}
+
+function showToast(msg){
+  const t = document.createElement("div");
+
+  t.className = "toast bg-slate-900";
+  t.innerText = msg;
+
+  document.body.appendChild(t);
+
+  setTimeout(() => {
+    t.remove();
+  }, 3000);
+}
+
+function categorizar(item){
+  const n = String(item || "").toLowerCase();
+
+  if([
+    "água","agua","carne","frango","linguiça",
+    "bacon","mussarela","presunto"
+  ].some(x => n.includes(x))){
+    return "🚨 Críticos";
   }
 
-  async function submeterDoacao() {
-    if (!carrinho.length) return showToast("Escolha pelo menos um item.", "error");
-
-    const btn = document.getElementById("btnEnviar");
-    const nome = document.getElementById("d_nome").value.trim();
-    const tel = document.getElementById("d_tel").value.trim();
-    const equipe = document.getElementById("d_equipe").value;
-    const dataP = document.getElementById("d_data").value;
-
-    if (!nome || !tel || !equipe || !dataP) return showToast("Preencha todos os campos.", "error");
-
-    btn.disabled = true;
-    btn.innerText = "Salvando...";
-
-    const telefone = normalizarTelefone(tel);
-
-    const doacoes = carrinho.map(c => ({
-      nome,
-      telefone,
-      equipe,
-      item: c.item,
-      quantidade: c.quantidade,
-      unidade: c.unidade,
-      valor_estimado: 0,
-      data_previsao: dataP,
-      status: "PROMETIDO",
-      tipo: "PENDENTE",
-      tipo_pessoa: equipe === "Externo" ? "PAROQUIANO" : "SERVO",
-      data_movimento: new Date().toISOString().split("T")[0],
-      responsavel_lanc: "Lista Pública",
-      observacao: "Registro realizado pela página pública de providência."
-    }));
-
-    const { error } = await _supabase.from("doacao").insert(doacoes);
-
-    if (error) {
-      console.error(error);
-      showToast(error.message || "Erro ao salvar. Tente novamente.", "error");
-      btn.disabled = false;
-      btn.innerText = "Confirmar Providência 💜";
-      return;
-    }
-
-    document.getElementById("areaForm").classList.add("hidden");
-    document.getElementById("listaWrap").classList.add("hidden");
-    document.getElementById("sucesso").classList.remove("hidden");
-    window.scrollTo({ top:0, behavior:"smooth" });
+  if([
+    "arroz","feijão","feijao","óleo","oleo",
+    "leite","café","cafe","açúcar","acucar",
+    "sal","farinha"
+  ].some(x => n.includes(x))){
+    return "🍚 Alimentação";
   }
 
-  async function enviarMensagem() {
-    const nome = document.getElementById("m_nome").value.trim() || "Anônimo";
-    const msg = document.getElementById("m_msg").value.trim();
-
-    if (!msg) return showToast("Escreva uma mensagem primeiro.", "error");
-
-    const { error } = await _supabase.from("doacao_mural").insert([{
-      nome,
-      mensagem: msg,
-      status: "PENDENTE"
-    }]);
-
-    if (error) {
-      console.error(error);
-      return showToast(error.message || "Erro ao enviar mensagem.", "error");
-    }
-
-    document.getElementById("m_nome").value = "";
-    document.getElementById("m_msg").value = "";
-    showToast("Mensagem enviada para aprovação 💜");
+  if([
+    "batata","cebola","alho","cenoura",
+    "tomate","limão","limao","banana"
+  ].some(x => n.includes(x))){
+    return "🥬 Hortifruti";
   }
 
-  async function carregarMural() {
-    const wrap = document.getElementById("listaMensagens");
+  return "💜 Outros";
+}
+
+function prioridadeInfo(item){
+  const n = String(item || "").toLowerCase();
+
+  const criticos = [
+    "água","agua","carne","frango","linguiça",
+    "bacon","mussarela","presunto","arroz",
+    "feijão","feijao","óleo","oleo","leite"
+  ];
+
+  const importantes = [
+    "café","cafe","açúcar","acucar","sal",
+    "farinha","detergente","desinfetante",
+    "sabão","sabao"
+  ];
+
+  if(criticos.some(p => n.includes(p))){
+    return {
+      nivel:1,
+      label:"🔴 Prioridade alta",
+      classe:"bg-rose-50 text-rose-700 border-rose-100"
+    };
+  }
+
+  if(importantes.some(p => n.includes(p))){
+    return {
+      nivel:2,
+      label:"🟠 Importante",
+      classe:"bg-orange-50 text-orange-700 border-orange-100"
+    };
+  }
+
+  return {
+    nivel:3,
+    label:"🟢 Apoio",
+    classe:"bg-emerald-50 text-emerald-700 border-emerald-100"
+  };
+}
+
+async function carregarDados(){
+
+  const wrap = document.getElementById("areaItens");
+
+  wrap.innerHTML = `
+    <p class="text-center text-slate-400 text-xs py-10">
+      Buscando necessidades...
+    </p>
+  `;
+
+  const { data: metas, error: erroMetas } =
+    await _supabase
+      .from("metas_providencia")
+      .select("*");
+
+  const { data: doacoes, error: erroDoacoes } =
+    await _supabase
+      .from("doacao")
+      .select("item, quantidade, status");
+
+  if(erroMetas || erroDoacoes){
+    console.error(erroMetas || erroDoacoes);
 
     wrap.innerHTML = `
-      <p class="text-xs text-slate-400 text-center py-4">
-        Carregando mural...
+      <p class="text-center text-rose-500 text-xs py-10">
+        Erro ao carregar a lista.
       </p>
     `;
 
-    let { data, error } = await _supabase
-      .from("doacao_mural")
-      .select("*")
-      .eq("status", "APROVADA")
-      .limit(15)
-      .order("created_at", { ascending:false });
-
-    if (error) {
-      console.warn("Falha ao ordenar por created_at. Tentando criado_em...", error);
-
-      const tentativa2 = await _supabase
-        .from("doacao_mural")
-        .select("*")
-        .eq("status", "APROVADA")
-        .limit(15)
-        .order("criado_em", { ascending:false });
-
-      data = tentativa2.data;
-      error = tentativa2.error;
-    }
-
-    if (error) {
-      console.warn("Falha ao ordenar. Tentando sem ordenação...", error);
-
-      const tentativa3 = await _supabase
-        .from("doacao_mural")
-        .select("*")
-        .eq("status", "APROVADA")
-        .limit(15);
-
-      data = tentativa3.data;
-      error = tentativa3.error;
-    }
-
-    if (error) {
-      console.error(error);
-      wrap.innerHTML = `
-        <p class="text-xs text-rose-500 text-center py-4">
-          Não foi possível carregar o mural.
-        </p>
-      `;
-      return;
-    }
-
-    if (!data || !data.length) {
-      wrap.innerHTML = `
-        <p class="text-xs text-slate-400 text-center py-4">
-          Ainda não há mensagens aprovadas.
-        </p>
-      `;
-      return;
-    }
-
-    const msgs = data.map(m => `
-      <div class="bg-white p-4 rounded-2xl border border-slate-100 text-xs font-semibold text-slate-600 shadow-sm leading-relaxed">
-        <p class="text-[10px] font-black text-purple-600 uppercase mb-1">${esc(m.nome || "Anônimo")}</p>
-        ${esc(m.mensagem || "")}
-      </div>
-    `).join("");
-
-    wrap.innerHTML =
-      `<div class="marquee-container"><div class="marquee-content">${msgs}${msgs}</div></div>`;
+    return;
   }
 
-  window.onload = () => {
-    initTimer();
-    carregarDados();
-    carregarMural();
+  const mapa = {};
 
-    const hoje = new Date().toISOString().split("T")[0];
-    document.getElementById("d_data").setAttribute("min", hoje);
+  (doacoes || []).forEach(d => {
+
+    const status =
+      String(d.status || "").toUpperCase();
+
+    if(![
+      "PROMETIDO",
+      "PENDENTE",
+      "ENTREGUE",
+      "PAGO"
+    ].includes(status)) return;
+
+    const key =
+      String(d.item || "")
+      .trim()
+      .toLowerCase();
+
+    mapa[key] =
+      (mapa[key] || 0)
+      + Number(d.quantidade || 0);
+  });
+
+  const grupos = {
+    "🔴 Prioridade alta":[],
+    "🟠 Importante":[],
+    "🟢 Apoio":[]
   };
+
+  (metas || []).forEach(m => {
+
+    const item =
+      String(m.item || "").trim();
+
+    const key = item.toLowerCase();
+
+    const alvo =
+      Number(m.quantidade_alvo || 0);
+
+    const recebido =
+      mapa[key] || 0;
+
+    const falta =
+      Math.max(0, alvo - recebido);
+
+    const perc =
+      alvo > 0
+        ? Math.min(
+            100,
+            Math.round((recebido / alvo) * 100)
+          )
+        : 0;
+
+    if(falta <= 0) return;
+
+    const prio =
+      prioridadeInfo(item);
+
+    grupos[prio.label].push({
+      item,
+      unidade:m.unidade || "un",
+      alvo,
+      recebido,
+      falta,
+      perc,
+      prio,
+      categoria:categorizar(item)
+    });
+  });
+
+  wrap.innerHTML = "";
+
+  let total = 0;
+
+  Object.entries(grupos).forEach(([titulo,itens]) => {
+
+    if(!itens.length) return;
+
+    total += itens.length;
+
+    const details =
+      document.createElement("details");
+
+    details.className =
+      "category-premium";
+
+    details.open =
+      titulo.includes("alta");
+
+    const summary =
+      document.createElement("summary");
+
+    summary.className =
+      "category-head";
+
+    summary.innerHTML = `
+      <div class="flex items-center gap-3">
+
+        <div class="category-icon">
+          ${titulo.split(" ")[0]}
+        </div>
+
+        <div>
+          <p class="text-sm font-black text-slate-800">
+            ${titulo}
+          </p>
+
+          <p class="text-[10px] font-bold text-slate-400">
+            ${itens.length} necessidade(s)
+          </p>
+        </div>
+
+      </div>
+
+      <i class="fas fa-chevron-down text-slate-300"></i>
+    `;
+
+    const content =
+      document.createElement("div");
+
+    content.className = "pb-2";
+
+    content.innerHTML =
+      itens.map(m => `
+
+      <div class="item-premium">
+
+        <div class="flex items-start justify-between gap-3">
+
+          <div class="flex-1">
+
+            <div class="flex flex-wrap gap-2 mb-2">
+
+              <span class="text-[8px] font-black px-2 py-1 rounded-full border ${m.prio.classe}">
+                ${m.prio.label}
+              </span>
+
+              <span class="text-[8px] font-black px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-100">
+                ${m.categoria}
+              </span>
+
+            </div>
+
+            <p class="text-sm font-black text-slate-800">
+              ${esc(m.item)}
+            </p>
+
+            <p class="text-[10px] font-bold text-slate-400 mt-1">
+              Faltam ${m.falta} ${esc(m.unidade)}
+              •
+              Recebido ${m.recebido}/${m.alvo}
+            </p>
+
+            <div class="progress-track mt-3">
+              <div class="progress-fill"
+                style="width:${m.perc}%">
+              </div>
+            </div>
+
+          </div>
+
+          <button
+            type="button"
+            class="choose-mini"
+            onclick='selecionarItemPremium(
+              ${JSON.stringify(m.item)},
+              ${JSON.stringify(m.unidade)},
+              ${m.falta}
+            )'>
+
+            Escolher
+
+          </button>
+
+        </div>
+      </div>
+
+    `).join("");
+
+    details.appendChild(summary);
+    details.appendChild(content);
+
+    wrap.appendChild(details);
+
+  });
+
+  document.getElementById(
+    "totalPendentes"
+  ).innerText = `${total} itens`;
+
+}
+
+function selecionarItemPremium(item, unidade, max){
+
+  const existe =
+    carrinho.find(c => c.item === item);
+
+  if(existe){
+
+    if(existe.quantidade < max){
+      existe.quantidade += 1;
+    }
+
+  }else{
+
+    carrinho.push({
+      item,
+      quantidade:1,
+      unidade,
+      max
+    });
+
+  }
+
+  abrirForm();
+
+  showToast(
+    `${item} adicionado 💜`
+  );
+}
+
+function abrirForm(){
+
+  document.getElementById(
+    "areaForm"
+  ).classList.remove("hidden");
+
+  renderCarrinho();
+
+  document.getElementById(
+    "areaForm"
+  ).scrollIntoView({
+    behavior:"smooth"
+  });
+}
+
+function fecharForm(){
+  document.getElementById(
+    "areaForm"
+  ).classList.add("hidden");
+}
+
+function renderCarrinho(){
+
+  const list =
+    document.getElementById(
+      "itensSelecionados"
+    );
+
+  if(!carrinho.length){
+
+    list.innerHTML = `
+      <p class="text-xs text-slate-400 text-center py-3">
+        Nenhum item selecionado.
+      </p>
+    `;
+
+    return;
+  }
+
+  list.innerHTML =
+    carrinho.map(c => `
+
+      <div class="flex items-center justify-between bg-white border border-purple-100 rounded-2xl p-3">
+
+        <div>
+          <p class="text-sm font-black text-slate-800">
+            ${esc(c.item)}
+          </p>
+
+          <p class="text-[10px] font-bold text-purple-600">
+            ${c.quantidade} ${esc(c.unidade)}
+          </p>
+        </div>
+
+      </div>
+
+    `).join("");
+}
+
+async function submeterDoacao(){
+
+  const nome =
+    document.getElementById("d_nome").value;
+
+  const tel =
+    document.getElementById("d_tel").value;
+
+  const equipe =
+    document.getElementById("d_equipe").value;
+
+  const dataP =
+    document.getElementById("d_data").value;
+
+  const doacoes = carrinho.map(c => ({
+    nome,
+    telefone:tel,
+    equipe,
+    item:c.item,
+    quantidade:c.quantidade,
+    unidade:c.unidade,
+    status:"PROMETIDO",
+    data_previsao:dataP
+  }));
+
+  const { error } =
+    await _supabase
+      .from("doacao")
+      .insert(doacoes);
+
+  if(error){
+    console.error(error);
+    return showToast("Erro ao salvar");
+  }
+
+  showToast("Providência registrada 💜");
+
+  location.reload();
+}
+
+function initTimer(){
+
+  const target =
+    new Date(
+      "2026-07-11T00:00:00-03:00"
+    ).getTime();
+
+  function update(){
+
+    const diff =
+      target - new Date().getTime();
+
+    document.getElementById("cdDias").innerText =
+      Math.floor(diff / (1000*60*60*24));
+
+    document.getElementById("cdHoras").innerText =
+      Math.floor((diff / (1000*60*60)) % 24);
+
+    document.getElementById("cdMin").innerText =
+      Math.floor((diff / (1000*60)) % 60);
+
+    document.getElementById("cdSeg").innerText =
+      Math.floor((diff / 1000) % 60);
+  }
+
+  update();
+
+  setInterval(update,1000);
+}
+
+window.onload = () => {
+
+  initTimer();
+
+  carregarDados();
+
+  const hoje =
+    new Date().toISOString().split("T")[0];
+
+  document
+    .getElementById("d_data")
+    .setAttribute("min", hoje);
+};
+
 </script>
 
 </body>
