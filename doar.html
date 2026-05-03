@@ -1,653 +1,748 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>EJC • Lista de Providência</title>
+<title>EJC • Lista de Providência</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap"
-    rel="stylesheet"/>
+<style>
+  body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:#f6f3ff;
+  }
 
-  <style>
+  .card{
+    background:white;
+    border-radius:28px;
+    box-shadow:0 10px 30px rgba(0,0,0,.06);
+  }
 
-    body{
-      font-family:"Plus Jakarta Sans",sans-serif;
-      background:#f8fafc;
-    }
+  .hero{
+    background:linear-gradient(135deg,#820ad1,#5b21b6);
+    color:white;
+    border-radius:32px;
+  }
 
-    .card{
-      background:white;
-      border-radius:28px;
-      box-shadow:0 10px 30px rgba(0,0,0,.08);
-    }
+  .categoria{
+    border-radius:24px;
+    overflow:hidden;
+    background:white;
+    border:1px solid #eee;
+  }
 
-    .hero{
-      background:linear-gradient(135deg,#820ad1,#4b0082);
-      color:white;
-      border-radius:28px;
-    }
+  .categoria-head{
+    padding:18px;
+    cursor:pointer;
+  }
 
-    .item-card{
-      background:white;
-      border-radius:22px;
-      border:1px solid #eee;
-      box-shadow:0 5px 20px rgba(0,0,0,.05);
-    }
+  .item{
+    background:#fafafa;
+    border:1px solid #eee;
+    border-radius:18px;
+    padding:14px;
+  }
 
-    .progress{
-      height:8px;
-      background:#ececec;
-      border-radius:999px;
-      overflow:hidden;
-    }
+  .btn{
+    background:#820ad1;
+    color:white;
+    border-radius:14px;
+    padding:10px 14px;
+    font-weight:800;
+    font-size:12px;
+  }
 
-    .progress-fill{
-      height:100%;
-      background:linear-gradient(90deg,#820ad1,#a855f7);
-    }
+  .input{
+    width:100%;
+    border:2px solid #eee;
+    border-radius:18px;
+    padding:14px;
+    font-weight:700;
+  }
 
-    .choose{
-      background:#820ad1;
-      color:white;
-      border-radius:14px;
-      padding:10px 14px;
-      font-size:11px;
-      font-weight:800;
-      text-transform:uppercase;
-    }
+  .input:focus{
+    outline:none;
+    border-color:#820ad1;
+  }
 
-    .input{
-      width:100%;
-      padding:15px;
-      border-radius:18px;
-      border:2px solid #edf2f7;
-      font-weight:700;
-    }
+  .progress{
+    height:8px;
+    background:#eee;
+    border-radius:999px;
+    overflow:hidden;
+  }
 
-    .input:focus{
-      outline:none;
-      border-color:#820ad1;
-    }
-
-  </style>
+  .progress-bar{
+    height:100%;
+    background:linear-gradient(90deg,#820ad1,#a855f7);
+  }
+</style>
 </head>
 
 <body class="p-4">
 
 <div class="max-w-md mx-auto space-y-5">
 
-  <div class="hero p-6 text-center">
+<div class="hero p-6">
+  <div class="text-center">
+    <div class="text-5xl mb-3">✝️</div>
 
-    <div class="text-4xl mb-3">
-      ✝️
-    </div>
-
-    <p class="text-[11px] uppercase tracking-[0.2em] font-black text-white/70">
+    <p class="uppercase text-[10px] tracking-[0.3em] font-black opacity-70">
       EJC • Paróquia Santo Eugênio
     </p>
 
-    <h1 class="text-2xl font-black mt-2">
+    <h1 class="text-3xl font-black mt-2">
       Lista de Providência
     </h1>
 
-    <p class="text-sm text-white/70 mt-2 italic">
-      "A morte não venceu!"
+    <p class="text-sm opacity-80 mt-3 italic">
+      "A morte não venceu."
     </p>
-
   </div>
+</div>
 
-  <div class="card p-5">
+<div class="card p-5">
+  <h2 class="font-black text-lg text-slate-800">
+    💜 Como ajudar?
+  </h2>
 
-    <div class="flex justify-between items-center mb-4">
+  <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+    Escolha os itens que deseja providenciar para o encontro.
+    Depois preencha seus dados e confirme.
+  </p>
+</div>
 
-      <div>
-        <p class="text-xs uppercase font-black text-slate-400">
-          Necessidades
-        </p>
-
-        <h2 class="text-lg font-black text-slate-800">
-          Itens pendentes
-        </h2>
-      </div>
-
-      <span id="totalPendentes"
-        class="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-black">
-        --
-      </span>
-
-    </div>
-
-    <div id="areaItens" class="space-y-4">
-
-      <p class="text-center text-slate-400 text-sm py-8">
-        Carregando itens...
+<div class="card p-5">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <p class="uppercase text-[10px] tracking-[0.3em] font-black text-purple-500">
+        PIX
       </p>
 
+      <h2 class="font-black text-xl">
+        Ajude financeiramente
+      </h2>
     </div>
 
+    <div class="text-3xl">
+      💸
+    </div>
   </div>
 
-  <div id="areaForm"
-    class="card p-5 hidden">
+  <div class="bg-purple-50 rounded-2xl p-4 border border-purple-100">
 
-    <h2 class="text-lg font-black text-slate-800 mb-4">
-      Confirmar providência 💜
+    <p class="text-[10px] uppercase tracking-[0.2em] font-black text-purple-500">
+      Chave PIX
+    </p>
+
+    <p id="pixKey" class="font-black text-sm mt-2 break-all">
+      ejcstoeugenio2019@gmail.com
+    </p>
+
+    <button onclick="copiarPix()" class="btn w-full mt-4">
+      COPIAR CHAVE PIX
+    </button>
+
+  </div>
+</div>
+
+<div>
+  <div class="flex items-center justify-between mb-3 px-1">
+
+    <h2 class="uppercase text-[11px] tracking-[0.25em] font-black text-slate-400">
+      Itens necessários
     </h2>
 
-    <div id="itensSelecionados"
-      class="space-y-2 mb-5">
-    </div>
-
-    <form
-      onsubmit="event.preventDefault(); submeterDoacao();"
-      class="space-y-4">
-
-      <input
-        id="d_nome"
-        class="input"
-        placeholder="Seu nome"
-        required/>
-
-      <input
-        id="d_tel"
-        class="input"
-        placeholder="WhatsApp"
-        required/>
-
-      <select
-        id="d_equipe"
-        class="input"
-        required>
-
-        <option value="">
-          Sua equipe...
-        </option>
-
-        <option value="Externo">
-          Externo
-        </option>
-
-        <option>
-          Cozinha
-        </option>
-
-        <option>
-          Liturgia
-        </option>
-
-        <option>
-          Ordem
-        </option>
-
-      </select>
-
-      <input
-        id="d_data"
-        type="date"
-        class="input"
-        required/>
-
-      <button
-        class="w-full bg-purple-700 text-white py-4 rounded-2xl font-black uppercase">
-
-        Confirmar Providência
-
-      </button>
-
-    </form>
+    <span id="contadorItens" class="text-[10px] font-black bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
+      --
+    </span>
 
   </div>
+
+  <div id="listaItens" class="space-y-4">
+    <div class="card p-6 text-center text-sm text-slate-400">
+      Carregando itens...
+    </div>
+  </div>
+</div>
+
+<div id="areaForm" class="hidden card p-5">
+
+  <div class="flex items-center justify-between mb-4">
+
+    <div>
+      <p class="uppercase text-[10px] tracking-[0.25em] font-black text-purple-500">
+        Sua providência
+      </p>
+
+      <h2 class="font-black text-xl">
+        Itens selecionados
+      </h2>
+    </div>
+
+    <button onclick="fecharForm()" class="text-xs font-black text-slate-400">
+      FECHAR
+    </button>
+
+  </div>
+
+  <div id="carrinho" class="space-y-3 mb-5"></div>
+
+  <form onsubmit="event.preventDefault(); salvarDoacao();" class="space-y-4">
+
+    <input
+      id="nome"
+      class="input"
+      placeholder="Seu nome"
+      required
+    >
+
+    <input
+      id="telefone"
+      class="input"
+      placeholder="WhatsApp"
+      required
+    >
+
+    <select id="equipe" class="input" required>
+      <option value="">Sua equipe</option>
+
+      <option value="Externo">Paroquiano / Visitante</option>
+
+      <option>Animação</option>
+      <option>Café</option>
+      <option>Círculo</option>
+      <option>Cozinha</option>
+      <option>Compras</option>
+      <option>Intercessão</option>
+      <option>Liturgia</option>
+      <option>Ordem</option>
+      <option>Piloto</option>
+      <option>Sala</option>
+      <option>Secretaria</option>
+      <option>Trânsito</option>
+
+    </select>
+
+    <input
+      id="dataEntrega"
+      type="date"
+      class="input"
+      required
+    >
+
+    <button class="btn w-full py-4 text-sm">
+      CONFIRMAR PROVIDÊNCIA 💜
+    </button>
+
+  </form>
+
+</div>
+
+<div id="sucesso" class="hidden card p-8 text-center">
+
+  <div class="text-5xl mb-4">
+    🙏
+  </div>
+
+  <h2 class="text-2xl font-black">
+    Deus lhe pague!
+  </h2>
+
+  <p class="text-sm text-slate-500 mt-3">
+    Sua providência foi registrada com sucesso.
+  </p>
 
 </div>
 
 <script>
 
-const SUPABASE_URL =
-'https://ilzgmueeblxeyieumpyk.supabase.co';
+const SUPABASE_URL = "https://ilzgmueeblxeyieumpyk.supabase.co";
 
 const SUPABASE_KEY =
-'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
+"sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf";
 
-const _supabase =
-supabase.createClient(
+const supa = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
 
 let carrinho = [];
 
-function esc(s){
-  return String(s || "")
-    .replace(/[&<>'"]/g, t => ({
-      '&':'&amp;',
-      '<':'&lt;',
-      '>':'&gt;',
-      "'":'&#39;',
-      '"':'&quot;'
-    }[t]));
+function copiarPix(){
+
+  navigator.clipboard.writeText(
+    "ejcstoeugenio2019@gmail.com"
+  );
+
+  alert("Chave PIX copiada 💜");
+
 }
 
-function prioridadeInfo(item){
+function esc(texto){
 
-  const n =
-    String(item || "").toLowerCase();
+  return String(texto || "")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;");
 
-  if([
-    "carne",
-    "frango",
-    "arroz",
-    "feijão",
-    "agua",
-    "água"
-  ].some(x => n.includes(x))){
-
-    return {
-      label:"🔴 Prioridade alta",
-      classe:"bg-rose-50 text-rose-700 border-rose-100"
-    };
-  }
-
-  if([
-    "óleo",
-    "oleo",
-    "café",
-    "cafe",
-    "sal"
-  ].some(x => n.includes(x))){
-
-    return {
-      label:"🟠 Importante",
-      classe:"bg-orange-50 text-orange-700 border-orange-100"
-    };
-  }
-
-  return {
-    label:"🟢 Apoio",
-    classe:"bg-emerald-50 text-emerald-700 border-emerald-100"
-  };
 }
 
-function categorizar(item){
+function categoria(nome){
 
-  const n =
-    String(item || "").toLowerCase();
+  const n = String(nome).toLowerCase();
 
-  if([
-    "carne",
-    "frango",
-    "linguiça"
-  ].some(x => n.includes(x))){
-    return "🍖 Proteínas";
+  if(
+    n.includes("carne") ||
+    n.includes("frango") ||
+    n.includes("linguiça") ||
+    n.includes("bacon")
+  ){
+    return "🚨 Prioridade Máxima";
   }
 
-  if([
-    "arroz",
-    "feijão",
-    "feijao"
-  ].some(x => n.includes(x))){
+  if(
+    n.includes("arroz") ||
+    n.includes("feijão") ||
+    n.includes("óleo") ||
+    n.includes("leite") ||
+    n.includes("café")
+  ){
     return "🍚 Alimentação";
   }
 
-  if([
-    "detergente",
-    "sabão",
-    "sabao"
-  ].some(x => n.includes(x))){
+  if(
+    n.includes("papel") ||
+    n.includes("detergente") ||
+    n.includes("sabão")
+  ){
     return "🧼 Limpeza";
   }
 
   return "💜 Outros";
 }
 
-async function carregarDados(){
+async function carregarItens(){
 
-  const wrap =
-    document.getElementById(
-      "areaItens"
-    );
+  const lista =
+  document.getElementById("listaItens");
 
-  wrap.innerHTML = `
-    <p class="text-center text-slate-400 text-sm py-8">
+  lista.innerHTML = `
+    <div class="card p-6 text-center text-sm text-slate-400">
       Carregando itens...
-    </p>
+    </div>
   `;
 
-  const { data: metas, error: erroMetas } =
-    await _supabase
-      .from("metas_providencia")
-      .select("*");
+  const metasReq = await supa
+  .from("metas_providencia")
+  .select("*");
 
-  if(erroMetas){
+  const doacoesReq = await supa
+  .from("doacao")
+  .select("item, quantidade, status");
 
-    console.error(erroMetas);
+  console.log(metasReq);
+  console.log(doacoesReq);
 
-    wrap.innerHTML = `
-      <p class="text-center text-rose-500 text-sm py-8">
+  if(metasReq.error){
+
+    lista.innerHTML = `
+      <div class="card p-6 text-center text-sm text-red-500">
         Erro ao carregar metas.
-      </p>
+      </div>
     `;
 
     return;
   }
 
-  const { data: doacoes } =
-    await _supabase
-      .from("doacao")
-      .select("item, quantidade, status");
+  const metas = metasReq.data || [];
+  const doacoes = doacoesReq.data || [];
 
   const mapa = {};
 
-  (doacoes || []).forEach(d => {
+  doacoes.forEach(d => {
 
     const status =
-      String(d.status || "")
-      .toUpperCase();
+    String(d.status || "").toUpperCase();
 
-    if(![
-      "PROMETIDO",
-      "PENDENTE",
-      "ENTREGUE",
-      "PAGO"
-    ].includes(status)) return;
-
-    const key =
-      String(d.item || "")
-      .trim()
-      .toLowerCase();
-
-    mapa[key] =
-      (mapa[key] || 0)
-      + Number(d.quantidade || 0);
-
-  });
-
-  const grupos = {
-    "🔴 Prioridade alta":[],
-    "🟠 Importante":[],
-    "🟢 Apoio":[]
-  };
-
-  (metas || []).forEach(m => {
-
-    const item =
-      String(m.item || "").trim();
-
-    if(!item) return;
-
-    const key =
-      item.toLowerCase();
-
-    const alvo =
-      Number(m.quantidade_alvo || 0);
-
-    const recebido =
-      mapa[key] || 0;
-
-    const falta =
-      alvo <= 0
-        ? 1
-        : Math.max(0, alvo - recebido);
-
-    const perc =
-      alvo > 0
-        ? Math.min(
-            100,
-            Math.round(
-              (recebido / alvo) * 100
-            )
-          )
-        : 0;
-
-    if(alvo > 0 && falta <= 0){
+    if(
+      status !== "PROMETIDO" &&
+      status !== "ENTREGUE"
+    ){
       return;
     }
 
-    const prio =
-      prioridadeInfo(item);
+    const chave =
+    String(d.item || "")
+    .trim()
+    .toLowerCase();
 
-    grupos[prio.label].push({
+    mapa[chave] =
+    (mapa[chave] || 0)
+    + Number(d.quantidade || 0);
+
+  });
+
+  const grupos = {};
+metas.forEach(meta => {
+
+    const item = String(meta.item || "").trim();
+    const unidade = meta.unidade || "un";
+    const alvo = Number(meta.quantidade_alvo || 0);
+
+    if (!item || alvo <= 0) return;
+
+    const recebido =
+      mapa[item.toLowerCase()] || 0;
+
+    const falta =
+      Math.max(0, alvo - recebido);
+
+    const perc =
+      Math.min(100, Math.round((recebido / alvo) * 100));
+
+    if (falta <= 0) return;
+
+    const cat = categoria(item);
+
+    if (!grupos[cat]) grupos[cat] = [];
+
+    grupos[cat].push({
       item,
-      unidade:m.unidade || "un",
+      unidade,
       alvo,
       recebido,
       falta,
-      perc,
-      prio,
-      categoria:categorizar(item)
+      perc
     });
 
   });
 
-  wrap.innerHTML = "";
+  lista.innerHTML = "";
 
   let total = 0;
 
-  Object.entries(grupos)
-    .forEach(([titulo,itens]) => {
-
-    if(!itens.length) return;
+  Object.entries(grupos).forEach(([nomeCategoria, itens]) => {
 
     total += itens.length;
 
-    const bloco =
-      document.createElement("div");
-
-    bloco.className =
-      "space-y-3";
+    const bloco = document.createElement("details");
+    bloco.className = "categoria";
+    bloco.open = true;
 
     bloco.innerHTML = `
-
-      <div class="flex items-center gap-2 px-1">
-
-        <div class="font-black text-sm text-slate-800">
-          ${titulo}
-        </div>
-
-        <div class="text-xs text-slate-400 font-bold">
-          (${itens.length})
-        </div>
-
-      </div>
-
-      ${itens.map(m => `
-
-        <div class="item-card p-4">
-
-          <div class="flex justify-between gap-3">
-
-            <div class="flex-1">
-
-              <div class="flex flex-wrap gap-2 mb-2">
-
-                <span class="text-[9px] font-black px-2 py-1 rounded-full border ${m.prio.classe}">
-                  ${m.prio.label}
-                </span>
-
-                <span class="text-[9px] font-black px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-100">
-                  ${m.categoria}
-                </span>
-
-              </div>
-
-              <p class="text-sm font-black text-slate-800">
-                ${esc(m.item)}
-              </p>
-
-              <p class="text-[11px] text-slate-400 font-bold mt-1">
-
-                Faltam
-                ${m.falta}
-                ${esc(m.unidade)}
-
-                •
-
-                Recebido
-                ${m.recebido}/${m.alvo}
-
-              </p>
-
-              <div class="progress mt-3">
-
-                <div class="progress-fill"
-                  style="width:${m.perc}%">
-                </div>
-
-              </div>
-
-            </div>
-
-            <button
-              class="choose"
-              onclick='selecionarItem(
-                ${JSON.stringify(m.item)},
-                ${JSON.stringify(m.unidade)},
-                ${m.falta}
-              )'>
-
-              Escolher
-
-            </button>
-
+      <summary class="categoria-head">
+        <div class="flex justify-between items-center gap-3">
+          <div>
+            <p class="font-black text-slate-800">${esc(nomeCategoria)}</p>
+            <p class="text-[11px] text-slate-400 font-bold">
+              ${itens.length} item(ns) disponível(is)
+            </p>
           </div>
 
+          <span class="text-xs font-black bg-purple-50 text-purple-700 px-3 py-1 rounded-full">
+            ${itens.length}
+          </span>
         </div>
+      </summary>
 
-      `).join("")}
+      <div class="px-4 pb-4 space-y-3">
+        ${itens.map(i => `
+          <div class="item">
+            <div class="flex justify-between gap-3 items-start">
+              <div class="flex-1">
+                <p class="font-black text-slate-800">
+                  ${esc(i.item)}
+                </p>
 
+                <p class="text-[11px] text-slate-400 font-bold mt-1">
+                  Faltam ${i.falta} ${esc(i.unidade)}
+                  • Recebido ${i.recebido}/${i.alvo}
+                </p>
+
+                <div class="progress mt-3">
+                  <div class="progress-bar" style="width:${i.perc}%"></div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="btn"
+                onclick='selecionarItem(${JSON.stringify(i.item)}, ${JSON.stringify(i.unidade)}, ${i.falta})'>
+                Escolher
+              </button>
+            </div>
+          </div>
+        `).join("")}
+      </div>
     `;
 
-    wrap.appendChild(bloco);
+    lista.appendChild(bloco);
 
   });
 
-  document.getElementById(
-    "totalPendentes"
-  ).innerText =
+  document.getElementById("contadorItens").innerText =
     `${total} itens`;
+
+  if (total === 0) {
+
+    lista.innerHTML = `
+      <div class="card p-8 text-center">
+        <div class="text-4xl mb-3">🙏</div>
+        <p class="font-black text-slate-800">
+          Nenhum item pendente no momento.
+        </p>
+        <p class="text-xs text-slate-400 mt-2">
+          Verifique se a tabela metas_providencia está preenchida.
+        </p>
+      </div>
+    `;
+
+  }
 
 }
 
 function selecionarItem(item, unidade, max){
 
-  carrinho.push({
-    item,
-    unidade,
-    quantidade:1,
-    max
-  });
+  const existente =
+    carrinho.find(c => c.item === item);
+
+  if (existente) {
+
+    if (existente.quantidade < max) {
+      existente.quantidade++;
+    } else {
+      alert("Quantidade máxima já selecionada.");
+      return;
+    }
+
+  } else {
+
+    carrinho.push({
+      item,
+      unidade,
+      quantidade: 1,
+      max
+    });
+
+  }
 
   renderCarrinho();
 
   document
     .getElementById("areaForm")
-    .classList.remove("hidden");
+    .classList
+    .remove("hidden");
 
   document
     .getElementById("areaForm")
     .scrollIntoView({
-      behavior:"smooth"
+      behavior:"smooth",
+      block:"start"
     });
+
+}
+
+function alterarQtd(index, delta){
+
+  const item = carrinho[index];
+
+  if (!item) return;
+
+  const nova =
+    item.quantidade + delta;
+
+  if (nova <= 0) {
+    carrinho.splice(index, 1);
+  } else if (nova <= item.max) {
+    item.quantidade = nova;
+  } else {
+    alert("Quantidade maior que o disponível.");
+  }
+
+  renderCarrinho();
+
+  if (!carrinho.length) {
+    fecharForm();
+  }
+
 }
 
 function renderCarrinho(){
 
-  const wrap =
-    document.getElementById(
-      "itensSelecionados"
-    );
+  const box =
+    document.getElementById("carrinho");
 
-  wrap.innerHTML =
-    carrinho.map(c => `
+  if (!carrinho.length) {
 
-      <div class="bg-purple-50 border border-purple-100 rounded-2xl p-3">
+    box.innerHTML = `
+      <p class="text-sm text-slate-400 text-center py-3">
+        Nenhum item selecionado.
+      </p>
+    `;
 
-        <p class="font-black text-sm text-slate-800">
-          ${esc(c.item)}
-        </p>
+    return;
 
-        <p class="text-xs text-purple-700 font-bold">
-          ${c.quantidade}
-          ${esc(c.unidade)}
-        </p>
+  }
 
+  box.innerHTML =
+    carrinho.map((c, i) => `
+      <div class="item flex justify-between items-center">
+        <div>
+          <p class="font-black text-slate-800">
+            ${esc(c.item)}
+          </p>
+
+          <p class="text-xs text-purple-600 font-bold">
+            ${c.quantidade} ${esc(c.unidade)}
+          </p>
+        </div>
+
+        <div class="flex gap-2">
+          <button
+            type="button"
+            onclick="alterarQtd(${i}, -1)"
+            class="w-9 h-9 rounded-xl bg-slate-100 font-black">
+            -
+          </button>
+
+          <button
+            type="button"
+            onclick="alterarQtd(${i}, 1)"
+            class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 font-black">
+            +
+          </button>
+        </div>
       </div>
-
     `).join("");
+
 }
 
-async function submeterDoacao(){
+function fecharForm(){
+
+  document
+    .getElementById("areaForm")
+    .classList
+    .add("hidden");
+
+}
+
+function telefoneFormatado(tel){
+
+  let n =
+    String(tel || "").replace(/\D/g, "");
+
+  if (!n) return "";
+
+  if (n.startsWith("0")) {
+    n = n.slice(1);
+  }
+
+  if (!n.startsWith("55")) {
+    n = "55" + n;
+  }
+
+  return n;
+
+}
+
+async function salvarDoacao(){
+
+  if (!carrinho.length) {
+    alert("Escolha pelo menos um item.");
+    return;
+  }
 
   const nome =
-    document.getElementById("d_nome").value;
+    document.getElementById("nome").value.trim();
 
   const telefone =
-    document.getElementById("d_tel").value;
+    telefoneFormatado(
+      document.getElementById("telefone").value
+    );
 
   const equipe =
-    document.getElementById("d_equipe").value;
+    document.getElementById("equipe").value;
 
   const data =
-    document.getElementById("d_data").value;
+    document.getElementById("dataEntrega").value;
 
-  const payload =
+  if (!nome || !telefone || !equipe || !data) {
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  const registros =
     carrinho.map(c => ({
-
       nome,
       telefone,
       equipe,
-
-      item:c.item,
-      quantidade:c.quantidade,
-      unidade:c.unidade,
-
-      status:"PROMETIDO",
-      data_previsao:data
-
+      item: c.item,
+      quantidade: c.quantidade,
+      unidade: c.unidade,
+      valor_estimado: 0,
+      data_previsao: data,
+      status: "PROMETIDO",
+      tipo: "PENDENTE",
+      tipo_pessoa: equipe === "Externo"
+        ? "PAROQUIANO"
+        : "SERVO",
+      data_movimento:
+        new Date().toISOString().slice(0,10),
+      responsavel_lanc: "Lista Pública",
+      observacao:
+        "Registro realizado pela página pública de providência."
     }));
 
   const { error } =
-    await _supabase
+    await supa
       .from("doacao")
-      .insert(payload);
+      .insert(registros);
 
-  if(error){
+  if (error) {
 
     console.error(error);
 
     alert(
-      "Erro ao salvar."
+      "Erro ao salvar. Verifique as permissões da tabela doacao."
     );
 
     return;
+
   }
 
-  alert(
-    "Providência registrada 💜"
-  );
+  document
+    .getElementById("areaForm")
+    .classList
+    .add("hidden");
 
-  location.reload();
+  document
+    .getElementById("sucesso")
+    .classList
+    .remove("hidden");
+
+  carrinho = [];
+
+  carregarItens();
+
 }
 
 window.onload = () => {
 
-  carregarDados();
-
   const hoje =
-    new Date()
-    .toISOString()
-    .split("T")[0];
+    new Date().toISOString().slice(0,10);
 
   document
-    .getElementById("d_data")
+    .getElementById("dataEntrega")
     .setAttribute("min", hoje);
+
+  carregarItens();
+
 };
 
 </script>
