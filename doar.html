@@ -2,8 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#820ad1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>EJC • Lista de Providência</title>
 
@@ -14,405 +13,211 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
   <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap"
     rel="stylesheet"/>
 
   <style>
-    :root{
-      --brand:#820ad1;
-      --brand-dark:#4b0082;
-      --bg:#f8fafc;
-      --text:#1f2937;
-    }
-
-    *{
-      box-sizing:border-box;
-    }
 
     body{
       font-family:"Plus Jakarta Sans",sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(130,10,209,.12), transparent 32%),
-        radial-gradient(circle at top left, rgba(168,85,247,.08), transparent 26%),
-        var(--bg);
-
-      color:var(--text);
-      -webkit-tap-highlight-color:transparent;
-    }
-
-    .page-shell{
-      background:rgba(255,255,255,.97);
-      border-radius:36px;
-      box-shadow:0 24px 60px -24px rgba(15,23,42,.22);
-      border:1px solid #f1f5f9;
-      backdrop-filter:blur(10px);
-    }
-
-    .hero-top{
-      background:linear-gradient(135deg,#820ad1 0%,#4b0082 100%);
-      border-radius:30px;
-      overflow:hidden;
-      position:relative;
-      box-shadow:0 22px 42px -26px rgba(75,0,130,.55);
-    }
-
-    .hero-top::before,
-    .pix-card::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background-image:url("https://www.transparenttextures.com/patterns/cubes.png");
-      opacity:.08;
-    }
-
-    .count-card{
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:18px;
-      padding:10px 6px;
-      backdrop-filter:blur(8px);
-    }
-
-    .vault-input{
-      width:100%;
       background:#f8fafc;
-      border:2px solid #eef2f7;
-      border-radius:18px;
-      padding:15px 18px;
-      font-weight:800;
-      color:#334155;
-      transition:.25s ease;
     }
 
-    .vault-input:focus{
-      outline:none;
-      border-color:var(--brand);
+    .card{
       background:white;
-      box-shadow:0 0 0 4px rgba(130,10,209,.10);
-    }
-
-    .info-card{
-      background:linear-gradient(180deg,#faf5ff 0%,#f5edff 100%);
-      border:1px solid #eadcff;
-      border-radius:26px;
-      box-shadow:0 14px 32px -28px rgba(130,10,209,.6);
-    }
-
-    .category-premium{
       border-radius:28px;
-      overflow:hidden;
-      background:linear-gradient(180deg,#fff 0%,#fbf8ff 100%);
-      border:1px solid #eee7fb;
-      box-shadow:0 18px 45px -34px rgba(15,23,42,.45);
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
     }
 
-    details summary::-webkit-details-marker{
-      display:none;
+    .hero{
+      background:linear-gradient(135deg,#820ad1,#4b0082);
+      color:white;
+      border-radius:28px;
     }
 
-    summary{
-      list-style:none;
-    }
-
-    .category-head{
-      padding:18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      cursor:pointer;
-    }
-
-    .category-icon{
-      width:44px;
-      height:44px;
-      border-radius:17px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:22px;
-      background:#f3e8ff;
-      flex-shrink:0;
-    }
-
-    .item-premium{
-      margin:0 14px 12px;
-      padding:14px;
-      border-radius:21px;
+    .item-card{
       background:white;
-      border:1px solid #f1f5f9;
-      box-shadow:0 10px 25px -22px rgba(0,0,0,.35);
+      border-radius:22px;
+      border:1px solid #eee;
+      box-shadow:0 5px 20px rgba(0,0,0,.05);
     }
 
-    .progress-track{
-      width:100%;
-      height:7px;
-      background:#eef2f7;
+    .progress{
+      height:8px;
+      background:#ececec;
       border-radius:999px;
       overflow:hidden;
     }
 
     .progress-fill{
       height:100%;
-      border-radius:999px;
       background:linear-gradient(90deg,#820ad1,#a855f7);
     }
 
-    .choose-mini{
+    .choose{
       background:#820ad1;
       color:white;
-      border-radius:15px;
-      padding:10px 12px;
-      font-size:10px;
-      font-weight:900;
+      border-radius:14px;
+      padding:10px 14px;
+      font-size:11px;
+      font-weight:800;
       text-transform:uppercase;
-      letter-spacing:.06em;
-      box-shadow:0 12px 22px -16px rgba(130,10,209,.8);
-      transition:.18s ease;
     }
 
-    .cart-box{
-      background:linear-gradient(180deg,#fff 0%,#faf5ff 100%);
-      border:2px solid #eadcff;
-      border-radius:32px;
-      box-shadow:0 20px 45px -30px rgba(130,10,209,.55);
-    }
-
-    .pix-card{
-      background:linear-gradient(135deg,#7e22ce 0%,#9333ea 50%,#6b21a8 100%);
-      position:relative;
-      overflow:hidden;
-      border-radius:32px;
-      box-shadow:0 24px 50px -28px rgba(126,34,206,.8);
-    }
-
-    .glass{
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.12);
-      backdrop-filter:blur(8px);
-    }
-
-    .toast{
-      position:fixed;
-      top:18px;
-      left:50%;
-      transform:translateX(-50%);
-      z-index:9999;
-      width:90%;
-      max-width:390px;
-      padding:15px 16px;
+    .input{
+      width:100%;
+      padding:15px;
       border-radius:18px;
-      color:white;
-      font-weight:900;
-      box-shadow:0 16px 32px -18px rgba(0,0,0,.45);
+      border:2px solid #edf2f7;
+      font-weight:700;
     }
 
-    .marquee-container{
-      max-height:280px;
-      overflow:hidden;
-      mask-image:linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+    .input:focus{
+      outline:none;
+      border-color:#820ad1;
     }
 
-    @keyframes scroll-v{
-      0%{transform:translateY(0)}
-      100%{transform:translateY(-50%)}
-    }
-
-    .marquee-content{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      animation:scroll-v 32s linear infinite;
-    }
   </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center p-4 py-8">
+<body class="p-4">
 
-<div class="w-full max-w-md page-shell p-5 sm:p-6">
+<div class="max-w-md mx-auto space-y-5">
 
-  <div class="hero-top p-6 text-white mb-6">
-    <div class="relative z-10 text-center">
+  <div class="hero p-6 text-center">
 
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-white/15 border border-white/20 rounded-2xl mb-5 text-3xl shadow-inner">
-        ✝️
-      </div>
-
-      <p class="text-[10px] font-black uppercase tracking-[0.24em] text-white/75 mb-2">
-        EJC • Paróquia Santo Eugênio de Mazenod
-      </p>
-
-      <h1 class="text-2xl font-black leading-tight">
-        Lista de Providência
-      </h1>
-
-      <p class="text-xs font-bold text-white/75 mt-2 italic">
-        "A morte não venceu!"
-      </p>
-
-      <div class="mt-5 px-4 py-3 rounded-2xl bg-white/10 border border-white/15">
-
-        <p class="text-[10px] uppercase tracking-[0.22em] font-black text-white/70 mb-3">
-          Contagem regressiva
-        </p>
-
-        <div class="grid grid-cols-4 gap-2">
-
-          <div class="count-card">
-            <div id="cdDias" class="text-xl font-black">--</div>
-            <div class="text-[8px] uppercase font-bold text-white/70">Dias</div>
-          </div>
-
-          <div class="count-card">
-            <div id="cdHoras" class="text-xl font-black">--</div>
-            <div class="text-[8px] uppercase font-bold text-white/70">Horas</div>
-          </div>
-
-          <div class="count-card">
-            <div id="cdMin" class="text-xl font-black">--</div>
-            <div class="text-[8px] uppercase font-bold text-white/70">Min</div>
-          </div>
-
-          <div class="count-card">
-            <div id="cdSeg" class="text-xl font-black">--</div>
-            <div class="text-[8px] uppercase font-bold text-white/70">Seg</div>
-          </div>
-
-        </div>
-      </div>
+    <div class="text-4xl mb-3">
+      ✝️
     </div>
-  </div>
-  <div class="info-card p-4 mb-6">
-    <div class="flex gap-3 items-start">
-      <div class="w-10 h-10 rounded-2xl bg-white text-purple-700 flex items-center justify-center shadow-sm">
-        <i class="fas fa-heart"></i>
-      </div>
 
-      <div>
-        <p class="text-sm font-black text-purple-950 mb-1">
-          Como ser providência? ✨
-        </p>
+    <p class="text-[11px] uppercase tracking-[0.2em] font-black text-white/70">
+      EJC • Paróquia Santo Eugênio
+    </p>
 
-        <p class="text-xs text-purple-800 leading-relaxed">
-          Escolha um ou mais itens por categoria, preencha seus dados e confirme sua doação.
-        </p>
-      </div>
-    </div>
+    <h1 class="text-2xl font-black mt-2">
+      Lista de Providência
+    </h1>
+
+    <p class="text-sm text-white/70 mt-2 italic">
+      "A morte não venceu!"
+    </p>
+
   </div>
 
-  <div id="listaWrap" class="mb-8">
-
-    <div class="flex items-center justify-between mb-4 px-2">
-      <h2 class="text-xs font-black uppercase tracking-widest text-slate-500">
-        Escolha por prioridade
-      </h2>
-
-      <span id="totalPendentes"
-        class="text-[10px] font-black text-purple-700 bg-purple-50 px-3 py-1 rounded-full">
-        --
-      </span>
-    </div>
-
-    <div id="areaItens" class="space-y-4">
-      <p class="text-center text-slate-400 text-xs py-10">
-        Buscando necessidades...
-      </p>
-    </div>
-  </div>
-
-  <div id="areaForm" class="hidden cart-box p-6 mb-8">
+  <div class="card p-5">
 
     <div class="flex justify-between items-center mb-4">
 
       <div>
-        <p class="text-[10px] font-black uppercase tracking-widest text-purple-500">
-          Sua seleção
+        <p class="text-xs uppercase font-black text-slate-400">
+          Necessidades
         </p>
 
-        <h2 class="font-black text-slate-800 text-lg">
-          Minha lista
+        <h2 class="text-lg font-black text-slate-800">
+          Itens pendentes
         </h2>
       </div>
 
-      <button type="button"
-        onclick="fecharForm()"
-        class="text-[10px] font-black uppercase text-slate-400">
-        Voltar
-      </button>
+      <span id="totalPendentes"
+        class="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-black">
+        --
+      </span>
 
     </div>
 
-    <div id="itensSelecionados" class="space-y-2 mb-6"></div>
+    <div id="areaItens" class="space-y-4">
 
-    <form id="formDoacao"
+      <p class="text-center text-slate-400 text-sm py-8">
+        Carregando itens...
+      </p>
+
+    </div>
+
+  </div>
+
+  <div id="areaForm"
+    class="card p-5 hidden">
+
+    <h2 class="text-lg font-black text-slate-800 mb-4">
+      Confirmar providência 💜
+    </h2>
+
+    <div id="itensSelecionados"
+      class="space-y-2 mb-5">
+    </div>
+
+    <form
       onsubmit="event.preventDefault(); submeterDoacao();"
       class="space-y-4">
 
-      <input id="d_nome"
-        placeholder="Seu nome completo"
-        required
-        class="vault-input"/>
+      <input
+        id="d_nome"
+        class="input"
+        placeholder="Seu nome"
+        required/>
 
-      <input id="d_tel"
-        type="tel"
-        placeholder="WhatsApp com DDD"
-        required
-        class="vault-input"/>
+      <input
+        id="d_tel"
+        class="input"
+        placeholder="WhatsApp"
+        required/>
 
-      <select id="d_equipe"
-        required
-        class="vault-input bg-white">
+      <select
+        id="d_equipe"
+        class="input"
+        required>
 
-        <option value="">Sua Equipe...</option>
-        <option value="Externo">Paroquiano / Visitante</option>
+        <option value="">
+          Sua equipe...
+        </option>
 
-        <option>Animação</option>
-        <option>Apoio ao Patrimônio</option>
-        <option>Café</option>
-        <option>Círculo</option>
-        <option>Compras</option>
-        <option>Cozinha</option>
-        <option>Intercessão</option>
-        <option>Liturgia</option>
-        <option>Ordem</option>
-        <option>Piloto</option>
-        <option>Sala</option>
-        <option>Secretaria</option>
-        <option>Som e Iluminação</option>
-        <option>Trânsito</option>
-        <option>Visitação</option>
+        <option value="Externo">
+          Externo
+        </option>
+
+        <option>
+          Cozinha
+        </option>
+
+        <option>
+          Liturgia
+        </option>
+
+        <option>
+          Ordem
+        </option>
 
       </select>
 
-      <div>
-        <label class="text-[9px] font-black text-slate-400 uppercase ml-1">
-          Previsão de entrega
-        </label>
+      <input
+        id="d_data"
+        type="date"
+        class="input"
+        required/>
 
-        <input id="d_data"
-          type="date"
-          required
-          class="vault-input mt-1"/>
-      </div>
+      <button
+        class="w-full bg-purple-700 text-white py-4 rounded-2xl font-black uppercase">
 
-      <button type="submit"
-        id="btnEnviar"
-        class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl uppercase tracking-widest text-sm">
-
-        Confirmar Providência 💜
+        Confirmar Providência
 
       </button>
 
     </form>
+
   </div>
 
 </div>
 
 <script>
-const SUPABASE_URL = 'https://ilzgmueeblxeyieumpyk.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
 
-const _supabase = supabase.createClient(
+const SUPABASE_URL =
+'https://ilzgmueeblxeyieumpyk.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
+
+const _supabase =
+supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
@@ -420,103 +225,98 @@ const _supabase = supabase.createClient(
 let carrinho = [];
 
 function esc(s){
-  return s
-    ? String(s).replace(/[&<>'"]/g, t => ({
+  return String(s || "")
+    .replace(/[&<>'"]/g, t => ({
       '&':'&amp;',
       '<':'&lt;',
       '>':'&gt;',
       "'":'&#39;',
       '"':'&quot;'
-    }[t]))
-    : "";
-}
-
-function showToast(msg){
-  const t = document.createElement("div");
-
-  t.className = "toast bg-slate-900";
-  t.innerText = msg;
-
-  document.body.appendChild(t);
-
-  setTimeout(() => {
-    t.remove();
-  }, 3000);
-}
-
-function categorizar(item){
-  const n = String(item || "").toLowerCase();
-
-  if([
-    "água","agua","carne","frango","linguiça",
-    "bacon","mussarela","presunto"
-  ].some(x => n.includes(x))){
-    return "🚨 Críticos";
-  }
-
-  if([
-    "arroz","feijão","feijao","óleo","oleo",
-    "leite","café","cafe","açúcar","acucar",
-    "sal","farinha"
-  ].some(x => n.includes(x))){
-    return "🍚 Alimentação";
-  }
-
-  if([
-    "batata","cebola","alho","cenoura",
-    "tomate","limão","limao","banana"
-  ].some(x => n.includes(x))){
-    return "🥬 Hortifruti";
-  }
-
-  return "💜 Outros";
+    }[t]));
 }
 
 function prioridadeInfo(item){
-  const n = String(item || "").toLowerCase();
 
-  const criticos = [
-    "água","agua","carne","frango","linguiça",
-    "bacon","mussarela","presunto","arroz",
-    "feijão","feijao","óleo","oleo","leite"
-  ];
+  const n =
+    String(item || "").toLowerCase();
 
-  const importantes = [
-    "café","cafe","açúcar","acucar","sal",
-    "farinha","detergente","desinfetante",
-    "sabão","sabao"
-  ];
+  if([
+    "carne",
+    "frango",
+    "arroz",
+    "feijão",
+    "agua",
+    "água"
+  ].some(x => n.includes(x))){
 
-  if(criticos.some(p => n.includes(p))){
     return {
-      nivel:1,
       label:"🔴 Prioridade alta",
       classe:"bg-rose-50 text-rose-700 border-rose-100"
     };
   }
 
-  if(importantes.some(p => n.includes(p))){
+  if([
+    "óleo",
+    "oleo",
+    "café",
+    "cafe",
+    "sal"
+  ].some(x => n.includes(x))){
+
     return {
-      nivel:2,
       label:"🟠 Importante",
       classe:"bg-orange-50 text-orange-700 border-orange-100"
     };
   }
 
   return {
-    nivel:3,
     label:"🟢 Apoio",
     classe:"bg-emerald-50 text-emerald-700 border-emerald-100"
   };
 }
 
+function categorizar(item){
+
+  const n =
+    String(item || "").toLowerCase();
+
+  if([
+    "carne",
+    "frango",
+    "linguiça"
+  ].some(x => n.includes(x))){
+    return "🍖 Proteínas";
+  }
+
+  if([
+    "arroz",
+    "feijão",
+    "feijao"
+  ].some(x => n.includes(x))){
+    return "🍚 Alimentação";
+  }
+
+  if([
+    "detergente",
+    "sabão",
+    "sabao"
+  ].some(x => n.includes(x))){
+    return "🧼 Limpeza";
+  }
+
+  return "💜 Outros";
+}
+
 async function carregarDados(){
 
-  const wrap = document.getElementById("areaItens");
+  const wrap =
+    document.getElementById(
+      "areaItens"
+    );
 
   wrap.innerHTML = `
-    <p class="text-center text-slate-400 text-xs py-10">
-      Buscando necessidades...
+    <p class="text-center text-slate-400 text-sm py-8">
+      Carregando itens...
     </p>
   `;
 
@@ -525,29 +325,31 @@ async function carregarDados(){
       .from("metas_providencia")
       .select("*");
 
-  const { data: doacoes, error: erroDoacoes } =
-    await _supabase
-      .from("doacao")
-      .select("item, quantidade, status");
+  if(erroMetas){
 
-  if(erroMetas || erroDoacoes){
-    console.error(erroMetas || erroDoacoes);
+    console.error(erroMetas);
 
     wrap.innerHTML = `
-      <p class="text-center text-rose-500 text-xs py-10">
-        Erro ao carregar a lista.
+      <p class="text-center text-rose-500 text-sm py-8">
+        Erro ao carregar metas.
       </p>
     `;
 
     return;
   }
 
+  const { data: doacoes } =
+    await _supabase
+      .from("doacao")
+      .select("item, quantidade, status");
+
   const mapa = {};
 
   (doacoes || []).forEach(d => {
 
     const status =
-      String(d.status || "").toUpperCase();
+      String(d.status || "")
+      .toUpperCase();
 
     if(![
       "PROMETIDO",
@@ -564,6 +366,7 @@ async function carregarDados(){
     mapa[key] =
       (mapa[key] || 0)
       + Number(d.quantidade || 0);
+
   });
 
   const grupos = {
@@ -577,7 +380,10 @@ async function carregarDados(){
     const item =
       String(m.item || "").trim();
 
-    const key = item.toLowerCase();
+    if(!item) return;
+
+    const key =
+      item.toLowerCase();
 
     const alvo =
       Number(m.quantidade_alvo || 0);
@@ -586,17 +392,23 @@ async function carregarDados(){
       mapa[key] || 0;
 
     const falta =
-      Math.max(0, alvo - recebido);
+      alvo <= 0
+        ? 1
+        : Math.max(0, alvo - recebido);
 
     const perc =
       alvo > 0
         ? Math.min(
             100,
-            Math.round((recebido / alvo) * 100)
+            Math.round(
+              (recebido / alvo) * 100
+            )
           )
         : 0;
 
-    if(falta <= 0) return;
+    if(alvo > 0 && falta <= 0){
+      return;
+    }
 
     const prio =
       prioridadeInfo(item);
@@ -611,212 +423,160 @@ async function carregarDados(){
       prio,
       categoria:categorizar(item)
     });
+
   });
 
   wrap.innerHTML = "";
 
   let total = 0;
 
-  Object.entries(grupos).forEach(([titulo,itens]) => {
+  Object.entries(grupos)
+    .forEach(([titulo,itens]) => {
 
     if(!itens.length) return;
 
     total += itens.length;
 
-    const details =
-      document.createElement("details");
+    const bloco =
+      document.createElement("div");
 
-    details.className =
-      "category-premium";
+    bloco.className =
+      "space-y-3";
 
-    details.open =
-      titulo.includes("alta");
+    bloco.innerHTML = `
 
-    const summary =
-      document.createElement("summary");
+      <div class="flex items-center gap-2 px-1">
 
-    summary.className =
-      "category-head";
-
-    summary.innerHTML = `
-      <div class="flex items-center gap-3">
-
-        <div class="category-icon">
-          ${titulo.split(" ")[0]}
+        <div class="font-black text-sm text-slate-800">
+          ${titulo}
         </div>
 
-        <div>
-          <p class="text-sm font-black text-slate-800">
-            ${titulo}
-          </p>
-
-          <p class="text-[10px] font-bold text-slate-400">
-            ${itens.length} necessidade(s)
-          </p>
+        <div class="text-xs text-slate-400 font-bold">
+          (${itens.length})
         </div>
 
       </div>
 
-      <i class="fas fa-chevron-down text-slate-300"></i>
-    `;
+      ${itens.map(m => `
 
-    const content =
-      document.createElement("div");
+        <div class="item-card p-4">
 
-    content.className = "pb-2";
+          <div class="flex justify-between gap-3">
 
-    content.innerHTML =
-      itens.map(m => `
+            <div class="flex-1">
 
-      <div class="item-premium">
+              <div class="flex flex-wrap gap-2 mb-2">
 
-        <div class="flex items-start justify-between gap-3">
+                <span class="text-[9px] font-black px-2 py-1 rounded-full border ${m.prio.classe}">
+                  ${m.prio.label}
+                </span>
 
-          <div class="flex-1">
+                <span class="text-[9px] font-black px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-100">
+                  ${m.categoria}
+                </span>
 
-            <div class="flex flex-wrap gap-2 mb-2">
-
-              <span class="text-[8px] font-black px-2 py-1 rounded-full border ${m.prio.classe}">
-                ${m.prio.label}
-              </span>
-
-              <span class="text-[8px] font-black px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-100">
-                ${m.categoria}
-              </span>
-
-            </div>
-
-            <p class="text-sm font-black text-slate-800">
-              ${esc(m.item)}
-            </p>
-
-            <p class="text-[10px] font-bold text-slate-400 mt-1">
-              Faltam ${m.falta} ${esc(m.unidade)}
-              •
-              Recebido ${m.recebido}/${m.alvo}
-            </p>
-
-            <div class="progress-track mt-3">
-              <div class="progress-fill"
-                style="width:${m.perc}%">
               </div>
+
+              <p class="text-sm font-black text-slate-800">
+                ${esc(m.item)}
+              </p>
+
+              <p class="text-[11px] text-slate-400 font-bold mt-1">
+
+                Faltam
+                ${m.falta}
+                ${esc(m.unidade)}
+
+                •
+
+                Recebido
+                ${m.recebido}/${m.alvo}
+
+              </p>
+
+              <div class="progress mt-3">
+
+                <div class="progress-fill"
+                  style="width:${m.perc}%">
+                </div>
+
+              </div>
+
             </div>
+
+            <button
+              class="choose"
+              onclick='selecionarItem(
+                ${JSON.stringify(m.item)},
+                ${JSON.stringify(m.unidade)},
+                ${m.falta}
+              )'>
+
+              Escolher
+
+            </button>
 
           </div>
 
-          <button
-            type="button"
-            class="choose-mini"
-            onclick='selecionarItemPremium(
-              ${JSON.stringify(m.item)},
-              ${JSON.stringify(m.unidade)},
-              ${m.falta}
-            )'>
-
-            Escolher
-
-          </button>
-
         </div>
-      </div>
 
-    `).join("");
+      `).join("")}
 
-    details.appendChild(summary);
-    details.appendChild(content);
+    `;
 
-    wrap.appendChild(details);
+    wrap.appendChild(bloco);
 
   });
 
   document.getElementById(
     "totalPendentes"
-  ).innerText = `${total} itens`;
+  ).innerText =
+    `${total} itens`;
 
 }
 
-function selecionarItemPremium(item, unidade, max){
+function selecionarItem(item, unidade, max){
 
-  const existe =
-    carrinho.find(c => c.item === item);
-
-  if(existe){
-
-    if(existe.quantidade < max){
-      existe.quantidade += 1;
-    }
-
-  }else{
-
-    carrinho.push({
-      item,
-      quantidade:1,
-      unidade,
-      max
-    });
-
-  }
-
-  abrirForm();
-
-  showToast(
-    `${item} adicionado 💜`
-  );
-}
-
-function abrirForm(){
-
-  document.getElementById(
-    "areaForm"
-  ).classList.remove("hidden");
+  carrinho.push({
+    item,
+    unidade,
+    quantidade:1,
+    max
+  });
 
   renderCarrinho();
 
-  document.getElementById(
-    "areaForm"
-  ).scrollIntoView({
-    behavior:"smooth"
-  });
-}
+  document
+    .getElementById("areaForm")
+    .classList.remove("hidden");
 
-function fecharForm(){
-  document.getElementById(
-    "areaForm"
-  ).classList.add("hidden");
+  document
+    .getElementById("areaForm")
+    .scrollIntoView({
+      behavior:"smooth"
+    });
 }
 
 function renderCarrinho(){
 
-  const list =
+  const wrap =
     document.getElementById(
       "itensSelecionados"
     );
 
-  if(!carrinho.length){
-
-    list.innerHTML = `
-      <p class="text-xs text-slate-400 text-center py-3">
-        Nenhum item selecionado.
-      </p>
-    `;
-
-    return;
-  }
-
-  list.innerHTML =
+  wrap.innerHTML =
     carrinho.map(c => `
 
-      <div class="flex items-center justify-between bg-white border border-purple-100 rounded-2xl p-3">
+      <div class="bg-purple-50 border border-purple-100 rounded-2xl p-3">
 
-        <div>
-          <p class="text-sm font-black text-slate-800">
-            ${esc(c.item)}
-          </p>
+        <p class="font-black text-sm text-slate-800">
+          ${esc(c.item)}
+        </p>
 
-          <p class="text-[10px] font-bold text-purple-600">
-            ${c.quantidade} ${esc(c.unidade)}
-          </p>
-        </div>
+        <p class="text-xs text-purple-700 font-bold">
+          ${c.quantidade}
+          ${esc(c.unidade)}
+        </p>
 
       </div>
 
@@ -828,79 +588,62 @@ async function submeterDoacao(){
   const nome =
     document.getElementById("d_nome").value;
 
-  const tel =
+  const telefone =
     document.getElementById("d_tel").value;
 
   const equipe =
     document.getElementById("d_equipe").value;
 
-  const dataP =
+  const data =
     document.getElementById("d_data").value;
 
-  const doacoes = carrinho.map(c => ({
-    nome,
-    telefone:tel,
-    equipe,
-    item:c.item,
-    quantidade:c.quantidade,
-    unidade:c.unidade,
-    status:"PROMETIDO",
-    data_previsao:dataP
-  }));
+  const payload =
+    carrinho.map(c => ({
+
+      nome,
+      telefone,
+      equipe,
+
+      item:c.item,
+      quantidade:c.quantidade,
+      unidade:c.unidade,
+
+      status:"PROMETIDO",
+      data_previsao:data
+
+    }));
 
   const { error } =
     await _supabase
       .from("doacao")
-      .insert(doacoes);
+      .insert(payload);
 
   if(error){
+
     console.error(error);
-    return showToast("Erro ao salvar");
+
+    alert(
+      "Erro ao salvar."
+    );
+
+    return;
   }
 
-  showToast("Providência registrada 💜");
+  alert(
+    "Providência registrada 💜"
+  );
 
   location.reload();
 }
 
-function initTimer(){
-
-  const target =
-    new Date(
-      "2026-07-11T00:00:00-03:00"
-    ).getTime();
-
-  function update(){
-
-    const diff =
-      target - new Date().getTime();
-
-    document.getElementById("cdDias").innerText =
-      Math.floor(diff / (1000*60*60*24));
-
-    document.getElementById("cdHoras").innerText =
-      Math.floor((diff / (1000*60*60)) % 24);
-
-    document.getElementById("cdMin").innerText =
-      Math.floor((diff / (1000*60)) % 60);
-
-    document.getElementById("cdSeg").innerText =
-      Math.floor((diff / 1000) % 60);
-  }
-
-  update();
-
-  setInterval(update,1000);
-}
-
 window.onload = () => {
-
-  initTimer();
 
   carregarDados();
 
   const hoje =
-    new Date().toISOString().split("T")[0];
+    new Date()
+    .toISOString()
+    .split("T")[0];
 
   document
     .getElementById("d_data")
