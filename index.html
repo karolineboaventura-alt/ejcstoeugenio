@@ -187,7 +187,7 @@
         </div>
       </div>
     </main>
-    <button id="fabNovoRegistro" onclick="abrirModal()" class="fixed bottom-8 right-8 w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition z-50">
+        <button id="fabNovoRegistro" onclick="abrirModal()" class="fixed bottom-8 right-8 w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition z-50">
       <i class="fas fa-plus"></i>
     </button>
   </div>
@@ -403,6 +403,39 @@
     let extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
     let registroEmEdicao = null;
 
+    let USUARIO_LOGADO = {
+      email: "",
+      nome: "",
+      avatar: "P"
+    };
+
+    const MAPA_USUARIOS = {
+      "angela@ejcbank.com.br": {
+        nome: "Tia Ângela",
+        avatar: "Â"
+      },
+      "cross@ejcbank.com.br": {
+        nome: "Prima Cross",
+        avatar: "C"
+      },
+      "ge@ejcbank.com.br": {
+        nome: "Tio Ge",
+        avatar: "G"
+      },
+      "rafael@ejcbank.com.br": {
+        nome: "Rafael",
+        avatar: "R"
+      },
+      "karol@ejcbank.com.br": {
+        nome: "Karol",
+        avatar: "K"
+      },
+      "compras@ejcbank.com.br": {
+        nome: "Equipe de Compras",
+        avatar: "C"
+      }
+    };
+
     // ============================
     // UTILITÁRIOS E MAPEAMENTO
     // ============================
@@ -460,9 +493,6 @@
       return "";
     }
     function obterStatusVisual(r) {
-      if (abaAtiva === "DOACAO" || r._modulo === "doacao") {
-        return obterStatusRegistro(r);
-      }
       return obterStatusRegistro(r);
     }
     function obterValorPagoRegistro(r) {
@@ -477,10 +507,14 @@
       return (s === "PENDENTE" || s === "PARCIAL") ? Number(r.valor || r.valor_total || r.valor_estimado || 0) : 0;
     }
     function obterEquipeResponsavel() { return ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças"; }
+    
     function obterNomeResponsavel() {
-      return document.getElementById("quitarTudoRecebidoPor")?.value?.trim() || 
-             document.getElementById("f_recebido")?.value?.trim() || 
-             (ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças");
+      return (
+        document.getElementById("quitarTudoRecebidoPor")?.value?.trim() ||
+        document.getElementById("f_recebido")?.value?.trim() ||
+        USUARIO_LOGADO.nome ||
+        (ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças")
+      );
     }
 
     // ============================
@@ -493,6 +527,7 @@
       else { document.getElementById("formCompras").classList.add("hidden"); document.getElementById("formPilotos").classList.remove("hidden"); }
     }
     function voltarParaSelecao() { document.getElementById("stepAuth").classList.add("hidden"); document.getElementById("stepProfile").classList.remove("hidden"); }
+    
     async function loginPiloto() {
       const email = document.getElementById("emailPiloto").value.trim().toLowerCase();
       const senha = document.getElementById("senhaPiloto").value.trim();
@@ -506,10 +541,18 @@
         if (email === "compras@ejcbank.com.br") { msgErro.textContent = "Use o botão de Compras."; msgErro.classList.remove("hidden"); return; }
         const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
         if (error || !data?.user) { msgErro.textContent = "Credenciais inválidas."; msgErro.classList.remove("hidden"); return; }
-        ROLE = "PILOTOS"; finalizarLogin();
+        
+        ROLE = "PILOTOS";
+        USUARIO_LOGADO = {
+          email,
+          nome: MAPA_USUARIOS[email]?.nome || "Piloto",
+          avatar: MAPA_USUARIOS[email]?.avatar || "P"
+        };
+        finalizarLogin();
       } catch (e) { msgErro.textContent = "Erro de conexão"; msgErro.classList.remove("hidden"); }
       finally { btn.disabled = false; btn.innerHTML = original; }
     }
+    
     async function loginCompras() {
       const senha = document.getElementById("senhaCompras").value.trim();
       const msgErro = document.getElementById("msgErroLogin");
@@ -520,7 +563,14 @@
       try {
         const { data, error } = await _supabase.auth.signInWithPassword({ email: "compras@ejcbank.com.br", password: senha });
         if (error || !data?.user) { msgErro.textContent = "Senha incorreta."; msgErro.classList.remove("hidden"); return; }
-        ROLE = "COMPRAS"; finalizarLogin();
+        
+        ROLE = "COMPRAS";
+        USUARIO_LOGADO = {
+          email: "compras@ejcbank.com.br",
+          nome: "Equipe de Compras",
+          avatar: "C"
+        };
+        finalizarLogin();
       } catch (e) { msgErro.textContent = "Erro"; msgErro.classList.remove("hidden"); }
       finally { btn.disabled = false; btn.innerHTML = original; }
     }
@@ -528,7 +578,22 @@
     function finalizarLogin() {
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appMain").classList.remove("hidden");
-      document.getElementById("headerTitle").textContent = "EJC BANK • " + ROLE;
+
+      const titulo = document.getElementById("headerTitle");
+      if (titulo) {
+        titulo.textContent = `EJC BANK • ${USUARIO_LOGADO.nome}`;
+      }
+
+      const avatar = document.getElementById("userAvatar");
+      if (avatar) {
+        avatar.textContent = USUARIO_LOGADO.avatar;
+      }
+
+      const campoRecebido = document.getElementById("f_recebido");
+      if (campoRecebido) {
+        campoRecebido.value = USUARIO_LOGADO.nome;
+      }
+
       configurarAbasPorPerfil();
     }
     
@@ -637,7 +702,10 @@
       } else {
         document.getElementById("blocoModulo")?.classList.remove("hidden");
       }
-      document.getElementById("f_recebido").value = ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças";
+      
+      // O nome do responsável agora é puxado direto da IA!
+      document.getElementById("f_recebido").value = obterNomeResponsavel();
+      
       if (document.getElementById("f_qtd_doacao")) document.getElementById("f_qtd_doacao").value = 1;
       if (document.getElementById("f_un_doacao")) document.getElementById("f_un_doacao").value = "un";
       atualizarModalDinamico();
@@ -1705,19 +1773,37 @@
       document.getElementById("f_modulo")?.addEventListener("change", atualizarModalDinamico);
     });
     
+    // ATUALIZADO: Inicialização carrega os dados do Usuário Logado
     window.addEventListener("load", async () => {
       const { data: { session } } = await _supabase.auth.getSession();
       if (session?.user) {
         ROLE = session.user.email === "compras@ejcbank.com.br" ? "COMPRAS" : "PILOTOS";
+        
+        const email = session.user.email?.toLowerCase() || "";
+        
+        USUARIO_LOGADO = {
+          email,
+          nome: MAPA_USUARIOS[email]?.nome || (ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto"),
+          avatar: MAPA_USUARIOS[email]?.avatar || (ROLE === "COMPRAS" ? "C" : "P")
+        };
+
         document.getElementById("loginScreen")?.classList.add("hidden");
         document.getElementById("appMain")?.classList.remove("hidden");
+        
         const headerTitle = document.getElementById("headerTitle");
-        if(headerTitle) headerTitle.textContent = ROLE === "COMPRAS" ? "EJC BANK • COMPRAS" : "EJC BANK • PILOTOS";
+        if (headerTitle) {
+          headerTitle.textContent = `EJC BANK • ${USUARIO_LOGADO.nome}`;
+        }
+        
         const userAvatar = document.getElementById("userAvatar");
-        if(userAvatar) userAvatar.textContent = ROLE === "COMPRAS" ? "C" : "P";
+        if (userAvatar) {
+          userAvatar.textContent = USUARIO_LOGADO.avatar;
+        }
+
         configurarAbasPorPerfil();
       }
     });
   </script>
 </body>
 </html>
+
