@@ -847,11 +847,25 @@
         </div>
       `).join("");
     }
-    
-    function atualizarPaineis() {
+    async function atualizarPaineis() {
       if (abaAtiva === "EJC") {
         const rec = dadosCache.filter(r => obterStatusRegistro(r) === "PAGO" && r.tipo !== "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);
-        const pen = dadosCache.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; }).reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+        let pen = dadosCache
+  .filter(r => {
+    const st = obterStatusRegistro(r);
+    return st === "PENDENTE" || st === "PARCIAL";
+  })
+  .reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+
+const { data: fiadosMercadinho } = await _supabase
+  .from("mercadinho")
+  .select("valor,status")
+  .eq("status", "PENDENTE");
+
+const totalFiadoMercadinho = (fiadosMercadinho || [])
+  .reduce((a, r) => a + Number(r.valor || 0), 0);
+
+pen += totalFiadoMercadinho;
         const sai = dadosCache.filter(r => r.tipo === "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);
         const elRec = document.getElementById("totalRecebido"); if(elRec) elRec.textContent = formatarMoeda(rec);
         const elPen = document.getElementById("totalPendente"); if(elPen) elPen.textContent = formatarMoeda(pen);
@@ -954,8 +968,8 @@
       if (abaAtiva === "DOACAO") {
         if (typeof carregarMetas === "function") await carregarMetas();
       }
-      atualizarPaineis();
-      renderizar();
+      await atualizarPaineis();
+renderizar();
     }
 
     async function salvarRegistro() {
