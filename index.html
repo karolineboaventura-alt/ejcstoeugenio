@@ -1358,36 +1358,57 @@ renderizar();
     // EXTRATO 360 & COBRANÇA
     // ============================
     async function abrirExtratoCompleto(telefone, nome = "") {
-      const num = normalizarTelefone(telefone);
-      if (!num) return showToast("Telefone inválido.", "error");
-      const tabelas = ["caixa_ejc", "mercadinho", "camisetas", "doacao"];
-      let todos = [];
-      for (const t of tabelas) {
-        const { data, error } = await _supabase.from(t).select("*").eq("telefone", num);
-        if (!error && data?.length) { todos.push(...data.map(item => ({ ...item, _modulo: t }))); }
-      }
-      if (!todos.length) return showToast("Nenhum registro encontrado para este telefone.", "error");
-      todos.sort((a, b) => {
-        const da = new Date(a.criado_em || a.created_at || a.data_movimento || 0).getTime();
-        const db = new Date(b.criado_em || b.created_at || b.data_movimento || 0).getTime();
-        return db - da;
-      });
-      const primeiroComNome = todos.find(x => x.nome);
-      const primeiroComEquipe = todos.find(x => x.equipe_responsavel || x.equipe);
-      extratoAtual = {
-        nome: nome || primeiroComNome?.nome || "Sem nome",
-        equipe: primeiroComEquipe?.equipe_responsavel || primeiroComEquipe?.equipe || "",
-        telefone: num,
-        tabela: "MULTIPLO",
-        registros: todos,
-        registrosFiltrados: [...todos]
-      };
-      document.getElementById("extratoNome").textContent = extratoAtual.nome;
-      document.getElementById("extratoEquipe").textContent = extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}` : "";
-      document.getElementById("filtroExtrato").value = "";
-      renderizarExtrato();
-      document.getElementById("modalExtrato")?.classList.remove("hidden");
-      document.getElementById("modalExtrato")?.classList.add("flex");
+  const num = normalizarTelefone(telefone);
+  if (!num) return showToast("Telefone inválido.", "error");
+
+  const tabelas = ["caixa_ejc", "mercadinho", "camisetas", "doacao"];
+  let todos = [];
+
+  for (const t of tabelas) {
+    const { data, error } = await _supabase.from(t).select("*");
+
+    if (!error && data?.length) {
+      const filtrados = data.filter(item =>
+        normalizarTelefone(item.telefone) === num
+      );
+
+      todos.push(...filtrados.map(item => ({
+        ...item,
+        _modulo: t
+      })));
+    }
+  }
+
+  if (!todos.length) {
+    return showToast("Nenhum registro encontrado para este telefone.", "error");
+  }
+
+  todos.sort((a, b) => {
+    const da = new Date(a.criado_em || a.created_at || a.data_movimento || 0).getTime();
+    const db = new Date(b.criado_em || b.created_at || b.data_movimento || 0).getTime();
+    return db - da;
+  });
+
+  const primeiroComNome = todos.find(x => x.nome);
+  const primeiroComEquipe = todos.find(x => x.equipe_responsavel || x.equipe);
+
+  extratoAtual = {
+    nome: nome || primeiroComNome?.nome || "Sem nome",
+    equipe: primeiroComEquipe?.equipe_responsavel || primeiroComEquipe?.equipe || "",
+    telefone: num,
+    tabela: "MULTIPLO",
+    registros: todos,
+    registrosFiltrados: [...todos]
+  };
+
+  document.getElementById("extratoNome").textContent = extratoAtual.nome;
+  document.getElementById("extratoEquipe").textContent = extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}` : "";
+  document.getElementById("filtroExtrato").value = "";
+
+  renderizarExtrato();
+
+  document.getElementById("modalExtrato")?.classList.remove("hidden");
+  document.getElementById("modalExtrato")?.classList.add("flex");
     }
     
     function renderizarExtrato() {
