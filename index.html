@@ -1811,19 +1811,16 @@ renderizar();
         document.getElementById("loginScreen")?.classList.add("hidden");
         document.getElementById("appMain")?.classList.remove("hidden");
         
-        const headerTitle = document.getElementById("headerTitle");
-        if (headerTitle) {
-          headerTitle.textContent = `EJC BANK • ${USUARIO_LOGADO.nome}`;
-        }
-        
-        const userAvatar = document.getElementById("userAvatar");
-        if (userAvatar) {
-          userAvatar.textContent = USUARIO_LOGADO.avatar;
-        }
+        document.getElementById("headerTitle").textContent = `EJC BANK • ${USUARIO_LOGADO.nome}`;
+        document.getElementById("userAvatar").textContent = USUARIO_LOGADO.avatar;
 
         configurarAbasPorPerfil();
       }
     });
+
+    async function exportarFechamentoExcel() {
+      showToast("Gerando fechamento em Excel...");
+    }
   </script>
 </body>
 </html>
