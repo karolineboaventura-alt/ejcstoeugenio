@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#820ad1" />
+  <title>EJC BANK • Paróquia Santo Eugênio de Mazenod</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --nu-roxo: #820ad1; --nu-roxo-dark: #4b0082; --nu-bg: #f8fafc; }
+    body { font-family: "Plus Jakarta Sans", sans-serif; background-color: var(--nu-bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+    .bg-roxo-premium { background: radial-gradient(circle at top right, #820ad1, #4b0082); position: relative; }
+    .bg-roxo-premium::before { content: ""; position: absolute; inset: 0; background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); opacity: 0.1; }
+    .premium-card { background: rgba(255,255,255,0.98); border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,.35); backdrop-filter: blur(10px); }
+    .vault-input { background: #f8fafc; border: 2px solid #f1f5f9; transition: all .3s ease; }
+    .vault-input:focus { background: white; border-color: var(--nu-roxo); box-shadow: 0 0 0 4px rgba(130,10,209,.1); outline: none; }
+    .nu-header { background: linear-gradient(135deg, #820ad1 0%, #4b0082 100%); color: white; padding-bottom: 24px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px; }
+    .choice-card { background: #fff; border: 2px solid #f1f5f9; transition: all .3s cubic-bezier(.4,0,.2,1); }
+    .choice-card:active { transform: scale(.97); border-color: var(--nu-roxo); }
+    .hidden { display: none !important; }
+    #toast-container { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 400px; }
+    .toast { background: #1e293b; color: white; padding: 16px 20px; border-radius: 16px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,.2); margin-bottom: 8px; }
+    @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .animate-elite { animation: slideIn .5s ease-out forwards; }
+    .action-btn { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; transition: all .2s ease; flex-shrink: 0; font-size: 14px; }
+    .action-btn:active { transform: scale(.95); }
+    .nubank-card { background: linear-gradient(180deg, #ffffff 0%, #fbf9ff 100%); border: 1px solid #eee7fb; border-radius: 24px; box-shadow: 0 14px 35px -28px rgba(0,0,0,.35); }
+    .soft-stat { border-radius: 18px; padding: 12px; border: 1px solid #edf2f7; background: #fafafa; text-align: center; }
+    .extrato-item { border: 1px solid #edf2f7; background: white; border-radius: 18px; margin-bottom: 8px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+  </style>
+</head>
+<body class="text-slate-900 min-h-screen flex flex-col">
+  <div id="toast-container"></div>
+  <div id="loginScreen" class="fixed inset-0 z-[999] flex items-center justify-center px-6 bg-roxo-premium">
+    <div class="w-full max-w-sm premium-card p-10 animate-elite">
+      <div id="stepProfile">
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-2xl mb-6 text-purple-700 text-3xl shadow-inner">✝️</div>
+          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">EJC <span class="text-purple-600">BANK</span></h1>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Escolha seu perfil</p>
+        </div>
+        <div class="space-y-4">
+          <button onclick="escolherPerfil('compras')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5 border border-slate-100 bg-white">
+            <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-shopping-cart"></i></div>
+            <div class="text-left"><p class="text-lg font-bold text-slate-800">🛍️ COMPRAS</p></div>
+          </button>
+          <button onclick="escolherPerfil('pilotos')" class="choice-card w-full p-6 rounded-3xl flex items-center gap-5 border border-slate-100 bg-white">
+            <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-user-shield"></i></div>
+            <div class="text-left"><p class="text-lg font-bold text-slate-800">✈️ PILOTOS</p></div>
+          </button>
+        </div>
+      </div>
+      <div id="stepAuth" class="hidden">
+        <button onclick="voltarParaSelecao()" class="text-slate-400 hover:text-purple-700 transition text-[10px] font-black uppercase mb-8 flex items-center gap-2"><i class="fas fa-chevron-left"></i> Voltar</button>
+        <form id="formCompras" onsubmit="event.preventDefault(); loginCompras();" class="space-y-6 hidden">
+          <input type="password" id="senhaCompras" placeholder="••••" required class="vault-input w-full rounded-xl py-4 text-center text-2xl tracking-[0.5em]" />
+          <button type="submit" id="btnCompras" class="w-full py-4 rounded-xl font-bold text-white bg-purple-700 shadow-lg">ENTRAR NO SISTEMA</button>
+        </form>
+        <form id="formPilotos" onsubmit="event.preventDefault(); loginPiloto();" class="space-y-4 hidden">
+          <input type="email" id="emailPiloto" placeholder="E-mail" required class="vault-input w-full rounded-xl py-4 px-5 font-bold" />
+          <input type="password" id="senhaPiloto" placeholder="Senha" required class="vault-input w-full rounded-xl py-4 px-5 font-bold" />
+          <button type="submit" id="btnPiloto" class="w-full py-4 rounded-xl font-bold text-white bg-slate-900 shadow-xl">ACESSAR PAINEL</button>
+        </form>
+        <p id="msgErroLogin" class="hidden mt-6 text-rose-600 text-[10px] font-bold text-center uppercase py-3 bg-rose-50 rounded-lg">Credenciais inválidas</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="appMain" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full">
+    <header class="nu-header sticky top-0 z-40 px-6 pt-8 text-white">
+      <div class="flex justify-between items-center mb-8">
+        <div class="flex items-center gap-4">
+          <div id="userAvatar" class="w-12 h-12 bg-white/20 border border-white/30 rounded-xl flex items-center justify-center font-bold text-xl backdrop-blur-sm">P</div>
+          <div>
+            <p class="text-[10px] font-bold text-white/60 uppercase italic">"A morte não venceu!"</p>
+            <h1 id="headerTitle" class="font-extrabold text-xl tracking-tight leading-none uppercase">EJC BANK</h1>
+          </div>
+        </div>
+        <button onclick="sair()" class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition"><i class="fas fa-power-off"></i></button>
+      </div>
+      <div class="flex gap-3 overflow-x-auto pb-2">
+        <button id="tab-ejc" onclick="mudarAba('EJC')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Caixa EJC</button>
+        <button id="tab-mercadinho" onclick="mudarAba('MERCADINHO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Mercadinho</button>
+        <button id="tab-camisetas" onclick="mudarAba('CAMISETAS')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Lista de Camisetas</button>
+        <button id="tab-doacao" onclick="mudarAba('DOACAO')" class="tab-btn px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white/10 text-white hidden">Lista de Providência</button>
+      </div>
+    </header>
+
+    <main class="px-6 py-8 space-y-8">
+      <div id="dashAdmin" class="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 hidden">
+        <div id="dashGrid" class="grid grid-cols-1 sm:grid-cols-4 gap-8 text-center">
+          <div><p class="text-[9px] font-black text-slate-400 uppercase mb-3">Entradas (Pagas)</p><h2 id="totalRecebido" class="text-3xl font-extrabold text-emerald-600">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase mb-3">A Receber (Fiado)</p><h2 id="totalPendente" class="text-3xl font-extrabold text-amber-500">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase mb-3">Saídas (Gastos)</p><h2 id="totalSaidas" class="text-3xl font-black text-rose-600">R$ 0,00</h2></div>
+          <div><p class="text-[9px] font-black text-slate-400 uppercase mb-3">Saldo em Caixa</p><h2 id="totalLiquido" class="text-3xl font-extrabold text-purple-700">R$ 0,00</h2></div>
+        </div>
+      </div>
+
+      <div id="painelFeijoada" class="hidden bg-white rounded-[32px] p-6 shadow-sm border border-slate-100">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+          <div>
+            <p id="tituloPainelModulo" class="text-[10px] font-black uppercase text-slate-400">Painel Operacional</p>
+            <h3 class="text-xl font-black text-slate-800">Controle de Módulo</h3>
+          </div>
+        </div>
+
+        <div id="gridMetricasFeijoada" class="grid grid-cols-2 sm:grid-cols-6 gap-3">
+          <div class="soft-stat bg-purple-50 border-purple-100"><p class="text-[10px] font-black uppercase text-purple-400">Total/Vend</p><p id="fjVendidos" class="text-xl font-extrabold text-slate-800">0</p></div>
+          <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Pagos</p><p id="fjPagos" class="text-xl font-extrabold text-slate-800">0</p></div>
+          <div class="soft-stat bg-amber-50 border-amber-100"><p class="text-[10px] font-black uppercase text-amber-500">Pendentes</p><p id="fjPendentes" class="text-xl font-extrabold text-slate-800">0</p></div>
+          <div class="soft-stat bg-slate-50 border-slate-200"><p class="text-[10px] font-black uppercase text-slate-500">Logística</p><p id="fjRestantes" class="text-xl font-extrabold text-slate-800">0</p></div>
+          <div class="soft-stat bg-rose-50 border-rose-100"><p class="text-[10px] font-black uppercase text-rose-500">Custos</p><p id="fjMercado" class="text-xl font-extrabold text-slate-800">R$ 0,00</p></div>
+          <div class="soft-stat bg-emerald-50 border-emerald-100"><p class="text-[10px] font-black uppercase text-emerald-500">Saldo/Lucro</p><p id="fjLucro" class="text-xl font-extrabold text-emerald-700">R$ 0,00</p></div>
+        </div>
+
+        <div id="painelPessoaEquipe" class="hidden mt-4 space-y-4">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+              <p class="text-[10px] font-black uppercase text-indigo-500">Servos</p>
+              <p id="statServos" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+            </div>
+            <div class="rounded-2xl border border-teal-100 bg-teal-50 p-4">
+              <p class="text-[10px] font-black uppercase text-teal-500">Paroquianos</p>
+              <p id="statParoquianos" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+            </div>
+            <div class="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+              <p class="text-[10px] font-black uppercase text-amber-500">Equipes ativas</p>
+              <p id="statEquipesAtivas" class="text-2xl font-extrabold text-slate-800 mt-1">0</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p class="text-[10px] font-black uppercase text-slate-500">Maior equipe</p>
+              <p id="statMaiorEquipe" class="text-base font-extrabold text-slate-800 mt-1 leading-tight">-</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="blocoAdminDoacao" class="hidden">
+        <button id="btnNovaMeta" type="button" class="w-full bg-white text-purple-700 border-2 border-purple-100 py-5 rounded-3xl font-extrabold shadow-sm flex items-center justify-center gap-3 mb-6 transition active:scale-95">
+          <i class="fas fa-bullseye"></i> REGISTRAR NECESSIDADE
+        </button>
+        <div id="listaGerenciarMetas" class="space-y-4"></div>
+      </div>
+
+      <div id="blocoMuralDoacao" class="hidden">
+        <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-[10px] font-black uppercase text-slate-400">Mural de Carinho</p>
+              <h3 class="text-lg font-black text-slate-800">Mensagens pendentes</h3>
+            </div>
+            <div id="contadorMensagensPendentes" class="pill bg-amber-50 text-amber-700 border border-amber-100">0 pendentes</div>
+          </div>
+          <div id="listaMensagensPendentes" class="space-y-3">
+            <p class="text-sm text-slate-400 text-center py-4">Nenhuma mensagem pendente.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm mb-20">
+        <div class="px-6 pt-6 flex flex-wrap gap-2" id="filtrosStatusWrap">
+          <button class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white btn-filtro-status" data-status="TODOS">Todos</button>
+          <button class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 btn-filtro-status" data-status="PENDENTE">Pendentes</button>
+          <button class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 btn-filtro-status" data-status="ENTREGUE">Entregues</button>
+          <button class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 btn-filtro-status" data-status="CANCELADO">Cancelados</button>
+        </div>
+        
+        <div class="p-6 flex flex-col sm:flex-row gap-4 items-center border-b border-slate-50">
+          <div class="flex-1 w-full flex gap-4 items-center">
+            <i class="fas fa-search text-slate-300"></i>
+            <input id="campoBusca" placeholder="Buscar nos registros..." class="w-full text-sm font-semibold outline-none" />
+          </div>
+        </div>
+        
+        <div class="px-6 pb-4 flex flex-col sm:flex-row gap-3 items-center border-b border-slate-50">
+          <input id="filtroDataInicio" type="date" class="vault-input rounded-xl px-4 py-3 font-bold text-sm outline-none" />
+          <input id="filtroDataFim" type="date" class="vault-input rounded-xl px-4 py-3 font-bold text-sm outline-none" />
+          <button onclick="exportarCSVAtual()" class="bg-slate-900 text-white py-3 px-4 rounded-xl font-bold text-xs ml-auto">Exportar CSV</button>
+        </div>
+        
+        <div id="loading" class="hidden p-12 text-center text-slate-300"><i class="fas fa-circle-notch fa-spin text-2xl"></i></div>
+        <div class="overflow-x-auto pb-24">
+          <table class="w-full text-left text-sm border-collapse"><tbody id="corpoTabela" class="divide-y divide-slate-50"></tbody></table>
+        </div>
+      </div>
+    </main>
+        <button id="fabNovoRegistro" onclick="abrirModal()" class="fixed bottom-8 right-8 w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition z-50">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
+
+  <div id="modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="absolute inset-0" onclick="fecharModal()"></div>
+    <div class="relative bg-white w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h2 id="tituloModalRegistro" class="text-xl font-black text-slate-900 uppercase">Novo Registro</h2>
+        <button type="button" onclick="fecharModal()" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="formFin" class="space-y-4">
+        <div id="blocoModulo" class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Tabela Destino</label>
+          <select id="f_modulo" class="w-full bg-transparent font-bold outline-none" onchange="atualizarModalDinamico()">
+            <option value="EJC">Caixa Fundo Principal</option>
+            <option value="MERCADINHO">Mercadinho</option>
+            <option value="CAMISETAS">Lista de Camisetas</option>
+            <option value="DOACAO">Lista de Providência</option>
+          </select>
+        </div>
+        
+        <div id="blocoTamanhoCamiseta" class="hidden bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-blue-500 uppercase block mb-1">Tamanho Camiseta</label>
+          <select id="f_tamanho" class="w-full bg-transparent font-bold outline-none">
+            <option value="P">P</option><option value="M">M</option><option value="G">G</option>
+            <option value="GG">GG (Plus Size + R$ 10,00)</option>
+            <option value="EXG">EXG (Plus Size + R$ 10,00)</option>
+            <option value="G1">G1 (Plus Size + R$ 10,00)</option>
+            <option value="G2">G2 (Plus Size + R$ 10,00)</option>
+            <option value="G3">G3 (Plus Size + R$ 10,00)</option>
+          </select>
+        </div>
+        
+        <div id="blocoStatusCamiseta" class="hidden bg-violet-50 border border-violet-100 rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-violet-500 uppercase block mb-1">Status da Camiseta</label>
+          <select id="f_status_camiseta" class="w-full bg-transparent font-bold outline-none">
+            <option value="SOLICITADA">Solicitada</option>
+            <option value="EM_PRODUCAO">Em produção</option>
+            <option value="PRONTA">Pronta</option>
+            <option value="ENTREGUE">Entregue</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="vault-input rounded-2xl px-4 py-3">
+            <label id="labelDesc" class="text-[9px] font-black text-slate-400 uppercase block mb-1">Descrição / Item</label>
+            <input id="f_desc" required class="w-full bg-transparent font-bold outline-none" />
+          </div>
+          <div id="blocoValor" class="vault-input rounded-2xl px-4 py-3">
+            <label id="labelVal" class="text-[9px] font-black text-slate-400 uppercase block mb-1">Valor R$</label>
+            <input id="f_val" type="text" inputmode="decimal" class="w-full bg-transparent font-bold text-right outline-none" placeholder="0,00" />
+          </div>
+        </div>
+
+        <div id="blocoQtdUnDoacao" class="hidden grid grid-cols-2 gap-4">
+          <div class="vault-input rounded-2xl px-4 py-3">
+            <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Quantidade</label>
+            <input id="f_qtd_doacao" type="number" min="1" class="w-full bg-transparent font-bold outline-none" placeholder="Ex: 5" />
+          </div>
+          <div class="vault-input rounded-2xl px-4 py-3">
+            <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Unidade</label>
+            <input id="f_un_doacao" class="w-full bg-transparent font-bold outline-none" placeholder="Ex: kg, un, cx" />
+          </div>
+        </div>
+
+        <div id="campoDataEntregaWrap" class="hidden vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Data</label>
+          <input id="f_data_entrega" type="date" class="w-full bg-transparent font-bold outline-none" />
+        </div>
+
+        <div id="camposMercado" class="hidden bg-pink-50 p-5 rounded-2xl border border-pink-100 space-y-4">
+            <select id="f_tipo_pessoa" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm" onchange="controlarEquipePorTipoPessoa()">
+              <option value="SERVO">🙋‍♂️ Servo do EJC (Pode Fiado)</option>
+              <option value="PAROQUIANO">👤 Paroquiano (Somente Pago)</option>
+            </select>
+            <label class="block">
+              <span class="text-[9px] font-black text-slate-400 uppercase block mb-2">Equipe Responsável</span>
+              <select id="f_equipe_merc" class="w-full bg-white p-3 rounded-xl font-bold text-sm outline-none shadow-sm">
+                <option value="">Selecione a equipe...</option>
+                <option value="Externo">Externo / Paroquiano</option>
+                <option value="Animação">Animação</option>
+                <option value="Apoio ao Patrimônio">Apoio ao Patrimônio</option>
+                <option value="Café">Café</option>
+                <option value="Casal Coordenador Geral">Casal Coordenador Geral</option>
+                <option value="Círculo">Círculo</option>
+                <option value="Cozinha">Cozinha</option>
+                <option value="Compras">Compras</option>
+                <option value="Intercessão">Intercessão</option>
+                <option value="Liturgia">Liturgia</option>
+                <option value="Ordem">Ordem</option>
+                <option value="Piloto">Piloto</option>
+                <option value="Sala">Sala</option>
+                <option value="Secretaria">Secretaria</option>
+                <option value="Som e Iluminação">Som e Iluminação</option>
+                <option value="Trânsito">Trânsito</option>
+                <option value="Visitação">Visitação</option>
+              </select>
+            </label>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="vault-input rounded-2xl px-4 py-3">
+            <label id="labelStatusType" class="text-[9px] font-black text-slate-400 uppercase block mb-1">Status Pagamento</label>
+            <select id="f_type" class="w-full bg-transparent font-bold outline-none">
+              <option value="ENTRADA">Pago ✅</option>
+              <option value="PENDENTE">Pendente 🟠</option>
+              <option value="SAIDA">Gasto 🔴</option>
+            </select>
+          </div>
+          <div id="blocoForma" class="vault-input rounded-2xl px-4 py-3">
+            <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Forma</label>
+            <select id="f_forma" class="w-full bg-transparent font-bold outline-none">
+              <option value="PIX">PIX</option>
+              <option value="DINHEIRO">Dinheiro</option>
+              <option value="CARTAO_DEBITO">Cartão de débito</option>
+              <option value="CARTAO_CREDITO">Cartão de crédito</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Nome Paroquiano / Doador</label>
+          <input id="f_nome" class="w-full bg-transparent font-bold outline-none" />
+        </div>
+
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">WhatsApp</label>
+          <input id="f_tel" type="tel" class="w-full bg-transparent font-bold outline-none" />
+        </div>
+
+        <div class="bg-purple-50 rounded-2xl px-4 py-3 border border-purple-100">
+          <label class="text-[9px] font-black text-purple-400 uppercase block mb-1">Responsável Lançamento</label>
+          <input id="f_recebido" required class="w-full bg-transparent font-bold outline-none" />
+        </div>
+        
+        <div class="vault-input rounded-2xl px-4 py-3">
+          <label class="text-[9px] font-black text-slate-400 uppercase block mb-1">Observação</label>
+          <textarea id="f_obs" rows="3" class="w-full bg-transparent font-bold outline-none resize-none" placeholder="Detalhes do lançamento..."></textarea>
+        </div>
+
+        <button type="submit" id="btnSubmitRegistro" class="w-full bg-purple-700 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all mt-4">SALVAR REGISTRO</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalExtrato" class="hidden fixed inset-0 z-[125] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-2xl rounded-[32px] p-6 shadow-2xl max-h-[92vh] flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <div><h3 class="text-lg font-black text-slate-800">Extrato 360º</h3><p class="text-[11px] text-slate-400">Cruzamento de módulos</p></div>
+        <button onclick="fecharExtrato()" class="text-slate-400 hover:text-slate-700"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="nubank-card p-4 mb-4">
+        <p id="extratoNome" class="text-sm font-black text-slate-800"></p>
+        <p id="extratoEquipe" class="text-[11px] text-slate-500 mt-1"></p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-center">
+          <div class="soft-stat"><p class="text-[10px] font-black uppercase text-purple-400">Lançamentos</p><p id="extratoQtdLanc" class="text-xl font-extrabold">0</p></div>
+          <div class="soft-stat"><p class="text-[10px] font-black uppercase text-emerald-500">Total Pago</p><p id="extratoTotalPago" class="text-xl font-extrabold text-emerald-700">R$ 0,00</p></div>
+          <div class="soft-stat"><p class="text-[10px] font-black uppercase text-rose-500">Em Aberto</p><p id="extratoTotalAberto" class="text-xl font-extrabold text-rose-600">R$ 0,00</p></div>
+        </div>
+      </div>
+      <input id="filtroExtrato" type="text" placeholder="Filtrar lançamentos..." oninput="renderizarExtrato()" class="vault-input w-full rounded-xl px-4 py-3 mb-3 font-bold text-sm outline-none" />
+      <div id="extratoLista" class="flex-1 overflow-y-auto space-y-3"></div>
+      <div class="mt-4 border-t border-slate-100 pt-4 grid grid-cols-2 gap-2">
+        <button onclick="copiarExtrato()" class="bg-slate-900 text-white py-3 rounded-xl font-bold text-xs hover:bg-slate-800 transition">Copiar Texto</button>
+        <button onclick="cobrarExtratoWhatsApp()" class="bg-emerald-600 text-white py-3 rounded-xl font-bold text-xs hover:bg-emerald-700 transition">Cobrar WhatsApp</button>
+        <button onclick="abrirModalQuitarTudo()" class="col-span-2 bg-purple-700 text-white py-3 rounded-xl font-bold text-xs hover:bg-purple-800 transition">Quitar Tudo</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalQuitarTudo" class="hidden fixed inset-0 z-[130] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl text-center">
+      <h3 class="text-xl font-black text-slate-800 mb-2">Quitar Tudo</h3>
+      <p class="text-xs text-slate-500 mb-6">Dar baixa em todos os registros financeiros pendentes.</p>
+      <input id="quitarTudoRecebidoPor" class="vault-input w-full p-4 rounded-xl font-bold mb-4" placeholder="Quem recebeu?" />
+      <input id="quitarTudoData" type="date" class="vault-input w-full p-4 rounded-xl font-bold mb-6" />
+      <div class="flex gap-3">
+        <button onclick="confirmarQuitarTudo()" class="flex-1 bg-purple-700 text-white py-4 rounded-xl font-black hover:bg-purple-800 transition">Confirmar</button>
+        <button onclick="fecharModalQuitarTudo()" class="flex-1 bg-slate-100 py-4 rounded-xl font-black hover:bg-slate-200 transition">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalMeta" class="hidden fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl text-center">
+      <h2 class="text-xl font-black text-slate-800 mb-6">Nova Necessidade</h2>
+      <form id="formMeta" class="space-y-4">
+        <input id="m_item" placeholder="Ex: Arroz ou Óleo" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
+        <div class="flex gap-2">
+          <input id="m_qtd" type="number" min="1" step="1" placeholder="Qtd" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
+          <input id="m_un" placeholder="Unid (kg, un)" required class="vault-input w-full p-4 rounded-xl font-bold outline-none">
+        </div>
+        <button type="submit" id="btnSalvarMeta" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black shadow-lg hover:bg-purple-800 transition">REGISTRAR META</button>
+        <button type="button" onclick="fecharModalMeta()" class="w-full py-2 font-bold text-slate-400 mt-2 hover:text-slate-600 transition">Cancelar</button>
+      </form>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ============================
+    // SUPABASE CONFIG E ESTADO
+    // ============================
+    const SUPABASE_URL = 'https://ilzgmueeblxeyieumpyk.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    let ROLE = "";
+    let abaAtiva = "EJC";
+    let dadosCache = [];
+    let filtroStatusAtivo = "TODOS";
+    let extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
+    let registroEmEdicao = null;
+
+    let USUARIO_LOGADO = {
+      email: "",
+      nome: "",
+      avatar: "P"
+    };
+
+    const MAPA_USUARIOS = {
+      "angela@ejcbank.com.br": {
+        nome: "Tia Ângela",
+        avatar: "Â"
+      },
+      "cross@ejcbank.com.br": {
+        nome: "Prima Cross",
+        avatar: "C"
+      },
+      "ge@ejcbank.com.br": {
+        nome: "Tio Ge",
+        avatar: "G"
+      },
+      "rafael@ejcbank.com.br": {
+        nome: "Rafael",
+        avatar: "R"
+      },
+      "karol@ejcbank.com.br": {
+        nome: "Karol",
+        avatar: "K"
+      },
+      "compras@ejcbank.com.br": {
+        nome: "Equipe de Compras",
+        avatar: "C"
+      }
+    };
+
+    // ============================
+    // UTILITÁRIOS E MAPEAMENTO
+    // ============================
+    function esc(s) { return s ? s.toString().replace(/[&<>'"]/g, t => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"}[t])) : ""; }
+    function formatarMoeda(v) { return "R$ " + Number(v || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 }); }
+    function formatarDataBR(d) {
+      if (!d) return "Sem data";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(d)) { const [ano, mes, dia] = d.split("-"); return `${dia}/${mes}/${ano}`; }
+      const dt = new Date(d); return Number.isNaN(dt.getTime()) ? d : dt.toLocaleDateString("pt-BR");
+    }
+    function hojeISODate() { return new Date().toISOString().slice(0, 10); }
+    function parseMoedaBR(v) { if (!v) return 0; const l = String(v).replace(/\s/g, '').replace(/\./g, '').replace(',', '.'); return Number.isFinite(Number(l)) ? Number(l) : 0; }
+    function normalizarTelefone(t) { let n = String(t || '').replace(/\D/g, ''); if (!n) return null; if (n.startsWith('0')) n = n.slice(1); if (!n.startsWith('55')) n = '55' + n; return n; }
+    function calcularValorCamisetaComPlusSize(valorBase, tamanho) {
+      const plusSizes = ["GG", "EXG", "G1", "G2", "G3"];
+      return plusSizes.includes(String(tamanho || "").toUpperCase()) ? Number(valorBase || 0) + 10 : Number(valorBase || 0);
+    }
+    function showToast(m, t = "success") {
+      const c = document.getElementById("toast-container");
+      if (!c) return;
+      const d = document.createElement("div");
+      d.className = "toast animate-elite";
+      d.innerHTML = `<i class="fas ${t === "error" ? "fa-circle-xmark text-rose-500" : "fa-circle-check text-emerald-500"}"></i><span>${esc(m)}</span>`;
+      c.appendChild(d);
+      setTimeout(() => d.remove(), 4000);
+    }
+    function obterNomeTabela(modulo) {
+      return {
+        EJC: "caixa_ejc",
+        MERCADINHO: "mercadinho",
+        CAMISETAS: "camisetas",
+        DOACAO: "doacao"
+      }[modulo] || "caixa_ejc";
+    }
+    function obterStatusRegistro(r) {
+      if (r.status_pedido === "CANCELADO") return "CANCELADO";
+      if (r.status_financeiro === "CANCELADO") return "CANCELADO";
+
+      if (abaAtiva === "DOACAO" || r._modulo === "doacao") {
+        if (r.status === "PROMETIDO" || r.status === "PENDENTE") return "PROMETIDO";
+        if (r.status === "ENTREGUE" || r.status === "PAGO") return "ENTREGUE";
+        if (r.status === "CANCELADO") return "CANCELADO";
+        return r.status || "";
+      }
+
+      if (r.status_financeiro) return r.status_financeiro;
+      if (r.status) {
+        if (r.status === "PROMETIDO") return "PENDENTE";
+        if (r.status === "ENTREGUE") return "PAGO";
+        return r.status;
+      }
+      if (r.tipo === "PENDENTE") return "PENDENTE";
+      if (r.tipo === "ENTRADA") return "PAGO";
+      if (r.tipo === "SAIDA") return "PAGO";
+      return "";
+    }
+    function obterStatusVisual(r) {
+      return obterStatusRegistro(r);
+    }
+    function obterValorPagoRegistro(r) {
+      if (r._modulo === "doacao" || abaAtiva === "DOACAO") return 0;
+      if (typeof r.valor_pago !== "undefined") return Number(r.valor_pago || 0);
+      return obterStatusRegistro(r) === "PAGO" ? Number(r.valor || r.valor_total || r.valor_estimado || 0) : 0;
+    }
+    function obterValorAbertoRegistro(r) {
+      if (r._modulo === "doacao" || abaAtiva === "DOACAO") return 0;
+      if (typeof r.saldo_pendente !== "undefined") return Number(r.saldo_pendente || 0);
+      const s = obterStatusRegistro(r);
+      return (s === "PENDENTE" || s === "PARCIAL") ? Number(r.valor || r.valor_total || r.valor_estimado || 0) : 0;
+    }
+    function obterEquipeResponsavel() { return ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças"; }
+    
+    function obterNomeResponsavel() {
+      return (
+        document.getElementById("quitarTudoRecebidoPor")?.value?.trim() ||
+        document.getElementById("f_recebido")?.value?.trim() ||
+        USUARIO_LOGADO.nome ||
+        (ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças")
+      );
+    }
+
+    // ============================
+    // AUTH & PERFIS
+    // ============================
+    function escolherPerfil(p) {
+      document.getElementById("stepProfile").classList.add("hidden");
+      document.getElementById("stepAuth").classList.remove("hidden");
+      if (p === 'compras') { document.getElementById("formCompras").classList.remove("hidden"); document.getElementById("formPilotos").classList.add("hidden"); }
+      else { document.getElementById("formCompras").classList.add("hidden"); document.getElementById("formPilotos").classList.remove("hidden"); }
+    }
+    function voltarParaSelecao() { document.getElementById("stepAuth").classList.add("hidden"); document.getElementById("stepProfile").classList.remove("hidden"); }
+    
+    async function loginPiloto() {
+      const email = document.getElementById("emailPiloto").value.trim().toLowerCase();
+      const senha = document.getElementById("senhaPiloto").value.trim();
+      const msgErro = document.getElementById("msgErroLogin");
+      const btn = document.getElementById("btnPiloto");
+      if (!btn) return;
+      const original = btn.innerHTML;
+      msgErro.classList.add("hidden");
+      btn.disabled = true; btn.innerHTML = "Entrando...";
+      try {
+        if (email === "compras@ejcbank.com.br") { msgErro.textContent = "Use o botão de Compras."; msgErro.classList.remove("hidden"); return; }
+        const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
+        if (error || !data?.user) { msgErro.textContent = "Credenciais inválidas."; msgErro.classList.remove("hidden"); return; }
+        
+        ROLE = "PILOTOS";
+        USUARIO_LOGADO = {
+          email,
+          nome: MAPA_USUARIOS[email]?.nome || "Piloto",
+          avatar: MAPA_USUARIOS[email]?.avatar || "P"
+        };
+        finalizarLogin();
+      } catch (e) { msgErro.textContent = "Erro de conexão"; msgErro.classList.remove("hidden"); }
+      finally { btn.disabled = false; btn.innerHTML = original; }
+    }
+    
+    async function loginCompras() {
+      const senha = document.getElementById("senhaCompras").value.trim();
+      const msgErro = document.getElementById("msgErroLogin");
+      const btn = document.getElementById("btnCompras");
+      if (!btn) return;
+      const original = btn.innerHTML;
+      msgErro.classList.add("hidden"); btn.disabled = true; btn.innerHTML = "Entrando...";
+      try {
+        const { data, error } = await _supabase.auth.signInWithPassword({ email: "compras@ejcbank.com.br", password: senha });
+        if (error || !data?.user) { msgErro.textContent = "Senha incorreta."; msgErro.classList.remove("hidden"); return; }
+        
+        ROLE = "COMPRAS";
+        USUARIO_LOGADO = {
+          email: "compras@ejcbank.com.br",
+          nome: "Equipe de Compras",
+          avatar: "C"
+        };
+        finalizarLogin();
+      } catch (e) { msgErro.textContent = "Erro"; msgErro.classList.remove("hidden"); }
+      finally { btn.disabled = false; btn.innerHTML = original; }
+    }
+    
+    function finalizarLogin() {
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("appMain").classList.remove("hidden");
+
+      const titulo = document.getElementById("headerTitle");
+      if (titulo) {
+        titulo.textContent = `EJC BANK • ${USUARIO_LOGADO.nome}`;
+      }
+
+      const avatar = document.getElementById("userAvatar");
+      if (avatar) {
+        avatar.textContent = USUARIO_LOGADO.avatar;
+      }
+
+      const campoRecebido = document.getElementById("f_recebido");
+      if (campoRecebido) {
+        campoRecebido.value = USUARIO_LOGADO.nome;
+      }
+
+      configurarAbasPorPerfil();
+    }
+    
+    function configurarAbasPorPerfil() {
+      const isC = (ROLE === "COMPRAS");
+      document.getElementById("tab-ejc")?.classList.toggle("hidden", isC);
+      
+      ["tab-mercadinho", "tab-camisetas", "tab-doacao"].forEach(id => {
+        document.getElementById(id)?.classList.remove("hidden");
+      });
+      document.getElementById("tab-feijoada")?.classList.add("hidden");
+      document.getElementById("blocoModulo")?.classList.toggle("hidden", isC);
+      
+      mudarAba(isC ? "DOACAO" : "DOACAO");
+    }
+    
+    async function sair() { await _supabase.auth.signOut(); location.reload(); }
+
+    // ============================
+    // CONTROLE DE EQUIPE E MODAL UI
+    // ============================
+    function controlarEquipePorTipoPessoa() {
+      const tipoPessoa = document.getElementById("f_tipo_pessoa");
+      const equipe = document.getElementById("f_equipe_merc");
+      const modulo = document.getElementById("f_modulo")?.value;
+      if (!tipoPessoa || !equipe) return;
+      const usaEquipe = ["MERCADINHO", "CAMISETAS", "DOACAO"].includes(modulo);
+      if (!usaEquipe) {
+        equipe.disabled = true;
+        equipe.value = "";
+        return;
+      }
+      if (tipoPessoa.value === "PAROQUIANO") {
+        equipe.value = "Externo";
+        equipe.disabled = true;
+        equipe.classList.add("opacity-60");
+      } else {
+        if (equipe.value === "Externo") equipe.value = "";
+        equipe.disabled = false;
+        equipe.classList.remove("opacity-60");
+      }
+    }
+    
+    function atualizarModalDinamico() {
+      const m = document.getElementById("f_modulo").value;
+
+      document.getElementById("blocoTamanhoCamiseta")?.classList.toggle("hidden", m !== "CAMISETAS");
+      document.getElementById("blocoStatusCamiseta")?.classList.toggle("hidden", m !== "CAMISETAS");
+      document.getElementById("blocoQtdUnDoacao")?.classList.toggle("hidden", m !== "DOACAO");
+      document.getElementById("camposMercado")?.classList.toggle("hidden", !["MERCADINHO", "CAMISETAS", "DOACAO"].includes(m));
+      document.getElementById("campoDataEntregaWrap")?.classList.toggle("hidden", !["CAMISETAS", "DOACAO"].includes(m));
+
+      document.getElementById("blocoValor")?.classList.remove("hidden");
+      document.getElementById("blocoForma")?.classList.remove("hidden");
+
+      const labelStatus = document.getElementById("labelStatusType");
+      const selectStatus = document.getElementById("f_type");
+      const valAtual = selectStatus ? selectStatus.value : "ENTRADA";
+
+      if (m === "DOACAO") {
+        if(labelStatus) labelStatus.textContent = "Status da Doação";
+        if(selectStatus) {
+            selectStatus.innerHTML = `
+              <option value="ENTRADA">Entregue / Pago ✅</option>
+              <option value="PENDENTE">Prometido 🟠</option>
+              <option value="SAIDA">Cancelado 🔴</option>
+            `;
+        }
+      } else {
+        if(labelStatus) labelStatus.textContent = "Status Pagamento";
+        if(selectStatus) {
+            selectStatus.innerHTML = `
+              <option value="ENTRADA">Pago ✅</option>
+              <option value="PENDENTE">Pendente 🟠</option>
+              <option value="SAIDA">Gasto 🔴</option>
+            `;
+        }
+      }
+      if(selectStatus) selectStatus.value = valAtual;
+
+      const labelData = document.querySelector("#campoDataEntregaWrap label");
+      if (labelData) {
+        if (m === "CAMISETAS") labelData.textContent = "Previsão de entrega";
+        else if (m === "DOACAO") labelData.textContent = "Data de entrega / previsão";
+        else labelData.textContent = "Data";
+      }
+
+      const labelDesc = document.getElementById("labelDesc");
+      if (labelDesc) {
+        labelDesc.textContent = m === "DOACAO" ? "Item / Doação" : "Descrição / Item";
+      }
+      if (m === "DOACAO") {
+        document.getElementById("f_val").value = "";
+      }
+
+      controlarEquipePorTipoPessoa();
+    }
+    
+    function abrirModal() {
+      document.getElementById("formFin").reset();
+      registroEmEdicao = null;
+      document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
+      document.getElementById("f_modulo").value = abaAtiva;
+      if (ROLE === "COMPRAS") {
+        document.getElementById("blocoModulo")?.classList.add("hidden");
+      } else {
+        document.getElementById("blocoModulo")?.classList.remove("hidden");
+      }
+      
+      // O nome do responsável agora é puxado direto da IA!
+      document.getElementById("f_recebido").value = obterNomeResponsavel();
+      
+      if (document.getElementById("f_qtd_doacao")) document.getElementById("f_qtd_doacao").value = 1;
+      if (document.getElementById("f_un_doacao")) document.getElementById("f_un_doacao").value = "un";
+      atualizarModalDinamico();
+      document.getElementById("modal")?.classList.remove("hidden");
+    }
+    
+    function fecharModal() {
+      document.getElementById("modal")?.classList.add("hidden");
+      document.getElementById("formFin").reset();
+      registroEmEdicao = null;
+      document.getElementById("tituloModalRegistro").textContent = "Novo Registro";
+    }
+
+    // ============================
+    // ABAS E NAVEGAÇÃO
+    // ============================
+    function obterModuloAtual() { return abaAtiva; }
+    
+    async function mudarAba(aba) {
+      if (ROLE === "COMPRAS" && aba === "EJC") return;
+      abaAtiva = aba; dadosCache = [];
+      document.querySelectorAll(".tab-btn").forEach(b => { b.classList.add("bg-white/10", "text-white"); b.classList.remove("bg-white", "text-slate-900"); });
+      const t = document.getElementById("tab-" + aba.toLowerCase());
+      if (t) { t.classList.remove("bg-white/10", "text-white"); t.classList.add("bg-white", "text-slate-900"); }
+      document.getElementById("dashAdmin")?.classList.toggle("hidden", aba !== "EJC");
+      
+      const isModuloOperacional = ["MERCADINHO", "CAMISETAS", "DOACAO"].includes(aba);
+      document.getElementById("painelFeijoada")?.classList.toggle("hidden", !isModuloOperacional);
+      
+      const blocoMural = document.getElementById("blocoMuralDoacao");
+      if (aba === "DOACAO") {
+        document.getElementById("blocoAdminDoacao")?.classList.remove("hidden");
+        document.getElementById("btnNovaMeta")?.classList.toggle("hidden", ROLE !== "PILOTOS");
+        if (blocoMural) {
+          blocoMural.classList.toggle("hidden", ROLE !== "PILOTOS");
+          if (ROLE === "PILOTOS") await carregarMensagensPendentesMural();
+        }
+      } else {
+        document.getElementById("blocoAdminDoacao")?.classList.add("hidden");
+        document.getElementById("blocoMuralDoacao")?.classList.add("hidden");
+      }
+      atualizarPainelFeijoada();
+      await carregarRegistros();
+    }
+    
+    function atualizarPainelFeijoada() {
+      const mostrarPainelMetricas = ["MERCADINHO", "CAMISETAS", "DOACAO"].includes(abaAtiva);
+      const gridPadrao = document.getElementById("gridMetricasFeijoada");
+      const painelCamisetas = document.getElementById("painelCamisetasBonito");
+      const painelPessoaEquipe = document.getElementById("painelPessoaEquipe");
+      
+      if (abaAtiva === "CAMISETAS") {
+        if(gridPadrao) gridPadrao.classList.add("hidden");
+        if(painelCamisetas) painelCamisetas.classList.remove("hidden");
+      } else {
+        if(gridPadrao) gridPadrao.classList.toggle("hidden", !mostrarPainelMetricas);
+        if(painelCamisetas) painelCamisetas.classList.add("hidden");
+      }
+      if (painelPessoaEquipe) {
+        painelPessoaEquipe.classList.toggle("hidden", !["MERCADINHO", "CAMISETAS", "DOACAO"].includes(abaAtiva));
+      }
+      
+      const tituloPainel = document.getElementById("tituloPainelModulo");
+      if(tituloPainel) {
+          if (abaAtiva === "MERCADINHO") tituloPainel.textContent = "Mercadinho do EJC";
+          else if (abaAtiva === "CAMISETAS") tituloPainel.textContent = "Produção e Entrega de Camisetas";
+          else if (abaAtiva === "DOACAO") tituloPainel.textContent = "Lista de Providência";
+      }
+      
+      const statBoxes = document.querySelectorAll("#gridMetricasFeijoada .soft-stat");
+      const btnPen = document.querySelector('[data-status="PENDENTE"]');
+      const btnPag = document.querySelector('[data-status="PAGO"]');
+
+      if (abaAtiva === "DOACAO") {
+        if(statBoxes[0]) statBoxes[0].querySelector("p:first-child").textContent = "Total Itens";
+        if(statBoxes[1]) statBoxes[1].querySelector("p:first-child").textContent = "Entregues";
+        if(statBoxes[2]) statBoxes[2].querySelector("p:first-child").textContent = "Prometidos";
+        if(statBoxes[3]) statBoxes[3].querySelector("p:first-child").textContent = "Cancelados";
+        if(statBoxes[4]) {
+          statBoxes[4].classList.remove("hidden");
+          statBoxes[4].querySelector("p:first-child").textContent = "Doações em R$";
+          statBoxes[4].className = "soft-stat bg-emerald-50 border-emerald-100";
+          statBoxes[4].querySelector("p:last-child").className = "text-xl font-extrabold text-emerald-700";
+        }
+        if(statBoxes[5]) statBoxes[5].classList.add("hidden");
+
+        if(btnPen) btnPen.textContent = "Prometidos";
+        if(btnPag) btnPag.textContent = "Entregues";
+      } else {
+        if(statBoxes[0]) statBoxes[0].querySelector("p:first-child").textContent = "Total/Vend";
+        if(statBoxes[1]) statBoxes[1].querySelector("p:first-child").textContent = "Pagos";
+        if(statBoxes[2]) statBoxes[2].querySelector("p:first-child").textContent = "Pendentes";
+        if(statBoxes[3]) statBoxes[3].querySelector("p:first-child").textContent = "Logística";
+        if(statBoxes[4]) {
+          statBoxes[4].classList.remove("hidden");
+          statBoxes[4].querySelector("p:first-child").textContent = "Custos";
+          statBoxes[4].className = "soft-stat bg-rose-50 border-rose-100";
+          statBoxes[4].querySelector("p:last-child").className = "text-xl font-extrabold text-slate-800";
+        }
+        if(statBoxes[5]) statBoxes[5].classList.remove("hidden");
+
+        if(btnPen) btnPen.textContent = "Pendentes";
+        if(btnPag) btnPag.textContent = "Pagos";
+      }
+    }
+
+    function atualizarPainelPessoaEquipe() {
+      const painel = document.getElementById("painelPessoaEquipe");
+      if (!painel || !["MERCADINHO", "CAMISETAS", "DOACAO"].includes(abaAtiva)) return;
+      const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
+      const servos = ativos.filter(r => r.tipo_pessoa === "SERVO");
+      const paroquianos = ativos.filter(r => (r.tipo_pessoa || "PAROQUIANO") === "PAROQUIANO");
+      const porEquipe = {};
+      servos.forEach(r => {
+        const equipe = (r.equipe_responsavel || r.equipe || "").trim();
+        if (!equipe) return;
+        porEquipe[equipe] = (porEquipe[equipe] || 0) + 1;
+      });
+      const ranking = Object.entries(porEquipe).sort((a, b) => b[1] - a[1]);
+      const maiorEquipe = ranking.length ? ranking[0][0] : "-";
+      const elServos = document.getElementById("statServos");
+      const elParoquianos = document.getElementById("statParoquianos");
+      const elEquipesAtivas = document.getElementById("statEquipesAtivas");
+      const elMaiorEquipe = document.getElementById("statMaiorEquipe");
+      const listaResumo = document.getElementById("listaResumoEquipe");
+      if (elServos) elServos.textContent = servos.length;
+      if (elParoquianos) elParoquianos.textContent = paroquianos.length;
+      if (elEquipesAtivas) elEquipesAtivas.textContent = ranking.length;
+      if (elMaiorEquipe) elMaiorEquipe.textContent = maiorEquipe;
+      if (!listaResumo) return;
+      if (!ranking.length) {
+        listaResumo.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhum servo com equipe selecionada.</p>`;
+        return;
+      }
+      listaResumo.innerHTML = ranking.map(([equipe, qtd]) => `
+        <div class="flex items-center justify-between rounded-xl bg-white border border-slate-100 px-3 py-3">
+          <div><p class="text-sm font-bold text-slate-800">${esc(equipe)}</p></div>
+          <div class="text-sm font-black text-purple-700">${qtd}</div>
+        </div>
+      `).join("");
+    }
+    
+    function atualizarPaineis() {
+      if (abaAtiva === "EJC") {
+        const rec = dadosCache.filter(r => obterStatusRegistro(r) === "PAGO" && r.tipo !== "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);
+        const pen = dadosCache.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; }).reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+        const sai = dadosCache.filter(r => r.tipo === "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);
+        const elRec = document.getElementById("totalRecebido"); if(elRec) elRec.textContent = formatarMoeda(rec);
+        const elPen = document.getElementById("totalPendente"); if(elPen) elPen.textContent = formatarMoeda(pen);
+        const elSai = document.getElementById("totalSaidas"); if(elSai) elSai.textContent = formatarMoeda(sai);
+        const elLiq = document.getElementById("totalLiquido"); if(elLiq) elLiq.textContent = formatarMoeda(rec - sai);
+      }
+      if (abaAtiva === "MERCADINHO") {
+        const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
+        const total = ativos.reduce((a, r) => a + Number(r.valor || 0), 0);
+        const pago = ativos.filter(r => obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + Number(r.valor || 0), 0);
+        const pend = ativos.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; }).reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+        const gastos = ativos.filter(r => r.tipo === "SAIDA").reduce((a, r) => a + Number(r.valor || 0), 0);
+        const elVend = document.getElementById("fjVendidos"); if(elVend) elVend.textContent = formatarMoeda(total);
+        const elPag = document.getElementById("fjPagos"); if(elPag) elPag.textContent = formatarMoeda(pago);
+        const elPen = document.getElementById("fjPendentes"); if(elPen) elPen.textContent = formatarMoeda(pend);
+        const elRes = document.getElementById("fjRestantes"); if(elRes) elRes.textContent = "-";
+        const elMer = document.getElementById("fjMercado"); if(elMer) elMer.textContent = formatarMoeda(gastos);
+        const elLuc = document.getElementById("fjLucro"); if(elLuc) elLuc.textContent = formatarMoeda(pago - gastos);
+      }
+      if (abaAtiva === "CAMISETAS") {
+        const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
+        const solicitadas = ativos.filter(r => r.status_pedido === "SOLICITADA").length;
+        const emProducao = ativos.filter(r => r.status_pedido === "EM_PRODUCAO").length;
+        const prontas = ativos.filter(r => r.status_pedido === "PRONTA").length;
+        const entregues = ativos.filter(r => r.status_pedido === "ENTREGUE").length;
+        const pagas = ativos.filter(r => r.status_financeiro === "PAGO").length;
+        const recebido = ativos.reduce((a, r) => a + Number(r.valor_pago || 0), 0);
+        const elSolic = document.getElementById("camSolicitadas"); if(elSolic) elSolic.textContent = solicitadas;
+        const elProd = document.getElementById("camEmProducao"); if(elProd) elProd.textContent = emProducao;
+        const elPron = document.getElementById("camProntas"); if(elPron) elPron.textContent = prontas;
+        const elEnt = document.getElementById("camEntregues"); if(elEnt) elEnt.textContent = entregues;
+        const elPagas = document.getElementById("camPagas"); if(elPagas) elPagas.textContent = pagas;
+        const elRec = document.getElementById("camRecebido"); if(elRec) elRec.textContent = formatarMoeda(recebido);
+      }
+      if (abaAtiva === "DOACAO") {
+        const ativos = dadosCache.filter(r => r.status !== "CANCELADO");
+        const prometidos = ativos.filter(r => r.status === "PENDENTE" || r.status === "PROMETIDO").length;
+        const entregues = ativos.filter(r => r.status === "PAGO" || r.status === "ENTREGUE").length;
+        const cancelados = dadosCache.filter(r => r.status === "CANCELADO").length;
+        const totalItens = ativos.length;
+
+        const totalDinheiroDoados = ativos
+          .filter(r => r.status === "PAGO" || r.status === "ENTREGUE")
+          .reduce((a, r) => a + Number(r.valor_estimado || r.valor || 0), 0);
+
+        const elVend = document.getElementById("fjVendidos"); if(elVend) elVend.textContent = totalItens;
+        const elPag = document.getElementById("fjPagos"); if(elPag) elPag.textContent = entregues;
+        const elPen = document.getElementById("fjPendentes"); if(elPen) elPen.textContent = prometidos;
+        const elRes = document.getElementById("fjRestantes"); if(elRes) elRes.textContent = cancelados;
+        const elMer = document.getElementById("fjMercado"); if(elMer) elMer.textContent = formatarMoeda(totalDinheiroDoados);
+        const elLuc = document.getElementById("fjLucro"); if(elLuc) elLuc.textContent = "-";
+      }
+      atualizarPainelPessoaEquipe();
+    }
+
+    async function registrarHistorico(acao, tabela, registro_id, dados = {}) {
+      try {
+        await _supabase.from("historico_financeiro").insert([{
+          acao, tabela_ref: tabela, registro_id, responsavel: obterNomeResponsavel(), detalhes: JSON.stringify(dados || {}), criado_em: new Date().toISOString()
+        }]);
+      } catch (e) { console.error("Falha ao registrar histórico:", e); }
+    }
+    // ============================
+    // CRUD PRINCIPAL
+    // ============================
+    async function carregarRegistros() {
+      const tabela = obterNomeTabela(abaAtiva);
+      const loading = document.getElementById("loading");
+      if(loading) loading.classList.remove("hidden");
+      let data = null;
+      let error = null;
+      let tentativa = await _supabase.from(tabela).select("*").order("created_at", { ascending: false });
+      data = tentativa.data;
+      error = tentativa.error;
+      if (error) {
+        console.warn(`Falha com created_at em ${tabela}, tentando criado_em...`, error.message);
+        tentativa = await _supabase.from(tabela).select("*").order("criado_em", { ascending: false });
+        data = tentativa.data;
+        error = tentativa.error;
+      }
+      if (error) {
+        console.warn(`Falha com criado_em em ${tabela}, tentando data_movimento...`, error.message);
+        tentativa = await _supabase.from(tabela).select("*").order("data_movimento", { ascending: false });
+        data = tentativa.data;
+        error = tentativa.error;
+      }
+      if (error) {
+        console.warn(`Falha com ordenação em ${tabela}, tentando sem order...`, error.message);
+        tentativa = await _supabase.from(tabela).select("*");
+        data = tentativa.data;
+        error = tentativa.error;
+      }
+      if(loading) loading.classList.add("hidden");
+      if (error) {
+        console.error(`Erro ao carregar ${tabela}:`, error);
+        showToast(`Erro ao carregar ${abaAtiva}.`, "error");
+        return;
+      }
+      dadosCache = data || [];
+      if (abaAtiva === "DOACAO") {
+        if (typeof carregarMetas === "function") await carregarMetas();
+      }
+      atualizarPaineis();
+      renderizar();
+    }
+
+    async function salvarRegistro() {
+      try {
+        const modulo = document.getElementById("f_modulo").value;
+        const tabela = obterNomeTabela(modulo);
+        const descricao = document.getElementById("f_desc").value.trim();
+        const valor = parseMoedaBR(document.getElementById("f_val").value);
+        const nome = document.getElementById("f_nome").value.trim() || null;
+        const telefone = normalizarTelefone(document.getElementById("f_tel").value);
+        const forma = document.getElementById("f_forma").value;
+        const tipo = document.getElementById("f_type").value;
+        const responsavel = document.getElementById("f_recebido").value.trim();
+        const observacao = document.getElementById("f_obs").value.trim() || null;
+        const dataEntrega = document.getElementById("f_data_entrega")?.value || null;
+        const registroOriginal = registroEmEdicao ? dadosCache.find(x => String(x.id) === String(registroEmEdicao)) : null;
+        
+        const tipoPessoa = document.getElementById("f_tipo_pessoa")?.value;
+        const equipeSelecionada = document.getElementById("f_equipe_merc")?.value;
+
+        if (!descricao) return showToast("Informe a descrição.", "error");
+        if (!responsavel) return showToast("Informe o responsável.", "error");
+
+        const modulosComEquipe = ["MERCADINHO", "CAMISETAS", "DOACAO"];
+        if (modulosComEquipe.includes(modulo)) {
+          if (tipoPessoa === "SERVO" && (!equipeSelecionada || equipeSelecionada === "")) {
+            return showToast("Obrigatório: Selecione a equipe do Servo.", "error");
+          }
+        }
+
+        let payload = null;
+
+        if (modulo === "CAMISETAS") {
+          const statusPedidoEscolhido = document.getElementById("f_status_camiseta").value || "SOLICITADA";
+          const tipoPessoaCam = document.getElementById("f_tipo_pessoa")?.value || "PAROQUIANO";
+          const equipeSelecionadaCam = tipoPessoaCam === "SERVO" ? (document.getElementById("f_equipe_merc")?.value || null) : "Externo";
+          const tamanhoSelecionado = document.getElementById("f_tamanho").value;
+          
+          let valorBase = parseMoedaBR(document.getElementById("f_val").value);
+          const valorFinal = calcularValorCamisetaComPlusSize(valorBase, tamanhoSelecionado);
+          
+          const valorPagoAtual = registroOriginal ? Number(registroOriginal.valor_pago || 0) : 0;
+          let valorPago = valorPagoAtual;
+          
+          if (!registroOriginal && tipo === "ENTRADA") valorPago = valorFinal;
+          if (registroOriginal && tipo === "ENTRADA" && valorPagoAtual === 0) valorPago = valorFinal;
+          if (tipo === "PENDENTE" && !registroOriginal) valorPago = 0;
+          
+          const saldoPendente = Math.max(0, valorFinal - valorPago);
+          let statusFinanceiro = "PENDENTE";
+          if (saldoPendente <= 0) statusFinanceiro = "PAGO";
+          else if (valorPago > 0) statusFinanceiro = "PARCIAL";
+          
+          if (statusPedidoEscolhido === "CANCELADO") {
+            statusFinanceiro = "CANCELADO";
+          }
+          
+          payload = {
+             descricao, tipo, nome, telefone,
+             tipo_pessoa: tipoPessoaCam, equipe_responsavel: equipeSelecionadaCam,
+             tamanho: tamanhoSelecionado, quantidade: registroOriginal?.quantidade || 1,
+             valor: valorFinal, valor_total: valorFinal, valor_pago: valorPago,
+             saldo_pendente: saldoPendente, status_financeiro: statusFinanceiro,
+             status_pedido: statusPedidoEscolhido, forma,
+             data_movimento: registroOriginal?.data_movimento || hojeISODate(),
+             data_previsao: dataEntrega,
+             data_entrega: statusPedidoEscolhido === "ENTREGUE" ? (registroOriginal?.data_entrega || hojeISODate()) : null,
+             responsavel_lanc: responsavel, observacao
+           };
+
+        } else if (modulo === "DOACAO") {
+          const itemFormatado = descricao.trim().toLowerCase();
+          const unidadeFormatada = (document.getElementById("f_un_doacao")?.value || "un").trim().toLowerCase();
+          const qtdDoacao = Number(document.getElementById("f_qtd_doacao")?.value || 0);
+          const tipoPessoaDoacao = document.getElementById("f_tipo_pessoa")?.value || "PAROQUIANO";
+          const equipeDoacao = tipoPessoaDoacao === "SERVO" ? (document.getElementById("f_equipe_merc")?.value || null) : "Externo";
+          const statusDoacao = tipo === "PENDENTE" ? "PROMETIDO" : tipo === "SAIDA" ? "CANCELADO" : "ENTREGUE";
+
+          if (qtdDoacao <= 0 && valor <= 0) {
+            return showToast("Informe uma quantidade válida ou um valor em R$.", "error");
+          }
+
+          payload = {
+             item: itemFormatado,
+             tipo,
+             quantidade: qtdDoacao,
+             unidade: unidadeFormatada,
+             valor_estimado: valor,
+             forma: valor > 0 ? forma : null,
+             nome,
+             telefone,
+             status: statusDoacao,
+             equipe: equipeDoacao,
+             tipo_pessoa: tipoPessoaDoacao,
+             data_movimento: registroOriginal?.data_movimento || hojeISODate(),
+             data_previsao: dataEntrega,
+             data_entrega: statusDoacao === "ENTREGUE" ? (registroOriginal?.data_entrega || dataEntrega || hojeISODate()) : null,
+             responsavel_lanc: responsavel,
+             observacao
+           };
+
+        } else if (modulo === "MERCADINHO") {
+          payload = {
+             descricao, tipo,
+             status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO",
+             forma, valor, nome, telefone,
+             equipe: document.getElementById("f_equipe_merc").value || null,
+             tipo_pessoa: document.getElementById("f_tipo_pessoa").value || null,
+             data_movimento: registroOriginal?.data_movimento || hojeISODate(),
+             responsavel_lanc: responsavel, observacao
+           };
+        } else {
+          payload = {
+             descricao, tipo,
+             status: tipo === "PENDENTE" ? "PENDENTE" : "PAGO",
+             forma, valor, nome, telefone,
+             data_movimento: registroOriginal?.data_movimento || hojeISODate(),
+             responsavel_lanc: responsavel, observacao
+           };
+        }
+        
+        let result;
+        if (registroEmEdicao) {
+          result = await _supabase.from(tabela).update(payload).eq("id", registroEmEdicao);
+          if (!result.error) await registrarHistorico("EDICAO", tabela, registroEmEdicao, payload);
+        } else {
+          result = await _supabase.from(tabela).insert([payload]).select();
+          if (!result.error && result.data && result.data.length > 0) await registrarHistorico("CRIACAO", tabela, result.data[0].id, payload);
+        }
+        
+        if (result.error) {
+          console.error(result.error);
+          return showToast(result.error.message || "Erro ao salvar.", "error");
+        }
+        
+        showToast(registroEmEdicao ? "Registro atualizado com sucesso!" : "Registro salvo com sucesso!");
+        fecharModal();
+        await carregarRegistros();
+      } catch (err) {
+        console.error("ERRO AO SALVAR:", err);
+        showToast("Erro ao salvar", "error");
+      }
+    }
+
+    // ============================
+    // EDITAR, CANCELAR E STATUS
+    // ============================
+    function editarRegistro(id) {
+      const r = dadosCache.find(x => String(x.id) === String(id));
+      if (!r) return showToast("Registro não encontrado.", "error");
+      registroEmEdicao = r.id;
+      document.getElementById("tituloModalRegistro").textContent = "Editar Registro";
+      document.getElementById("f_modulo").value = abaAtiva;
+      if (ROLE === "COMPRAS") {
+        document.getElementById("blocoModulo")?.classList.add("hidden");
+      } else {
+        document.getElementById("blocoModulo")?.classList.remove("hidden");
+      }
+      document.getElementById("f_desc").value = r.descricao || r.item || "";
+      let valorEdicao = Number(r.valor || r.valor_total || r.valor_estimado || 0);
+      const tamanhoEdicao = String(r.tamanho || "").toUpperCase();
+      if (["GG", "EXG", "G1", "G2", "G3"].includes(tamanhoEdicao)) {
+        valorEdicao = Math.max(0, valorEdicao - 10);
+      }
+      document.getElementById("f_val").value = valorEdicao.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+      document.getElementById("f_nome").value = r.nome || "";
+      document.getElementById("f_tel").value = r.telefone || "";
+      if (document.getElementById("f_forma")) document.getElementById("f_forma").value = r.forma || "PIX";
+      document.getElementById("f_recebido").value = r.responsavel_lanc || obterNomeResponsavel();
+      document.getElementById("f_obs").value = r.observacao || "";
+      if (document.getElementById("f_data_entrega")) document.getElementById("f_data_entrega").value = r.data_previsao || r.data_entrega || "";
+      
+      if (abaAtiva === "CAMISETAS") {
+        if (document.getElementById("f_tamanho")) document.getElementById("f_tamanho").value = r.tamanho || "M";
+        if (document.getElementById("f_status_camiseta")) document.getElementById("f_status_camiseta").value = r.status_pedido || "SOLICITADA";
+      }
+      if (abaAtiva === "DOACAO") {
+        if (document.getElementById("f_qtd_doacao")) document.getElementById("f_qtd_doacao").value = r.quantidade || 1;
+        if (document.getElementById("f_un_doacao")) document.getElementById("f_un_doacao").value = r.unidade || "un";
+      }
+      if (document.getElementById("f_equipe_merc")) {
+        document.getElementById("f_equipe_merc").value = r.equipe || r.equipe_responsavel || "";
+      }
+      if (document.getElementById("f_tipo_pessoa")) {
+        document.getElementById("f_tipo_pessoa").value = r.tipo_pessoa || "PAROQUIANO";
+      }
+      if (abaAtiva === "DOACAO") {
+        document.getElementById("f_type").value = r.status === "PROMETIDO" || r.status === "PENDENTE" ? "PENDENTE" : r.status === "CANCELADO" ? "SAIDA" : "ENTRADA";
+      } else {
+        document.getElementById("f_type").value = r.tipo || (obterStatusRegistro(r) === "PENDENTE" ? "PENDENTE" : "ENTRADA");
+      }
+      atualizarModalDinamico();
+      document.getElementById("modal")?.classList.remove("hidden");
+    }
+
+    async function cancelarRegistro(id) {
+      if (!window.confirm("Tem certeza que deseja cancelar este lançamento? Ele será desconsiderado nos controles e no caixa.")) return;
+      const tabela = obterNomeTabela(abaAtiva);
+      let payload = { responsavel_lanc: obterNomeResponsavel() };
+      if (abaAtiva === "CAMISETAS") {
+        payload.status_financeiro = "CANCELADO";
+        payload.status_pedido = "CANCELADO";
+      } else {
+        payload.status = "CANCELADO";
+      }
+      const { error } = await _supabase.from(tabela).update(payload).eq("id", id);
+      if (error) { console.error(error); return showToast("Erro ao cancelar.", "error"); }
+      await registrarHistorico("CANCELAMENTO", tabela, id, payload);
+      showToast("Lançamento cancelado.");
+      if (tabela === "doacao") { await carregarMetas(); }
+      await carregarRegistros();
+    }
+
+    async function darBaixaIndividual(id) {
+      const tabela = obterNomeTabela(abaAtiva);
+      const r = dadosCache.find(x => String(x.id) === String(id));
+      if (!r) return;
+      let payload = {};
+      if (tabela === "camisetas") {
+        const valorTotal = Number(r.valor_total || r.valor || 0);
+        payload = { status_financeiro: "PAGO", valor_pago: valorTotal, saldo_pendente: 0, responsavel_lanc: obterNomeResponsavel() };
+      } else if (tabela === "doacao") {
+        payload = { status: "ENTREGUE", data_entrega: hojeISODate(), responsavel_lanc: obterNomeResponsavel() };
+      } else {
+        payload = { status: "PAGO", responsavel_lanc: obterNomeResponsavel() };
+      }
+      const { error } = await _supabase.from(tabela).update(payload).eq("id", id);
+      if (error) { console.error(error); return showToast("Erro ao dar baixa.", "error"); }
+      await registrarHistorico("BAIXA_INDIVIDUAL", tabela, id, payload);
+      showToast("Baixa realizada com sucesso!");
+      if (tabela === "doacao") { await carregarMetas(); }
+      await carregarRegistros();
+    }
+
+    async function atualizarStatusCamiseta(id, status) {
+      const atual = dadosCache.find(x => String(x.id) === String(id));
+      if (!atual) return showToast("Registro não encontrado.", "error");
+      let payload = { status_pedido: status };
+      if (status === "ENTREGUE") {
+        payload.data_entrega = hojeISODate();
+      } else if (atual.data_entrega) {
+        payload.data_entrega = null;
+      }
+      if (status === "CANCELADO") {
+        payload.status_financeiro = "CANCELADO";
+      }
+      if (status !== "CANCELADO" && atual.status_financeiro === "CANCELADO") {
+        if (Number(atual.valor_pago || 0) >= Number(atual.valor_total || 0)) {
+          payload.status_financeiro = "PAGO";
+        } else if (Number(atual.valor_pago || 0) > 0) {
+          payload.status_financeiro = "PARCIAL";
+        } else {
+          payload.status_financeiro = "PENDENTE";
+        }
+      }
+      const { error } = await _supabase.from("camisetas").update(payload).eq("id", id);
+      if (error) { console.error(error); return showToast("Erro ao atualizar status.", "error"); }
+      await registrarHistorico("STATUS_CAMISETA", "camisetas", id, payload);
+      showToast("Status da produção atualizado!");
+      await carregarRegistros();
+    }
+
+    function aplicarFiltroEBusca() {
+      const termo = (document.getElementById("campoBusca")?.value || "").toLowerCase().trim();
+      const dataInicio = document.getElementById("filtroDataInicio")?.value || "";
+      const dataFim = document.getElementById("filtroDataFim")?.value || "";
+      return dadosCache.filter(reg => {
+        const texto = [ reg.descricao, reg.item, reg.nome, reg.telefone, reg.tipo, reg.forma, reg.status, reg.status_financeiro, reg.status_pedido, reg.equipe, reg.equipe_responsavel, reg.tipo_pessoa, reg.observacao, reg.unidade ].join(" ").toLowerCase();
+        const passouBusca = texto.includes(termo);
+        const statusAtual = obterStatusRegistro(reg);
+        
+        let statusParaFiltro = statusAtual;
+        if (abaAtiva === "DOACAO") {
+            if (statusAtual === "PROMETIDO") statusParaFiltro = "PENDENTE";
+            if (statusAtual === "ENTREGUE") statusParaFiltro = "PAGO";
+        }
+
+        const passouStatus = filtroStatusAtivo === "TODOS" || statusParaFiltro === filtroStatusAtivo;
+        const dataBase = String(reg.data_movimento || reg.criado_em || reg.created_at || "").slice(0, 10);
+        const passouInicio = !dataInicio || dataBase >= dataInicio;
+        const passouFim = !dataFim || dataBase <= dataFim;
+        return passouBusca && passouStatus && passouInicio && passouFim;
+      });
+    }
+
+    function renderizar() {
+      const corpo = document.getElementById("corpoTabela");
+      if(!corpo) return;
+      corpo.innerHTML = "";
+      const lista = aplicarFiltroEBusca();
+      if (!lista.length) {
+        corpo.innerHTML = `<tr><td colspan="2" class="px-6 py-10 text-center text-slate-400 font-semibold">Nenhum registro encontrado.</td></tr>`;
+        return;
+      }
+      lista.forEach(reg => {
+        const id = reg.id;
+        const desc = reg.descricao || reg.item || "-";
+        const nome = reg.nome || "Sem nome";
+        const valor = reg.valor ?? reg.valor_total ?? reg.valor_estimado ?? 0;
+        const statusVisual = obterStatusVisual(reg);
+        const statusAtualRegistro = obterStatusRegistro(reg);
+        
+        const btnBaixa = ((abaAtiva === "DOACAO" && statusVisual === "PROMETIDO") || (abaAtiva !== "DOACAO" && (statusAtualRegistro === "PENDENTE" || statusAtualRegistro === "PARCIAL")))
+          ? `<button class="action-btn bg-emerald-50 text-emerald-600" onclick="darBaixaIndividual('${id}')" title="Dar baixa"><i class="fas fa-check"></i></button>` : "";
+        const btnEditar = statusVisual !== "CANCELADO"
+          ? `<button class="action-btn bg-blue-50 text-blue-600" onclick="editarRegistro('${id}')" title="Editar"><i class="fas fa-pen"></i></button>` : "";
+        const btnCancelar = statusVisual !== "CANCELADO"
+          ? `<button class="action-btn bg-rose-50 text-rose-600 hover:bg-rose-100" onclick="cancelarRegistro('${id}')" title="Cancelar"><i class="fas fa-ban"></i></button>` : "";
+        const btnExtrato = reg.telefone
+          ? `<button class="action-btn bg-slate-100 text-slate-700 hover:bg-slate-200" onclick="abrirExtratoCompleto('${esc(reg.telefone)}', '${esc(nome)}')" title="Extrato"><i class="fas fa-file-invoice"></i></button>` : "";
+        const btnCobrarDoacao = (abaAtiva === "DOACAO" && statusVisual === "PROMETIDO" && reg.telefone)
+          ? `<button class="action-btn bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white shadow-md hover:opacity-90" onclick="cobrarWhatsAppDoacao('${id}')" title="Cobrar doação"><i class="fab fa-whatsapp"></i></button>` : "";
+        
+        const detalhes = [];
+        if (reg.tipo_pessoa === "SERVO") detalhes.push("Servo do EJC");
+        else if (reg.tipo_pessoa === "PAROQUIANO" || !reg.tipo_pessoa) detalhes.push("Paroquiano");
+        if (reg.equipe_responsavel || reg.equipe) detalhes.push(reg.equipe_responsavel || reg.equipe);
+        if (reg.tamanho) detalhes.push(`Tam: ${reg.tamanho}`);
+        if (reg.quantidade && abaAtiva === "DOACAO") {
+          if (reg.data_previsao) detalhes.push(`Prev.: ${formatarDataBR(reg.data_previsao)}`);
+          if (reg.data_entrega) detalhes.push(`Entregue: ${formatarDataBR(reg.data_entrega)}`);
+        } else if (reg.quantidade && abaAtiva !== "DOACAO") {
+           detalhes.push(`Qtd: ${reg.quantidade}${reg.unidade ? " " + reg.unidade : ""}`);
+        }
+        if (reg.forma && valor > 0) detalhes.push(`Forma: ${reg.forma}`);
+        const extras = detalhes.length ? `<div class="text-[10px] text-slate-400 mt-1">${esc(detalhes.join(" • "))}</div>` : "";
+        
+        let controleCamiseta = "";
+        if (abaAtiva === "CAMISETAS") {
+          controleCamiseta = `
+            <div class="mt-2 flex flex-col items-start gap-2">
+              <select onchange="atualizarStatusCamiseta('${id}', this.value)" class="text-[10px] font-bold border border-slate-200 rounded-lg px-2 py-1 bg-white text-purple-700 outline-none">
+                <option value="SOLICITADA" ${reg.status_pedido === "SOLICITADA" ? "selected" : ""}>Solicitada</option>
+                <option value="EM_PRODUCAO" ${reg.status_pedido === "EM_PRODUCAO" ? "selected" : ""}>Em produção</option>
+                <option value="PRONTA" ${reg.status_pedido === "PRONTA" ? "selected" : ""}>Pronta</option>
+                <option value="ENTREGUE" ${reg.status_pedido === "ENTREGUE" ? "selected" : ""}>Entregue</option>
+                <option value="CANCELADO" ${reg.status_pedido === "CANCELADO" ? "selected" : ""}>Cancelado</option>
+              </select>
+            </div>`;
+        }
+
+        let infoDireita = `<div class="font-black text-slate-900">${formatarMoeda(valor)}</div>`;
+        if (abaAtiva === "DOACAO") {
+          if (valor > 0) {
+             infoDireita = `<div class="font-black text-emerald-600 text-lg leading-none">${formatarMoeda(valor)}</div>`;
+          } else {
+             infoDireita = `<div class="font-black text-purple-700 text-xl leading-none">${reg.quantidade || 0} <span class="text-[11px] text-slate-500 uppercase">${reg.unidade || 'un'}</span></div>`;
+          }
+        }
+
+        const corStatus = statusAtualRegistro === "PAGO" || statusVisual === "ENTREGUE" ? "text-emerald-600" : statusAtualRegistro === "CANCELADO" || statusVisual === "CANCELADO" ? "text-rose-600" : "text-amber-600";
+        
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 border-b border-slate-50";
+        tr.innerHTML = `
+          <td class="px-4 py-4 align-top">
+            <div class="font-bold text-slate-800">${esc(desc)}</div>
+            <div class="text-[11px] text-slate-500">${esc(nome)}</div>
+            ${extras}
+            ${controleCamiseta}
+          </td>
+          <td class="px-4 py-4 text-right align-top">
+            ${infoDireita}
+            <div class="text-[10px] font-bold uppercase ${corStatus} mt-1">${esc(statusVisual)}</div>
+            <div class="flex justify-end gap-1 mt-2">
+              ${btnBaixa}
+              ${btnCobrarDoacao}
+              ${btnEditar}
+              ${btnCancelar}
+              ${btnExtrato}
+            </div>
+          </td>
+        `;
+        corpo.appendChild(tr);
+      });
+    }
+
+    // ============================
+    // EXTRATO 360 & COBRANÇA
+    // ============================
+    async function abrirExtratoCompleto(telefone, nome = "") {
+      const num = normalizarTelefone(telefone);
+      if (!num) return showToast("Telefone inválido.", "error");
+      const tabelas = ["caixa_ejc", "mercadinho", "camisetas", "doacao"];
+      let todos = [];
+      for (const t of tabelas) {
+        const { data, error } = await _supabase.from(t).select("*").eq("telefone", num);
+        if (!error && data?.length) { todos.push(...data.map(item => ({ ...item, _modulo: t }))); }
+      }
+      if (!todos.length) return showToast("Nenhum registro encontrado para este telefone.", "error");
+      todos.sort((a, b) => {
+        const da = new Date(a.criado_em || a.created_at || a.data_movimento || 0).getTime();
+        const db = new Date(b.criado_em || b.created_at || b.data_movimento || 0).getTime();
+        return db - da;
+      });
+      const primeiroComNome = todos.find(x => x.nome);
+      const primeiroComEquipe = todos.find(x => x.equipe_responsavel || x.equipe);
+      extratoAtual = {
+        nome: nome || primeiroComNome?.nome || "Sem nome",
+        equipe: primeiroComEquipe?.equipe_responsavel || primeiroComEquipe?.equipe || "",
+        telefone: num,
+        tabela: "MULTIPLO",
+        registros: todos,
+        registrosFiltrados: [...todos]
+      };
+      document.getElementById("extratoNome").textContent = extratoAtual.nome;
+      document.getElementById("extratoEquipe").textContent = extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}` : "";
+      document.getElementById("filtroExtrato").value = "";
+      renderizarExtrato();
+      document.getElementById("modalExtrato")?.classList.remove("hidden");
+      document.getElementById("modalExtrato")?.classList.add("flex");
+    }
+    
+    function renderizarExtrato() {
+      const lista = document.getElementById("extratoLista");
+      const filtro = (document.getElementById("filtroExtrato").value || "").toLowerCase().trim();
+      const regs = extratoAtual.registros.filter(r => {
+        const texto = [r.descricao, r.item, r.nome, r._modulo, r.status, r.status_financeiro, r.status_pedido, r.equipe_responsavel, r.equipe, r.tamanho].join(" ").toLowerCase();
+        return texto.includes(filtro);
+      });
+      extratoAtual.registrosFiltrados = regs;
+      const totalPago = regs.reduce((a, r) => a + obterValorPagoRegistro(r), 0);
+      const totalAberto = regs.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+      document.getElementById("extratoQtdLanc").textContent = regs.length;
+      document.getElementById("extratoTotalPago").textContent = formatarMoeda(totalPago);
+      document.getElementById("extratoTotalAberto").textContent = formatarMoeda(totalAberto);
+      if (!regs.length) {
+        lista.innerHTML = `<p class="text-sm text-slate-400 text-center py-6">Nenhum lançamento encontrado nesse filtro.</p>`;
+        return;
+      }
+      lista.innerHTML = regs.map(r => {
+        const valor = r.valor || r.valor_total || r.valor_estimado || 0;
+        const status = obterStatusVisual(r);
+        const statusClasse = status === "PAGO" || status === "ENTREGUE" ? "text-emerald-600" : status === "CANCELADO" ? "text-rose-600" : "text-amber-600";
+        const nomeModuloVisual = (r._modulo === "doacao") ? "LISTA DE PROVIDÊNCIA" : (r._modulo || "");
+        const detalhes = [formatarDataBR(r.data_movimento || r.criado_em || r.created_at || ""), nomeModuloVisual, status];
+        if (r.status_pedido) detalhes.push(r.status_pedido);
+        if (r.tamanho) detalhes.push(`Tam: ${r.tamanho}`);
+        if (r.equipe_responsavel || r.equipe) detalhes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
+        if (r.quantidade && r.unidade && valor <= 0) detalhes.push(`Qtd: ${r.quantidade} ${r.unidade}`);
+
+        let infoDireita = `<p class="text-xs font-black text-slate-900">${formatarMoeda(valor)}</p>`;
+        if (r._modulo === "doacao") {
+            if (valor > 0) {
+               infoDireita = `<p class="text-xs font-black text-emerald-600">${formatarMoeda(valor)}</p>`;
+            } else {
+               infoDireita = `<p class="text-xs font-black text-purple-700">${r.quantidade || 0} ${r.unidade || 'un'}</p>`;
+            }
+        }
+
+        return `
+          <div class="extrato-item p-3">
+            <div class="flex justify-between items-start gap-3">
+              <div>
+                <p class="text-xs font-bold text-slate-800">${esc(r.descricao || r.item || "-")}</p>
+                <p class="text-[11px] mt-1 ${statusClasse} font-bold">${esc(status)}</p>
+                <p class="text-[10px] text-slate-400 mt-1">${esc(detalhes.join(" • "))}</p>
+              </div>
+              <div class="text-right">
+                ${infoDireita}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+    
+    function fecharExtrato() {
+      document.getElementById("modalExtrato")?.classList.add("hidden");
+      document.getElementById("modalExtrato")?.classList.remove("flex");
+      extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
+    }
+    
+    async function copiarExtrato() {
+      const regs = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
+      if (!regs.length) return showToast("Extrato vazio.", "error");
+      const totalPago = regs.reduce((a, r) => a + obterValorPagoRegistro(r), 0);
+      const totalAberto = regs.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+      const linhas = regs.map(r => {
+        const moduloVisual = r._modulo === "doacao" ? "LISTA DE PROVIDÊNCIA" : (r._modulo || "");
+        const partes = [ formatarDataBR(r.data_movimento || r.criado_em || r.created_at || ""), moduloVisual, r.descricao || r.item || "-", formatarMoeda(r.valor || r.valor_total || r.valor_estimado || 0), obterStatusVisual(r) ];
+        if (r.status_pedido) partes.push(`Pedido: ${r.status_pedido}`);
+        if (r.tamanho) partes.push(`Tam: ${r.tamanho}`);
+        if (r.equipe_responsavel || r.equipe) partes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
+        if (r.quantidade && r.unidade) partes.push(`Qtd: ${r.quantidade} ${r.unidade}`);
+        return `• ${partes.join(" — ")}`;
+      });
+      const texto = `Extrato de ${extratoAtual.nome}\n` + `${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}` + `Telefone: ${extratoAtual.telefone || "-"}\n\n` + `${linhas.join("\n")}\n\n` + `Total pago: ${formatarMoeda(totalPago)}\n` + `Total em aberto: ${formatarMoeda(totalAberto)}`;
+      try { await navigator.clipboard.writeText(texto); showToast("Extrato copiado!"); } catch { showToast("Não foi possível copiar.", "error"); }
+    }
+    
+    function exportarCSVAtual() {
+      const lista = aplicarFiltroEBusca();
+      if (!lista.length) return showToast("Nada para exportar.", "error");
+      const linhas = [["data","modulo","descricao","nome","telefone","equipe","valor","status","forma","observacao"]];
+      lista.forEach(r => {
+        linhas.push([ r.data_movimento || r.criado_em || r.created_at || "", abaAtiva, r.descricao || r.item || "", r.nome || "", r.telefone || "", r.equipe_responsavel || r.equipe || "", r.valor || r.valor_total || r.valor_estimado || "", obterStatusVisual(r), r.forma || "", r.observacao || "" ]);
+      });
+      const csv = linhas.map(l => l.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ejc-bank-${abaAtiva.toLowerCase()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("CSV exportado!");
+    }
+
+    // ============================
+    // QUITAR TUDO
+    // ============================
+    function abrirModalQuitarTudo() {
+      const pendentes = extratoAtual.registros.filter(r => { if (r._modulo === "doacao") return false; const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; });
+      if (!pendentes.length) return showToast("Não há lançamentos financeiros em aberto.", "success");
+      document.getElementById("quitarTudoRecebidoPor").value = obterNomeResponsavel();
+      document.getElementById("quitarTudoData").value = hojeISODate();
+      document.getElementById("modalQuitarTudo")?.classList.remove("hidden");
+      document.getElementById("modalQuitarTudo")?.classList.add("flex");
+    }
+    
+    function fecharModalQuitarTudo() {
+      document.getElementById("modalQuitarTudo")?.classList.add("hidden");
+      document.getElementById("modalQuitarTudo")?.classList.remove("flex");
+    }
+    
+    async function confirmarQuitarTudo() {
+      const resp = document.getElementById("quitarTudoRecebidoPor").value.trim();
+      const data = document.getElementById("quitarTudoData").value;
+      if (!resp) return showToast("Quem recebeu?", "error");
+      if (!data) return showToast("Informe a data.", "error");
+      const pendentes = extratoAtual.registros.filter(r => { if (r._modulo === "doacao") return false; const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; });
+      if (!pendentes.length) return showToast("Nada pendente.", "success");
+      let erros = 0;
+      for (const r of pendentes) {
+        let p = {};
+        if (r._modulo === "camisetas") { p = { status_financeiro: "PAGO", valor_pago: Number(r.valor_total || 0), saldo_pendente: 0, data_entrega: r.data_entrega || data, responsavel_lanc: resp }; }
+        else { p = { status: "PAGO", responsavel_lanc: resp }; }
+        const { error } = await _supabase.from(r._modulo).update(p).eq("id", r.id);
+        if (error) { console.error(error); erros++; } else { await registrarHistorico("QUITAR_TUDO", r._modulo, r.id, p); }
+      }
+      if (erros > 0) showToast(`Concluído com ressalvas. ${erros} falharam.`, "error");
+      else showToast("Todos os lançamentos foram quitados!");
+      fecharModalQuitarTudo();
+      await abrirExtratoCompleto(extratoAtual.telefone, extratoAtual.nome);
+      await carregarRegistros();
+    }
+
+    // ============================
+    // WHATSAPP
+    // ============================
+    function abrirWhatsApp(numero, mensagem) {
+      const num = normalizarTelefone(numero);
+      if (!num) { showToast("Telefone inválido.", "error"); return; }
+      const texto = encodeURIComponent(mensagem);
+      const urlApp = `https://wa.me/${num}?text=${texto}`;
+      const urlWeb = `https://api.whatsapp.com/send?phone=${num}&text=${texto}`;
+      const win = window.open(urlApp, "_blank");
+      if (!win) { window.location.href = urlWeb; }
+    }
+
+    // ============================
+    // COBRANÇA DOAÇÃO C/ IA SIMPLES DE DATAS (DIA 10/07 para os perecíveis da lista)
+    // ============================
+    function cobrarWhatsAppDoacao(id) {
+      const registro = dadosCache.find(x => String(x.id) === String(id));
+      if (!registro) return showToast("Registro não encontrado.", "error");
+
+      const num = normalizarTelefone(registro.telefone);
+      if (!num) return showToast("Telefone inválido.", "error");
+
+      const primeiroNome = (registro.nome || "").split(" ")[0] || "Tudo bem";
+      const item = registro.item || registro.descricao || "item";
+      const qtd = Number(registro.quantidade || 0);
+      const unidade = registro.unidade || "un";
+
+      // Palavras de itens "Sexta-feira" ou "Perecíveis" baseados na sua imagem do PDF
+      const palavrasPereciveis = [
+        'requeijão', 'requeijao', 'banana', 'laranja', 'limão', 'limao', 
+        'maçã', 'maca', 'mamão', 'mamao', 'melancia', 'melão', 'melao', 
+        'mexerica', 'mussarela', 'pão', 'pao', 'presunto', 'uva', 
+        'carne', 'frango', 'linguiça', 'bacon', 'batata', 'cenoura', 
+        'tomate', 'repolho', 'cebola', 'alho', 'manteiga', 'leite'
+      ];
+      const isPerecivel = palavrasPereciveis.some(p => item.toLowerCase().includes(p));
+      
+      const dataEntrega = isPerecivel ? "*10/07*" : "*05/07*";
+      const avisoExtra = isPerecivel 
+        ? " (data especial para itens perecíveis/frescos 🥩🥦)" 
+        : " (data padrão para itens não perecíveis 📦)";
+
+      const mensagem =
+        `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\n` +
+        `Aqui é *${obterNomeResponsavel()}*, da equipe *${obterEquipeResponsavel()}* do EJC da Paróquia Santo Eugênio de Mazenod *(EJC do Parque)*.\n\n` +
+        `Estou passando para confirmar sua doação na nossa *Lista de Providência* 🤍\n\n` +
+        `• Item: ${item}\n` +
+        `• Quantidade: ${qtd} ${unidade}\n\n` +
+        `🗓️ *Atenção para a entrega:*\n` +
+        `A sua doação deve ser entregue até o dia ${dataEntrega}${avisoExtra}.\n\n` +
+        `Você consegue nos confirmar se está tudo certo?\n\n` +
+        `Se precisar de qualquer coisa, é só me avisar 🙏`;
+
+      abrirWhatsApp(num, mensagem);
+    }
+
+    // ============================
+    // COBRANÇA EXTRATO
+    // ============================
+    function cobrarExtratoWhatsApp() {
+      const total = extratoAtual.registros.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+      if (total <= 0) return showToast("Nada em aberto", "success");
+
+      const primeiroNome = (extratoAtual.nome || "").split(" ")[0] || "Tudo bem";
+
+      const mensagem =
+        `Olá, *${primeiroNome}*! Tudo bem? ✝️💜\n\n` +
+        `Aqui é *${obterNomeResponsavel()}*, da equipe *${obterEquipeResponsavel()}* do EJC da Paróquia Santo Eugênio de Mazenod *(EJC do Parque)*.\n\n` +
+        `Passando para alinhar uma informação do nosso controle 😊\n\n` +
+        `Atualmente consta um valor em aberto de:\n` +
+        `• ${formatarMoeda(total)}\n\n` +
+        `Quando puder, você consegue verificar pra gente?\n\n` +
+        `Qualquer dúvida estou à disposição.\nDeus abençoe 🙏`;
+
+      abrirWhatsApp(extratoAtual.telefone, mensagem);
+    }
+
+    // ============================
+    // PROVIDENCIA (METAS) COM IA DE PRIORIDADES
+    // ============================
+    function abrirModalMeta() { document.getElementById("modalMeta")?.classList.remove("hidden"); }
+    function fecharModalMeta() { document.getElementById("modalMeta")?.classList.add("hidden"); document.getElementById("formMeta")?.reset(); }
+    
+    async function salvarMeta() {
+      const itemEl = document.getElementById("m_item");
+      const qtdEl = document.getElementById("m_qtd");
+      const unEl = document.getElementById("m_un");
+      const btn = document.getElementById("btnSalvarMeta");
+      if (!itemEl || !qtdEl || !unEl) { showToast("Campos da necessidade não encontrados.", "error"); return; }
+      const item = itemEl.value.trim();
+      const qtd = Number(qtdEl.value || 0);
+      const un = unEl.value.trim();
+      if (!item || qtd <= 0 || !un) { showToast("Preencha item, quantidade e unidade corretamente.", "error"); return; }
+      const original = btn ? btn.innerHTML : "";
+      if (btn) { btn.disabled = true; btn.innerHTML = "Salvando..."; }
+      try {
+        let result = await _supabase.from("metas_providencia").insert([{ item: item.trim().toLowerCase(), unidade: un.trim().toLowerCase(), quantidade_alvo: qtd, quantidade_recebida: 0, status_meta: "ABERTA" }]);
+        if (result.error) { console.error("Erro ao salvar em metas_providencia:", result.error); showToast(result.error.message || "Erro ao registrar necessidade.", "error"); return; }
+        showToast("Necessidade registrada com sucesso!");
+        fecharModalMeta();
+        await carregarMetas();
+      } catch (err) { console.error("Falha inesperada ao salvar meta:", err); showToast("Erro inesperado ao registrar necessidade.", "error"); } 
+      finally { if (btn) { btn.disabled = false; btn.innerHTML = original || "REGISTRAR META"; } }
+    }
+
+    async function carregarMetas() {
+      const wrap = document.getElementById("listaGerenciarMetas");
+      if (!wrap) return;
+      wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Carregando prioridades...</p>`;
+
+      const { data: metas, error: erroMetas } = await _supabase.from("metas_providencia").select("*");
+      if (erroMetas) {
+        wrap.innerHTML = `<p class="text-sm text-rose-500 text-center py-4">Erro ao carregar necessidades.</p>`;
+        return;
+      }
+
+      const { data: doacoes, error: erroDoacoes } = await _supabase.from("doacao").select("*").in("status", ["ENTREGUE", "PAGO"]);
+      
+      const mapaRecebidos = {};
+      (doacoes || []).forEach(d => {
+        const key = `${String(d.item).trim().toLowerCase()}_${String(d.unidade).trim().toLowerCase()}`;
+        if (!mapaRecebidos[key]) mapaRecebidos[key] = 0;
+        mapaRecebidos[key] += Number(d.quantidade || 0);
+      });
+
+      if (!metas || !metas.length) {
+        wrap.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhuma necessidade cadastrada.</p>`;
+        return;
+      }
+
+      // IA SIMPLES DE PRIORIZAÇÃO
+      function obterPrioridade(nomeItem) {
+        const n = nomeItem.toLowerCase();
+        const criticos = ['água', 'agua', 'carne', 'frango', 'linguiça', 'bacon', 'arroz', 'feijão', 'feijao', 'óleo', 'oleo', 'leite', 'pão', 'pao', 'papel higiênico', 'mussarela', 'presunto'];
+        if (criticos.some(p => n.includes(p))) return { nivel: 1, label: '🔴 CRÍTICO', cor: 'bg-rose-100 text-rose-700 border-rose-200' };
+        const importantes = ['café', 'cafe', 'açúcar', 'acucar', 'limpeza', 'detergente', 'desinfetante', 'sabão', 'sabao', 'cândida', 'candida', 'copo', 'carvão', 'carvao', 'margarina', 'requeijão', 'requeijao', 'saco de lixo', 'alumínio'];
+        if (importantes.some(p => n.includes(p))) return { nivel: 2, label: '🟠 IMPORTANTE', cor: 'bg-orange-100 text-orange-700 border-orange-200' };
+        return { nivel: 3, label: '🟢 DE BOA', cor: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
+      }
+
+      const metasProcessadas = metas.map(meta => {
+        const key = `${String(meta.item).trim().toLowerCase()}_${String(meta.unidade).trim().toLowerCase()}`;
+        const recebido = mapaRecebidos[key] || 0;
+        const alvo = Number(meta.quantidade_alvo || 0);
+        const falta = Math.max(0, alvo - recebido);
+        const percentual = alvo > 0 ? Math.min(100, (recebido / alvo) * 100) : 0;
+        let statusMeta = "ABERTA";
+        if (recebido >= alvo) statusMeta = "CONCLUIDA";
+        else if (recebido > 0) statusMeta = "PARCIAL";
+
+        return { ...meta, recebido, alvo, falta, percentual, statusMeta, prio: obterPrioridade(meta.item) };
+      });
+
+      metasProcessadas.forEach(async (m) => {
+        if (Number(m.quantidade_recebida) !== m.recebido || m.status_meta !== m.statusMeta) {
+            await _supabase.from("metas_providencia").update({ quantidade_recebida: m.recebido, status_meta: m.statusMeta }).eq("id", m.id);
+        }
+      });
+
+      // ORDENAÇÃO INTELIGENTE
+      metasProcessadas.sort((a, b) => {
+        const aConcluido = a.statusMeta === "CONCLUIDA" ? 1 : 0;
+        const bConcluido = b.statusMeta === "CONCLUIDA" ? 1 : 0;
+        if (aConcluido !== bConcluido) return aConcluido - bConcluido;
+        if (a.prio.nivel !== b.prio.nivel) return a.prio.nivel - b.prio.nivel;
+        return a.item.localeCompare(b.item);
+      });
+
+      wrap.innerHTML = metasProcessadas.map(meta => {
+        let corStatus = meta.statusMeta === "CONCLUIDA" ? "text-emerald-600" : (meta.statusMeta === "PARCIAL" ? "text-amber-600" : "text-slate-400");
+        let corBarra = meta.statusMeta === "CONCLUIDA" ? "bg-emerald-500" : (meta.prio.nivel === 1 ? 'bg-rose-500' : (meta.prio.nivel === 2 ? 'bg-orange-400' : 'bg-emerald-400'));
+
+        return `
+          <div class="bg-white rounded-2xl px-4 py-4 border border-slate-100 shadow-sm relative overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 ${corBarra}"></div>
+            <div class="flex items-start justify-between gap-3 pl-2">
+              <div>
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  <p class="font-black text-slate-800 text-sm leading-tight">${esc(meta.item)}</p>
+                  <span class="text-[8px] font-black px-2 py-0.5 rounded-full border uppercase ${meta.prio.cor}">${meta.prio.label}</span>
+                </div>
+                <p class="text-[11px] font-semibold text-slate-500 mt-1">Meta: ${meta.alvo} ${esc(meta.unidade || "")} • Arrecadado: <span class="text-slate-800">${meta.recebido}</span></p>
+                <p class="text-[10px] font-black mt-1 uppercase ${corStatus}">${meta.statusMeta === "CONCLUIDA" ? "META ATINGIDA 🎉" : `FALTAM ${meta.falta}`}</p>
+              </div>
+              <div class="text-right text-xs font-black ${meta.percentual >= 100 ? 'text-emerald-600' : 'text-slate-400'}">${meta.percentual.toFixed(0)}%</div>
+            </div>
+            <div class="mt-3 ml-2 w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-500 ${corBarra}" style="width:${meta.percentual}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ============================
+    // MURAL DE CARINHO PENDENTES
+    // ============================
+    async function buscarMensagensPendentesMural() {
+      let query = _supabase.from("doacao_mural").select("*").eq("status", "PENDENTE");
+      let { data, error } = await query.order("created_at", { ascending: false });
+      if (error) {
+        console.warn("Falha com created_at, tentando criado_em...", error.message);
+        const tentativa2 = await _supabase.from("doacao_mural").select("*").eq("status", "PENDENTE").order("criado_em", { ascending: false });
+        data = tentativa2.data; error = tentativa2.error;
+      }
+      if (error) { console.error("Erro ao buscar mensagens:", error); showToast("Erro ao carregar mensagens do mural.", "error"); return []; }
+      return data || [];
+    }
+    
+    async function carregarMensagensPendentesMural() {
+      const lista = document.getElementById("listaMensagensPendentes");
+      const contador = document.getElementById("contadorMensagensPendentes");
+      if (!lista || !contador) return;
+      lista.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Carregando...</p>`;
+      const mensagens = await buscarMensagensPendentesMural();
+      contador.textContent = `${mensagens.length} pendente(s)`;
+      if (!mensagens.length) { lista.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Nenhuma mensagem pendente.</p>`; return; }
+      lista.innerHTML = mensagens.map(m => `
+        <div class="border border-slate-100 rounded-2xl p-4 bg-slate-50">
+          <p class="text-sm font-bold text-slate-800 mb-1">${esc(m.nome || "Anônimo")}</p>
+          <p class="text-sm text-slate-600 mb-3 whitespace-pre-wrap">${esc(m.mensagem)}</p>
+          <div class="flex gap-2 justify-end">
+            <button onclick="aprovarMensagemMural('${m.id}')" class="px-3 py-2 rounded-xl bg-emerald-100 text-emerald-700 font-bold text-xs hover:opacity-90">Aprovar</button>
+            <button onclick="rejeitarMensagemMural('${m.id}')" class="px-3 py-2 rounded-xl bg-rose-100 text-rose-700 font-bold text-xs hover:opacity-90">Rejeitar</button>
+          </div>
+        </div>
+      `).join("");
+    }
+    
+    async function aprovarMensagemMural(id) {
+      const { error } = await _supabase.from("doacao_mural").update({ status: "APROVADA" }).eq("id", id);
+      if (error) { showToast("Erro ao aprovar mensagem", "error"); return; }
+      showToast("Mensagem aprovada!"); carregarMensagensPendentesMural();
+    }
+    
+    async function rejeitarMensagemMural(id) {
+      const confirmar = window.confirm("Deseja rejeitar esta mensagem?");
+      if (!confirmar) return;
+      const { error } = await _supabase.from("doacao_mural").update({ status: "REJEITADA" }).eq("id", id);
+      if (error) { showToast("Erro ao rejeitar mensagem", "error"); return; }
+      showToast("Mensagem rejeitada!"); carregarMensagensPendentesMural();
+    }
+
+    // ============================
+    // EVENT LISTENERS E INICIALIZAÇÃO
+    // ============================
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("formFin")?.addEventListener("submit", async (e) => { e.preventDefault(); await salvarRegistro(); });
+      document.getElementById("btnNovaMeta")?.addEventListener("click", abrirModalMeta);
+      document.getElementById("btnCancelarMeta")?.addEventListener("click", fecharModalMeta);
+      document.getElementById("formMeta")?.addEventListener("submit", async function (e) { e.preventDefault(); await salvarMeta(); });
+      const modalMeta = document.getElementById("modalMeta");
+      if (modalMeta) { modalMeta.addEventListener("click", (e) => { if (e.target === modalMeta) fecharModalMeta(); }); }
+      document.getElementById("campoBusca")?.addEventListener("input", renderizar);
+      document.getElementById("filtroDataInicio")?.addEventListener("input", renderizar);
+      document.getElementById("filtroDataFim")?.addEventListener("input", renderizar);
+      document.querySelectorAll(".btn-filtro-status").forEach(btn => {
+        btn.addEventListener("click", () => {
+          filtroStatusAtivo = btn.dataset.status || "TODOS";
+          document.querySelectorAll(".btn-filtro-status").forEach(b => b.classList.remove("ring-2", "ring-slate-900"));
+          btn.classList.add("ring-2", "ring-slate-900");
+          renderizar();
+        });
+      });
+      document.getElementById("f_tipo_pessoa")?.addEventListener("change", controlarEquipePorTipoPessoa);
+      document.getElementById("f_modulo")?.addEventListener("change", atualizarModalDinamico);
+    });
+    
+    // ATUALIZADO: Inicialização carrega os dados do Usuário Logado
+    window.addEventListener("load", async () => {
+      const { data: { session } } = await _supabase.auth.getSession();
+      if (session?.user) {
+        ROLE = session.user.email === "compras@ejcbank.com.br" ? "COMPRAS" : "PILOTOS";
+        
+        const email = session.user.email?.toLowerCase() || "";
+        
+        USUARIO_LOGADO = {
+          email,
+          nome: MAPA_USUARIOS[email]?.nome || (ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto"),
+          avatar: MAPA_USUARIOS[email]?.avatar || (ROLE === "COMPRAS" ? "C" : "P")
+        };
+
+        document.getElementById("loginScreen")?.classList.add("hidden");
+        document.getElementById("appMain")?.classList.remove("hidden");
+        
+        const headerTitle = document.getElementById("headerTitle");
+        if (headerTitle) {
+          headerTitle.textContent = `EJC BANK • ${USUARIO_LOGADO.nome}`;
+        }
+        
+        const userAvatar = document.getElementById("userAvatar");
+        if (userAvatar) {
+          userAvatar.textContent = USUARIO_LOGADO.avatar;
+        }
+
+        configurarAbasPorPerfil();
+      }
+    });
+  </script>
+</body>
+</html>
+
