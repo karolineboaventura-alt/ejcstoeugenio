@@ -1353,11 +1353,10 @@ renderizar();
         corpo.appendChild(tr);
       });
     }
-
-    // ============================
-    // EXTRATO 360 & COBRANÇA
-    // ============================
-    async function abrirExtratoCompleto(telefone, nome = "") {
+// ============================
+// EXTRATO 360 & COBRANÇA
+// ============================
+async function abrirExtratoCompleto(telefone, nome = "") {
   const num = normalizarTelefone(telefone);
   if (!num) return showToast("Telefone inválido.", "error");
 
@@ -1367,16 +1366,16 @@ renderizar();
   for (const t of tabelas) {
     const { data, error } = await _supabase.from(t).select("*");
 
-    if (!error && data?.length) {
-      const filtrados = data.filter(item =>
-        normalizarTelefone(item.telefone) === num
-      );
-
-      todos.push(...filtrados.map(item => ({
-        ...item,
-        _modulo: t
-      })));
+    if (error) {
+      console.error(`Erro ao buscar ${t}:`, error);
+      continue;
     }
+
+    const filtrados = (data || []).filter(item => {
+      return normalizarTelefone(item.telefone) === num;
+    });
+
+    todos.push(...filtrados.map(item => ({ ...item, _modulo: t })));
   }
 
   if (!todos.length) {
@@ -1409,103 +1408,168 @@ renderizar();
 
   document.getElementById("modalExtrato")?.classList.remove("hidden");
   document.getElementById("modalExtrato")?.classList.add("flex");
+}
+
+function renderizarExtrato() {
+  const lista = document.getElementById("extratoLista");
+  const filtro = (document.getElementById("filtroExtrato")?.value || "").toLowerCase().trim();
+
+  const regs = extratoAtual.registros.filter(r => {
+    const texto = [
+      r.descricao, r.item, r.nome, r._modulo, r.status,
+      r.status_financeiro, r.status_pedido, r.equipe_responsavel,
+      r.equipe, r.tamanho
+    ].join(" ").toLowerCase();
+
+    return texto.includes(filtro);
+  });
+
+  extratoAtual.registrosFiltrados = regs;
+
+  const totalPago = regs.reduce((a, r) => a + obterValorPagoRegistro(r), 0);
+  const totalAberto = regs.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+
+  document.getElementById("extratoQtdLanc").textContent = regs.length;
+  document.getElementById("extratoTotalPago").textContent = formatarMoeda(totalPago);
+  document.getElementById("extratoTotalAberto").textContent = formatarMoeda(totalAberto);
+
+  if (!regs.length) {
+    lista.innerHTML = `<p class="text-sm text-slate-400 text-center py-6">Nenhum lançamento encontrado nesse filtro.</p>`;
+    return;
+  }
+
+  lista.innerHTML = regs.map(r => {
+    const valor = r.valor || r.valor_total || r.valor_estimado || 0;
+    const status = obterStatusVisual(r);
+
+    const statusClasse =
+      status === "PAGO" || status === "ENTREGUE"
+        ? "text-emerald-600"
+        : status === "CANCELADO"
+        ? "text-rose-600"
+        : "text-amber-600";
+
+    const nomeModuloVisual =
+      r._modulo === "doacao"
+        ? "LISTA DE PROVIDÊNCIA"
+        : (r._modulo || "").toUpperCase();
+
+    const detalhes = [
+      formatarDataBR(r.data_movimento || r.criado_em || r.created_at || ""),
+      nomeModuloVisual,
+      status
+    ];
+
+    if (r.status_pedido) detalhes.push(r.status_pedido);
+    if (r.tamanho) detalhes.push(`Tam: ${r.tamanho}`);
+    if (r.equipe_responsavel || r.equipe) detalhes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
+    if (r.quantidade && r.unidade) detalhes.push(`Qtd: ${r.quantidade} ${r.unidade}`);
+
+    let infoDireita = `<p class="text-xs font-black text-slate-900">${formatarMoeda(valor)}</p>`;
+
+    if (r._modulo === "doacao" && valor <= 0) {
+      infoDireita = `<p class="text-xs font-black text-purple-700">${r.quantidade || 0} ${r.unidade || "un"}</p>`;
     }
-    
-    function renderizarExtrato() {
-      const lista = document.getElementById("extratoLista");
-      const filtro = (document.getElementById("filtroExtrato").value || "").toLowerCase().trim();
-      const regs = extratoAtual.registros.filter(r => {
-        const texto = [r.descricao, r.item, r.nome, r._modulo, r.status, r.status_financeiro, r.status_pedido, r.equipe_responsavel, r.equipe, r.tamanho].join(" ").toLowerCase();
-        return texto.includes(filtro);
-      });
-      extratoAtual.registrosFiltrados = regs;
-      const totalPago = regs.reduce((a, r) => a + obterValorPagoRegistro(r), 0);
-      const totalAberto = regs.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
-      document.getElementById("extratoQtdLanc").textContent = regs.length;
-      document.getElementById("extratoTotalPago").textContent = formatarMoeda(totalPago);
-      document.getElementById("extratoTotalAberto").textContent = formatarMoeda(totalAberto);
-      if (!regs.length) {
-        lista.innerHTML = `<p class="text-sm text-slate-400 text-center py-6">Nenhum lançamento encontrado nesse filtro.</p>`;
-        return;
-      }
-      lista.innerHTML = regs.map(r => {
-        const valor = r.valor || r.valor_total || r.valor_estimado || 0;
-        const status = obterStatusVisual(r);
-        const statusClasse = status === "PAGO" || status === "ENTREGUE" ? "text-emerald-600" : status === "CANCELADO" ? "text-rose-600" : "text-amber-600";
-        const nomeModuloVisual = (r._modulo === "doacao") ? "LISTA DE PROVIDÊNCIA" : (r._modulo || "");
-        const detalhes = [formatarDataBR(r.data_movimento || r.criado_em || r.created_at || ""), nomeModuloVisual, status];
-        if (r.status_pedido) detalhes.push(r.status_pedido);
-        if (r.tamanho) detalhes.push(`Tam: ${r.tamanho}`);
-        if (r.equipe_responsavel || r.equipe) detalhes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
-        if (r.quantidade && r.unidade && valor <= 0) detalhes.push(`Qtd: ${r.quantidade} ${r.unidade}`);
 
-        let infoDireita = `<p class="text-xs font-black text-slate-900">${formatarMoeda(valor)}</p>`;
-        if (r._modulo === "doacao") {
-            if (valor > 0) {
-               infoDireita = `<p class="text-xs font-black text-emerald-600">${formatarMoeda(valor)}</p>`;
-            } else {
-               infoDireita = `<p class="text-xs font-black text-purple-700">${r.quantidade || 0} ${r.unidade || 'un'}</p>`;
-            }
-        }
-
-        return `
-          <div class="extrato-item p-3">
-            <div class="flex justify-between items-start gap-3">
-              <div>
-                <p class="text-xs font-bold text-slate-800">${esc(r.descricao || r.item || "-")}</p>
-                <p class="text-[11px] mt-1 ${statusClasse} font-bold">${esc(status)}</p>
-                <p class="text-[10px] text-slate-400 mt-1">${esc(detalhes.join(" • "))}</p>
-              </div>
-              <div class="text-right">
-                ${infoDireita}
-              </div>
-            </div>
+    return `
+      <div class="extrato-item p-3">
+        <div class="flex justify-between items-start gap-3">
+          <div>
+            <p class="text-xs font-bold text-slate-800">${esc(r.descricao || r.item || "-")}</p>
+            <p class="text-[11px] mt-1 ${statusClasse} font-bold">${esc(status)}</p>
+            <p class="text-[10px] text-slate-400 mt-1">${esc(detalhes.join(" • "))}</p>
           </div>
-        `;
-      }).join("");
-    }
-    
-    function fecharExtrato() {
-      document.getElementById("modalExtrato")?.classList.add("hidden");
-      document.getElementById("modalExtrato")?.classList.remove("flex");
-      extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
-    }
-    
-    async function copiarExtrato() {
-      const regs = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
-      if (!regs.length) return showToast("Extrato vazio.", "error");
-      const totalPago = regs.reduce((a, r) => a + obterValorPagoRegistro(r), 0);
-      const totalAberto = regs.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
-      const linhas = regs.map(r => {
-        const moduloVisual = r._modulo === "doacao" ? "LISTA DE PROVIDÊNCIA" : (r._modulo || "");
-        const partes = [ formatarDataBR(r.data_movimento || r.criado_em || r.created_at || ""), moduloVisual, r.descricao || r.item || "-", formatarMoeda(r.valor || r.valor_total || r.valor_estimado || 0), obterStatusVisual(r) ];
-        if (r.status_pedido) partes.push(`Pedido: ${r.status_pedido}`);
-        if (r.tamanho) partes.push(`Tam: ${r.tamanho}`);
-        if (r.equipe_responsavel || r.equipe) partes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
-        if (r.quantidade && r.unidade) partes.push(`Qtd: ${r.quantidade} ${r.unidade}`);
-        return `• ${partes.join(" — ")}`;
-      });
-      const texto = `Extrato de ${extratoAtual.nome}\n` + `${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}` + `Telefone: ${extratoAtual.telefone || "-"}\n\n` + `${linhas.join("\n")}\n\n` + `Total pago: ${formatarMoeda(totalPago)}\n` + `Total em aberto: ${formatarMoeda(totalAberto)}`;
-      try { await navigator.clipboard.writeText(texto); showToast("Extrato copiado!"); } catch { showToast("Não foi possível copiar.", "error"); }
-    }
-    
-    function exportarCSVAtual() {
-      const lista = aplicarFiltroEBusca();
-      if (!lista.length) return showToast("Nada para exportar.", "error");
-      const linhas = [["data","modulo","descricao","nome","telefone","equipe","valor","status","forma","observacao"]];
-      lista.forEach(r => {
-        linhas.push([ r.data_movimento || r.criado_em || r.created_at || "", abaAtiva, r.descricao || r.item || "", r.nome || "", r.telefone || "", r.equipe_responsavel || r.equipe || "", r.valor || r.valor_total || r.valor_estimado || "", obterStatusVisual(r), r.forma || "", r.observacao || "" ]);
-      });
-      const csv = linhas.map(l => l.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `ejc-bank-${abaAtiva.toLowerCase()}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast("CSV exportado!");
-    }
+          <div class="text-right">
+            ${infoDireita}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function fecharExtrato() {
+  document.getElementById("modalExtrato")?.classList.add("hidden");
+  document.getElementById("modalExtrato")?.classList.remove("flex");
+  extratoAtual = { nome: "", equipe: "", telefone: "", tabela: "", registros: [], registrosFiltrados: [] };
+}
+
+async function copiarExtrato() {
+  const regs = extratoAtual.registrosFiltrados.length ? extratoAtual.registrosFiltrados : extratoAtual.registros;
+  if (!regs.length) return showToast("Extrato vazio.", "error");
+
+  const totalPago = regs.reduce((a, r) => a + obterValorPagoRegistro(r), 0);
+  const totalAberto = regs.reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
+
+  const linhas = regs.map(r => {
+    const moduloVisual = r._modulo === "doacao" ? "LISTA DE PROVIDÊNCIA" : (r._modulo || "").toUpperCase();
+    const valor = r.valor || r.valor_total || r.valor_estimado || 0;
+
+    const partes = [
+      formatarDataBR(r.data_movimento || r.criado_em || r.created_at || ""),
+      moduloVisual,
+      r.descricao || r.item || "-",
+      valor > 0 ? formatarMoeda(valor) : `${r.quantidade || 0} ${r.unidade || "un"}`,
+      obterStatusVisual(r)
+    ];
+
+    if (r.status_pedido) partes.push(`Pedido: ${r.status_pedido}`);
+    if (r.tamanho) partes.push(`Tam: ${r.tamanho}`);
+    if (r.equipe_responsavel || r.equipe) partes.push(`Equipe: ${r.equipe_responsavel || r.equipe}`);
+
+    return `• ${partes.join(" — ")}`;
+  });
+
+  const texto =
+    `Extrato de ${extratoAtual.nome}\n` +
+    `${extratoAtual.equipe ? `Equipe: ${extratoAtual.equipe}\n` : ""}` +
+    `Telefone: ${extratoAtual.telefone || "-"}\n\n` +
+    `${linhas.join("\n")}\n\n` +
+    `Total pago: ${formatarMoeda(totalPago)}\n` +
+    `Total em aberto: ${formatarMoeda(totalAberto)}`;
+
+  try {
+    await navigator.clipboard.writeText(texto);
+    showToast("Extrato copiado!");
+  } catch {
+    showToast("Não foi possível copiar.", "error");
+  }
+}
+
+function exportarCSVAtual() {
+  const lista = aplicarFiltroEBusca();
+  if (!lista.length) return showToast("Nada para exportar.", "error");
+
+  const linhas = [["data","modulo","descricao","nome","telefone","equipe","valor","status","forma","observacao"]];
+
+  lista.forEach(r => {
+    linhas.push([
+      r.data_movimento || r.criado_em || r.created_at || "",
+      abaAtiva,
+      r.descricao || r.item || "",
+      r.nome || "",
+      r.telefone || "",
+      r.equipe_responsavel || r.equipe || "",
+      r.valor || r.valor_total || r.valor_estimado || "",
+      obterStatusVisual(r),
+      r.forma || "",
+      r.observacao || ""
+    ]);
+  });
+
+  const csv = linhas.map(l => l.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = `ejc-bank-${abaAtiva.toLowerCase()}.csv`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+  showToast("CSV exportado!");
+}
 
     // ============================
     // QUITAR TUDO
