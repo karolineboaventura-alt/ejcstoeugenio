@@ -1160,7 +1160,6 @@
     </div>
 
   </div>
- MODAL EXTRATO
   <div
     id="modalExtrato"
     class="hidden fixed inset-0 z-[125] items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
@@ -2291,8 +2290,13 @@
           selectStatus.innerHTML = `
             <option value="ENTRADA">Pago ✅</option>
             <option value="PENDENTE">Pendente 🟠</option>
-            <option value="SAIDA">Gasto 🔴</option
-          
+            <option value="SAIDA">Gasto 🔴</option>
+          `;
+}
+}
+
+controlarEquipePorTipoPessoa();
+    }
     function atualizarPainelPessoaEquipe(){
 
       const painel =
