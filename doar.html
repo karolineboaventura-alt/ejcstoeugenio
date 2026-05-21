@@ -1536,19 +1536,22 @@ async function enviarMural(){
     .insert({
       nome,
       mensagem,
-      origem: "Lista de Providência",
-      status: "PENDENTE",
-      created_at: new Date().toISOString()
+      origem:"Lista de Providência",
+      status:"PENDENTE",
+      curtidas:0,
+      created_at:new Date().toISOString()
     });
 
   if(error){
     alert("Erro ao enviar mensagem: " + error.message);
-  } else {
-    alert("Mensagem enviada com carinho 💜\nEla passará por aprovação da equipe antes de aparecer no mural!");
-    document.getElementById("nomeMural").value = "";
-    document.getElementById("mensagemMural").value = "";
-    carregarMuralPublico();
+    console.error(error);
+    return;
   }
+
+  alert("Mensagem enviada com carinho 💜\nEla será aprovada pelos pilotos.");
+
+  document.getElementById("nomeMural").value = "";
+  document.getElementById("mensagemMural").value = "";
 }
 
 function gerarAvatar(nome){
