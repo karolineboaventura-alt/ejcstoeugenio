@@ -483,16 +483,28 @@ function obterStatusRegistro(r) {
 function obterStatusVisual(r) {  
   return obterStatusRegistro(r);  
 }  
+
+function obterValorDoacao(r) {
+  return Number(
+    r.valor_estimado ||
+    r.valor ||
+    r.valor_total ||
+    r.valor_pago ||
+    r.quantia ||
+    0
+  );
+}
+
 function obterValorPagoRegistro(r) {  
   if (r._modulo === "doacao" || abaAtiva === "DOACAO") return 0;  
   if (typeof r.valor_pago !== "undefined") return Number(r.valor_pago || 0);  
-  return obterStatusRegistro(r) === "PAGO" ? Number(r.valor || r.valor_total || r.valor_estimado || 0) : 0;  
+  return obterStatusRegistro(r) === "PAGO" ? obterValorDoacao(r) : 0;  
 }  
 function obterValorAbertoRegistro(r) {  
   if (r._modulo === "doacao" || abaAtiva === "DOACAO") return 0;  
   if (typeof r.saldo_pendente !== "undefined") return Number(r.saldo_pendente || 0);  
   const s = obterStatusRegistro(r);  
-  return (s === "PENDENTE" || s === "PARCIAL") ? Number(r.valor || r.valor_total || r.valor_estimado || 0) : 0;  
+  return (s === "PENDENTE" || s === "PARCIAL") ? obterValorDoacao(r) : 0;  
 }  
 function obterEquipeResponsavel() { return ROLE === "COMPRAS" ? "Equipe de Compras" : "Piloto Finanças"; }  
   
@@ -840,7 +852,7 @@ function atualizarPainelPessoaEquipe() {
 
 async function atualizarPaineis() {  
   if (abaAtiva === "EJC") {  
-    const rec = dadosCache.filter(r => obterStatusRegistro(r) === "PAGO" && r.tipo !== "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);  
+    const rec = dadosCache.filter(r => obterStatusRegistro(r) === "PAGO" && r.tipo !== "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + obterValorDoacao(r), 0);  
     let pen = dadosCache
       .filter(r => {
         const st = obterStatusRegistro(r);
@@ -857,10 +869,10 @@ async function atualizarPaineis() {
         const st = r.status_financeiro || r.status || r.tipo;
         return st === "PENDENTE" || st === "PARCIAL";
       })
-      .reduce((a, r) => a + Number(r.valor || 0), 0);
+      .reduce((a, r) => a + obterValorDoacao(r), 0);
 
     pen += totalFiadoMercadinho;
-    const sai = dadosCache.filter(r => r.tipo === "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);
+    const sai = dadosCache.filter(r => r.tipo === "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + obterValorDoacao(r), 0);
     const elRec = document.getElementById("totalRecebido"); if(elRec) elRec.textContent = formatarMoeda(rec);
     const elPen = document.getElementById("totalPendente"); if(elPen) elPen.textContent = formatarMoeda(pen);
     const elSai = document.getElementById("totalSaidas"); if(elSai) elSai.textContent = formatarMoeda(sai);
@@ -868,10 +880,10 @@ async function atualizarPaineis() {
   }
   if (abaAtiva === "MERCADINHO") {
     const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");
-    const total = ativos.reduce((a, r) => a + Number(r.valor || 0), 0);
-    const pago = ativos.filter(r => obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + Number(r.valor || 0), 0);
+    const total = ativos.reduce((a, r) => a + obterValorDoacao(r), 0);
+    const pago = ativos.filter(r => obterStatusRegistro(r) === "PAGO").reduce((a, r) => a + obterValorDoacao(r), 0);
     const pend = ativos.filter(r => { const st = obterStatusRegistro(r); return st === "PENDENTE" || st === "PARCIAL"; }).reduce((a, r) => a + obterValorAbertoRegistro(r), 0);
-    const gastos = ativos.filter(r => r.tipo === "SAIDA").reduce((a, r) => a + Number(r.valor || 0), 0);
+    const gastos = ativos.filter(r => r.tipo === "SAIDA").reduce((a, r) => a + obterValorDoacao(r), 0);
     const elVend = document.getElementById("fjVendidos"); if(elVend) elVend.textContent = formatarMoeda(total);
     const elPag = document.getElementById("fjPagos"); if(elPag) elPag.textContent = formatarMoeda(pago);
     const elPen = document.getElementById("fjPendentes"); if(elPen) elPen.textContent = formatarMoeda(pend);
@@ -910,8 +922,7 @@ async function atualizarPaineis() {
     const totalItens = ativos.length;
 
     const totalDinheiroDoados = ativos
-      .filter(r => Number(r.valor_estimado || r.valor || 0) > 0)
-      .reduce((a, r) => a + Number(r.valor_estimado || r.valor || 0), 0);
+      .reduce((a, r) => a + obterValorDoacao(r), 0);
 
     const servos = ativos.filter(r =>
       String(r.tipo_pessoa || "").toUpperCase().includes("SERVO")
@@ -1159,7 +1170,7 @@ function editarRegistro(id) {
     document.getElementById("blocoModulo")?.classList.remove("hidden");  
   }  
   document.getElementById("f_desc").value = r.descricao || r.item || "";  
-  let valorEdicao = Number(r.valor || r.valor_total || r.valor_estimado || 0);  
+  let valorEdicao = obterValorDoacao(r);  
   const tamanhoEdicao = String(r.tamanho || "").toUpperCase();  
   if (["GG", "EXG", "G1", "G2", "G3"].includes(tamanhoEdicao)) {  
     valorEdicao = Math.max(0, valorEdicao - 10);  
@@ -1298,7 +1309,7 @@ function renderizar() {
     const id = reg.id;  
     const desc = reg.descricao || reg.item || "-";  
     const nome = reg.nome || "Sem nome";  
-    const valor = reg.valor ?? reg.valor_total ?? reg.valor_estimado ?? 0;  
+    const valor = obterValorDoacao(reg);  
     const statusVisual = obterStatusVisual(reg);  
     const statusAtualRegistro = obterStatusRegistro(reg);  
       
@@ -1463,7 +1474,7 @@ function renderizarExtrato() {
   }
 
   lista.innerHTML = regs.map(r => {
-    const valor = r.valor || r.valor_total || r.valor_estimado || 0;
+    const valor = obterValorDoacao(r);
     const status = obterStatusVisual(r);
 
     const statusClasse =  
@@ -1527,7 +1538,7 @@ async function copiarExtrato() {
 
   const linhas = regs.map(r => {
     const moduloVisual = r._modulo === "doacao" ? "LISTA DE PROVIDÊNCIA" : (r._modulo || "").toUpperCase();
-    const valor = r.valor || r.valor_total || r.valor_estimado || 0;
+    const valor = obterValorDoacao(r);
 
     const partes = [  
       formatarDataBR(r.data_movimento || r.criado_em || r.created_at || ""),  
@@ -1573,7 +1584,7 @@ function exportarCSVAtual() {
       r.nome || "",
       r.telefone || "",
       r.equipe_responsavel || r.equipe || "",
-      r.valor || r.valor_total || r.valor_estimado || "",
+      obterValorDoacao(r) || "",
       obterStatusVisual(r),
       r.forma || "",
       r.observacao || ""
@@ -1933,4 +1944,3 @@ async function exportarFechamentoExcel() {
   </script>  
 </body>  
 </html>
-
