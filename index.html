@@ -382,7 +382,9 @@
     // ============================  
     const SUPABASE_URL = 'https://ilzgmueeblxeyieumpyk.supabase.co';  
     const SUPABASE_ANON_KEY = 'sb_publishable_zDZyZ2_2KVeAD63XOon3mw_QOOQoRHf';  
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);  let ROLE = "";  
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);  
+    
+let ROLE = "";  
 let abaAtiva = "EJC";  
 let dadosCache = [];  
 let filtroStatusAtivo = "TODOS";  
@@ -800,7 +802,9 @@ function atualizarPainelFeijoada() {
 
 function atualizarPainelPessoaEquipe() {  
   const painel = document.getElementById("painelPessoaEquipe");  
-  if (!painel || !["MERCADINHO", "CAMISETAS", "DOACAO"].includes(abaAtiva)) return;  
+  // BLOQUEIA DE RODAR NA ABA DOACAO PARA NÃO SOBRESCREVER SUA NOVA LÓGICA
+  if (!painel || !["MERCADINHO", "CAMISETAS"].includes(abaAtiva)) return;  
+  
   const ativos = dadosCache.filter(r => obterStatusRegistro(r) !== "CANCELADO");  
   const servos = ativos.filter(r => r.tipo_pessoa === "SERVO");  
   const paroquianos = ativos.filter(r => (r.tipo_pessoa || "PAROQUIANO") === "PAROQUIANO");  
@@ -833,6 +837,7 @@ function atualizarPainelPessoaEquipe() {
     </div>  
   `).join("");  
 }  
+
 async function atualizarPaineis() {  
   if (abaAtiva === "EJC") {  
     const rec = dadosCache.filter(r => obterStatusRegistro(r) === "PAGO" && r.tipo !== "SAIDA" && obterStatusRegistro(r) !== "CANCELADO").reduce((a, r) => a + Number(r.valor || 0), 0);  
@@ -889,24 +894,59 @@ async function atualizarPaineis() {
     const elPagas = document.getElementById("camPagas"); if(elPagas) elPagas.textContent = pagas;
     const elRec = document.getElementById("camRecebido"); if(elRec) elRec.textContent = formatarMoeda(recebido);
   }
+  
   if (abaAtiva === "DOACAO") {
     const ativos = dadosCache.filter(r => r.status !== "CANCELADO");
-    const prometidos = ativos.filter(r => r.status === "PENDENTE" || r.status === "PROMETIDO").length;
-    const entregues = ativos.filter(r => r.status === "PAGO" || r.status === "ENTREGUE").length;
+
+    const prometidos = ativos.filter(r =>
+      r.status === "PENDENTE" || r.status === "PROMETIDO"
+    ).length;
+
+    const entregues = ativos.filter(r =>
+      r.status === "PAGO" || r.status === "ENTREGUE"
+    ).length;
+
     const cancelados = dadosCache.filter(r => r.status === "CANCELADO").length;
     const totalItens = ativos.length;
 
-    const totalDinheiroDoados = ativos  
-      .filter(r => r.status === "PAGO" || r.status === "ENTREGUE")  
-      .reduce((a, r) => a + Number(r.valor_estimado || r.valor || 0), 0);  
+    const totalDinheiroDoados = ativos
+      .filter(r => Number(r.valor_estimado || r.valor || 0) > 0)
+      .reduce((a, r) => a + Number(r.valor_estimado || r.valor || 0), 0);
 
-    const elVend = document.getElementById("fjVendidos"); if(elVend) elVend.textContent = totalItens;  
-    const elPag = document.getElementById("fjPagos"); if(elPag) elPag.textContent = entregues;  
-    const elPen = document.getElementById("fjPendentes"); if(elPen) elPen.textContent = prometidos;  
-    const elRes = document.getElementById("fjRestantes"); if(elRes) elRes.textContent = cancelados;  
-    const elMer = document.getElementById("fjMercado"); if(elMer) elMer.textContent = formatarMoeda(totalDinheiroDoados);  
-    const elLuc = document.getElementById("fjLucro"); if(elLuc) elLuc.textContent = "-";  
+    const servos = ativos.filter(r =>
+      String(r.tipo_pessoa || "").toUpperCase().includes("SERVO")
+    ).length;
+
+    const paroquianos = ativos.filter(r =>
+      String(r.tipo_pessoa || "").toUpperCase().includes("PAROQUIANO") ||
+      String(r.equipe || "").toUpperCase() === "EXTERNO"
+    ).length;
+
+    const equipes = {};
+    ativos.forEach(r => {
+      const tipoPessoa = String(r.tipo_pessoa || "").toUpperCase();
+      const equipe = String(r.equipe || r.equipe_responsavel || "").trim();
+
+      if (tipoPessoa.includes("SERVO") && equipe && equipe !== "Externo") {
+        equipes[equipe] = (equipes[equipe] || 0) + 1;
+      }
+    });
+
+    const ranking = Object.entries(equipes).sort((a, b) => b[1] - a[1]);
+
+    document.getElementById("fjVendidos").textContent = totalItens;
+    document.getElementById("fjPagos").textContent = entregues;
+    document.getElementById("fjPendentes").textContent = prometidos;
+    document.getElementById("fjRestantes").textContent = cancelados;
+    document.getElementById("fjMercado").textContent = formatarMoeda(totalDinheiroDoados);
+    document.getElementById("fjLucro").textContent = "-";
+
+    document.getElementById("statServos").textContent = servos;
+    document.getElementById("statParoquianos").textContent = paroquianos;
+    document.getElementById("statEquipesAtivas").textContent = ranking.length;
+    document.getElementById("statMaiorEquipe").textContent = ranking.length ? ranking[0][0] : "-";
   }  
+  
   atualizarPainelPessoaEquipe();  
 }  
 
@@ -1893,3 +1933,4 @@ async function exportarFechamentoExcel() {
   </script>  
 </body>  
 </html>
+
