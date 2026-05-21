@@ -212,7 +212,7 @@ body{
   height:58px;
   border-radius:20px;
   display:flex;
-  align-items:center;
+  align-items:center;  
   justify-content:center;
   background:rgba(255,255,255,.14);
   border:1px solid rgba(255,255,255,.18);
@@ -240,7 +240,7 @@ body{
   font-size:9px;
   letter-spacing:.22em;
   text-transform:uppercase;
-  font-weight:900;  
+  font-weight:900;
   opacity:.65;
 }
 
@@ -659,6 +659,195 @@ body{
   color:#a997b6;
   font-weight:700;
 }
+
+/* Mural estilo feed social */
+.wall-slider{
+  margin-top:20px;
+  position:relative;
+  height:360px;
+  overflow:hidden;
+  border-radius:30px;
+  background:linear-gradient(180deg,#f8f1ff 0%,#ffffff 100%);
+  border:1px solid #eddcfb;
+  box-shadow:0 18px 40px rgba(73,27,113,.10);
+  padding:12px;
+}
+
+.wall-track{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  will-change:transform;
+}
+
+.wall-post{
+  background:#fff;
+  border-radius:28px;
+  overflow:hidden;
+  border:1px solid #f0e6f7;
+  box-shadow:0 10px 24px rgba(73,27,113,.07);
+}
+
+.wall-story-bar{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:4px;
+  padding:10px 12px 0;
+}
+
+.wall-story-bar span{
+  height:4px;
+  border-radius:999px;
+  background:rgba(123,0,201,.12);
+  overflow:hidden;
+  position:relative;
+}
+
+.wall-story-bar span.is-active::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:999px;
+  background:linear-gradient(90deg,#f9ce34,#ee2a7b,#6228d7);
+}
+
+.wall-post-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px 10px;
+}
+
+.wall-avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  padding:2px;
+  flex:none;
+  background:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);
+}
+
+.wall-avatar-inner{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:900;
+  color:#7b00c9;
+}
+
+.wall-user{
+  min-width:0;
+  flex:1;
+}
+
+.wall-user strong{
+  display:block;
+  font-size:13px;
+  line-height:1.2;
+  color:#2b183c;
+}
+
+.wall-user span{
+  display:block;
+  margin-top:2px;
+  font-size:10px;
+  color:#9b8aa8;
+  font-weight:700;
+}
+
+.wall-dots{
+  color:#b39ac7;
+  font-size:18px;
+  line-height:1;
+  font-weight:900;
+}
+
+.wall-post-body{
+  padding:0 14px 12px;
+}
+
+.wall-story{
+  min-height:170px;
+  border-radius:22px;
+  padding:18px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:
+    radial-gradient(circle at top left,rgba(249,206,52,.14),transparent 28%),
+    radial-gradient(circle at top right,rgba(238,42,123,.11),transparent 30%),
+    radial-gradient(circle at bottom right,rgba(98,40,215,.10),transparent 32%),
+    linear-gradient(180deg,#fff 0%,#fcf8ff 100%);
+  border:1px solid #f3e8fb;
+}
+
+.wall-story p{
+  margin:0;
+  font-size:15px;
+  line-height:1.45;
+  font-weight:800;
+  color:#4b3062;
+  display:-webkit-box;
+  -webkit-line-clamp:5;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.wall-post-actions{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 10px;
+}
+
+.wall-actions-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#7f6a92;
+  font-size:17px;
+}
+
+.wall-likes{
+  padding:0 16px 4px;
+  font-size:12px;
+  color:#3a234e;
+  font-weight:800;
+}
+
+.wall-post-footer{
+  padding:0 16px 16px;
+  font-size:11px;
+  color:#9b8aa8;
+  font-weight:700;
+}
+
+.wall-fade-top,
+.wall-fade-bottom{
+  position:absolute;
+  left:0;
+  right:0;
+  height:44px;
+  z-index:2;
+  pointer-events:none;
+}
+
+.wall-fade-top{
+  top:0;
+  background:linear-gradient(to bottom,#f8f1ff 0%,rgba(248,241,255,0) 100%);
+}
+
+.wall-fade-bottom{
+  bottom:0;
+  background:linear-gradient(to top,#ffffff 0%,rgba(255,255,255,0) 100%);
+}
 </style>
 </head>
 
@@ -833,7 +1022,13 @@ body{
       <textarea id="mensagemMural" class="input" placeholder="Deixe uma mensagem para o EJC..."></textarea>
       <button class="wall-btn" onclick="enviarMural()">ENVIAR MENSAGEM</button>
     </div>
-    <div id="mensagensAprovadas" style="margin-top: 20px; display: grid; gap: 10px;"></div>
+    
+    <div id="wallSlider" class="wall-slider">
+      <div class="wall-fade-top"></div>
+      <div class="wall-fade-bottom"></div>
+      <div id="mensagensAprovadas" class="wall-track"></div>
+    </div>
+    
   </section>
 
   <div class="footer">
@@ -851,6 +1046,8 @@ const DATA_EJC = "2026-07-10T19:00:00";
 const supa = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let carrinho = [];
+let carrosselAnimationId = null;
+let muralPausado = false;
 
 function esc(t){
   return String(t || "")
@@ -1354,6 +1551,11 @@ async function enviarMural(){
   }
 }
 
+function gerarAvatar(nome){
+  const base = String(nome || "Anônimo").trim();
+  return base.charAt(0).toUpperCase() || "A";
+}
+
 async function carregarMuralPublico() {
   const box = document.getElementById("mensagensAprovadas");
   if (!box) return;
@@ -1367,16 +1569,154 @@ async function carregarMuralPublico() {
     .order("created_at", { ascending: false });
 
   if (error || !data || data.length === 0) {
-    box.innerHTML = `<p style="font-size:12px; color:#9b8aa8; text-align:center; padding: 10px;">Seja o primeiro a deixar uma mensagem de carinho para o EJC!</p>`;
+    box.innerHTML = `
+      <div class="wall-post">
+        <div class="wall-story-bar">
+          <span class="is-active"></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div class="wall-post-head">
+          <div class="wall-avatar">
+            <div class="wall-avatar-inner">E</div>
+          </div>
+
+          <div class="wall-user">
+            <strong>EJC Santo Eugênio</strong>
+            <span>Mural de carinho</span>
+          </div>
+
+          <div class="wall-dots">•••</div>
+        </div>
+
+        <div class="wall-post-body">
+          <div class="wall-story">
+            <p>Seja o primeiro a deixar uma mensagem de carinho para o EJC! 💜</p>
+          </div>
+        </div>
+
+        <div class="wall-post-actions">
+          <div class="wall-actions-left">
+            <span>♥</span>
+            <span>💬</span>
+            <span>⌲</span>
+          </div>
+          <div style="color:#b39ac7;font-size:16px;">🔖</div>
+        </div>
+
+        <div class="wall-likes">21 curtidas</div>
+        <div class="wall-post-footer">Mensagem para o EJC 💜</div>
+      </div>
+    `;
     return;
   }
 
-  box.innerHTML = data.map(m => `
-    <div style="background: #fbf7ff; border: 1px solid #f1e7f7; border-radius: 16px; padding: 14px;">
-      <strong style="display:block; font-size:13px; color:#2b183c; margin-bottom:4px;">${esc(m.nome || "Anônimo")}</strong>
-      <p style="font-size:12px; color:#6b5a7a; margin:0; line-height:1.4;">${esc(m.mensagem)}</p>
-    </div>
-  `).join("");
+  const mensagens = [...data];
+
+  // Duplica as mensagens se forem poucas para o loop infinito funcionar bonito
+  while (mensagens.length < 5) {
+    mensagens.push(...data);
+    if (mensagens.length > 10) break;
+  }
+
+  box.innerHTML = mensagens.map((m, index) => {
+    const nome = esc(m.nome || "Anônimo");
+    const letra = esc(gerarAvatar(m.nome || "Anônimo"));
+    const mensagem = esc(m.mensagem);
+    const curtidas = 12 + (index * 7);
+
+    return `
+      <div class="wall-post">
+        <div class="wall-story-bar">
+          <span class="is-active"></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div class="wall-post-head">
+          <div class="wall-avatar">
+            <div class="wall-avatar-inner">${letra}</div>
+          </div>
+
+          <div class="wall-user">
+            <strong>${nome}</strong>
+            <span>Mensagem de carinho</span>
+          </div>
+
+          <div class="wall-dots">•••</div>
+        </div>
+
+        <div class="wall-post-body">
+          <div class="wall-story">
+            <p>${mensagem}</p>
+          </div>
+        </div>
+
+        <div class="wall-post-actions">
+          <div class="wall-actions-left">
+            <span>♥</span>
+            <span>💬</span>
+            <span>⌲</span>
+          </div>
+          <div style="color:#b39ac7;font-size:16px;">🔖</div>
+        </div>
+
+        <div class="wall-likes">${curtidas} curtidas</div>
+        <div class="wall-post-footer">Mensagem para o EJC 💜</div>
+      </div>
+    `;
+  }).join("");
+
+  iniciarCarrosselMural();
+}
+
+function iniciarCarrosselMural() {
+  const track = document.getElementById("mensagensAprovadas");
+  const slider = document.getElementById("wallSlider");
+  if (!track || !slider) return;
+
+  if (carrosselAnimationId) {
+    cancelAnimationFrame(carrosselAnimationId);
+    carrosselAnimationId = null;
+  }
+
+  let scrollPos = 0;
+  const speed = 0.45;
+
+  slider.onmouseenter = () => muralPausado = true;
+  slider.onmouseleave = () => muralPausado = false;
+  slider.ontouchstart = () => muralPausado = true;
+  slider.ontouchend = () => {
+    setTimeout(() => muralPausado = false, 700);
+  };
+
+  function scroll() {
+    if (!muralPausado) {
+      scrollPos += speed;
+      track.style.transform = `translateY(-${scrollPos}px)`;
+
+      const primeiro = track.firstElementChild;
+
+      if (primeiro) {
+        const estilos = getComputedStyle(track);
+        const gap = parseFloat(estilos.gap || 16);
+        const alturaItem = primeiro.offsetHeight + gap;
+
+        if (scrollPos >= alturaItem) {
+          track.appendChild(primeiro);
+          scrollPos -= alturaItem;
+          track.style.transform = `translateY(-${scrollPos}px)`;
+        }
+      }
+    }
+
+    carrosselAnimationId = requestAnimationFrame(scroll);
+  }
+
+  carrosselAnimationId = requestAnimationFrame(scroll);
 }
 
 window.onload = () => {
