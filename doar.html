@@ -240,7 +240,7 @@ body{
   font-size:9px;
   letter-spacing:.22em;
   text-transform:uppercase;
-  font-weight:900;
+  font-weight:900;  
   opacity:.65;
 }
 
@@ -386,9 +386,10 @@ body{
   cursor:pointer;
 }
 
-category summary::-webkit-details-marker{
+.category summary::-webkit-details-marker{
   display:none;
 }
+
 .cat-head{
   padding:16px;
   display:flex;
@@ -832,6 +833,7 @@ category summary::-webkit-details-marker{
       <textarea id="mensagemMural" class="input" placeholder="Deixe uma mensagem para o EJC..."></textarea>
       <button class="wall-btn" onclick="enviarMural()">ENVIAR MENSAGEM</button>
     </div>
+    <div id="mensagensAprovadas" style="margin-top: 20px; display: grid; gap: 10px;"></div>
   </section>
 
   <div class="footer">
@@ -1333,31 +1335,57 @@ async function enviarMural(){
   }
 
   const { error } = await supa
-    .from("mural_carinho")
+    .from("doacao_mural")
     .insert({
       nome,
       mensagem,
-      origem:"Lista de Providência",
-      created_at:new Date().toISOString()
+      origem: "Lista de Providência",
+      status: "PENDENTE",
+      created_at: new Date().toISOString()
     });
 
   if(error){
-    alert("Mensagem recebida 💜");
-  }else{
-    alert("Mensagem enviada com carinho 💜");
+    alert("Erro ao enviar mensagem: " + error.message);
+  } else {
+    alert("Mensagem enviada com carinho 💜\nEla passará por aprovação da equipe antes de aparecer no mural!");
+    document.getElementById("nomeMural").value = "";
+    document.getElementById("mensagemMural").value = "";
+    carregarMuralPublico();
+  }
+}
+
+async function carregarMuralPublico() {
+  const box = document.getElementById("mensagensAprovadas");
+  if (!box) return;
+
+  box.innerHTML = `<p style="font-size:11px; color:#9b8aa8; text-align:center;">Carregando mensagens...</p>`;
+
+  const { data, error } = await supa
+    .from("doacao_mural")
+    .select("*")
+    .eq("status", "APROVADA")
+    .order("created_at", { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    box.innerHTML = `<p style="font-size:12px; color:#9b8aa8; text-align:center; padding: 10px;">Seja o primeiro a deixar uma mensagem de carinho para o EJC!</p>`;
+    return;
   }
 
-  document.getElementById("nomeMural").value = "";
-  document.getElementById("mensagemMural").value = "";
+  box.innerHTML = data.map(m => `
+    <div style="background: #fbf7ff; border: 1px solid #f1e7f7; border-radius: 16px; padding: 14px;">
+      <strong style="display:block; font-size:13px; color:#2b183c; margin-bottom:4px;">${esc(m.nome || "Anônimo")}</strong>
+      <p style="font-size:12px; color:#6b5a7a; margin:0; line-height:1.4;">${esc(m.mensagem)}</p>
+    </div>
+  `).join("");
 }
 
 window.onload = () => {
   const hoje = new Date().toISOString().slice(0,10);
-
   document.getElementById("dataEntrega").setAttribute("min", hoje);
 
   iniciarContagem();
   carregarItens();
+  carregarMuralPublico();
 };
 </script>
 
